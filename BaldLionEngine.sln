@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "Sandbox\Sandbox.vcxproj", "{F78CBC71-E464-4E9E-826A-F1EDF726BED4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaldLionEngine", "BaldLionEngine\BaldLionEngine.vcxproj", "{BC485FA6-DB9F-4C4E-A3B3-584B9DE8F374}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC485FA6-DB9F-4C4E-A3B3-584B9DE8F374}.Debug|x64.ActiveCfg = Debug|x64
+		{BC485FA6-DB9F-4C4E-A3B3-584B9DE8F374}.Debug|x64.Build.0 = Debug|x64
+		{BC485FA6-DB9F-4C4E-A3B3-584B9DE8F374}.Release|x64.ActiveCfg = Release|x64
+		{BC485FA6-DB9F-4C4E-A3B3-584B9DE8F374}.Release|x64.Build.0 = Release|x64
+		{F78CBC71-E464-4E9E-826A-F1EDF726BED4}.Debug|x64.ActiveCfg = Debug|x64
+		{F78CBC71-E464-4E9E-826A-F1EDF726BED4}.Debug|x64.Build.0 = Debug|x64
+		{F78CBC71-E464-4E9E-826A-F1EDF726BED4}.Release|x64.ActiveCfg = Release|x64
+		{F78CBC71-E464-4E9E-826A-F1EDF726BED4}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D6DFBBB9-264E-4B05-A726-3768E8391F88}
+	EndGlobalSection
+EndGlobal
