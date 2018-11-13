@@ -1,0 +1,3 @@
+[submodule "BaldLionEngine/vendor/spdlog"]
+	path = BaldLionEngine/vendor/spdlog
+	url = https://github.com/gabime/spdlog

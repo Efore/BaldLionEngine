@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include "BaldLion/Application.h"
+#include "BaldLion/Log.h"
 
 // --------------- Entry point -----------------------
 

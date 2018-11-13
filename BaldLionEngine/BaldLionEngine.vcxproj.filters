@@ -27,9 +27,15 @@
     <ClInclude Include="src\BaldLion\EntryPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
