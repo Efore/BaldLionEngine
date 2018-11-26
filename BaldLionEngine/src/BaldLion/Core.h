@@ -9,3 +9,5 @@
 #else
 	#error BaldLion only support Wiwndos!
 #endif
+
+#define BIT(x) (1 << x)

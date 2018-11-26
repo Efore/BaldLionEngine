@@ -4,6 +4,9 @@
     <Filter Include="BaldLion">
       <UniqueIdentifier>{AA61A792-962E-029E-BF47-F045AB73372C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BaldLion\Events">
+      <UniqueIdentifier>{4E4A9DD1-BAD5-0A96-C3E6-8D8A2FF16696}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h" />
@@ -15,6 +18,18 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\EntryPoint.h">
       <Filter>BaldLion</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h">
+      <Filter>BaldLion\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Events\Event.h">
+      <Filter>BaldLion\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Events\KeyEvent.h">
+      <Filter>BaldLion\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Events\MouseEvent.h">
+      <Filter>BaldLion\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Log.h">
       <Filter>BaldLion</Filter>
