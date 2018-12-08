@@ -1,5 +1,5 @@
 #pragma once
-#include "blpch.h"
+
 #include "BaldLion/Core.h"
 
 namespace BaldLion

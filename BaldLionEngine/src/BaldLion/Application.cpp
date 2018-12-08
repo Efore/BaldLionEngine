@@ -1,4 +1,5 @@
 #include "blpch.h"
+
 #include "Application.h"
 
 #include "BaldLion/Events/ApplicationEvent.h"
@@ -19,7 +20,14 @@ namespace BaldLion
 	{
 		WindowResizeEvent e(1280, 720);
 	
-		BL_LOG_TRACE(e);
+		if (e.IsInCategory(EventCategoryApplication))
+		{
+			BL_LOG_TRACE(e);
+		}
+		if (e.IsInCategory(EventCategoryInput))
+		{
+			BL_LOG_TRACE(e);
+		}
 
 		while (true);
 	}
