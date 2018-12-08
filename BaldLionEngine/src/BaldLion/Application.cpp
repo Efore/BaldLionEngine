@@ -1,3 +1,4 @@
+#include "blpch.h"
 #include "Application.h"
 
 #include "BaldLion/Events/ApplicationEvent.h"

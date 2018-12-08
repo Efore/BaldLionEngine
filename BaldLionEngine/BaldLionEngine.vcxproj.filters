@@ -34,6 +34,7 @@
     <ClInclude Include="src\BaldLion\Log.h">
       <Filter>BaldLion</Filter>
     </ClInclude>
+    <ClInclude Include="src\blpch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Application.cpp">
@@ -42,5 +43,6 @@
     <ClCompile Include="src\BaldLion\Log.cpp">
       <Filter>BaldLion</Filter>
     </ClCompile>
+    <ClCompile Include="src\blpch.cpp" />
   </ItemGroup>
 </Project>

@@ -16,6 +16,9 @@ project "BaldLionEngine"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+	pchheader "blpch.h"
+	pchsource "%{prj.name}/src/blpch.cpp"
+
 	files
 	{
 		"%{prj.name}/src/**.h",

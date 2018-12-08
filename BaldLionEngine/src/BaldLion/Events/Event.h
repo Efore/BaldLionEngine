@@ -1,9 +1,6 @@
 #pragma once
-
+#include "blpch.h"
 #include "BaldLion/Core.h"
-
-#include <string>
-#include <functional>
 
 namespace BaldLion
 {

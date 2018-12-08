@@ -2,8 +2,6 @@
 
 #include "Event.h"
 
-#include <sstream>
-
 namespace BaldLion
 {
 	class BL_API MouseMovedEvent : public Event
