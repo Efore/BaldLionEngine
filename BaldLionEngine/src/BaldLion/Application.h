@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core.h" 
+#include "Window.h"
 
 namespace BaldLion 
 {
@@ -11,6 +12,9 @@ namespace BaldLion
 		virtual ~Application();
 
 		void Run();
+	private:
+		std::unique_ptr<Window> m_window;
+		bool m_running = true;
 	};
 
 	//To be defined in client
