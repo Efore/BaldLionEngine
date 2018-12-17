@@ -2,6 +2,7 @@
 
 #include "Core.h" 
 #include "Window.h"
+#include "BaldLion/Events/ApplicationEvent.h"
 
 namespace BaldLion 
 {
@@ -12,7 +13,11 @@ namespace BaldLion
 		virtual ~Application();
 
 		void Run();
+
+		void OnEvent(Event& e);
 	private:
+		bool OnWindowClose(WindowCloseEvent& e);
+
 		std::unique_ptr<Window> m_window;
 		bool m_running = true;
 	};
