@@ -14,8 +14,8 @@ namespace BaldLion
 		unsigned int Height;
 
 		WindowProps(const std::string& title = "BaldLion Engine",
-			unsigned int width = 1280,
-			unsigned int height = 720)
+			unsigned int width = 680,
+			unsigned int height = 420)
 			: Title(title), Width(width), Height(height)
 		{
 

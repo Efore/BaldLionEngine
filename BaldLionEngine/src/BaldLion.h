@@ -3,6 +3,7 @@
 //For use by BaldLion application
 
 #include "BaldLion/Application.h"
+#include "BaldLion/Layer.h"
 #include "BaldLion/Log.h"
 
 // --------------- Entry point -----------------------

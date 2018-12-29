@@ -62,14 +62,17 @@ project "BaldLionEngine"
 
 	filter "configurations:Debug"
 		defines "BL_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "BL_RELEASE"
+		buildoptions "/MD"
 		symbols "On"
 
 	filter "configurations:Dist"
 		defines "BL_DIST"
+		buildoptions "/MD"
 		symbols "On"
 
 project "Sandbox"
@@ -109,12 +112,15 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "BL_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "BL_RELEASE"
+		buildoptions "/MD"
 		symbols "On"
 
 	filter "configurations:Dist"
 		defines "BL_DIST"
+		buildoptions "/MD"
 		symbols "On"

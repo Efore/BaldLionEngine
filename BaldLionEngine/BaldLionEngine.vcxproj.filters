@@ -37,6 +37,12 @@
     <ClInclude Include="src\BaldLion\Events\MouseEvent.h">
       <Filter>BaldLion\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Layer.h">
+      <Filter>BaldLion</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\LayerStack.h">
+      <Filter>BaldLion</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Log.h">
       <Filter>BaldLion</Filter>
     </ClInclude>
@@ -50,6 +56,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Application.cpp">
+      <Filter>BaldLion</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Layer.cpp">
+      <Filter>BaldLion</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\LayerStack.cpp">
       <Filter>BaldLion</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Log.cpp">

@@ -46,6 +46,8 @@ namespace BaldLion
 			return GetCategoryFlags() & category;
 		}
 
+		inline bool IsHandled() const { return m_handled; }
+
 	protected:
 		bool m_handled = false;
 	};
