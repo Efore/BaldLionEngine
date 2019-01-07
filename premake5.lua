@@ -11,8 +11,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["GLFW"] = "BaldLionEngine/vendor/GLFW/include"
+IncludeDir["Glad"] = "BaldLionEngine/vendor/Glad/include"
 
 include "BaldLionEngine/vendor/GLFW"
+include "BaldLionEngine/vendor/Glad"
 
 project "BaldLionEngine"
 	location "BaldLionEngine"
@@ -35,12 +37,14 @@ project "BaldLionEngine"
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}"
 	}
 	
 	links
 	{
 		"GLFW",
+		"Glad",
 		"opengl32.lib"
 	}
 
@@ -52,7 +56,8 @@ project "BaldLionEngine"
 		defines
 		{
 			"BL_BUILD_DLL",
-			"BL_PLATFORM_WINDOWS"
+			"BL_PLATFORM_WINDOWS",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands

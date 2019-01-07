@@ -5,6 +5,8 @@
 #include "BaldLion/Events/ApplicationEvent.h"
 #include "BaldLion/Events/KeyEvent.h"
 
+#include <glad/glad.h>
+
 namespace BaldLion
 {
 	static bool s_GLFWInitialized = false;
@@ -47,6 +49,10 @@ namespace BaldLion
 
 		m_window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_window);
+
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		BL_CORE_ASSERT(status, "Failed to initialize Glad");
+
 		glfwSetWindowUserPointer(m_window, &m_data);
 		SetVSync(true);
 
