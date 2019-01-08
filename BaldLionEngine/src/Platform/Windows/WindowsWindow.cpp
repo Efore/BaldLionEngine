@@ -137,6 +137,14 @@ namespace BaldLion
 			MouseMovedEvent event((float)xPos, (float)yPos);
 			data.EventCallback(event);
 		});
+
+		glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int codepoint)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			CharEvent event(codepoint);
+			data.EventCallback(event);
+		});
 	}
 
 	void WindowsWindow::Shutdown()

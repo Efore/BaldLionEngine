@@ -5,3 +5,7 @@
 [submodule "BaldLionEngine/vendor/spdlog"]
 	path = BaldLionEngine/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "BaldLionEngine/vendor/imgui"]
+	path = BaldLionEngine/vendor/imgui
+	url = https://github.com/TheCherno/imgui
+	ignore = dirty
