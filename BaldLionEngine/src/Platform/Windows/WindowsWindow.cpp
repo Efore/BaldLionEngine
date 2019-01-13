@@ -138,11 +138,11 @@ namespace BaldLion
 			data.EventCallback(event);
 		});
 
-		glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int codepoint)
+		glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int keycode)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-			CharEvent event(codepoint);
+			KeyTypedEvent event(keycode);
 			data.EventCallback(event);
 		});
 	}

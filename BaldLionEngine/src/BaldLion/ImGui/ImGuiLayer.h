@@ -2,6 +2,10 @@
 
 #include "BaldLion/Layer.h"
 
+#include "BaldLion/Events/KeyEvent.h"
+#include "BaldLion/Events/MouseEvent.h"
+#include "BaldLion/Events/ApplicationEvent.h"
+
 namespace BaldLion
 {
 	class BL_API ImGuiLayer : public Layer
@@ -15,12 +19,15 @@ namespace BaldLion
 		void OnUpdate();
 		void OnEvent(Event& event);
 
-		void MouseMovedCallback(float posX, float posY);
-		void MouseButtonCallback(int button, int action);
-		void ScrollCallback(double xoffset, double yoffset);
-		void KeyCallback(int key, int action);
-		void CharCallback(unsigned int c);
-		void WindowsCloseCallback();
+	private:
+		bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);
+		bool OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
+		bool OnMouseMovedEvent(MouseMovedEvent& e);
+		bool OnMouseScrolledEvent(MouseScrolledEvent& e);
+		bool OnKeyPressedEvent(KeyPressedEvent& e);
+		bool OnKeyReleasedEvent(KeyReleasedEvent& e);
+		bool OnKeyTypedEvent(KeyTypedEvent& e);
+		bool OnWindowResizeEvent(WindowResizeEvent &e);		
 
 	private:
 		float m_time = 0.0f;

@@ -51,24 +51,18 @@ namespace BaldLion
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
 
-	class BL_API CharEvent : public Event
+	class BL_API KeyTypedEvent : public KeyEvent
 	{
 	public:
-		CharEvent(unsigned int codepoint) : m_codepoint(codepoint) {}
-
-		inline unsigned int GetCodepoint() const { return m_codepoint; }
-
+		KeyTypedEvent(int keycode) : KeyEvent(keycode) {}
+		
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "CharEvent: " << m_codepoint;
+			ss << "KeyTypedEvent: " << m_keyCode;
 			return ss.str();
 		}
 
-		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
-		EVENT_CLASS_TYPE(Char)
-
-	protected:
-		unsigned int m_codepoint;
+		EVENT_CLASS_TYPE(KeyTyped)
 	};
 }
