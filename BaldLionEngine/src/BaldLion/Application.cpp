@@ -2,6 +2,7 @@
 #include "Application.h"
 
 #include "BaldLion/Log.h"
+#include "Input.h"
 
 #include <glad/glad.h>
 
@@ -46,7 +47,7 @@ namespace BaldLion
 
 			for (Layer* layer : m_layerStack)
 				layer->OnUpdate();
-
+			
 			m_window->OnUpdate();
 		}
 	}
@@ -55,8 +56,6 @@ namespace BaldLion
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-
-		BL_LOG_CORE_TRACE("{0}", e);
 
 		for (auto it = m_layerStack.end(); it != m_layerStack.begin(); )
 		{

@@ -153,11 +153,13 @@
     <ClInclude Include="src\BaldLion\Events\KeyEvent.h" />
     <ClInclude Include="src\BaldLion\Events\MouseEvent.h" />
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\BaldLion\Input.h" />
     <ClInclude Include="src\BaldLion\Layer.h" />
     <ClInclude Include="src\BaldLion\LayerStack.h" />
     <ClInclude Include="src\BaldLion\Log.h" />
     <ClInclude Include="src\BaldLion\Window.h" />
     <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\blpch.h" />
   </ItemGroup>
@@ -168,6 +170,7 @@
     <ClCompile Include="src\BaldLion\LayerStack.cpp" />
     <ClCompile Include="src\BaldLion\Log.cpp" />
     <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\blpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
