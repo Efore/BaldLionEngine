@@ -97,8 +97,6 @@ namespace BaldLion
 		dispatcher.Dispatch<KeyReleasedEvent>(BL_BIND_EVENT_FN(ImGuiLayer::OnKeyReleasedEvent));
 		dispatcher.Dispatch<KeyTypedEvent>(BL_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
 		dispatcher.Dispatch<WindowResizeEvent>(BL_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
-
-		BL_LOG_TRACE("{0}", event);
 	}
 
 	bool ImGuiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent & e)

@@ -2,7 +2,6 @@
 #include "Application.h"
 
 #include "BaldLion/Log.h"
-#include "Input.h"
 
 #include <glad/glad.h>
 
@@ -47,7 +46,7 @@ namespace BaldLion
 
 			for (Layer* layer : m_layerStack)
 				layer->OnUpdate();
-			
+
 			m_window->OnUpdate();
 		}
 	}

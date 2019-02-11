@@ -154,9 +154,11 @@
     <ClInclude Include="src\BaldLion\Events\MouseEvent.h" />
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\BaldLion\Input.h" />
+    <ClInclude Include="src\BaldLion\KeyCodes.h" />
     <ClInclude Include="src\BaldLion\Layer.h" />
     <ClInclude Include="src\BaldLion\LayerStack.h" />
     <ClInclude Include="src\BaldLion\Log.h" />
+    <ClInclude Include="src\BaldLion\MouseButtonCodes.h" />
     <ClInclude Include="src\BaldLion\Window.h" />
     <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
