@@ -1220,5 +1220,6 @@
     <ClCompile Include="src\blpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\ImGui\ImGuiBuild.cpp" />
   </ItemGroup>
 </Project>

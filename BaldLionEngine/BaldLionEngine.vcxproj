@@ -529,6 +529,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Application.cpp" />
+    <ClCompile Include="src\BaldLion\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\BaldLion\Layer.cpp" />
     <ClCompile Include="src\BaldLion\LayerStack.cpp" />
