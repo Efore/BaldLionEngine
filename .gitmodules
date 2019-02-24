@@ -9,3 +9,6 @@
 	path = BaldLionEngine/vendor/imgui
 	url = https://github.com/TheCherno/imgui
 	ignore = dirty
+[submodule "BaldLionEngine/vendor/glm"]
+	path = BaldLionEngine/vendor/glm
+	url = https://github.com/g-truc/glm

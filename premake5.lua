@@ -13,6 +13,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "BaldLionEngine/vendor/GLFW/include"
 IncludeDir["Glad"] = "BaldLionEngine/vendor/Glad/include"
 IncludeDir["ImGui"] = "BaldLionEngine/vendor/imgui"
+IncludeDir["glm"] = "BaldLionEngine/vendor/glm/"
 
 include "BaldLionEngine/vendor/GLFW"
 include "BaldLionEngine/vendor/Glad"
@@ -32,7 +33,9 @@ project "BaldLionEngine"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
 
 	includedirs
@@ -41,7 +44,8 @@ project "BaldLionEngine"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.ImGui}"
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}"
 	}
 	
 	links
@@ -101,7 +105,8 @@ project "Sandbox"
 	includedirs
 	{
 		"BaldLionEngine/vendor/spdlog/include",
-		"BaldLionEngine/src"
+		"BaldLionEngine/src",
+		"%{IncludeDir.glm}"
 	}
 
 	links
