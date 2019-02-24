@@ -20,6 +20,9 @@ namespace BaldLion
 
 		m_window = std::unique_ptr<Window>(Window::Create());
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
+		m_imGuiLayer = new ImGuiLayer();
+		PushOverlay(m_imGuiLayer);
 	}
 
 	Application::~Application()
@@ -47,6 +50,13 @@ namespace BaldLion
 
 			for (Layer* layer : m_layerStack)
 				layer->OnUpdate();
+
+			m_imGuiLayer->Begin();
+
+			for (Layer* layer : m_layerStack)
+				layer->OnImGuiRender();
+
+			m_imGuiLayer->End();
 
 			m_window->OnUpdate();
 		}

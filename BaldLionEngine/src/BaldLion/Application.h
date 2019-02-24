@@ -6,6 +6,8 @@
 #include "BaldLion/Events/ApplicationEvent.h"
 #include "BaldLion/LayerStack.h"
 
+#include "BaldLion/ImGui/ImGuiLayer.h"
+
 namespace BaldLion 
 {
 	class BL_API Application
@@ -29,6 +31,8 @@ namespace BaldLion
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_window;
+		ImGuiLayer* m_imGuiLayer;
+
 		bool m_running = true;
 		LayerStack m_layerStack;
 
