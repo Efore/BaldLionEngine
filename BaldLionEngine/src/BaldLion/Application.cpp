@@ -75,7 +75,6 @@ namespace BaldLion
 		}
 	}
 
-
 	bool Application::OnWindowClose(WindowCloseEvent & e)
 	{
 		m_running = false;

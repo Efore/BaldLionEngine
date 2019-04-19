@@ -21,8 +21,10 @@ include "BaldLionEngine/vendor/imgui"
 
 project "BaldLionEngine"
 	location "BaldLionEngine"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
+	cppdialect "C++14"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -38,6 +40,12 @@ project "BaldLionEngine"
 		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
 
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS"
+	}
+	
+	
 	includedirs
 	{
 		"%{prj.name}/src",
@@ -56,42 +64,36 @@ project "BaldLionEngine"
 		"opengl32.lib"
 	}
 
-	filter "system:windows"
-		cppdialect "C++14"
-		staticruntime "On"
+	filter "system:windows"		
 		systemversion "latest"
 
 		defines
 		{
-			"BL_BUILD_DLL",
 			"BL_PLATFORM_WINDOWS",
 			"GLFW_INCLUDE_NONE"
 		}
 
-		postbuildcommands
-		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
-		}
-
 	filter "configurations:Debug"
 		defines "BL_DEBUG"
-		buildoptions "/MDd"
-		symbols "On"
+		runtime "Debug"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "BL_RELEASE"
-		buildoptions "/MD"
-		symbols "On"
+		runtime "Release"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "BL_DIST"
-		buildoptions "/MD"
-		symbols "On"
+		runtime "Release"
+		optimize "on"
 
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	cppdialect "C++14"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -114,9 +116,7 @@ project "Sandbox"
 		"BaldLionEngine"
 	}
 
-	filter "system:windows"
-		cppdialect "C++14"
-		staticruntime "On"
+	filter "system:windows"	
 		systemversion "latest"
 
 		defines
@@ -126,15 +126,16 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "BL_DEBUG"
-		buildoptions "/MDd"
-		symbols "On"
+		runtime "Debug"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "BL_RELEASE"
-		buildoptions "/MD"
-		symbols "On"
+		runtime "Release"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "BL_DIST"
-		buildoptions "/MD"
-		symbols "On"
+		runtime "Release"
+		optimize "on"
+		

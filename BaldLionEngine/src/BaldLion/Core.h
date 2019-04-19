@@ -1,10 +1,14 @@
 #pragma once
 
 #ifdef BL_PLATFORM_WINDOWS
-	#ifdef BL_BUILD_DLL
-		#define BL_API __declspec(dllexport)
+	#if BL_DYNAMIC_LINK
+		#ifdef BL_BUILD_DLL
+			#define BL_API __declspec(dllexport)
+		#else
+			#define BL_API __declspec(dllimport)
+		#endif
 	#else
-		#define BL_API __declspec(dllimport)
+		#define BL_API
 	#endif
 #else
 	#error BaldLion only support Wiwndos!

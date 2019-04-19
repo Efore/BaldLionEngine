@@ -38,7 +38,6 @@ namespace BaldLion
 
 		// Setup Style
 		ImGui::StyleColorsDark();
-		//ImGui::StyleColorsClassic();
 
 		//When viewports are enabled we tweak WindowRounding/windowBg so platform windows can look identical to regular ones
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -82,7 +81,7 @@ namespace BaldLion
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
-		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 
 		//Rendering
 		ImGui::Render();
