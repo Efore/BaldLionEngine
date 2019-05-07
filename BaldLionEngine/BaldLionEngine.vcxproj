@@ -155,6 +155,8 @@
     <ClInclude Include="src\BaldLion\LayerStack.h" />
     <ClInclude Include="src\BaldLion\Log.h" />
     <ClInclude Include="src\BaldLion\MouseButtonCodes.h" />
+    <ClInclude Include="src\BaldLion\Renderer\GraphicsContext.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\BaldLion\Window.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
@@ -528,6 +530,7 @@
     <ClCompile Include="src\BaldLion\Layer.cpp" />
     <ClCompile Include="src\BaldLion\LayerStack.cpp" />
     <ClCompile Include="src\BaldLion\Log.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\blpch.cpp">

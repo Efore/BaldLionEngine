@@ -4,6 +4,7 @@
 #include "BaldLion/Events/MouseEvent.h"
 #include "BaldLion/Events/ApplicationEvent.h"
 #include "BaldLion/Events/KeyEvent.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 #include <glad/glad.h>
 
@@ -35,7 +36,7 @@ namespace BaldLion
 	{
 		m_data.Title = props.Title;
 		m_data.Width = props.Width;
-		m_data.Height = props.Height;
+		m_data.Height = props.Height;		
 
 		BL_LOG_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
@@ -48,10 +49,9 @@ namespace BaldLion
 		}
 
 		m_window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_window);
+		m_context = new OpenGLContext(m_window);
 
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		BL_CORE_ASSERT(status, "Failed to initialize Glad");
+		m_context->Init();			   		 
 
 		glfwSetWindowUserPointer(m_window, &m_data);
 		SetVSync(true);
@@ -155,7 +155,7 @@ namespace BaldLion
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_window);
+		m_context->SwapBuffers();		
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
