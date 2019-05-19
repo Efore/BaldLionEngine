@@ -37,6 +37,8 @@ namespace BaldLion
 		LayerStack m_layerStack;
 
 		static Application* s_instance;
+
+		unsigned int m_vertexArray, m_vertexBuffer, m_indexBuffer;
 	};
 
 	//To be defined in client
