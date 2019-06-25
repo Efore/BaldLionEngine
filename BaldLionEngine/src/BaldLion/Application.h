@@ -7,6 +7,9 @@
 #include "BaldLion/LayerStack.h"
 
 #include "BaldLion/ImGui/ImGuiLayer.h"
+#include "BaldLion/Renderer/Shader.h"
+#include "BaldLion/Renderer/Buffer.h"
+#include "BaldLion/Renderer/VertexArray.h"
 
 namespace BaldLion 
 {
@@ -38,7 +41,11 @@ namespace BaldLion
 
 		static Application* s_instance;
 
-		unsigned int m_vertexArray, m_vertexBuffer, m_indexBuffer;
+		std::shared_ptr<Shader> m_triangleShader;
+		std::shared_ptr<Shader> m_squareShader;
+
+		std::shared_ptr<VertexArray> m_triangleVertexArray;
+		std::shared_ptr<VertexArray> m_squareVertexArray;
 	};
 
 	//To be defined in client

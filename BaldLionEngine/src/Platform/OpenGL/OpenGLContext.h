@@ -3,7 +3,7 @@
 
 
 struct GLFWwindow;
-
+ 
 namespace BaldLion
 {
 	class OpenGLContext : public GraphicsContext

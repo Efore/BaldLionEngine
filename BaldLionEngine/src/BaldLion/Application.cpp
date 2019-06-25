@@ -3,8 +3,8 @@
 
 #include "BaldLion/Log.h"
 
-#include <glad/glad.h>
-
+#include "Renderer/Renderer.h"
+#include "Renderer/RenderCommand.h"
 
 namespace BaldLion
 {
@@ -24,25 +24,116 @@ namespace BaldLion
 		m_imGuiLayer = new ImGuiLayer();
 		PushOverlay(m_imGuiLayer);
 	
-		glGenBuffers(1, &m_vertexBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+		//triangle definition
+		m_triangleVertexArray.reset(VertexArray::Create());
+		
+		float triangleVertices[3 * 7] = {
+			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,		//index 0
+			0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,		//index 1
+			0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f		//index 2
+		};		
 
-		float vertices[3 * 3] = {
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.0f, 0.5f, 0.0f
+		std::shared_ptr<VertexBuffer> triangleVB;
+		triangleVB.reset(VertexBuffer::Create(triangleVertices, sizeof(triangleVertices)));
+		triangleVB->SetLayout({
+			{ ShaderDataType::Float3, "a_position" },
+			{ ShaderDataType::Float4, "a_color" }
+		});
+		m_triangleVertexArray->AddVertexBuffer(triangleVB);
+
+
+		uint32_t triangleIndices[3] = { 0, 1, 2 };
+
+		std::shared_ptr<IndexBuffer> triangleIB;
+		triangleIB.reset(IndexBuffer::Create(triangleIndices, sizeof(triangleIndices) / sizeof(uint32_t)));
+		m_triangleVertexArray->AddIndexBuffer(triangleIB);
+
+		//square definition
+		m_squareVertexArray.reset(VertexArray::Create());
+
+		float sqrVertices[3 * 4] = {
+			-0.75f, -0.75f, 0.0f,		//index 0
+			0.75f, -0.75f, 0.0f, 		//index 1
+			0.75f, 0.75f, 0.0f,			//index 2
+			-0.75f, 0.75f, 0.0f			//index 3
 		};
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		std::shared_ptr<VertexBuffer> squareVB; 
+		squareVB.reset(VertexBuffer::Create(sqrVertices, sizeof(sqrVertices)));
+		squareVB->SetLayout({
+			{ ShaderDataType::Float3, "a_position"}
+		});
+		m_squareVertexArray->AddVertexBuffer(squareVB);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
-		glGenBuffers(1, &m_indexBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
+		uint32_t sqrIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
-		unsigned int indices[3] = { 0, 1, 2 };
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		std::shared_ptr<IndexBuffer> squareIB;
+		squareIB.reset(IndexBuffer::Create(sqrIndices, sizeof(sqrIndices) / sizeof(uint32_t)));
+		m_squareVertexArray->AddIndexBuffer(squareIB);
+
+
+		std::string vertexSource = R"(
+			#version 330 core
+
+			layout(location = 0) in vec3 a_position;		
+			layout(location = 1) in vec4 a_color;				
+
+			out vec3 v_position;
+			out vec4 v_color;
+
+			void main()
+			{
+				v_position = a_position + 0.5;
+				v_color = a_color;
+				gl_Position = vec4(a_position, 1.0);
+			}
+		)";
+
+		std::string fragmentSource = R"(
+			#version 330 core
+
+			layout(location = 0) out vec4 color;			
+
+			in vec3 v_position;
+			in vec4 v_color;
+	
+			void main()
+			{
+				color = v_color;
+			}
+		)";
+
+		std::string vertexSource2 = R"(
+			#version 330 core
+
+			layout(location = 0) in vec3 a_position;		
+
+			out vec3 v_position;			
+
+			void main()
+			{
+				v_position = a_position + 0.5;				
+				gl_Position = vec4(a_position, 1.0);
+			}
+		)";
+
+		std::string fragmentSource2 = R"(
+			#version 330 core
+
+			layout(location = 0) out vec4 color;			
+
+			in vec3 v_position;			
+	
+			void main()
+			{
+				color = vec4(0.2, 0.3, 0.8, 1.0);
+			}
+		)";
+
+
+		m_triangleShader.reset(new Shader(vertexSource,fragmentSource));		
+		m_squareShader.reset(new Shader(vertexSource2, fragmentSource2));
 	}
 
 	Application::~Application()
@@ -65,12 +156,19 @@ namespace BaldLion
 	{		
 		while (m_running)
 		{
-			glClearColor(0.1f, 0.1f, 0.1f, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
+			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+			RenderCommand::Clear();
 
-			glBindVertexArray(m_vertexBuffer);
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+			Renderer::BeginScene();			
 
+			m_squareShader->Bind();
+			Renderer::Submit(m_squareVertexArray);
+
+			m_triangleShader->Bind();
+			Renderer::Submit(m_triangleVertexArray);
+
+			Renderer::EndScene();			
+			
 			for (Layer* layer : m_layerStack)
 				layer->OnUpdate();
 
