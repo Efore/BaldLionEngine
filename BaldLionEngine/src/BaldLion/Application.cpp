@@ -79,6 +79,8 @@ namespace BaldLion
 			layout(location = 0) in vec3 a_position;		
 			layout(location = 1) in vec4 a_color;				
 
+			uniform mat4 MVP;  
+
 			out vec3 v_position;
 			out vec4 v_color;
 
@@ -86,7 +88,7 @@ namespace BaldLion
 			{
 				v_position = a_position + 0.5;
 				v_color = a_color;
-				gl_Position = vec4(a_position, 1.0);
+				gl_Position = MVP * vec4(a_position, 1.0);
 			}
 		)";
 
@@ -109,12 +111,14 @@ namespace BaldLion
 
 			layout(location = 0) in vec3 a_position;		
 
+			uniform mat4 MVP;
+		
 			out vec3 v_position;			
-
+			
 			void main()
 			{
 				v_position = a_position + 0.5;				
-				gl_Position = vec4(a_position, 1.0);
+				gl_Position = MVP * vec4(a_position, 1.0);
 			}
 		)";
 
@@ -134,6 +138,8 @@ namespace BaldLion
 
 		m_triangleShader.reset(new Shader(vertexSource,fragmentSource));		
 		m_squareShader.reset(new Shader(vertexSource2, fragmentSource2));
+
+		m_camera.reset(new ProjectionCamera(640.0f, 420.0f, 0.1f, 100.0f));
 	}
 
 	Application::~Application()
@@ -157,15 +163,12 @@ namespace BaldLion
 		while (m_running)
 		{
 			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-			RenderCommand::Clear();
+			RenderCommand::Clear();		
 
-			Renderer::BeginScene();			
+			Renderer::BeginScene(m_camera,glm::vec3(3,0,-3),glm::vec3(0,0,0));			
 
-			m_squareShader->Bind();
-			Renderer::Submit(m_squareVertexArray);
-
-			m_triangleShader->Bind();
-			Renderer::Submit(m_triangleVertexArray);
+			Renderer::Submit(m_squareVertexArray, m_squareShader);			
+			Renderer::Submit(m_triangleVertexArray, m_triangleShader);
 
 			Renderer::EndScene();			
 			

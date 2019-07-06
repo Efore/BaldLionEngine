@@ -130,4 +130,18 @@ namespace BaldLion
 		glUseProgram(0);
 	}
 
+	void Shader::SetUniform(const std::string& uniformName, ShaderDataType dataType, void* uniformIndex)
+	{
+		// Get a handle for our "MVP" uniform
+		// Only during the initialisation
+		GLuint uniformID = glGetUniformLocation(m_rendererID, uniformName.c_str());
+
+		switch (dataType)
+		{
+			case ShaderDataType::Mat4:
+				glUniformMatrix4fv(uniformID, 1, GL_FALSE, (float*)uniformIndex);
+				return;
+		}		
+	}
+
 }

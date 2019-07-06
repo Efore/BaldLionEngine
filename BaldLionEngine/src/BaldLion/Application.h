@@ -10,6 +10,7 @@
 #include "BaldLion/Renderer/Shader.h"
 #include "BaldLion/Renderer/Buffer.h"
 #include "BaldLion/Renderer/VertexArray.h"
+#include "BaldLion/Renderer/Camera.h"
 
 namespace BaldLion 
 {
@@ -46,6 +47,8 @@ namespace BaldLion
 
 		std::shared_ptr<VertexArray> m_triangleVertexArray;
 		std::shared_ptr<VertexArray> m_squareVertexArray;
+
+		std::shared_ptr<ProjectionCamera> m_camera;
 	};
 
 	//To be defined in client

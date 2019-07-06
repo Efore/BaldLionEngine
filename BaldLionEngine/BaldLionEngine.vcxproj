@@ -156,6 +156,7 @@
     <ClInclude Include="src\BaldLion\Log.h" />
     <ClInclude Include="src\BaldLion\MouseButtonCodes.h" />
     <ClInclude Include="src\BaldLion\Renderer\Buffer.h" />
+    <ClInclude Include="src\BaldLion\Renderer\Camera.h" />
     <ClInclude Include="src\BaldLion\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\BaldLion\Renderer\RenderCommand.h" />
     <ClInclude Include="src\BaldLion\Renderer\Renderer.h" />
@@ -540,6 +541,7 @@
     <ClCompile Include="src\BaldLion\LayerStack.cpp" />
     <ClCompile Include="src\BaldLion\Log.cpp" />
     <ClCompile Include="src\BaldLion\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\BaldLion\Renderer\Camera.cpp" />
     <ClCompile Include="src\BaldLion\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\BaldLion\Renderer\Renderer.cpp" />
     <ClCompile Include="src\BaldLion\Renderer\RendererAPI.cpp" />

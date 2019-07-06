@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Buffer.h"
 
 namespace BaldLion 
 {
@@ -13,6 +14,8 @@ namespace BaldLion
 
 		void Bind() const;
 		void Unbind() const;
+
+		void SetUniform(const std::string& uniformName, ShaderDataType dataType, void* uniformIndex);
 	private:
 
 		uint32_t m_rendererID;
