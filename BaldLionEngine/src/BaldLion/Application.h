@@ -7,14 +7,10 @@
 #include "BaldLion/LayerStack.h"
 
 #include "BaldLion/ImGui/ImGuiLayer.h"
-#include "BaldLion/Renderer/Shader.h"
-#include "BaldLion/Renderer/Buffer.h"
-#include "BaldLion/Renderer/VertexArray.h"
-#include "BaldLion/Renderer/Camera.h"
 
 namespace BaldLion 
 {
-	class BL_API Application
+	class Application
 	{
 	public:
 		Application();
@@ -32,7 +28,7 @@ namespace BaldLion
 		inline static Application& Get(){ return *s_instance; }
 
 	private:
-		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowClose(WindowCloseEvent& e);		
 
 		std::unique_ptr<Window> m_window;
 		ImGuiLayer* m_imGuiLayer;
@@ -41,14 +37,6 @@ namespace BaldLion
 		LayerStack m_layerStack;
 
 		static Application* s_instance;
-
-		std::shared_ptr<Shader> m_triangleShader;
-		std::shared_ptr<Shader> m_squareShader;
-
-		std::shared_ptr<VertexArray> m_triangleVertexArray;
-		std::shared_ptr<VertexArray> m_squareVertexArray;
-
-		std::shared_ptr<ProjectionCamera> m_camera;
 	};
 
 	//To be defined in client

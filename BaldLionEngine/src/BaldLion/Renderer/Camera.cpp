@@ -9,9 +9,10 @@ namespace BaldLion
 	//	PROJECTION CAMERA
 	//-----------------------------------------------------------------------------------------------
 
-	ProjectionCamera::ProjectionCamera( float width, float height, float farPlane, float nearPlane) :
+	ProjectionCamera::ProjectionCamera(const glm::vec3& initialPosition, float width, float height, float farPlane, float nearPlane) :
 		m_width(width), m_height(height)		
 	{
+		m_position = initialPosition;
 		m_farPlane = farPlane;
 		m_nearPlane = nearPlane;
 	}

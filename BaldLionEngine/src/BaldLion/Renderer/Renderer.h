@@ -11,7 +11,7 @@ namespace BaldLion
 	{	
 	public:
 
-		static void BeginScene(const std::shared_ptr<ProjectionCamera> & camera, const glm::vec3& position, const glm::vec3 direction);
+		static void BeginScene(const std::shared_ptr<ProjectionCamera> & camera, const glm::vec3 direction);
 		static void EndScene();
 
 		static void Submit(const std::shared_ptr<VertexArray>& vertexArray, const std::shared_ptr<Shader>& shader);

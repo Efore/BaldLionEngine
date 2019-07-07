@@ -6,11 +6,9 @@ namespace BaldLion
 {
 	Renderer::SceneData* Renderer::m_steneData = new Renderer::SceneData;
 
-	void Renderer::BeginScene(const std::shared_ptr<ProjectionCamera> & camera, const glm::vec3& position, const glm::vec3 direction)
+	void Renderer::BeginScene(const std::shared_ptr<ProjectionCamera> & camera, const glm::vec3 direction)
 	{
-		camera->SetPosition(position);
 		camera->SetDirection(direction);
-
 		m_steneData->ViewProjectionMatrix = camera->GetViewProjectionMatrix();
 	}
 
