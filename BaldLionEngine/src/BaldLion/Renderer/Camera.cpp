@@ -19,11 +19,11 @@ namespace BaldLion
 
 	void ProjectionCamera::RecalculateViewMatrix()
 	{
-		m_viewMatrix = glm::lookAt(
-			m_position,
-			m_direction,
-			glm::vec3(0, 1, 0)
-		);
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_position) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(m_yaw), glm::vec3(0, 1, 0)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(m_pitch), glm::vec3(1, 0, 0));
+
+		m_viewMatrix = glm::inverse(transform);		
 
 		m_projectionMatrix = glm::perspective(glm::radians(45.0f), m_width / m_height, m_nearPlane, m_farPlane);
 

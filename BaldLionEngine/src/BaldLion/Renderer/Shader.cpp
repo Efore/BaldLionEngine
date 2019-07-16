@@ -130,7 +130,7 @@ namespace BaldLion
 		glUseProgram(0);
 	}
 
-	void Shader::SetUniform(const std::string& uniformName, ShaderDataType dataType, void* uniformIndex)
+	void Shader::SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex)
 	{
 		// Get a handle for our "MVP" uniform
 		// Only during the initialisation

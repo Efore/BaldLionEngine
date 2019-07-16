@@ -47,6 +47,10 @@ namespace BaldLion
 		void SetHeight(float height) { m_height = height; RecalculateViewMatrix(); }
 		inline float GetHeight() const { return m_height; }
 
+		void SetRotation(float pitch, float yaw) { m_pitch = pitch; m_yaw = yaw; RecalculateViewMatrix(); }
+		inline float GetPitch() const { return m_pitch; }
+		inline float GetYaw() const { return m_yaw; }
+
 	protected:
 		virtual void RecalculateViewMatrix() override;
 
@@ -55,6 +59,9 @@ namespace BaldLion
 
 		float m_width;
 		float m_height;
+
+		float m_pitch;
+		float m_yaw;
 	};
 
 	class OrthographicCamera : public Camera

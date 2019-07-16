@@ -1,4 +1,6 @@
 #include <BaldLion.h>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class ExampleLayer : public BaldLion::Layer
 {
@@ -6,6 +8,14 @@ public:
 	ExampleLayer()
 		: BaldLion::Layer("Example"), m_cameraMovement(glm::vec3(0,0,0))
 	{
+		m_cameraMovementSpeed = 1.0f;
+		m_cameraRotationSpeed = 10.0f;
+
+		m_cameraYawRotation = 0.0f;
+		m_cameraPitchRotation = 0.0f;
+
+		m_prevX = BaldLion::Input::GetMouseX();
+		m_prevY = BaldLion::Input::GetMouseY();
 		//triangle definition
 		m_triangleVertexArray.reset(BaldLion::VertexArray::Create());
 
@@ -61,7 +71,8 @@ public:
 			layout(location = 0) in vec3 a_position;		
 			layout(location = 1) in vec4 a_color;				
 
-			uniform mat4 MVP;  
+			uniform mat4 u_viewProjection;  
+			uniform mat4 u_transform;
 
 			out vec3 v_position;
 			out vec4 v_color;
@@ -70,7 +81,7 @@ public:
 			{
 				v_position = a_position + 0.5;
 				v_color = a_color;
-				gl_Position = MVP * vec4(a_position, 1.0);
+				gl_Position = u_viewProjection * u_transform * vec4(a_position, 1.0);
 			}
 		)";
 
@@ -93,14 +104,15 @@ public:
 
 			layout(location = 0) in vec3 a_position;		
 
-			uniform mat4 MVP;
+			uniform mat4 u_viewProjection;  
+			uniform mat4 u_transform;
 		
 			out vec3 v_position;			
 			
 			void main()
 			{
-				v_position = a_position + 0.5;				
-				gl_Position = MVP * vec4(a_position, 1.0);
+				v_position = a_position + 0.5;						
+				gl_Position = u_viewProjection * u_transform * vec4(a_position, 1.0);
 			}
 		)";
 
@@ -124,9 +136,9 @@ public:
 		m_camera.reset(new BaldLion::ProjectionCamera(glm::vec3(0, 0, 0), 640.0f, 420.0f, 0.1f, 100.0f));
 	}
 
-	virtual void OnUpdate() override
+	virtual void OnUpdate(BaldLion::TimeStep timeStep) override
 	{
-		HandleCameraMovement();
+		HandleCameraMovement(timeStep);
 
 		BaldLion::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		BaldLion::RenderCommand::Clear();
@@ -146,22 +158,36 @@ public:
 
 private:
 
-	void HandleCameraMovement()
+	void HandleCameraMovement(float deltaTime)
 	{
 		m_cameraMovement = glm::vec3(0, 0, 0);
-
+				 
 		if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
-			m_cameraMovement += glm::vec3(0.0f, 0.0f, 0.01f);
+			m_cameraMovement += glm::vec3(0.0f, 0.0f, -m_cameraMovementSpeed) * deltaTime;
 		else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
-			m_cameraMovement += glm::vec3(0.0f, 0.0f, -0.01f);
+			m_cameraMovement += glm::vec3(0.0f, 0.0f, m_cameraMovementSpeed) * deltaTime;
 
 		if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
-			m_cameraMovement += glm::vec3(-0.01f, 0.0f, 0.0f);
+			m_cameraMovement += glm::vec3(-m_cameraMovementSpeed, 0.0f, 0.0f) * deltaTime;
 		else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
-			m_cameraMovement += glm::vec3(0.01f, 0.0f, 0.0f);
+			m_cameraMovement += glm::vec3(m_cameraMovementSpeed, 0.0f, 0.0f) * deltaTime;
 
 		if (m_cameraMovement != glm::vec3(0, 0, 0))
 			m_camera->SetPosition(m_camera->GetPosition() + m_cameraMovement);
+
+		if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_1))
+		{
+			float deltaX = BaldLion::Input::GetMouseX() - m_prevX;
+			float deltaY = BaldLion::Input::GetMouseY() - m_prevY;
+
+			m_cameraYawRotation -= deltaX * m_cameraRotationSpeed * deltaTime;
+			m_cameraPitchRotation -= deltaY * m_cameraRotationSpeed * deltaTime;
+			m_camera->SetRotation(m_cameraPitchRotation, m_cameraYawRotation);
+		}
+
+		m_prevX = BaldLion::Input::GetMouseX();
+		m_prevY = BaldLion::Input::GetMouseY();
+
 	}
 
 private:
@@ -174,6 +200,15 @@ private:
 	std::shared_ptr<BaldLion::ProjectionCamera> m_camera;
 
 	glm::vec3 m_cameraMovement;
+
+	float m_cameraPitchRotation;
+	float m_cameraYawRotation;
+
+	float m_prevX;
+	float m_prevY;
+	
+	float m_cameraRotationSpeed;
+	float m_cameraMovementSpeed;
 };
 
 class Sandbox : public BaldLion::Application

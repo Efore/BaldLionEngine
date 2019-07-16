@@ -6,6 +6,7 @@
 #include "BaldLion/Events/ApplicationEvent.h"
 #include "BaldLion/LayerStack.h"
 
+#include "BaldLion/Core/TimeStep.h"
 #include "BaldLion/ImGui/ImGuiLayer.h"
 
 namespace BaldLion 
@@ -30,12 +31,14 @@ namespace BaldLion
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);		
 
+	private:
 		std::unique_ptr<Window> m_window;
 		ImGuiLayer* m_imGuiLayer;
-
 		bool m_running = true;
 		LayerStack m_layerStack;
+		float m_lastFrameTime;
 
+	private:
 		static Application* s_instance;
 	};
 

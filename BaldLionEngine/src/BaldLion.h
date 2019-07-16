@@ -6,6 +6,8 @@
 #include "BaldLion/Layer.h"
 #include "BaldLion/Log.h"
 
+#include "BaldLion/Core/TimeStep.h"
+
 #include "BaldLion/Input.h"
 #include "BaldLion/KeyCodes.h"
 #include "BaldLion/MouseButtonCodes.h"

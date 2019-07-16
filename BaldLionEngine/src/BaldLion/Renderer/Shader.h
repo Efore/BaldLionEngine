@@ -15,7 +15,7 @@ namespace BaldLion
 		void Bind() const;
 		void Unbind() const;
 
-		void SetUniform(const std::string& uniformName, ShaderDataType dataType, void* uniformIndex);
+		void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex);
 	private:
 
 		uint32_t m_rendererID;

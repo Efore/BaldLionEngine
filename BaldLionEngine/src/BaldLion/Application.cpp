@@ -1,6 +1,7 @@
 #include "blpch.h"
 #include "Application.h"
 
+#include <GLFW/glfw3.h>
 
 namespace BaldLion
 {
@@ -16,9 +17,11 @@ namespace BaldLion
 
 		m_window = std::unique_ptr<Window>(Window::Create());
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		m_lastFrameTime = 0.0f;
 
 		m_imGuiLayer = new ImGuiLayer();
 		PushOverlay(m_imGuiLayer);
+
 	}
 
 	Application::~Application()
@@ -41,8 +44,14 @@ namespace BaldLion
 	{		
 		while (m_running)
 		{	
+			float time = (float)glfwGetTime(); // Platform::GetTime
+
+			TimeStep timeStep = time - m_lastFrameTime;
+
+			m_lastFrameTime = time;
+
 			for (Layer* layer : m_layerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(timeStep);
 
 			m_imGuiLayer->Begin();
 

@@ -17,10 +17,11 @@ namespace BaldLion
 
 	}
 
-	void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray, const std::shared_ptr<Shader>& shader)
+	void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray, const std::shared_ptr<Shader>& shader, const glm::mat4& transform)
 	{
 		shader->Bind();
-		shader->SetUniform("MVP", ShaderDataType::Mat4, &(m_steneData->ViewProjectionMatrix * glm::mat4(1.0f)[0][0]));
+		shader->SetUniform("u_viewProjection", ShaderDataType::Mat4, &(m_steneData->ViewProjectionMatrix));
+		shader->SetUniform("u_transform", ShaderDataType::Mat4, &(transform[0][0]));
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

@@ -143,6 +143,7 @@
     <ClInclude Include="src\BaldLion.h" />
     <ClInclude Include="src\BaldLion\Application.h" />
     <ClInclude Include="src\BaldLion\Core.h" />
+    <ClInclude Include="src\BaldLion\Core\TimeStep.h" />
     <ClInclude Include="src\BaldLion\EntryPoint.h" />
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h" />
     <ClInclude Include="src\BaldLion\Events\Event.h" />
