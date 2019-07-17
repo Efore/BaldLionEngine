@@ -163,14 +163,14 @@ private:
 		m_cameraMovement = glm::vec3(0, 0, 0);
 				 
 		if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
-			m_cameraMovement += glm::vec3(0.0f, 0.0f, -m_cameraMovementSpeed) * deltaTime;
+			m_cameraMovement -= m_camera->GetForwardDirection() * deltaTime;
 		else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
-			m_cameraMovement += glm::vec3(0.0f, 0.0f, m_cameraMovementSpeed) * deltaTime;
+			m_cameraMovement += m_camera->GetForwardDirection() * deltaTime;
 
 		if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
-			m_cameraMovement += glm::vec3(-m_cameraMovementSpeed, 0.0f, 0.0f) * deltaTime;
+			m_cameraMovement -= m_camera->GetRightDirection() * deltaTime;
 		else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
-			m_cameraMovement += glm::vec3(m_cameraMovementSpeed, 0.0f, 0.0f) * deltaTime;
+			m_cameraMovement += m_camera->GetRightDirection() * deltaTime;
 
 		if (m_cameraMovement != glm::vec3(0, 0, 0))
 			m_camera->SetPosition(m_camera->GetPosition() + m_cameraMovement);

@@ -5,6 +5,21 @@
 
 namespace BaldLion
 {
+
+	//------------------------------------------------------------------------------------------
+	//	CAMERA
+	//-----------------------------------------------------------------------------------------------
+
+	glm::vec3 Camera::GetForwardDirection()
+	{
+		return glm::vec3(m_cameraTransform[2][0], m_cameraTransform[2][1], m_cameraTransform[2][2]);
+	}
+
+	glm::vec3 Camera::GetRightDirection()
+	{
+		return glm::vec3(m_cameraTransform[0][0], m_cameraTransform[0][1], m_cameraTransform[0][2]);
+	}
+
 	//------------------------------------------------------------------------------------------
 	//	PROJECTION CAMERA
 	//-----------------------------------------------------------------------------------------------
@@ -19,11 +34,11 @@ namespace BaldLion
 
 	void ProjectionCamera::RecalculateViewMatrix()
 	{
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_position) *
+		m_cameraTransform = glm::translate(glm::mat4(1.0f), m_position) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(m_yaw), glm::vec3(0, 1, 0)) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(m_pitch), glm::vec3(1, 0, 0));
 
-		m_viewMatrix = glm::inverse(transform);		
+		m_viewMatrix = glm::inverse(m_cameraTransform);
 
 		m_projectionMatrix = glm::perspective(glm::radians(45.0f), m_width / m_height, m_nearPlane, m_farPlane);
 
@@ -46,6 +61,7 @@ namespace BaldLion
 
 		m_viewProjectionMatrix = m_projectionMatrix * m_viewMatrix;
 	}
+
 
 
 

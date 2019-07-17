@@ -20,12 +20,16 @@ namespace BaldLion
 		void SetNearPlane(float nearPlane) { m_nearPlane = nearPlane; RecalculateViewMatrix(); }
 		inline float GetNearPlane() const { return m_nearPlane; }
 
+		glm::vec3 GetForwardDirection();
+		glm::vec3 GetRightDirection();
+
 	protected:
 		virtual void RecalculateViewMatrix() = 0;
 
 	protected:
 		glm::mat4 m_projectionMatrix;
 		glm::mat4 m_viewMatrix;
+		glm::mat4 m_cameraTransform;
 		glm::mat4 m_viewProjectionMatrix;
 		glm::vec3 m_position;		
 
