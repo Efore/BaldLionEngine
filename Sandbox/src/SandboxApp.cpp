@@ -1,12 +1,16 @@
 #include <BaldLion.h>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include "Platform/OpenGL/OpenGLShader.h"
+#include "imgui.h"
 
 class ExampleLayer : public BaldLion::Layer
 {
 public:
 	ExampleLayer()
-		: BaldLion::Layer("Example"), m_cameraMovement(glm::vec3(0,0,0))
+		: BaldLion::Layer("Example"), m_cameraMovement(glm::vec3(0,0,0)), m_squareColor(0.8f, 0.2f, 0.3f, 1.0f)
 	{
 		m_cameraMovementSpeed = 1.0f;
 		m_cameraRotationSpeed = 10.0f;
@@ -72,7 +76,7 @@ public:
 			layout(location = 1) in vec4 a_color;				
 
 			uniform mat4 u_viewProjection;  
-			uniform mat4 u_transform;
+			uniform mat4 u_transform;	
 
 			out vec3 v_position;
 			out vec4 v_color;
@@ -90,12 +94,14 @@ public:
 
 			layout(location = 0) out vec4 color;			
 
+			uniform vec4 u_baseColor;
+
 			in vec3 v_position;
 			in vec4 v_color;
 	
 			void main()
 			{
-				color = v_color;
+				color = v_color * u_baseColor;
 			}
 		)";
 
@@ -119,19 +125,20 @@ public:
 		std::string fragmentSource2 = R"(
 			#version 330 core
 
-			layout(location = 0) out vec4 color;			
+			layout(location = 0) out vec4 color;					
+
+			uniform vec4 u_baseColor;
 
 			in vec3 v_position;			
 	
 			void main()
 			{
-				color = vec4(0.2, 0.3, 0.8, 1.0);
+				color = u_baseColor;
 			}
 		)";
 
-
-		m_triangleShader.reset(new BaldLion::Shader(vertexSource, fragmentSource));
-		m_squareShader.reset(new BaldLion::Shader(vertexSource2, fragmentSource2));
+		m_triangleShader.reset(BaldLion::Shader::Create(vertexSource, fragmentSource));
+		m_squareShader.reset(BaldLion::Shader::Create(vertexSource2, fragmentSource2));
 
 		m_camera.reset(new BaldLion::ProjectionCamera(glm::vec3(0, 0, 0), 640.0f, 420.0f, 0.1f, 100.0f));
 	}
@@ -146,9 +153,19 @@ public:
 		BaldLion::Renderer::BeginScene(m_camera, glm::vec3(0, 0, 0));
 
 		BaldLion::Renderer::Submit(m_squareVertexArray, m_squareShader);
+		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_squareShader)->SetUniform("u_baseColor", BaldLion::ShaderDataType::Float4, &(m_squareColor));
+
 		BaldLion::Renderer::Submit(m_triangleVertexArray, m_triangleShader);
+		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_triangleShader)->SetUniform("u_baseColor", BaldLion::ShaderDataType::Float4, &(m_squareColor));
 
 		BaldLion::Renderer::EndScene();
+	}
+
+	virtual void OnImGuiRender() override 
+	{
+		ImGui::Begin("Settings");
+		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_squareColor));
+		ImGui::End();
 	}
 
 	virtual void OnEvent(BaldLion::Event& event) override
@@ -194,12 +211,14 @@ private:
 	std::shared_ptr<BaldLion::Shader> m_triangleShader;
 	std::shared_ptr<BaldLion::Shader> m_squareShader;
 
+
 	std::shared_ptr<BaldLion::VertexArray> m_triangleVertexArray;
 	std::shared_ptr<BaldLion::VertexArray> m_squareVertexArray;
 
 	std::shared_ptr<BaldLion::ProjectionCamera> m_camera;
 
 	glm::vec3 m_cameraMovement;
+	glm::vec4 m_squareColor;
 
 	float m_cameraPitchRotation;
 	float m_cameraYawRotation;

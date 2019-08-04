@@ -1198,6 +1198,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\BaldLion\Renderer\Camera.h" />
     <ClInclude Include="src\BaldLion\Core\TimeStep.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Application.cpp">
@@ -1235,5 +1236,6 @@
     <ClCompile Include="src\BaldLion\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\BaldLion\Renderer\Camera.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
   </ItemGroup>
 </Project>

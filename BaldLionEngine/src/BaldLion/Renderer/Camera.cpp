@@ -61,8 +61,4 @@ namespace BaldLion
 
 		m_viewProjectionMatrix = m_projectionMatrix * m_viewMatrix;
 	}
-
-
-
-
 }
