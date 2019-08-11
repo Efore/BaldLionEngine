@@ -7,10 +7,10 @@ namespace BaldLion
 {
 	Renderer::SceneData* Renderer::m_steneData = new Renderer::SceneData;
 
-	void Renderer::BeginScene(const std::shared_ptr<ProjectionCamera> & camera, const glm::vec3 direction)
+	void Renderer::BeginScene(ProjectionCamera& camera, const glm::vec3 direction)
 	{
-		camera->SetDirection(direction);
-		m_steneData->ViewProjectionMatrix = camera->GetViewProjectionMatrix();
+		camera.SetDirection(direction);
+		m_steneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 
 	void Renderer::EndScene()
@@ -18,7 +18,7 @@ namespace BaldLion
 
 	}
 
-	void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray, const std::shared_ptr<Shader>& shader, const glm::mat4& transform)
+	void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader, const glm::mat4& transform)
 	{
 		shader->Bind();
 		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_viewProjection", ShaderDataType::Mat4, &(m_steneData->ViewProjectionMatrix));

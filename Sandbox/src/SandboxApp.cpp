@@ -29,7 +29,7 @@ public:
 			0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f		//index 2
 		};
 
-		std::shared_ptr<BaldLion::VertexBuffer> triangleVB;
+		BaldLion::Ref<BaldLion::VertexBuffer> triangleVB;
 		triangleVB.reset(BaldLion::VertexBuffer::Create(triangleVertices, sizeof(triangleVertices)));
 		triangleVB->SetLayout({
 			{ BaldLion::ShaderDataType::Float3, "a_position" },
@@ -40,7 +40,7 @@ public:
 
 		uint32_t triangleIndices[3] = { 0, 1, 2 };
 
-		std::shared_ptr<BaldLion::IndexBuffer> triangleIB;
+		BaldLion::Ref<BaldLion::IndexBuffer> triangleIB;
 		triangleIB.reset(BaldLion::IndexBuffer::Create(triangleIndices, sizeof(triangleIndices) / sizeof(uint32_t)));
 		m_triangleVertexArray->AddIndexBuffer(triangleIB);
 
@@ -54,7 +54,7 @@ public:
 			-0.75f, 0.75f, 0.0f			//index 3
 		};
 
-		std::shared_ptr<BaldLion::VertexBuffer> squareVB;
+		BaldLion::Ref<BaldLion::VertexBuffer> squareVB;
 		squareVB.reset(BaldLion::VertexBuffer::Create(sqrVertices, sizeof(sqrVertices)));
 		squareVB->SetLayout({
 			{ BaldLion::ShaderDataType::Float3, "a_position"}
@@ -64,7 +64,7 @@ public:
 
 		uint32_t sqrIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
-		std::shared_ptr<BaldLion::IndexBuffer> squareIB;
+		BaldLion::Ref<BaldLion::IndexBuffer> squareIB;
 		squareIB.reset(BaldLion::IndexBuffer::Create(sqrIndices, sizeof(sqrIndices) / sizeof(uint32_t)));
 		m_squareVertexArray->AddIndexBuffer(squareIB);
 
@@ -140,7 +140,7 @@ public:
 		m_triangleShader.reset(BaldLion::Shader::Create(vertexSource, fragmentSource));
 		m_squareShader.reset(BaldLion::Shader::Create(vertexSource2, fragmentSource2));
 
-		m_camera.reset(new BaldLion::ProjectionCamera(glm::vec3(0, 0, 0), 640.0f, 420.0f, 0.1f, 100.0f));
+		m_camera = BaldLion::ProjectionCamera(glm::vec3(0, 0, 0), 640.0f, 420.0f, 0.1f, 100.0f);
 	}
 
 	virtual void OnUpdate(BaldLion::TimeStep timeStep) override
@@ -180,26 +180,26 @@ private:
 		m_cameraMovement = glm::vec3(0, 0, 0);
 				 
 		if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
-			m_cameraMovement -= m_camera->GetForwardDirection() * deltaTime;
+			m_cameraMovement -= m_camera.GetForwardDirection() * deltaTime;
 		else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
-			m_cameraMovement += m_camera->GetForwardDirection() * deltaTime;
+			m_cameraMovement += m_camera.GetForwardDirection() * deltaTime;
 
 		if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
-			m_cameraMovement -= m_camera->GetRightDirection() * deltaTime;
+			m_cameraMovement -= m_camera.GetRightDirection() * deltaTime;
 		else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
-			m_cameraMovement += m_camera->GetRightDirection() * deltaTime;
+			m_cameraMovement += m_camera.GetRightDirection() * deltaTime;
 
 		if (m_cameraMovement != glm::vec3(0, 0, 0))
-			m_camera->SetPosition(m_camera->GetPosition() + m_cameraMovement);
+			m_camera.SetPosition(m_camera.GetPosition() + m_cameraMovement);
 
-		if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_1))
+		if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 		{
 			float deltaX = BaldLion::Input::GetMouseX() - m_prevX;
 			float deltaY = BaldLion::Input::GetMouseY() - m_prevY;
 
 			m_cameraYawRotation -= deltaX * m_cameraRotationSpeed * deltaTime;
 			m_cameraPitchRotation -= deltaY * m_cameraRotationSpeed * deltaTime;
-			m_camera->SetRotation(m_cameraPitchRotation, m_cameraYawRotation);
+			m_camera.SetRotation(m_cameraPitchRotation, m_cameraYawRotation);
 		}
 
 		m_prevX = BaldLion::Input::GetMouseX();
@@ -208,14 +208,14 @@ private:
 	}
 
 private:
-	std::shared_ptr<BaldLion::Shader> m_triangleShader;
-	std::shared_ptr<BaldLion::Shader> m_squareShader;
+	BaldLion::Ref<BaldLion::Shader> m_triangleShader;
+	BaldLion::Ref<BaldLion::Shader> m_squareShader;
 
 
-	std::shared_ptr<BaldLion::VertexArray> m_triangleVertexArray;
-	std::shared_ptr<BaldLion::VertexArray> m_squareVertexArray;
+	BaldLion::Ref<BaldLion::VertexArray> m_triangleVertexArray;
+	BaldLion::Ref<BaldLion::VertexArray> m_squareVertexArray;
 
-	std::shared_ptr<BaldLion::ProjectionCamera> m_camera;
+	BaldLion::ProjectionCamera m_camera;
 
 	glm::vec3 m_cameraMovement;
 	glm::vec4 m_squareColor;
