@@ -27,7 +27,7 @@ namespace BaldLion
 	
 
 	ProjectionCamera::ProjectionCamera(const glm::vec3& initialPosition, float width, float height, float farPlane, float nearPlane) :
-		m_width(width), m_height(height)		
+		m_width(width), m_height(height), m_yaw(0.0f), m_pitch(0.0f)
 	{
 		m_position = initialPosition;
 		m_farPlane = farPlane;

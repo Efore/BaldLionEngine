@@ -4,7 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Platform/OpenGL/OpenGLShader.h"
-#include "imgui.h"
+#include "ImGui/imgui.h"
 
 class ExampleLayer : public BaldLion::Layer
 {
@@ -20,44 +20,22 @@ public:
 
 		m_prevX = BaldLion::Input::GetMouseX();
 		m_prevY = BaldLion::Input::GetMouseY();
-		//triangle definition
-		m_triangleVertexArray.reset(BaldLion::VertexArray::Create());
-
-		float triangleVertices[3 * 7] = {
-			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,		//index 0
-			0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,		//index 1
-			0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f		//index 2
-		};
-
-		BaldLion::Ref<BaldLion::VertexBuffer> triangleVB;
-		triangleVB.reset(BaldLion::VertexBuffer::Create(triangleVertices, sizeof(triangleVertices)));
-		triangleVB->SetLayout({
-			{ BaldLion::ShaderDataType::Float3, "a_position" },
-			{ BaldLion::ShaderDataType::Float4, "a_color" }
-		});
-		m_triangleVertexArray->AddVertexBuffer(triangleVB);
-
-
-		uint32_t triangleIndices[3] = { 0, 1, 2 };
-
-		BaldLion::Ref<BaldLion::IndexBuffer> triangleIB;
-		triangleIB.reset(BaldLion::IndexBuffer::Create(triangleIndices, sizeof(triangleIndices) / sizeof(uint32_t)));
-		m_triangleVertexArray->AddIndexBuffer(triangleIB);
 
 		//square definition
-		m_squareVertexArray.reset(BaldLion::VertexArray::Create());
+		m_squareVertexArray = BaldLion::VertexArray::Create();
 
-		float sqrVertices[3 * 4] = {
-			-0.75f, -0.75f, 0.0f,		//index 0
-			0.75f, -0.75f, 0.0f, 		//index 1
-			0.75f, 0.75f, 0.0f,			//index 2
-			-0.75f, 0.75f, 0.0f			//index 3
+		float sqrVertices[5 * 4] = {
+		   -0.75f, -0.75f, 0.0f, 0.0f, 0.0f,		//index 0
+			0.75f, -0.75f, 0.0f, 1.0f, 0.0f, 		//index 1
+			0.75f,  0.75f, 0.0f, 1.0f, 1.0f,			//index 2
+		   -0.75f,  0.75f, 0.0f, 0.0f, 1.0f			//index 3
 		};
 
 		BaldLion::Ref<BaldLion::VertexBuffer> squareVB;
-		squareVB.reset(BaldLion::VertexBuffer::Create(sqrVertices, sizeof(sqrVertices)));
+		squareVB = BaldLion::VertexBuffer::Create(sqrVertices, sizeof(sqrVertices));
 		squareVB->SetLayout({
-			{ BaldLion::ShaderDataType::Float3, "a_position"}
+			{ BaldLion::ShaderDataType::Float3, "a_position"},
+			{ BaldLion::ShaderDataType::Float2, "a_TexCoord"}
 		});
 		m_squareVertexArray->AddVertexBuffer(squareVB);
 
@@ -65,82 +43,52 @@ public:
 		uint32_t sqrIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
 		BaldLion::Ref<BaldLion::IndexBuffer> squareIB;
-		squareIB.reset(BaldLion::IndexBuffer::Create(sqrIndices, sizeof(sqrIndices) / sizeof(uint32_t)));
+		squareIB = (BaldLion::IndexBuffer::Create(sqrIndices, sizeof(sqrIndices) / sizeof(uint32_t)));
 		m_squareVertexArray->AddIndexBuffer(squareIB);
 
-
-		std::string vertexSource = R"(
+		std::string textureShaderVertexSource = R"(
 			#version 330 core
 
 			layout(location = 0) in vec3 a_position;		
-			layout(location = 1) in vec4 a_color;				
-
-			uniform mat4 u_viewProjection;  
-			uniform mat4 u_transform;	
-
-			out vec3 v_position;
-			out vec4 v_color;
-
-			void main()
-			{
-				v_position = a_position + 0.5;
-				v_color = a_color;
-				gl_Position = u_viewProjection * u_transform * vec4(a_position, 1.0);
-			}
-		)";
-
-		std::string fragmentSource = R"(
-			#version 330 core
-
-			layout(location = 0) out vec4 color;			
-
-			uniform vec4 u_baseColor;
-
-			in vec3 v_position;
-			in vec4 v_color;
-	
-			void main()
-			{
-				color = v_color * u_baseColor;
-			}
-		)";
-
-		std::string vertexSource2 = R"(
-			#version 330 core
-
-			layout(location = 0) in vec3 a_position;		
+			layout(location = 1) in vec2 a_TexCoord;	
 
 			uniform mat4 u_viewProjection;  
 			uniform mat4 u_transform;
 		
-			out vec3 v_position;			
+			out vec2 v_TexCoord;			
 			
 			void main()
 			{
-				v_position = a_position + 0.5;						
+				v_TexCoord = a_TexCoord;						
 				gl_Position = u_viewProjection * u_transform * vec4(a_position, 1.0);
 			}
 		)";
 
-		std::string fragmentSource2 = R"(
+		std::string textureShaderFragmentSource = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 color;					
+			
+			in vec2 v_TexCoord;
 
 			uniform vec4 u_baseColor;
-
-			in vec3 v_position;			
+			uniform sampler2D u_texture;
 	
 			void main()
 			{
-				color = u_baseColor;
+				color = texture(u_texture,v_TexCoord) * u_baseColor;
 			}
 		)";
 
-		m_triangleShader.reset(BaldLion::Shader::Create(vertexSource, fragmentSource));
-		m_squareShader.reset(BaldLion::Shader::Create(vertexSource2, fragmentSource2));
+		m_textureShader = BaldLion::Shader::Create(textureShaderVertexSource, textureShaderFragmentSource);
+		m_texture = BaldLion::Texture2D::Create("assets/textures/checkerboard.png");
 
-		m_camera = BaldLion::ProjectionCamera(glm::vec3(0, 0, 0), 640.0f, 420.0f, 0.1f, 100.0f);
+		int slot = 0;
+
+		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_textureShader)->Bind();
+		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_textureShader)->SetUniform("u_texture", BaldLion::ShaderDataType::Int, &slot);
+
+		m_camera = BaldLion::ProjectionCamera(glm::vec3(0, 0, 2), 640.0f, 420.0f, 0.1f, 100.0f);
 	}
 
 	virtual void OnUpdate(BaldLion::TimeStep timeStep) override
@@ -152,11 +100,12 @@ public:
 
 		BaldLion::Renderer::BeginScene(m_camera, glm::vec3(0, 0, 0));
 
-		BaldLion::Renderer::Submit(m_squareVertexArray, m_squareShader);
-		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_squareShader)->SetUniform("u_baseColor", BaldLion::ShaderDataType::Float4, &(m_squareColor));
+		m_texture->Bind();
+		
+		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_textureShader)->Bind();
+		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_textureShader)->SetUniform("u_baseColor", BaldLion::ShaderDataType::Float4, &(m_squareColor));
 
-		BaldLion::Renderer::Submit(m_triangleVertexArray, m_triangleShader);
-		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_triangleShader)->SetUniform("u_baseColor", BaldLion::ShaderDataType::Float4, &(m_squareColor));
+		BaldLion::Renderer::Submit(m_squareVertexArray, m_textureShader);
 
 		BaldLion::Renderer::EndScene();
 	}
@@ -208,12 +157,9 @@ private:
 	}
 
 private:
-	BaldLion::Ref<BaldLion::Shader> m_triangleShader;
-	BaldLion::Ref<BaldLion::Shader> m_squareShader;
-
-
-	BaldLion::Ref<BaldLion::VertexArray> m_triangleVertexArray;
+	BaldLion::Ref<BaldLion::Shader> m_textureShader;
 	BaldLion::Ref<BaldLion::VertexArray> m_squareVertexArray;
+	BaldLion::Ref<BaldLion::Texture2D> m_texture;
 
 	BaldLion::ProjectionCamera m_camera;
 

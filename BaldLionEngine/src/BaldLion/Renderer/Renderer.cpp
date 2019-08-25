@@ -21,8 +21,8 @@ namespace BaldLion
 	void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader, const glm::mat4& transform)
 	{
 		shader->Bind();
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_viewProjection", ShaderDataType::Mat4, &(m_steneData->ViewProjectionMatrix));
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_transform", ShaderDataType::Mat4, &(transform[0][0]));
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_transform", BaldLion::ShaderDataType::Mat4, &(transform[0][0]));
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_viewProjection", BaldLion::ShaderDataType::Mat4, &(m_steneData->ViewProjectionMatrix));
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

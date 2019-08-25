@@ -1,19 +1,17 @@
 #include "blpch.h"
-#include "VertexArray.h"
+#include "Texture.h"
 
-#include "Platform/OpenGL/OpenGLVertexArray.h"
-
-#include "Renderer.h"
 #include "RendererAPI.h"
+#include "Platform/OpenGL/OpenGLTexture.h"
 
-namespace BaldLion
-{
-	Ref<VertexArray> VertexArray::Create()
+namespace BaldLion {
+
+	Ref<Texture2D> Texture2D::Create(const std::string & path)
 	{
 		switch (RendererAPI::GetAPI())
 		{
 			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return std::make_shared<OpenGLVertexArray>();
+			case RendererAPI::API::OpenGL:		return std::make_shared<OpenGLTexture2D>(path);
 		}
 
 		BL_CORE_ASSERT(false, "Unknown RenderAPI!");

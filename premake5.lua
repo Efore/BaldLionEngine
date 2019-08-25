@@ -14,6 +14,7 @@ IncludeDir["GLFW"] = "BaldLionEngine/vendor/GLFW/include"
 IncludeDir["Glad"] = "BaldLionEngine/vendor/Glad/include"
 IncludeDir["ImGui"] = "BaldLionEngine/vendor/imgui"
 IncludeDir["glm"] = "BaldLionEngine/vendor/glm/"
+IncludeDir["stb_image"] = "BaldLionEngine/vendor/stb_image/"
 
 include "BaldLionEngine/vendor/GLFW"
 include "BaldLionEngine/vendor/Glad"
@@ -36,6 +37,8 @@ project "BaldLionEngine"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
@@ -53,7 +56,9 @@ project "BaldLionEngine"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
+		
 	}
 	
 	links
@@ -108,6 +113,7 @@ project "Sandbox"
 	{
 		"BaldLionEngine/vendor/spdlog/include",
 		"BaldLionEngine/src",
+		"BaldLionEngine/vendor",
 		"%{IncludeDir.glm}"
 	}
 
