@@ -6,21 +6,27 @@ namespace BaldLion
 	class RenderCommand
 	{
 	public:
+
+		inline static void Init()
+		{
+			s_rendererAPI->Init();
+		}
+
 		inline static void SetClearColor(const glm::vec4& color)
 		{
-			s_renderer->SetClearColor(color);
+			s_rendererAPI->SetClearColor(color);
 		}
 
 		inline static void Clear()
 		{
-			s_renderer->Clear();
+			s_rendererAPI->Clear();
 		}
 
 		inline static void DrawIndexed(const Ref<VertexArray>& vertexArray)
 		{
-			s_renderer->DrawIndexed(vertexArray);
+			s_rendererAPI->DrawIndexed(vertexArray);
 		} 
 	private :
-		static RendererAPI *s_renderer;
+		static RendererAPI *s_rendererAPI;
 	};
 }

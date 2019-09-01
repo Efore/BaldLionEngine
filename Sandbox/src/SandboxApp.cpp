@@ -46,42 +46,10 @@ public:
 		squareIB = (BaldLion::IndexBuffer::Create(sqrIndices, sizeof(sqrIndices) / sizeof(uint32_t)));
 		m_squareVertexArray->AddIndexBuffer(squareIB);
 
-		std::string textureShaderVertexSource = R"(
-			#version 330 core
+		m_textureShader = BaldLion::Shader::Create("assets/shaders/Texture.glsl");
 
-			layout(location = 0) in vec3 a_position;		
-			layout(location = 1) in vec2 a_TexCoord;	
-
-			uniform mat4 u_viewProjection;  
-			uniform mat4 u_transform;
-		
-			out vec2 v_TexCoord;			
-			
-			void main()
-			{
-				v_TexCoord = a_TexCoord;						
-				gl_Position = u_viewProjection * u_transform * vec4(a_position, 1.0);
-			}
-		)";
-
-		std::string textureShaderFragmentSource = R"(
-			#version 330 core
-
-			layout(location = 0) out vec4 color;					
-			
-			in vec2 v_TexCoord;
-
-			uniform vec4 u_baseColor;
-			uniform sampler2D u_texture;
-	
-			void main()
-			{
-				color = texture(u_texture,v_TexCoord) * u_baseColor;
-			}
-		)";
-
-		m_textureShader = BaldLion::Shader::Create(textureShaderVertexSource, textureShaderFragmentSource);
 		m_texture = BaldLion::Texture2D::Create("assets/textures/checkerboard.png");
+		m_textureAlpha = BaldLion::Texture2D::Create("assets/textures/logo.png");
 
 		int slot = 0;
 
@@ -101,10 +69,12 @@ public:
 		BaldLion::Renderer::BeginScene(m_camera, glm::vec3(0, 0, 0));
 
 		m_texture->Bind();
-		
 		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_textureShader)->Bind();
 		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_textureShader)->SetUniform("u_baseColor", BaldLion::ShaderDataType::Float4, &(m_squareColor));
 
+		BaldLion::Renderer::Submit(m_squareVertexArray, m_textureShader);
+
+		m_textureAlpha->Bind();		
 		BaldLion::Renderer::Submit(m_squareVertexArray, m_textureShader);
 
 		BaldLion::Renderer::EndScene();
@@ -159,7 +129,7 @@ private:
 private:
 	BaldLion::Ref<BaldLion::Shader> m_textureShader;
 	BaldLion::Ref<BaldLion::VertexArray> m_squareVertexArray;
-	BaldLion::Ref<BaldLion::Texture2D> m_texture;
+	BaldLion::Ref<BaldLion::Texture2D> m_texture, m_textureAlpha;
 
 	BaldLion::ProjectionCamera m_camera;
 

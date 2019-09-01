@@ -1,5 +1,6 @@
 #include "blpch.h"
 #include "Application.h"
+#include "BaldLion/Renderer/Renderer.h"
 
 #include <GLFW/glfw3.h>
 
@@ -17,6 +18,9 @@ namespace BaldLion
 
 		m_window = std::unique_ptr<Window>(Window::Create());
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
+		Renderer::Init();
+
 		m_lastFrameTime = 0.0f;
 
 		m_imGuiLayer = new ImGuiLayer();

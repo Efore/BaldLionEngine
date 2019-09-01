@@ -7,6 +7,19 @@
 
 namespace BaldLion
 {
+	Ref<Shader> Shader::Create(const std::string & filepath)
+	{
+		switch (RendererAPI::GetAPI())
+		{
+		case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+		case RendererAPI::API::OpenGL:		return std::make_shared<OpenGLShader>(filepath);
+		}
+
+		BL_CORE_ASSERT(false, "Unknown renderereAPI!");
+
+		return nullptr;
+	}
+
 	Ref<Shader> Shader::Create(const std::string & vertexSrc, const std::string & fragmentSrc)
 	{
 		switch (RendererAPI::GetAPI())
@@ -19,5 +32,4 @@ namespace BaldLion
 
 		return nullptr;
 	}
-
 }

@@ -10,9 +10,11 @@ namespace BaldLion
 	class Renderer
 	{	
 	public:
+		static void Init();
 
 		static void BeginScene(ProjectionCamera& camera, const glm::vec3 direction);
 		static void EndScene();
+
 
 		static void Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader, const glm::mat4& transform = glm::mat4(1.0f));
 

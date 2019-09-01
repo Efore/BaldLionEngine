@@ -1,17 +1,18 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
-
 #include "BaldLion/Renderer/Shader.h"
 #include "BaldLion/Renderer/Buffer.h"
 
+#include <glm/glm.hpp>
+
+typedef unsigned int GLenum;
+
 namespace BaldLion
 {
-
 	class OpenGLShader : public Shader
 	{
 	public:
+		OpenGLShader(const std::string& filepath);
 		OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc);
 		~OpenGLShader();
 
@@ -21,6 +22,10 @@ namespace BaldLion
 		virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex);
 	private:
 		virtual int GetUniformLocation(const std::string& name) const;
+		std::string ReadFile(const std::string& filepath);
+		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
+		void Compile(const std::unordered_map<GLenum, std::string>& shaderSources);
+		
 	private:
 
 		uint32_t m_rendererID;

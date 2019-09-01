@@ -7,6 +7,11 @@ namespace BaldLion
 {
 	Renderer::SceneData* Renderer::m_steneData = new Renderer::SceneData;
 
+	void Renderer::Init()
+	{
+		RenderCommand::Init();
+	}
+
 	void Renderer::BeginScene(ProjectionCamera& camera, const glm::vec3 direction)
 	{
 		camera.SetDirection(direction);
@@ -15,7 +20,7 @@ namespace BaldLion
 
 	void Renderer::EndScene()
 	{
-
+		
 	}
 
 	void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader, const glm::mat4& transform)

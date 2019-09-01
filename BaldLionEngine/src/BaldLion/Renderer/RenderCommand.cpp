@@ -5,5 +5,5 @@
 
 namespace BaldLion
 {
-	RendererAPI* RenderCommand::s_renderer = new OpenGLRendererAPI;
+	RendererAPI* RenderCommand::s_rendererAPI = new OpenGLRendererAPI;
 }
