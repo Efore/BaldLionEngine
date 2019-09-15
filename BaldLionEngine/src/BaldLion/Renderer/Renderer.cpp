@@ -6,6 +6,7 @@
 namespace BaldLion
 {
 	Renderer::SceneData* Renderer::m_steneData = new Renderer::SceneData;
+	ShaderLibrary Renderer::m_shaderLibrary;
 
 	void Renderer::Init()
 	{

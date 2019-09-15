@@ -6,6 +6,7 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "ImGui/imgui.h"
 
+
 class ExampleLayer : public BaldLion::Layer
 {
 public:
@@ -46,15 +47,15 @@ public:
 		squareIB = (BaldLion::IndexBuffer::Create(sqrIndices, sizeof(sqrIndices) / sizeof(uint32_t)));
 		m_squareVertexArray->AddIndexBuffer(squareIB);
 
-		m_textureShader = BaldLion::Shader::Create("assets/shaders/Texture.glsl");
+		auto textureShader = BaldLion::Renderer::GetShaderLibrary().Load("assets/shaders/Texture.glsl");
 
 		m_texture = BaldLion::Texture2D::Create("assets/textures/checkerboard.png");
 		m_textureAlpha = BaldLion::Texture2D::Create("assets/textures/logo.png");
 
 		int slot = 0;
 
-		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_textureShader)->Bind();
-		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_textureShader)->SetUniform("u_texture", BaldLion::ShaderDataType::Int, &slot);
+		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(textureShader)->Bind();
+		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(textureShader)->SetUniform("u_texture", BaldLion::ShaderDataType::Int, &slot);
 
 		m_camera = BaldLion::ProjectionCamera(glm::vec3(0, 0, 2), 640.0f, 420.0f, 0.1f, 100.0f);
 	}
@@ -68,14 +69,16 @@ public:
 
 		BaldLion::Renderer::BeginScene(m_camera, glm::vec3(0, 0, 0));
 
-		m_texture->Bind();
-		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_textureShader)->Bind();
-		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(m_textureShader)->SetUniform("u_baseColor", BaldLion::ShaderDataType::Float4, &(m_squareColor));
+		auto textureShader = BaldLion::Renderer::GetShaderLibrary().Get("Texture");
 
-		BaldLion::Renderer::Submit(m_squareVertexArray, m_textureShader);
+		m_texture->Bind();
+		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(textureShader)->Bind();
+		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(textureShader)->SetUniform("u_baseColor", BaldLion::ShaderDataType::Float4, &(m_squareColor));
+
+		BaldLion::Renderer::Submit(m_squareVertexArray, textureShader);
 
 		m_textureAlpha->Bind();		
-		BaldLion::Renderer::Submit(m_squareVertexArray, m_textureShader);
+		BaldLion::Renderer::Submit(m_squareVertexArray, textureShader);
 
 		BaldLion::Renderer::EndScene();
 	}
@@ -127,7 +130,7 @@ private:
 	}
 
 private:
-	BaldLion::Ref<BaldLion::Shader> m_textureShader;
+
 	BaldLion::Ref<BaldLion::VertexArray> m_squareVertexArray;
 	BaldLion::Ref<BaldLion::Texture2D> m_texture, m_textureAlpha;
 

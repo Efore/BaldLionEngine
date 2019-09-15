@@ -15,6 +15,7 @@ namespace BaldLion
 			return GL_FRAGMENT_SHADER;
 
 		BL_CORE_ASSERT(false, "Unknown shader type!");
+		return GL_FALSE;
 	}
 
 	OpenGLShader::OpenGLShader(const std::string & filepath)
@@ -22,9 +23,18 @@ namespace BaldLion
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
+
+		// Extracting name from lastpath
+		auto lastSlash = filepath.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		auto lastDot = filepath.rfind('.');
+		auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+
+		m_name = filepath.substr(lastSlash, count);
 	}
 
-	OpenGLShader::OpenGLShader(const std::string & vertexSrc, const std::string & fragmentSrc)
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string & vertexSrc, const std::string & fragmentSrc) 
+		: m_name (name)
 	{
 		std::unordered_map<GLenum, std::string> shaderSources;
 		shaderSources[GL_VERTEX_SHADER] = vertexSrc;
@@ -39,7 +49,7 @@ namespace BaldLion
 
 	std::string OpenGLShader::ReadFile(const std::string& filepath)
 	{
-		std::ifstream in(filepath, std::ios::in, std::ios::binary);
+		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 		std::string result;
 
 		if (in)
@@ -86,8 +96,11 @@ namespace BaldLion
 	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{		
 		GLuint program = glCreateProgram();
-		std::vector<GLenum> glShaderIDs(shaderSources.size());
-		
+		BL_CORE_ASSERT(shaderSources.size() <= 2, "Only 2 shaders supported");
+
+		std::array<GLenum, 2> glShaderIDs;
+		int glShaderIDsIndex = 0;
+
 		for (auto &kv : shaderSources)
 		{
 			GLenum shaderType = kv.first;
@@ -122,7 +135,7 @@ namespace BaldLion
 			}
 
 			glAttachShader(program, shader);
-			glShaderIDs.push_back(shader);
+			glShaderIDs[glShaderIDsIndex++] = shader;
 		}
 
 		// Link our program
@@ -147,8 +160,7 @@ namespace BaldLion
 			for (auto id : glShaderIDs)
 			{
 				glDeleteShader(id);
-			}
-			
+			}			
 
 			// Use the infoLog as you see fit.
 			BL_LOG_CORE_ERROR("{0}", infoLog.data());
@@ -156,10 +168,8 @@ namespace BaldLion
 			return;
 		}
 
-		for (auto id : glShaderIDs)
-		{
-			glDetachShader(program, id);		
-		}
+		for (auto id : glShaderIDs)		
+			glDetachShader(program, id);				
 
 		m_rendererID = program;
 	}

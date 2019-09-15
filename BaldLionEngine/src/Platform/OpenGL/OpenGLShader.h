@@ -13,11 +13,12 @@ namespace BaldLion
 	{
 	public:
 		OpenGLShader(const std::string& filepath);
-		OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc);
+		OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 		~OpenGLShader();
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
+		virtual const std::string& GetName() const override { return m_name; }
 
 		virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex);
 	private:
@@ -30,5 +31,6 @@ namespace BaldLion
 
 		uint32_t m_rendererID;
 		mutable std::unordered_map<std::string, int> m_uniformLocationCache;
+		std::string m_name;
 	};
 }
