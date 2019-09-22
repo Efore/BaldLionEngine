@@ -24,7 +24,7 @@
 #include "BaldLion/Renderer/VertexArray.h"
 
 
-#include "BaldLion/Renderer/Camera.h"
+#include "BaldLion/Renderer/CameraController.h"
 
 // --------------- Entry point -----------------------
 

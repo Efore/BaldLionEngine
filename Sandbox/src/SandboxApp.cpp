@@ -11,17 +11,8 @@ class ExampleLayer : public BaldLion::Layer
 {
 public:
 	ExampleLayer()
-		: BaldLion::Layer("Example"), m_cameraMovement(glm::vec3(0,0,0)), m_squareColor(0.8f, 0.2f, 0.3f, 1.0f)
+		: BaldLion::Layer("Example"), m_squareColor(0.8f, 0.2f, 0.3f, 1.0f)
 	{
-		m_cameraMovementSpeed = 1.0f;
-		m_cameraRotationSpeed = 10.0f;
-
-		m_cameraYawRotation = 0.0f;
-		m_cameraPitchRotation = 0.0f;
-
-		m_prevX = BaldLion::Input::GetMouseX();
-		m_prevY = BaldLion::Input::GetMouseY();
-
 		//square definition
 		m_squareVertexArray = BaldLion::VertexArray::Create();
 
@@ -38,6 +29,7 @@ public:
 			{ BaldLion::ShaderDataType::Float3, "a_position"},
 			{ BaldLion::ShaderDataType::Float2, "a_TexCoord"}
 		});
+
 		m_squareVertexArray->AddVertexBuffer(squareVB);
 
 
@@ -57,17 +49,17 @@ public:
 		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(textureShader)->Bind();
 		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(textureShader)->SetUniform("u_texture", BaldLion::ShaderDataType::Int, &slot);
 
-		m_camera = BaldLion::ProjectionCamera(glm::vec3(0, 0, 2), 640.0f, 420.0f, 0.1f, 100.0f);
+		m_cameraController = BaldLion::ProjectionCameraController(glm::vec3(0, 0, 2), 640.0f, 420.0f, 0.1f, 100.0f);
 	}
 
 	virtual void OnUpdate(BaldLion::TimeStep timeStep) override
 	{
-		HandleCameraMovement(timeStep);
+		m_cameraController.OnUpdate(timeStep);
 
 		BaldLion::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		BaldLion::RenderCommand::Clear();
 
-		BaldLion::Renderer::BeginScene(m_camera, glm::vec3(0, 0, 0));
+		BaldLion::Renderer::BeginScene(m_cameraController.GetCamera(), glm::vec3(0, 0, 0));
 
 		auto textureShader = BaldLion::Renderer::GetShaderLibrary().Get("Texture");
 
@@ -97,56 +89,12 @@ public:
 
 private:
 
-	void HandleCameraMovement(float deltaTime)
-	{
-		m_cameraMovement = glm::vec3(0, 0, 0);
-				 
-		if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
-			m_cameraMovement -= m_camera.GetForwardDirection() * deltaTime;
-		else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
-			m_cameraMovement += m_camera.GetForwardDirection() * deltaTime;
-
-		if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
-			m_cameraMovement -= m_camera.GetRightDirection() * deltaTime;
-		else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
-			m_cameraMovement += m_camera.GetRightDirection() * deltaTime;
-
-		if (m_cameraMovement != glm::vec3(0, 0, 0))
-			m_camera.SetPosition(m_camera.GetPosition() + m_cameraMovement);
-
-		if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
-		{
-			float deltaX = BaldLion::Input::GetMouseX() - m_prevX;
-			float deltaY = BaldLion::Input::GetMouseY() - m_prevY;
-
-			m_cameraYawRotation -= deltaX * m_cameraRotationSpeed * deltaTime;
-			m_cameraPitchRotation -= deltaY * m_cameraRotationSpeed * deltaTime;
-			m_camera.SetRotation(m_cameraPitchRotation, m_cameraYawRotation);
-		}
-
-		m_prevX = BaldLion::Input::GetMouseX();
-		m_prevY = BaldLion::Input::GetMouseY();
-
-	}
-
-private:
-
 	BaldLion::Ref<BaldLion::VertexArray> m_squareVertexArray;
 	BaldLion::Ref<BaldLion::Texture2D> m_texture, m_textureAlpha;
 
-	BaldLion::ProjectionCamera m_camera;
+	BaldLion::ProjectionCameraController m_cameraController;
 
-	glm::vec3 m_cameraMovement;
 	glm::vec4 m_squareColor;
-
-	float m_cameraPitchRotation;
-	float m_cameraYawRotation;
-
-	float m_prevX;
-	float m_prevY;
-	
-	float m_cameraRotationSpeed;
-	float m_cameraMovementSpeed;
 };
 
 class Sandbox : public BaldLion::Application
