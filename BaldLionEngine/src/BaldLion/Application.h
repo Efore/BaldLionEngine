@@ -29,14 +29,18 @@ namespace BaldLion
 		inline static Application& Get(){ return *s_instance; }
 
 	private:
-		bool OnWindowClose(WindowCloseEvent& e);		
+		bool OnWindowClose(WindowCloseEvent& e);
 
 	private:
 		std::unique_ptr<Window> m_window;
 		ImGuiLayer* m_imGuiLayer;
+
 		bool m_running = true;
+		bool m_minimized = false;
+
 		LayerStack m_layerStack;
 		float m_lastFrameTime;
+		
 
 	private:
 		static Application* s_instance;

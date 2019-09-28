@@ -30,7 +30,7 @@ namespace BaldLion
 		m_cameraPitchRotation = 0.0f;
 
 		m_prevX = BaldLion::Input::GetMouseX();
-		m_prevY = BaldLion::Input::GetMouseY();
+		m_prevY = BaldLion::Input::GetMouseY();		
 	}
 
 	void ProjectionCameraController::OnUpdate(BaldLion::TimeStep timeStep)

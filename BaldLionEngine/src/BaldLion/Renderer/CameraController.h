@@ -1,5 +1,6 @@
 #pragma once
 #include "BaldLion/Core/TimeStep.h"
+#include "BaldLion/Events/ApplicationEvent.h"
 #include "Camera.h"
 
 namespace BaldLion
@@ -8,7 +9,7 @@ namespace BaldLion
 	{
 
 	public: 
-		virtual void OnUpdate(BaldLion::TimeStep timeStep) = 0;				
+		virtual void OnUpdate(BaldLion::TimeStep timeStep) = 0;			
 	};
 
 

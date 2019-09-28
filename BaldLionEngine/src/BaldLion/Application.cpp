@@ -54,8 +54,11 @@ namespace BaldLion
 
 			m_lastFrameTime = time;
 
-			for (Layer* layer : m_layerStack)
-				layer->OnUpdate(timeStep);
+			if (!m_minimized)
+			{
+				for (Layer* layer : m_layerStack)
+					layer->OnUpdate(timeStep);
+			}
 
 			m_imGuiLayer->Begin();
 

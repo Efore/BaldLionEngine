@@ -7,10 +7,10 @@
 #include "ImGui/imgui.h"
 
 
-class ExampleLayer : public BaldLion::Layer
+class RendererTestLayer : public BaldLion::Layer
 {
 public:
-	ExampleLayer()
+	RendererTestLayer(uint32_t width, uint32_t height)
 		: BaldLion::Layer("Example"), m_squareColor(0.8f, 0.2f, 0.3f, 1.0f)
 	{
 		//square definition
@@ -32,7 +32,6 @@ public:
 
 		m_squareVertexArray->AddVertexBuffer(squareVB);
 
-
 		uint32_t sqrIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
 		BaldLion::Ref<BaldLion::IndexBuffer> squareIB;
@@ -49,7 +48,7 @@ public:
 		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(textureShader)->Bind();
 		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(textureShader)->SetUniform("u_texture", BaldLion::ShaderDataType::Int, &slot);
 
-		m_cameraController = BaldLion::ProjectionCameraController(glm::vec3(0, 0, 2), 640.0f, 420.0f, 0.1f, 100.0f);
+		m_cameraController = BaldLion::ProjectionCameraController(glm::vec3(0, 0, 2), (float)width, (float)height, 0.1f, 100.0f);
 	}
 
 	virtual void OnUpdate(BaldLion::TimeStep timeStep) override
@@ -84,7 +83,21 @@ public:
 
 	virtual void OnEvent(BaldLion::Event& event) override
 	{
+		BaldLion::EventDispatcher dispatcher(event);		
+		dispatcher.Dispatch<BaldLion::WindowResizeEvent>(std::bind(&RendererTestLayer::OnWindowResize, this, std::placeholders::_1));
+	}
 
+	bool OnWindowResize(BaldLion::WindowResizeEvent& e)
+	{		
+		uint32_t width = e.GetWidth();
+		uint32_t height = e.GetHeight();
+		
+		m_cameraController.GetCamera().SetWidth((float)width);
+		m_cameraController.GetCamera().SetHeight((float)height);
+
+		BaldLion::Renderer::OnWindowResize(width, height);		
+
+		return true;
 	}
 
 private:
@@ -102,7 +115,7 @@ class Sandbox : public BaldLion::Application
 public:
 	Sandbox()
 	{		
-		PushLayer(new ExampleLayer());
+		PushLayer(new RendererTestLayer(GetWindow().GetWidth(),GetWindow().GetHeight()));
 	}
 
 	~Sandbox()

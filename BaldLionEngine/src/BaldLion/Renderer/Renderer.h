@@ -11,6 +11,7 @@ namespace BaldLion
 	{	
 	public:
 		static void Init();
+		static void OnWindowResize(uint32_t width, uint32_t height);
 
 		static void BeginScene(ProjectionCamera& camera, const glm::vec3 direction);
 		static void EndScene();
