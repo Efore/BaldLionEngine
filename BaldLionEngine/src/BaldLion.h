@@ -21,6 +21,7 @@
 #include "BaldLion/Renderer/Texture.h"
 #include "BaldLion/Renderer/Shader.h"
 #include "BaldLion/Renderer/Buffer.h"
+#include "BaldLion/Renderer/Mesh.h"
 #include "BaldLion/Renderer/VertexArray.h"
 
 

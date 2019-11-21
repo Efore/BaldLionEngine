@@ -21,7 +21,9 @@ namespace BaldLion
 		virtual const std::string& GetName() const override { return m_name; }
 
 		virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex);
+
 	private:
+
 		virtual int GetUniformLocation(const std::string& name) const;
 		std::string ReadFile(const std::string& filepath);
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);

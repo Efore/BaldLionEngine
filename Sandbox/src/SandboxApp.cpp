@@ -13,41 +13,9 @@ public:
 	RendererTestLayer(uint32_t width, uint32_t height)
 		: BaldLion::Layer("Example"), m_squareColor(0.8f, 0.2f, 0.3f, 1.0f)
 	{
-		//square definition
-		m_squareVertexArray = BaldLion::VertexArray::Create();
 
-		float sqrVertices[5 * 4] = {
-		   -0.75f, -0.75f, 0.0f, 0.0f, 0.0f,		//index 0
-			0.75f, -0.75f, 0.0f, 1.0f, 0.0f, 		//index 1
-			0.75f,  0.75f, 0.0f, 1.0f, 1.0f,			//index 2
-		   -0.75f,  0.75f, 0.0f, 0.0f, 1.0f			//index 3
-		};
-
-		BaldLion::Ref<BaldLion::VertexBuffer> squareVB;
-		squareVB = BaldLion::VertexBuffer::Create(sqrVertices, sizeof(sqrVertices));
-		squareVB->SetLayout({
-			{ BaldLion::ShaderDataType::Float3, "a_position"},
-			{ BaldLion::ShaderDataType::Float2, "a_TexCoord"}
-		});
-
-		m_squareVertexArray->AddVertexBuffer(squareVB);
-
-		uint32_t sqrIndices[6] = { 0, 1, 2, 2, 3, 0 };
-
-		BaldLion::Ref<BaldLion::IndexBuffer> squareIB;
-		squareIB = (BaldLion::IndexBuffer::Create(sqrIndices, sizeof(sqrIndices) / sizeof(uint32_t)));
-		m_squareVertexArray->AddIndexBuffer(squareIB);
-
-		auto textureShader = BaldLion::Renderer::GetShaderLibrary().Load("assets/shaders/Texture.glsl");
-
-		m_texture = BaldLion::Texture2D::Create("assets/textures/checkerboard.png");
-		m_textureAlpha = BaldLion::Texture2D::Create("assets/textures/logo.png");
-
-		int slot = 0;
-
-		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(textureShader)->Bind();
-		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(textureShader)->SetUniform("u_texture", BaldLion::ShaderDataType::Int, &slot);
-
+		m_mesh = std::make_shared<BaldLion::Mesh>("assets/models/model.obj");
+		m_mesh->SetUpMesh();
 		m_cameraController = BaldLion::ProjectionCameraController(glm::vec3(0, 0, 2), (float)width, (float)height, 0.1f, 100.0f);
 	}
 
@@ -60,16 +28,7 @@ public:
 
 		BaldLion::Renderer::BeginScene(m_cameraController.GetCamera(), glm::vec3(0, 0, 0));
 
-		auto textureShader = BaldLion::Renderer::GetShaderLibrary().Get("Texture");
-
-		m_texture->Bind();
-		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(textureShader)->Bind();
-		std::dynamic_pointer_cast<BaldLion::OpenGLShader>(textureShader)->SetUniform("u_baseColor", BaldLion::ShaderDataType::Float4, &(m_squareColor));
-
-		BaldLion::Renderer::Submit(m_squareVertexArray, textureShader);
-
-		m_textureAlpha->Bind();		
-		BaldLion::Renderer::Submit(m_squareVertexArray, textureShader);
+		m_mesh->Draw();
 
 		BaldLion::Renderer::EndScene();
 	}
@@ -105,6 +64,7 @@ private:
 	BaldLion::Ref<BaldLion::VertexArray> m_squareVertexArray;
 	BaldLion::Ref<BaldLion::Texture2D> m_texture, m_textureAlpha;
 
+	BaldLion::Ref<BaldLion::Mesh> m_mesh;
 	BaldLion::ProjectionCameraController m_cameraController;
 
 	glm::vec4 m_squareColor;

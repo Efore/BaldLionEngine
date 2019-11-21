@@ -1,4 +1,5 @@
 #pragma once
+#include "Vertex.h"
 
 namespace BaldLion
 {	
@@ -115,6 +116,7 @@ namespace BaldLion
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 
 		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
+		static Ref<VertexBuffer> Create(Vertex* vertices, uint32_t size);
 	};
 
 	class IndexBuffer

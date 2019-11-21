@@ -108,7 +108,13 @@
     <ClInclude Include="src\BaldLion\Renderer\Camera.h">
       <Filter>src\BaldLion\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Renderer\CameraController.h">
+      <Filter>src\BaldLion\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Renderer\GraphicsContext.h">
+      <Filter>src\BaldLion\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Renderer\Mesh.h">
       <Filter>src\BaldLion\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Renderer\RenderCommand.h">
@@ -124,6 +130,9 @@
       <Filter>src\BaldLion\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Renderer\Texture.h">
+      <Filter>src\BaldLion\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Renderer\Vertex.h">
       <Filter>src\BaldLion\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Renderer\VertexArray.h">
@@ -1248,7 +1257,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Renderer\CameraController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Application.cpp">
@@ -1270,6 +1278,12 @@
       <Filter>src\BaldLion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Renderer\Camera.cpp">
+      <Filter>src\BaldLion\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Renderer\CameraController.cpp">
+      <Filter>src\BaldLion\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Renderer\Mesh.cpp">
       <Filter>src\BaldLion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Renderer\RenderCommand.cpp">
@@ -1320,6 +1334,5 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Renderer\CameraController.cpp" />
   </ItemGroup>
 </Project>

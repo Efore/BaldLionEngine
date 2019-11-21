@@ -23,6 +23,18 @@ namespace BaldLion
 		return nullptr;
 	}
 
+	Ref<VertexBuffer> VertexBuffer::Create(Vertex* vertices, uint32_t size)
+	{
+		switch (RendererAPI::GetAPI())
+		{
+		case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+		case RendererAPI::API::OpenGL:		return std::make_shared<OpenGLVertexBuffer>(vertices[0].GetFirstElement(), size);
+		}
+
+		BL_CORE_ASSERT(false, "Unknown RenderAPI!");
+		return nullptr;
+	}
+
 	//-------------------------------------------------
 	//Index buffer
 	//-------------------------------------------------
