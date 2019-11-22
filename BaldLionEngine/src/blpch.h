@@ -13,6 +13,7 @@
 #include <unordered_set>
 
 #include "BaldLion/Log.h"
+#include "BaldLion/Core.h"
 
 #ifdef BL_PLATFORM_WINDOWS
 	#include <Windows.h>

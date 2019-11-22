@@ -3,7 +3,6 @@
 #include "Buffer.h"
 #include "Renderer.h"
 
-#include <fstream>
 #include <string_view>
 
 namespace BaldLion
@@ -13,100 +12,13 @@ namespace BaldLion
 
 	}
 
-	Mesh::Mesh(const std::string& objPath)
+	Mesh::Mesh(const std::string& filePath)
 	{
-		std::vector<glm::vec3> vertexPositions;
-		vertexPositions.reserve(10000);
+		std::string extension = filePath.substr(filePath.find('.'));		
 
-		std::vector<glm::vec3> vertexNormals;
-		vertexNormals.reserve(10000);
-
-		std::vector<glm::vec2> vertexTexCoords;
-		vertexTexCoords.reserve(10000);
-
-		std::ifstream fs(objPath);
-		std::string str;
-
-		while (std::getline(fs, str))
-		{
-
-			size_t currentIndex = 0;
-			size_t nextSpace = str.find(' ');
-			std::string lineData = str.substr(currentIndex, nextSpace);
-						
-			size_t values_index = 0;
-
-			if (lineData == "v")
-			{
-				float values[3];
-				do
-				{
-					currentIndex = nextSpace;
-					nextSpace = str.find(' ',currentIndex + 1);
-					lineData = str.substr(currentIndex, nextSpace);
-
-					values[values_index] = stof(lineData);
-					++values_index;
-				}
-				while (nextSpace != std::string::npos);
-
-				vertexPositions.emplace_back(glm::vec3(values[0], values[1], values[2]));
-			}
-			else if (lineData == "vn")
-			{
-				float values[3];
-				do
-				{
-					currentIndex = nextSpace;
-					nextSpace = str.find(' ', currentIndex + 1);
-					lineData = str.substr(currentIndex, nextSpace);
-
-					values[values_index] = stof(lineData);
-					++values_index;
-				} 
-				while (nextSpace != std::string::npos);
-
-				vertexNormals.emplace_back(glm::vec3(values[0], values[1], values[2]));
-			}
-			else if (lineData == "vt")
-			{
-				float values[2];
-				do
-				{
-					currentIndex = nextSpace;
-					nextSpace = str.find(' ', currentIndex + 1);
-					lineData = str.substr(currentIndex, nextSpace);
-
-					values[values_index] = stof(lineData);
-					++values_index;
-				} 
-				while (nextSpace != std::string::npos);
-
-				vertexTexCoords.emplace_back(glm::vec2(values[0], values[1]));
-			}
-			else if (lineData == "f")
-			{
-				do
-				{
-					currentIndex = nextSpace;
-					nextSpace = str.find(' ', currentIndex + 1);
-					lineData = str.substr(currentIndex, nextSpace);
-
-					std::string indexValue = lineData.substr(0, lineData.find('/'));					
-
-					m_indices.emplace_back(stoi(indexValue));
-					
-				} while (nextSpace != std::string::npos);
-			}
-		}
-
-		m_vertices.reserve(vertexNormals.size());
-		for (size_t i = 0; i < vertexPositions.size(); ++i)
-		{
-			m_vertices.emplace_back( Vertex { vertexPositions[i],vertexNormals[i],vertexTexCoords[i] });
-		}
+		if (std::strcmp(extension.c_str(), OBJ_EXTENSION) == 0)
+			ExtractFromObj(filePath.c_str());
 	}
-
 
 	Mesh::~Mesh()
 	{
@@ -142,4 +54,81 @@ namespace BaldLion
 
 		Renderer::Submit(m_vertexArray, textureShader);		
 	}
+
+	void Mesh::ExtractFromObj(const char* objPath)
+	{
+		std::vector<glm::vec3> vertexPositions;
+		vertexPositions.reserve(10000);
+
+		std::vector<glm::vec3> vertexNormals;
+		vertexNormals.reserve(10000);
+
+		std::vector<glm::vec2> vertexTexCoords;
+		vertexTexCoords.reserve(10000);
+
+		std::vector< unsigned int > uvIndices, normalIndices;
+
+		FILE * file = fopen(objPath, "r");
+
+		if (file == NULL) {
+			printf("Impossible to open the file !\n");
+			return;
+		}
+
+		while (1) {
+
+			char lineHeader[128];
+			// read the first word of the line
+			int res = fscanf(file, "%s", lineHeader);
+
+			if (res == EOF)
+				break;
+
+			if (strcmp(lineHeader, "v") == 0) {
+				glm::vec3 vertex;
+				fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+				vertexPositions.push_back(vertex);
+			}
+			else if (strcmp(lineHeader, "vt") == 0) {
+				glm::vec2 uv;
+				fscanf(file, "%f %f\n", &uv.x, &uv.y);
+				vertexTexCoords.push_back(uv);
+			}
+			else if (strcmp(lineHeader, "vn") == 0) {
+				glm::vec3 normal;
+				fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
+				vertexNormals.push_back(normal);
+			}
+			else if (strcmp(lineHeader, "f") == 0) {
+
+				unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
+
+				int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+				if (matches != 9) {
+					printf("File can't be read by our simple parser : ( Try exporting with other options\n");
+					return;
+				}
+
+				m_indices.push_back(vertexIndex[0] - 1);
+				m_indices.push_back(vertexIndex[1] - 1);
+				m_indices.push_back(vertexIndex[2] - 1);
+
+				uvIndices.push_back(uvIndex[0]);
+				uvIndices.push_back(uvIndex[1]);
+				uvIndices.push_back(uvIndex[2]);
+
+				normalIndices.push_back(normalIndex[0]);
+				normalIndices.push_back(normalIndex[1]);
+				normalIndices.push_back(normalIndex[2]);
+			}
+		}
+
+		m_vertices.reserve(vertexNormals.size());
+
+		for (size_t i = 0; i < vertexPositions.size(); ++i)
+		{
+			m_vertices.emplace_back(Vertex{ vertexPositions[i],vertexNormals[i],vertexTexCoords[i] });
+		}
+	}
+
 }

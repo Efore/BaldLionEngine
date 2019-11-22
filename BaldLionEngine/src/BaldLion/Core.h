@@ -27,6 +27,8 @@
 
 #define BL_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
 
+#define OBJ_EXTENSION ".obj"
+
 namespace BaldLion
 {
 	template<typename T>

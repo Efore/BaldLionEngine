@@ -9,13 +9,14 @@ namespace BaldLion
 		
 	public:
 		Mesh();
-		Mesh(const std::string& path);
+		Mesh(const std::string& filePath);
 		~Mesh();
 
 		void SetUpMesh();
 		void Draw();
 
 	private:
+		void ExtractFromObj(const char* filePath);
 
 		std::vector<Vertex> m_vertices;		
 		std::vector<uint32_t> m_indices;
