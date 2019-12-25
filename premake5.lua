@@ -1,5 +1,6 @@
 workspace "BaldLionEngine"
 	architecture "x64"
+	startproject "Sandbox"
 	
 	configurations
 	{

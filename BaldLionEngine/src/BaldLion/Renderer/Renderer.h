@@ -4,6 +4,7 @@
 #include "VertexArray.h"
 #include "Camera.h"
 #include "Shader.h"
+#include "Texture.h"
 
 namespace BaldLion
 {
@@ -17,6 +18,7 @@ namespace BaldLion
 		static void EndScene();
 
 		static ShaderLibrary& GetShaderLibrary() { return m_shaderLibrary; }
+		static TextureLibrary& GetTextureLibrary() { return m_textureLibrary; }
 
 		static void Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader, const glm::mat4& transform = glm::mat4(1.0f));
 
@@ -29,5 +31,6 @@ namespace BaldLion
 
 		static SceneData* m_steneData;
 		static ShaderLibrary m_shaderLibrary;
+		static TextureLibrary m_textureLibrary;
 	};
 }

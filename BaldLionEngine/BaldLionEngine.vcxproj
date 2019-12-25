@@ -19,7 +19,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BaldLionEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -160,6 +160,7 @@
     <ClInclude Include="src\BaldLion\Renderer\Camera.h" />
     <ClInclude Include="src\BaldLion\Renderer\CameraController.h" />
     <ClInclude Include="src\BaldLion\Renderer\GraphicsContext.h" />
+    <ClInclude Include="src\BaldLion\Renderer\Material.h" />
     <ClInclude Include="src\BaldLion\Renderer\Mesh.h" />
     <ClInclude Include="src\BaldLion\Renderer\RenderCommand.h" />
     <ClInclude Include="src\BaldLion\Renderer\Renderer.h" />
@@ -171,6 +172,7 @@
     <ClInclude Include="src\BaldLion\Window.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLMaterial.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
@@ -551,6 +553,7 @@
     <ClCompile Include="src\BaldLion\Renderer\Buffer.cpp" />
     <ClCompile Include="src\BaldLion\Renderer\Camera.cpp" />
     <ClCompile Include="src\BaldLion\Renderer\CameraController.cpp" />
+    <ClCompile Include="src\BaldLion\Renderer\Material.cpp" />
     <ClCompile Include="src\BaldLion\Renderer\Mesh.cpp" />
     <ClCompile Include="src\BaldLion\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\BaldLion\Renderer\Renderer.cpp" />
@@ -560,6 +563,7 @@
     <ClCompile Include="src\BaldLion\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLMaterial.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />

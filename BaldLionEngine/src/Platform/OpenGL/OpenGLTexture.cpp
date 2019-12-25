@@ -44,6 +44,14 @@ namespace BaldLion
 		glTextureSubImage2D(m_rendererID, 0, 0, 0, m_width, m_height, dataFormat, GL_UNSIGNED_BYTE, data);
 
 		stbi_image_free(data);
+
+		// Extracting name from lastpath
+		auto lastSlash = path.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		auto lastDot = path.rfind('.');
+		auto count = lastDot == std::string::npos ? path.size() - lastSlash : lastDot - lastSlash;
+
+		m_name = path.substr(lastSlash, count);
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()

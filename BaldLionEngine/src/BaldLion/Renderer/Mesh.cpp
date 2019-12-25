@@ -31,28 +31,28 @@ namespace BaldLion
 		vertexBuffer = VertexBuffer::Create(&m_vertices[0], (uint32_t)(m_vertices.size() * sizeof(BaldLion::Vertex)));
 
 		vertexBuffer->SetLayout({
-			{ BaldLion::ShaderDataType::Float3, "a_position"},
-			{ BaldLion::ShaderDataType::Float3, "a_normal"},
-			{ BaldLion::ShaderDataType::Float2, "a_texCoord"}
+			{ BaldLion::ShaderDataType::Float3, "vertex_position"},
+			{ BaldLion::ShaderDataType::Float3, "vertex_normal"},
+			{ BaldLion::ShaderDataType::Float2, "vertex_texcoord"}
 		});
 
 		m_vertexArray = VertexArray::Create();
 		m_vertexArray->AddVertexBuffer(vertexBuffer);
 
 		Ref<IndexBuffer> indexBuffer;
-		indexBuffer = (BaldLion::IndexBuffer::Create(&m_indices[0], m_indices.size()));
+		indexBuffer = (IndexBuffer::Create(&m_indices[0], m_indices.size()));
 		m_vertexArray->AddIndexBuffer(indexBuffer);
 
-		auto textureShader = BaldLion::Renderer::GetShaderLibrary().Load("assets/shaders/Cube.glsl");
-		textureShader->Bind();
+		auto shader = Renderer::GetShaderLibrary().Load("assets/shaders/Cube.glsl");
+		shader->Bind();
 	}
 
 	void Mesh::Draw()
 	{
-		auto textureShader = Renderer::GetShaderLibrary().Get("Cube");		
-		textureShader->Bind();
+		auto shader = Renderer::GetShaderLibrary().Get("Cube");		
+		shader->Bind();
 
-		Renderer::Submit(m_vertexArray, textureShader);		
+		Renderer::Submit(m_vertexArray, shader);		
 	}
 
 	void Mesh::ExtractFromObj(const char* objPath)
