@@ -14,7 +14,7 @@ namespace BaldLion
 		static void Init();
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
-		static void BeginScene(ProjectionCamera& camera, const glm::vec3 direction);
+		static void BeginScene(const Ref<ProjectionCamera>& camera, const glm::vec3& lightPosition);
 		static void EndScene();
 
 		static ShaderLibrary& GetShaderLibrary() { return m_shaderLibrary; }
@@ -27,9 +27,11 @@ namespace BaldLion
 		struct SceneData 
 		{
 			glm::mat4 ViewProjectionMatrix;
+			glm::vec3 CameraPosition;
+			glm::vec3 LightPosition;
 		};
 
-		static SceneData* m_steneData;
+		static SceneData* m_sceneData;
 		static ShaderLibrary m_shaderLibrary;
 		static TextureLibrary m_textureLibrary;
 	};

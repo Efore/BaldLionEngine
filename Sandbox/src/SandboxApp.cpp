@@ -11,7 +11,7 @@ class RendererTestLayer : public BaldLion::Layer
 {
 public:
 	RendererTestLayer(uint32_t width, uint32_t height)
-		: BaldLion::Layer("Example"), m_squareColor(0.8f, 0.2f, 0.3f, 1.0f)
+		: BaldLion::Layer("Example"), m_ambientColor(1.0f), m_diffuseColor(1.0f), m_specularColor(1.0f)
 	{
 
 		m_mesh = std::make_shared<BaldLion::Mesh>("assets/models/model.obj");
@@ -26,7 +26,11 @@ public:
 		BaldLion::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		BaldLion::RenderCommand::Clear();
 
-		BaldLion::Renderer::BeginScene(m_cameraController.GetCamera(), glm::vec3(0, 0, 0));
+		BaldLion::Renderer::BeginScene(m_cameraController.GetCamera(),m_lightPosition);
+
+		m_mesh->GetMaterial()->SetAmbientColor(m_ambientColor);
+		m_mesh->GetMaterial()->SetAmbientColor(m_diffuseColor);
+		m_mesh->GetMaterial()->SetAmbientColor(m_specularColor);
 
 		m_mesh->Draw();
 
@@ -36,7 +40,10 @@ public:
 	virtual void OnImGuiRender() override 
 	{
 		ImGui::Begin("Settings");
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_squareColor));
+		ImGui::ColorEdit3("Ambient Color", glm::value_ptr(m_ambientColor));
+		ImGui::ColorEdit3("Diffuse Color", glm::value_ptr(m_diffuseColor));
+		ImGui::ColorEdit3("Specular Color", glm::value_ptr(m_specularColor));
+		ImGui::SliderFloat3("Light Position", glm::value_ptr(m_lightPosition), -100.0f, 100.0f);
 		ImGui::End();
 	}
 
@@ -51,8 +58,8 @@ public:
 		uint32_t width = e.GetWidth();
 		uint32_t height = e.GetHeight();
 		
-		m_cameraController.GetCamera().SetWidth((float)width);
-		m_cameraController.GetCamera().SetHeight((float)height);
+		m_cameraController.GetCamera()->SetWidth((float)width);
+		m_cameraController.GetCamera()->SetHeight((float)height);
 
 		BaldLion::Renderer::OnWindowResize(width, height);		
 
@@ -67,7 +74,10 @@ private:
 	BaldLion::Ref<BaldLion::Mesh> m_mesh;
 	BaldLion::ProjectionCameraController m_cameraController;
 
-	glm::vec4 m_squareColor;
+	glm::vec3 m_ambientColor;
+	glm::vec3 m_diffuseColor;
+	glm::vec3 m_specularColor;
+	glm::vec3 m_lightPosition;
 };
 
 class Sandbox : public BaldLion::Application

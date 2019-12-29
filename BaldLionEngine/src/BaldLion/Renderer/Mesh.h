@@ -16,7 +16,7 @@ namespace BaldLion
 		void SetUpMesh();
 		void Draw();
 
-		Ref<Material> GetMaterial() { return m_material; }
+		const Ref<Material>& GetMaterial() const { return m_material; } 
 
 	private:
 		void ExtractFromObj(const char* filePath);

@@ -19,10 +19,10 @@ namespace BaldLion
 		m_prevX = BaldLion::Input::GetMouseX();
 		m_prevY = BaldLion::Input::GetMouseY();
 
-		m_camera = ProjectionCamera(initialPosition, width, height, farPlane, nearPlane);
+		m_camera = std::make_shared<ProjectionCamera>(initialPosition, width, height, farPlane, nearPlane);
 	}
 
-	ProjectionCameraController::ProjectionCameraController(const ProjectionCamera & camera)
+	ProjectionCameraController::ProjectionCameraController(const Ref<ProjectionCamera>& camera)
 	{
 		m_camera = camera;
 
@@ -43,20 +43,20 @@ namespace BaldLion
 		glm::vec3 cameraMovement = glm::vec3(0, 0, 0);
 
 		if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
-			cameraMovement -= m_camera.GetForwardDirection() * deltaTime;
+			cameraMovement -= m_camera->GetForwardDirection() * deltaTime;
 		else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
-			cameraMovement += m_camera.GetForwardDirection() * deltaTime;
+			cameraMovement += m_camera->GetForwardDirection() * deltaTime;
 
 		if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
-			cameraMovement -= m_camera.GetRightDirection() * deltaTime;
+			cameraMovement -= m_camera->GetRightDirection() * deltaTime;
 		else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
-			cameraMovement += m_camera.GetRightDirection() * deltaTime;
+			cameraMovement += m_camera->GetRightDirection() * deltaTime;
 
 		if (BaldLion::Input::IsKeyPressed(BL_KEY_LEFT_SHIFT))
 			cameraMovement *= 2;
 
 		if (cameraMovement != glm::vec3(0, 0, 0))			
-			m_camera.SetPosition(m_camera.GetPosition() + cameraMovement);
+			m_camera->SetPosition(m_camera->GetPosition() + cameraMovement);
 
 		if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 		{
@@ -65,7 +65,7 @@ namespace BaldLion
 
 			m_cameraYawRotation -= deltaX * m_cameraRotationSpeed * deltaTime;
 			m_cameraPitchRotation -= deltaY * m_cameraRotationSpeed * deltaTime;
-			m_camera.SetRotation(m_cameraPitchRotation, m_cameraYawRotation);
+			m_camera->SetRotation(m_cameraPitchRotation, m_cameraYawRotation);
 		}
 
 		m_prevX = BaldLion::Input::GetMouseX();

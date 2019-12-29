@@ -28,6 +28,11 @@ namespace BaldLion
 		virtual void SetDiffuseColor(const glm::vec3 & diffuse) override;
 		virtual void SetSpecularColor(const glm::vec3 & specular) override;
 
+		virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex) override;
+
+		virtual Ref<Shader> GetShader() override { return m_shader; }
+		virtual const Ref<Shader>& GetShader() const override { return m_shader; }
+
 		virtual void Bind() override;
 	};
 }

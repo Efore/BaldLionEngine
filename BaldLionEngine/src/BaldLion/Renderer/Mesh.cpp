@@ -32,6 +32,7 @@ namespace BaldLion
 
 		vertexBuffer->SetLayout({
 			{ BaldLion::ShaderDataType::Float3, "vertex_position"},
+			{ BaldLion::ShaderDataType::Float3, "vertex_color"},
 			{ BaldLion::ShaderDataType::Float3, "vertex_normal"},
 			{ BaldLion::ShaderDataType::Float2, "vertex_texcoord"}
 		});
@@ -40,26 +41,25 @@ namespace BaldLion
 		m_vertexArray->AddVertexBuffer(vertexBuffer);
 
 		Ref<IndexBuffer> indexBuffer;
-		indexBuffer = (IndexBuffer::Create(&m_indices[0], m_indices.size()));
+		indexBuffer = (IndexBuffer::Create(&m_indices[0], (uint32_t)m_indices.size()));
 		m_vertexArray->AddIndexBuffer(indexBuffer);
 
-		auto shader = Renderer::GetShaderLibrary().Load("assets/shaders/Cube.glsl");
-		shader->Bind();
+		m_material = Material::Create("assets/shaders/Diffuse.glsl", glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), "assets/textures/diffuseTex.png", "assets/textures/specularTex.png");
+		m_material->Bind();
 	}
 
 	void Mesh::Draw()
 	{
-		auto shader = Renderer::GetShaderLibrary().Get("Cube");		
-		shader->Bind();
+		m_material->Bind();
 
-		Renderer::Submit(m_vertexArray, shader);		
+		Renderer::Submit(m_vertexArray, m_material->GetShader());
 	}
 
 	void Mesh::ExtractFromObj(const char* objPath)
 	{
 		std::vector<glm::vec3> vertexPositions;
 		vertexPositions.reserve(10000);
-
+		
 		std::vector<glm::vec3> vertexNormals;
 		vertexNormals.reserve(10000);
 
@@ -127,8 +127,8 @@ namespace BaldLion
 
 		for (size_t i = 0; i < vertexPositions.size(); ++i)
 		{
-			m_vertices.emplace_back(Vertex{ vertexPositions[i],vertexNormals[i],vertexTexCoords[i] });
-		}
+			m_vertices.emplace_back(Vertex{ vertexPositions[i], glm::vec3(1.0f), vertexNormals[i], vertexTexCoords[i] });
+		} 
 	}
 
 }

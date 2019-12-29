@@ -20,7 +20,7 @@ namespace BaldLion
 		virtual void Unbind() const override;
 		virtual const std::string& GetName() const override { return m_name; }
 
-		virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex);
+		virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex) override;
 
 	private:
 

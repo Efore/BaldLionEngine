@@ -21,18 +21,18 @@ namespace BaldLion
 
 		ProjectionCameraController(const glm::vec3& initialPosition, float width, float height, float farPlane, float nearPlane);
 
-		ProjectionCameraController(const ProjectionCamera& camera);
+		ProjectionCameraController(const Ref<ProjectionCamera>& camera);
 
 		virtual void OnUpdate(BaldLion::TimeStep timeStep) override;
 
-		ProjectionCamera& GetCamera() { return m_camera; }
-		const ProjectionCamera& GetCamera() const { return m_camera; }
+		Ref<ProjectionCamera>& GetCamera() { return m_camera; }
+		const Ref<ProjectionCamera>& GetCamera() const { return m_camera; }
 
 	private:
 		void HandleCameraMovement(float deltaTime);
 
 	private:
-		ProjectionCamera m_camera;
+		Ref<ProjectionCamera> m_camera;
 
 		float m_prevX;
 		float m_prevY;

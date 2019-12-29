@@ -48,6 +48,11 @@ namespace BaldLion
 		m_shader->SetUniform("material.specular", BaldLion::ShaderDataType::Float3, &m_specular);
 	}
 
+	void OpenGLMaterial::SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex)
+	{
+		m_shader->SetUniform(uniformName, dataType, uniformIndex);
+	}
+
 	void OpenGLMaterial::Bind()
 	{		
 		m_diffuseTex->Bind(m_diffuseTexSlot);

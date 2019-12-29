@@ -5,7 +5,7 @@
 
 namespace BaldLion
 {
-	Renderer::SceneData* Renderer::m_steneData = new Renderer::SceneData;
+	Renderer::SceneData* Renderer::m_sceneData = new Renderer::SceneData;
 	ShaderLibrary Renderer::m_shaderLibrary;
 	TextureLibrary Renderer::m_textureLibrary;
 
@@ -19,10 +19,11 @@ namespace BaldLion
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
 
-	void Renderer::BeginScene(ProjectionCamera& camera, const glm::vec3 direction)
+	void Renderer::BeginScene(const Ref<ProjectionCamera>& camera, const glm::vec3& lightPosition)
 	{
-		camera.SetDirection(direction);
-		m_steneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		m_sceneData->ViewProjectionMatrix = camera->GetViewProjectionMatrix();
+		m_sceneData->CameraPosition = camera->GetPosition();
+		m_sceneData->LightPosition = lightPosition;
 	}
 
 	void Renderer::EndScene()
@@ -34,7 +35,9 @@ namespace BaldLion
 	{
 		shader->Bind();
 		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_transform", BaldLion::ShaderDataType::Mat4, &(transform[0][0]));
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_viewProjection", BaldLion::ShaderDataType::Mat4, &(m_steneData->ViewProjectionMatrix));
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_viewProjection", BaldLion::ShaderDataType::Mat4, &(m_sceneData->ViewProjectionMatrix));
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_cameraPos", BaldLion::ShaderDataType::Float3, &(m_sceneData->CameraPosition));
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_lightPos", BaldLion::ShaderDataType::Float3, &(m_sceneData->LightPosition));
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

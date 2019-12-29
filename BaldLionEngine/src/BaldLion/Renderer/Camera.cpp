@@ -32,6 +32,7 @@ namespace BaldLion
 		m_position = initialPosition;
 		m_farPlane = farPlane;
 		m_nearPlane = nearPlane;
+		RecalculateViewMatrix();
 	}
 
 	void ProjectionCamera::RecalculateViewMatrix()
