@@ -8,9 +8,8 @@
 
 namespace BaldLion
 {
-	ProjectionCameraController::ProjectionCameraController(const glm::vec3 & initialPosition, float width, float height, float farPlane, float nearPlane)
+	ProjectionCameraController::ProjectionCameraController(const glm::vec3 & initialPosition, float width, float height, float farPlane, float nearPlane, float cameraMovementSpeed) : m_cameraMovementSpeed (cameraMovementSpeed)
 	{
-		m_cameraMovementSpeed = 1.0f;
 		m_cameraRotationSpeed = 10.0f;
 
 		m_cameraYawRotation = 0.0f;
@@ -43,14 +42,14 @@ namespace BaldLion
 		glm::vec3 cameraMovement = glm::vec3(0, 0, 0);
 
 		if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
-			cameraMovement -= m_camera->GetForwardDirection() * deltaTime;
+			cameraMovement -= m_camera->GetForwardDirection() * deltaTime * m_cameraMovementSpeed;
 		else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
-			cameraMovement += m_camera->GetForwardDirection() * deltaTime;
+			cameraMovement += m_camera->GetForwardDirection() * deltaTime * m_cameraMovementSpeed;
 
 		if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
-			cameraMovement -= m_camera->GetRightDirection() * deltaTime;
+			cameraMovement -= m_camera->GetRightDirection() * deltaTime * m_cameraMovementSpeed;
 		else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
-			cameraMovement += m_camera->GetRightDirection() * deltaTime;
+			cameraMovement += m_camera->GetRightDirection() * deltaTime * m_cameraMovementSpeed;
 
 		if (BaldLion::Input::IsKeyPressed(BL_KEY_LEFT_SHIFT))
 			cameraMovement *= 2;

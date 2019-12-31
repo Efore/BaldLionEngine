@@ -11,12 +11,12 @@ class RendererTestLayer : public BaldLion::Layer
 {
 public:
 	RendererTestLayer(uint32_t width, uint32_t height)
-		: BaldLion::Layer("Example"), m_ambientColor(1.0f), m_diffuseColor(1.0f), m_specularColor(1.0f)
+		: BaldLion::Layer("Example"), m_ambientColor(1.0f), m_diffuseColor(1.0f), m_specularColor(1.0f), m_lightPosition(0.0f,200.0f,0.0f), m_shininess(32.0f)
 	{
 
 		m_mesh = std::make_shared<BaldLion::Mesh>("assets/models/model.obj");
 		m_mesh->SetUpMesh();
-		m_cameraController = BaldLion::ProjectionCameraController(glm::vec3(0, 0, 2), (float)width, (float)height, 0.1f, 100.0f);
+		m_cameraController = BaldLion::ProjectionCameraController(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 500.0f, 100.0f);
 	}
 
 	virtual void OnUpdate(BaldLion::TimeStep timeStep) override
@@ -29,8 +29,9 @@ public:
 		BaldLion::Renderer::BeginScene(m_cameraController.GetCamera(),m_lightPosition);
 
 		m_mesh->GetMaterial()->SetAmbientColor(m_ambientColor);
-		m_mesh->GetMaterial()->SetAmbientColor(m_diffuseColor);
-		m_mesh->GetMaterial()->SetAmbientColor(m_specularColor);
+		m_mesh->GetMaterial()->SetDiffuseColor(m_diffuseColor);
+		m_mesh->GetMaterial()->SetSpecularColor(m_specularColor);
+		m_mesh->GetMaterial()->SetShininess(m_shininess);
 
 		m_mesh->Draw();
 
@@ -43,7 +44,8 @@ public:
 		ImGui::ColorEdit3("Ambient Color", glm::value_ptr(m_ambientColor));
 		ImGui::ColorEdit3("Diffuse Color", glm::value_ptr(m_diffuseColor));
 		ImGui::ColorEdit3("Specular Color", glm::value_ptr(m_specularColor));
-		ImGui::SliderFloat3("Light Position", glm::value_ptr(m_lightPosition), -100.0f, 100.0f);
+		ImGui::SliderFloat("Shininess", &m_shininess, 1.0f, 300.0f);
+		ImGui::SliderFloat3("Light Position", glm::value_ptr(m_lightPosition), -300.0f, 300.0f);
 		ImGui::End();
 	}
 
@@ -78,6 +80,8 @@ private:
 	glm::vec3 m_diffuseColor;
 	glm::vec3 m_specularColor;
 	glm::vec3 m_lightPosition;
+
+	float m_shininess;
 };
 
 class Sandbox : public BaldLion::Application

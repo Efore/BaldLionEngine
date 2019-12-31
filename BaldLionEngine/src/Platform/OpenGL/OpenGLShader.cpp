@@ -187,15 +187,14 @@ namespace BaldLion
 	void OpenGLShader::SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex)
 	{
 		int uniformID = GetUniformLocation(uniformName);
-
 		switch (dataType)
 		{
 		case ShaderDataType::Int:
-			glUniform1i(uniformID, (int&)uniformIndex);
+			glUniform1i(uniformID, *(int*)uniformIndex);
 			return;
 
 		case ShaderDataType::Float:
-			glUniform1f(uniformID, (float&)uniformIndex);
+			glUniform1f(uniformID, *(float*)uniformIndex);
 			return;
 
 		case ShaderDataType::Float2:

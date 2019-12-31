@@ -44,7 +44,7 @@ namespace BaldLion
 		indexBuffer = (IndexBuffer::Create(&m_indices[0], (uint32_t)m_indices.size()));
 		m_vertexArray->AddIndexBuffer(indexBuffer);
 
-		m_material = Material::Create("assets/shaders/Diffuse.glsl", glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), "assets/textures/diffuseTex.png", "assets/textures/specularTex.png");
+		m_material = Material::Create("assets/shaders/Diffuse.glsl", glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), 32.0f, "assets/textures/diffuseTex.png", "assets/textures/specularTex.png");
 		m_material->Bind();
 	}
 

@@ -19,7 +19,7 @@ namespace BaldLion
 	public:
 		ProjectionCameraController(){}
 
-		ProjectionCameraController(const glm::vec3& initialPosition, float width, float height, float farPlane, float nearPlane);
+		ProjectionCameraController(const glm::vec3& initialPosition, float width, float height, float farPlane, float nearPlane, float cameraMovementSpeed);
 
 		ProjectionCameraController(const Ref<ProjectionCamera>& camera);
 

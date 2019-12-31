@@ -37,7 +37,15 @@ namespace BaldLion
 		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_transform", BaldLion::ShaderDataType::Mat4, &(transform[0][0]));
 		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_viewProjection", BaldLion::ShaderDataType::Mat4, &(m_sceneData->ViewProjectionMatrix));
 		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_cameraPos", BaldLion::ShaderDataType::Float3, &(m_sceneData->CameraPosition));
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_lightPos", BaldLion::ShaderDataType::Float3, &(m_sceneData->LightPosition));
+
+		glm::vec3 lightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
+		glm::vec3 lightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+		glm::vec3 lightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
+
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_light.position", BaldLion::ShaderDataType::Float3, &(m_sceneData->LightPosition));
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_light.ambient", BaldLion::ShaderDataType::Float3, &(lightAmbient));
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_light.diffuse", BaldLion::ShaderDataType::Float3, &(lightDiffuse));
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_light.specular", BaldLion::ShaderDataType::Float3, &(lightSpecular));
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
