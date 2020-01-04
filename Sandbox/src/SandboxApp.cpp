@@ -14,8 +14,7 @@ public:
 		: BaldLion::Layer("Example"), m_ambientColor(1.0f), m_diffuseColor(1.0f), m_specularColor(1.0f), m_lightPosition(0.0f,200.0f,0.0f), m_shininess(32.0f)
 	{
 
-		m_mesh = std::make_shared<BaldLion::Mesh>("assets/models/model.obj");
-		m_mesh->SetUpMesh();
+		m_model = std::make_shared<BaldLion::Model>("assets/models/model.obj");
 		m_cameraController = BaldLion::ProjectionCameraController(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 500.0f, 100.0f);
 	}
 
@@ -28,12 +27,15 @@ public:
 
 		BaldLion::Renderer::BeginScene(m_cameraController.GetCamera(),m_lightPosition);
 
-		m_mesh->GetMaterial()->SetAmbientColor(m_ambientColor);
-		m_mesh->GetMaterial()->SetDiffuseColor(m_diffuseColor);
-		m_mesh->GetMaterial()->SetSpecularColor(m_specularColor);
-		m_mesh->GetMaterial()->SetShininess(m_shininess);
+		for (auto submesh : m_model->GetSubMeshes())
+		{
+			submesh.GetMaterial()->SetAmbientColor(m_ambientColor);
+			submesh.GetMaterial()->SetDiffuseColor(m_diffuseColor);
+			submesh.GetMaterial()->SetSpecularColor(m_specularColor);
+			submesh.GetMaterial()->SetShininess(m_shininess);
+		}
 
-		m_mesh->Draw();
+		m_model->Draw();
 
 		BaldLion::Renderer::EndScene();
 	}
@@ -73,7 +75,7 @@ private:
 	BaldLion::Ref<BaldLion::VertexArray> m_squareVertexArray;
 	BaldLion::Ref<BaldLion::Texture2D> m_texture, m_textureAlpha;
 
-	BaldLion::Ref<BaldLion::Mesh> m_mesh;
+	BaldLion::Ref<BaldLion::Model> m_model;
 	BaldLion::ProjectionCameraController m_cameraController;
 
 	glm::vec3 m_ambientColor;

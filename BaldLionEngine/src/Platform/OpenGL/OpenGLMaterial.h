@@ -32,9 +32,8 @@ namespace BaldLion
 
 		virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex) override;
 
-		virtual Ref<Shader> GetShader() override { return m_shader; }
-		virtual const Ref<Shader>& GetShader() const override { return m_shader; }
+		virtual Ref<Shader> GetShader() const override  { return m_shader; }
 
-		virtual void Bind() override;
+		virtual void Bind() const override;
 	};
 }

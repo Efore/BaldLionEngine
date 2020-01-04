@@ -16,6 +16,7 @@ IncludeDir["Glad"] = "BaldLionEngine/vendor/Glad/include"
 IncludeDir["ImGui"] = "BaldLionEngine/vendor/imgui"
 IncludeDir["glm"] = "BaldLionEngine/vendor/glm/"
 IncludeDir["stb_image"] = "BaldLionEngine/vendor/stb_image/"
+IncludeDir["assimp"] = "BaldLionEngine/vendor/assimp/include"
 
 include "BaldLionEngine/vendor/GLFW"
 include "BaldLionEngine/vendor/Glad"
@@ -58,8 +59,13 @@ project "BaldLionEngine"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
-		
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.assimp}"		
+	}	
+	
+	libdirs 
+	{ 
+		"BaldLionEngine/vendor/assimp/lib" 
 	}
 	
 	links
@@ -67,7 +73,7 @@ project "BaldLionEngine"
 		"GLFW",
 		"Glad",
 		"ImGui",
-		"opengl32.lib"
+		"assimp.lib"
 	}
 
 	filter "system:windows"		
@@ -115,7 +121,8 @@ project "Sandbox"
 		"BaldLionEngine/vendor/spdlog/include",
 		"BaldLionEngine/src",
 		"BaldLionEngine/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.assimp}"
 	}
 
 	links

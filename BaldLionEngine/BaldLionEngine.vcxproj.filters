@@ -114,7 +114,13 @@
     <ClInclude Include="src\BaldLion\Renderer\GraphicsContext.h">
       <Filter>src\BaldLion\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Renderer\Material.h">
+      <Filter>src\BaldLion\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Renderer\Mesh.h">
+      <Filter>src\BaldLion\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Renderer\Model.h">
       <Filter>src\BaldLion\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Renderer\RenderCommand.h">
@@ -145,6 +151,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLMaterial.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
@@ -1257,8 +1266,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Renderer\Material.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLMaterial.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Application.cpp">
@@ -1285,7 +1292,13 @@
     <ClCompile Include="src\BaldLion\Renderer\CameraController.cpp">
       <Filter>src\BaldLion\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Renderer\Material.cpp">
+      <Filter>src\BaldLion\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\BaldLion\Renderer\Mesh.cpp">
+      <Filter>src\BaldLion\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Renderer\Model.cpp">
       <Filter>src\BaldLion\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Renderer\RenderCommand.cpp">
@@ -1312,6 +1325,9 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLMaterial.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1336,7 +1352,5 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Renderer\Material.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLMaterial.cpp" />
   </ItemGroup>
 </Project>

@@ -18,12 +18,8 @@
 #include "BaldLion/Renderer/Renderer.h"
 #include "BaldLion/Renderer/RenderCommand.h"
 
-#include "BaldLion/Renderer/Texture.h"
-#include "BaldLion/Renderer/Shader.h"
 #include "BaldLion/Renderer/Buffer.h"
-#include "BaldLion/Renderer/Mesh.h"
-#include "BaldLion/Renderer/VertexArray.h"
-
+#include "BaldLion/Renderer/Model.h"
 
 #include "BaldLion/Renderer/CameraController.h"
 

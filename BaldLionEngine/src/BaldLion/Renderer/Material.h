@@ -18,11 +18,10 @@ namespace BaldLion{
 
 		virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex) = 0;
 
-		virtual Ref<Shader> GetShader() = 0;
-		virtual const Ref<Shader>& GetShader() const = 0;
+		virtual Ref<Shader> GetShader() const = 0;
 
 		virtual ~Material() = default;
 
-		virtual void Bind() = 0;
+		virtual void Bind() const = 0;
 	};
 }

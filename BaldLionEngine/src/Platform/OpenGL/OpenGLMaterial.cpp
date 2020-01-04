@@ -61,10 +61,10 @@ namespace BaldLion
 		m_shader->SetUniform(uniformName, dataType, uniformIndex);
 	}
 
-	void OpenGLMaterial::Bind()
+	void OpenGLMaterial::Bind() const
 	{		
 		m_diffuseTex->Bind(m_diffuseTexSlot);
 		m_specularTex->Bind(m_specularTexSlot);
-		m_shader->Bind();		
+		m_shader->Bind(); 
 	}
 }
