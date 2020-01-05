@@ -21,6 +21,8 @@ namespace BaldLion
 		m_specularTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(specularTexPath));
 		m_specularTex->Bind(m_specularTexSlot);
 
+		m_shader->Bind();
+
 		m_shader->SetUniform("u_material.ambient", BaldLion::ShaderDataType::Float3, &m_ambient);
 		m_shader->SetUniform("u_material.diffuse", BaldLion::ShaderDataType::Float3, &m_diffuse);
 		m_shader->SetUniform("u_material.specular", BaldLion::ShaderDataType::Float3, &m_specular);
@@ -29,7 +31,6 @@ namespace BaldLion
 		m_shader->SetUniform("u_material.diffuseTex", BaldLion::ShaderDataType::Int, &m_diffuseTexSlot);
 		m_shader->SetUniform("u_material.specularTex", BaldLion::ShaderDataType::Int, &m_specularTexSlot);
 
-		m_shader->Bind();
 	}
 
 	void OpenGLMaterial::SetAmbientColor(const glm::vec3 & ambient)
