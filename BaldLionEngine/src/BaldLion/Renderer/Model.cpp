@@ -104,7 +104,13 @@ namespace BaldLion
 				indices.push_back(face.mIndices[j]);
 		}
 
-		return Mesh(vertices, indices, Material::Create("assets/shaders/Diffuse.glsl", glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), 32.0f, "assets/textures/diffuseTex.png", "assets/textures/specularTex.png"));
+		return Mesh(vertices, indices, 
+			Material::Create("assets/shaders/BaseLit.glsl", glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), 32.0f, 
+				"assets/textures/diffuseTex.png", 
+				"assets/textures/diffuseTex.png",
+				"assets/textures/specularTex.png",
+				"assets/textures/diffuseTex.png"));
 	}
 
 }
+

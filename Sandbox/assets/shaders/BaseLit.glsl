@@ -37,11 +37,13 @@ struct Light
 
 struct Material
 {
-	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
+	vec3 diffuseColor;
+	vec3 emissiveColor;
+	vec3 specularColor;
 	sampler2D diffuseTex;
+	sampler2D emissiveTex;
 	sampler2D specularTex;
+	sampler2D normalTex;
 	float shininess;
 };
 
@@ -61,14 +63,19 @@ uniform vec3 u_lightPos;
 //Functions
 vec3 calculateAmbient(Material material, Light light)
 {
-	return material.ambient * light.ambient;
+	return material.diffuseColor * light.ambient;
+}
+
+vec3 calculateEmission(Material material)
+{
+	return vec3(texture(material.emissiveTex, vs_texcoord)) * material.emissiveColor;
 }
 
 vec3 calculateDiffuse(Material material, Light light, vec3 vs_position, vec3 vs_normal, vec3 lightPos)
 {
 	vec3 posToLightDirVec = normalize(lightPos - vs_position);
 	float diffuse = max(dot(posToLightDirVec, vs_normal), 0.0f);
-	vec3 diffuseFinal = material.diffuse * diffuse * light.diffuse;
+	vec3 diffuseFinal = material.diffuseColor * diffuse * light.diffuse;
 
 	return diffuseFinal;
 }
@@ -79,7 +86,7 @@ vec3 calculateSpecular(Material material, Light light, vec3 vs_position, vec3 vs
 	vec3 reflectDirVec = normalize(reflect(lightToPosDirVec, vs_normal));
 	vec3 posToViewDirVec = normalize(cameraPos - vs_position);
 	float specularConstant = pow(max(dot(posToViewDirVec, reflectDirVec), 0.0f), material.shininess);
-	vec3 specularFinal = vec3(texture(material.specularTex, vs_texcoord)) * material.specular * light.specular * specularConstant;
+	vec3 specularFinal = vec3(texture(material.specularTex, vs_texcoord)) * material.specularColor * light.specular * specularConstant;
 
 	return specularFinal;
 }
@@ -96,6 +103,8 @@ void main()
 
 	//Specular light
 	vec3 specularFinal = calculateSpecular(u_material, u_light, vs_position, norm, u_light.position, u_cameraPos);
+
+	vec3 emissionFinal = calculateEmission(u_material);
 
 	//Final light
 	fs_color = texture(u_material.diffuseTex, vs_texcoord) * (vec4(ambientFinal, 1.f) + vec4(diffuseFinal, 1.f) + vec4(specularFinal, 1.f));

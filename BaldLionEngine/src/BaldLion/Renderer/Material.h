@@ -9,9 +9,9 @@ namespace BaldLion{
 	class Material {
 
 	public:
-		static Ref<Material> Create(const std::string& shaderPath, const glm::vec3& ambientColor, const glm::vec3& diffuseColor, const glm::vec3& specularColor, float shininess, const std::string& diffuseTexPath, const std::string& specularTexPath);
+		static Ref<Material> Create(const std::string& shaderPath, const glm::vec3& emissive, const glm::vec3& diffuse, const glm::vec3& specular, float shininess, const std::string& diffuseTexPath, const std::string& emissiveTexPath, const std::string& specularTexPath, const std::string& normalTexPath);
 
-		virtual void SetAmbientColor(const glm::vec3& ambient) = 0;
+		virtual void SetEmissiveColor(const glm::vec3& emissive) = 0;
 		virtual void SetDiffuseColor(const glm::vec3& diffuse) = 0;
 		virtual void SetSpecularColor(const glm::vec3& specular) = 0;
 		virtual void SetShininess(float value) = 0;

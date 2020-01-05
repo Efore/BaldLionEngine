@@ -10,22 +10,29 @@ namespace BaldLion
 	private:
 		Ref<OpenGLShader> m_shader;
 
-		glm::vec3 m_ambient;
-		glm::vec3 m_diffuse;
-		glm::vec3 m_specular;
+		glm::vec3 m_emissiveColor;
+		glm::vec3 m_diffuseColor;
+		glm::vec3 m_specularColor;
 		float m_shininess;
 
 		Ref<OpenGLTexture2D> m_diffuseTex;
 		int m_diffuseTexSlot;
 
+		Ref<OpenGLTexture2D> m_emissiveTex;
+		int m_emissiveTexSlot;
+
 		Ref<OpenGLTexture2D> m_specularTex;
 		int m_specularTexSlot;
 
+		Ref<OpenGLTexture2D> m_normalTex;
+		int m_normalTexSlot;
+
+
 	public:
 
-		OpenGLMaterial(const std::string& shaderPath, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular, float shininess, const std::string& diffuseTexPath, const std::string& specularTexPath);
+		OpenGLMaterial(const std::string& shaderPath, const glm::vec3& emissive, const glm::vec3& diffuse, const glm::vec3& specular, float shininess, const std::string& diffuseTexPath, const std::string& emissiveTexPath, const std::string& specularTexPath, const std::string& normalTexPath);
 
-		virtual void SetAmbientColor(const glm::vec3 & ambient) override;
+		virtual void SetEmissiveColor(const glm::vec3 & emissive) override;
 		virtual void SetDiffuseColor(const glm::vec3 & diffuse) override;
 		virtual void SetSpecularColor(const glm::vec3 & specular) override;
 		virtual void SetShininess(float value) override;
