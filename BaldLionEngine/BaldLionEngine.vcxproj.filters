@@ -1266,6 +1266,9 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Renderer\LightManager.h" />
+    <ClInclude Include="src\BaldLion\Renderer\LightClasses\PointLight.h" />
+    <ClInclude Include="src\BaldLion\Renderer\LightClasses\DirectionalLight.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Application.cpp">
@@ -1352,5 +1355,6 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Renderer\LightManager.cpp" />
   </ItemGroup>
 </Project>

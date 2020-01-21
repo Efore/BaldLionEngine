@@ -11,11 +11,42 @@ class RendererTestLayer : public BaldLion::Layer
 {
 public:
 	RendererTestLayer(uint32_t width, uint32_t height)
-		: BaldLion::Layer("Example"), m_emissiveColor(1.0f), m_diffuseColor(1.0f), m_specularColor(1.0f), m_lightPosition(0.0f,200.0f,0.0f), m_shininess(32.0f)
+		: BaldLion::Layer("Example"), m_emissiveColor(1.0f), m_diffuseColor(1.0f), m_specularColor(1.0f), m_shininess(32.0f)
 	{
 
 		m_model = std::make_shared<BaldLion::Model>("assets/models/model.obj");
 		m_cameraController = BaldLion::ProjectionCameraController(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 500.0f, 100.0f);
+
+		directionalLight = { 
+			glm::vec3(-0.2f, -1.0f, -0.3f), 
+			glm::vec3(1.0f, 1.0f, 1.0f),
+			glm::vec3(0.4f, 0.4f, 0.4f), 
+			glm::vec3(0.5f, 0.5f, 0.5f)
+		};
+
+		pointLights.emplace_back(BaldLion::PointLight 
+			({
+				glm::vec3(0.7f,  0.2f,  2.0f),
+				1.0f,
+				0.009f,
+				0.032f,
+				glm::vec3(1.0f, 1.0f, 1.0f),
+				glm::vec3(0.8f, 0.8f, 0.8f),
+				glm::vec3(1.0f, 1.0f, 1.0f)
+			})
+		);
+
+		pointLights.emplace_back(BaldLion::PointLight
+		({
+			glm::vec3(0.7f,  0.2f,  2.0f),
+			1.0f,
+			0.009f,
+			0.032f,
+			glm::vec3(1.0f, 1.0f, 1.0f),
+			glm::vec3(0.8f, 0.8f, 0.8f),
+			glm::vec3(1.0f, 1.0f, 1.0f)
+			})
+		);
 	}
 
 	virtual void OnUpdate(BaldLion::TimeStep timeStep) override
@@ -25,7 +56,7 @@ public:
 		BaldLion::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		BaldLion::RenderCommand::Clear();
 
-		BaldLion::Renderer::BeginScene(m_cameraController.GetCamera(),m_lightPosition);
+		BaldLion::Renderer::BeginScene(m_cameraController.GetCamera(), directionalLight, pointLights);
 
 		for (auto submesh : m_model->GetSubMeshes())
 		{
@@ -43,11 +74,30 @@ public:
 	virtual void OnImGuiRender() override 
 	{
 		ImGui::Begin("Settings");
+		ImGui::Text("Material");
 		ImGui::SliderFloat3("Emissive Color", glm::value_ptr(m_emissiveColor), 0.0f, 5.0f);
 		ImGui::ColorEdit3("Diffuse Color", glm::value_ptr(m_diffuseColor));
 		ImGui::ColorEdit3("Specular Color", glm::value_ptr(m_specularColor));
 		ImGui::SliderFloat("Shininess", &m_shininess, 1.0f, 300.0f);
-		ImGui::SliderFloat3("Light Position", glm::value_ptr(m_lightPosition), -300.0f, 300.0f);
+
+		ImGui::Text("Directional Light");
+		ImGui::SliderFloat3("Light Direction", glm::value_ptr(directionalLight.direction), -300.0f, 300.0f);
+		ImGui::ColorEdit3("Light Ambient Color", glm::value_ptr(directionalLight.ambientColor));
+		ImGui::ColorEdit3("Light Diffuse Color", glm::value_ptr(directionalLight.diffuseColor));
+		ImGui::ColorEdit3("Light Specular Color", glm::value_ptr(directionalLight.specularColor));
+
+		for (int i = 0; i < pointLights.size(); ++i)
+		{
+			ImGui::Text(("Point Light " + std::to_string(i)).c_str());
+			ImGui::SliderFloat3(("Light Position " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].position), -300.0f, 300.0f);
+			ImGui::SliderFloat(("Constant " + std::to_string(i)).c_str(), &(pointLights[i].constant), 0.001f, 1.0f);
+			ImGui::SliderFloat(("Linear " + std::to_string(i)).c_str(), &(pointLights[i].linear), 0.001f, 1.0f);
+			ImGui::SliderFloat(("Quadratic " + std::to_string(i)).c_str(), &(pointLights[i].quadratic), 0.001f, 1.0f);
+			ImGui::ColorEdit3(("LP Ambient Color " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].ambientColor));
+			ImGui::ColorEdit3(("LP Diffuse Color " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].diffuseColor));
+			ImGui::ColorEdit3(("LP Specular Color " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].specularColor));
+		}
+
 		ImGui::End();
 	}
 
@@ -78,10 +128,12 @@ private:
 	BaldLion::Ref<BaldLion::Model> m_model;
 	BaldLion::ProjectionCameraController m_cameraController;
 
+	BaldLion::DirectionalLight directionalLight;
+	std::vector<BaldLion::PointLight> pointLights;
+
 	glm::vec3 m_emissiveColor;
 	glm::vec3 m_diffuseColor;
 	glm::vec3 m_specularColor;
-	glm::vec3 m_lightPosition;
 
 	float m_shininess;
 };

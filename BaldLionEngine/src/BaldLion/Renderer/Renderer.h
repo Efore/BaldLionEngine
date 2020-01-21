@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "LightManager.h"
 
 namespace BaldLion
 {
@@ -14,7 +15,7 @@ namespace BaldLion
 		static void Init();
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
-		static void BeginScene(const Ref<ProjectionCamera>& camera, const glm::vec3& lightPosition);
+		static void BeginScene(const Ref<ProjectionCamera>& camera, const DirectionalLight& directionalLight, const std::vector<PointLight>& pointLights);
 		static void EndScene();
 
 		static ShaderLibrary& GetShaderLibrary() { return m_shaderLibrary; }
@@ -28,7 +29,6 @@ namespace BaldLion
 		{
 			glm::mat4 ViewProjectionMatrix;
 			glm::vec3 CameraPosition;
-			glm::vec3 LightPosition;
 		};
 
 		static SceneData* m_sceneData;
