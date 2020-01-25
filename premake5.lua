@@ -100,8 +100,8 @@ project "BaldLionEngine"
 		runtime "Release"
 		optimize "on"
 
-project "Sandbox"
-	location "Sandbox"
+project "BaldLionEditor"
+	location "BaldLionEditor"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
@@ -110,6 +110,10 @@ project "Sandbox"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+	debugenvs { 
+		"PATH=%PATH%;$(ProjectDir)lib"
+	}
+	
 	files
 	{
 		"%{prj.name}/src/**.h",

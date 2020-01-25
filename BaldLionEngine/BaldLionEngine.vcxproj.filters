@@ -16,14 +16,20 @@
     <Filter Include="src\BaldLion\ImGui">
       <UniqueIdentifier>{8B0E0574-77F2-C5C9-E052-C01CCC55B04B}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\BaldLion\Renderer">
-      <UniqueIdentifier>{676D22FA-D3D9-DDF4-9CCD-755208F9FF5C}</UniqueIdentifier>
+    <Filter Include="src\BaldLion\Rendering">
+      <UniqueIdentifier>{2E2B703E-1A25-9990-0392-2FA1EF2AFFFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\Rendering\LightClasses">
+      <UniqueIdentifier>{43518B9A-AF0A-F644-386A-101FA422ACB4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\Rendering\Platform">
+      <UniqueIdentifier>{42DB6498-AEBE-73D8-B7C1-A11423243A29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\Rendering\Platform\OpenGL">
+      <UniqueIdentifier>{360656DC-2258-2DCC-0B77-6ADCF76746B5}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Platform\OpenGL">
-      <UniqueIdentifier>{35A49437-A105-7245-2A73-B8F796D3A804}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Platform\Windows">
       <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
@@ -101,6 +107,78 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\MouseButtonCodes.h">
       <Filter>src\BaldLion</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Buffer.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Camera.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\CameraController.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\LightClasses\DirectionalLight.h">
+      <Filter>src\BaldLion\Rendering\LightClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\LightClasses\PointLight.h">
+      <Filter>src\BaldLion\Rendering\LightClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\LightManager.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Material.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Mesh.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Model.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLBuffer.h">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLMaterial.h">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLRendererAPI.h">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLShader.h">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTexture.h">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLVertexArray.h">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\RenderCommand.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Renderer.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\RendererAPI.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Shader.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Texture.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Vertex.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\VertexArray.h">
+      <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Window.h">
       <Filter>src\BaldLion</Filter>
@@ -1203,72 +1281,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\LightClasses\DirectionalLight.h" />
-    <ClInclude Include="src\BaldLion\Rendering\LightClasses\PointLight.h" />
-    <ClInclude Include="src\BaldLion\Rendering\Buffer.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Camera.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\CameraController.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\LightManager.h" />
-    <ClInclude Include="src\BaldLion\Rendering\Material.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Mesh.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Model.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\RenderCommand.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Renderer.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\RendererAPI.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Shader.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Texture.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Vertex.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\VertexArray.h">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLBuffer.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLContext.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLMaterial.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLRendererAPI.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLShader.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTexture.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLVertexArray.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Application.cpp">
@@ -1286,6 +1298,66 @@
     <ClCompile Include="src\BaldLion\Log.cpp">
       <Filter>src\BaldLion</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Camera.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\CameraController.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\LightManager.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Material.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Mesh.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Model.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLBuffer.cpp">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLMaterial.cpp">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLRendererAPI.cpp">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLShader.cpp">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTexture.cpp">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLVertexArray.cpp">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\RenderCommand.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Renderer.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\RendererAPI.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Shader.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Texture.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\VertexArray.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -1297,64 +1369,6 @@
     </ClCompile>
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Camera.cpp">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\CameraController.cpp">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\LightManager.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\Material.cpp">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Mesh.cpp">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Model.cpp">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\RenderCommand.cpp">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Renderer.cpp">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\RendererAPI.cpp">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Shader.cpp">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Texture.cpp">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\VertexArray.cpp">
-      <Filter>src\BaldLion\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLBuffer.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLContext.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLMaterial.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLRendererAPI.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLShader.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTexture.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLVertexArray.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
