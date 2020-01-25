@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaldLion/Window.h"
-#include "BaldLion/Renderer/GraphicsContext.h"
+#include "BaldLion/Rendering/GraphicsContext.h"
 #include <GLFW/glfw3.h>
 
 namespace BaldLion
@@ -29,7 +29,7 @@ namespace BaldLion
 		virtual void Shutdown();
 	private:
 		GLFWwindow * m_window;
-		GraphicsContext* m_context;
+		Rendering::GraphicsContext* m_context;
 
 		struct WindowData
 		{

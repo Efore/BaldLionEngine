@@ -3,9 +3,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Platform/OpenGL/OpenGLShader.h"
+#include "BaldLion/Rendering/Platform/OpenGL/OpenGLShader.h"
 #include "ImGui/imgui.h"
 
+using namespace BaldLion;
+using namespace BaldLion::Rendering;
 
 class RendererTestLayer : public BaldLion::Layer
 {
@@ -14,8 +16,8 @@ public:
 		: BaldLion::Layer("Example"), m_emissiveColor(1.0f), m_diffuseColor(1.0f), m_specularColor(1.0f), m_shininess(32.0f)
 	{
 
-		m_model = std::make_shared<BaldLion::Model>("assets/models/model.obj");
-		m_cameraController = BaldLion::ProjectionCameraController(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 500.0f, 100.0f);
+		m_model = std::make_shared<Model>("assets/models/model.obj");
+		m_cameraController = ProjectionCameraController(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 500.0f, 100.0f);
 
 		directionalLight = { 
 			glm::vec3(-0.2f, -1.0f, -0.3f), 
@@ -24,7 +26,7 @@ public:
 			glm::vec3(0.5f, 0.5f, 0.5f)
 		};
 
-		pointLights.emplace_back(BaldLion::PointLight 
+		pointLights.emplace_back(PointLight 
 			({
 				glm::vec3(0.7f,  0.2f,  2.0f),
 				1.0f,
@@ -36,7 +38,7 @@ public:
 			})
 		);
 
-		pointLights.emplace_back(BaldLion::PointLight
+		pointLights.emplace_back(PointLight
 		({
 			glm::vec3(0.7f,  0.2f,  2.0f),
 			1.0f,
@@ -53,10 +55,10 @@ public:
 	{
 		m_cameraController.OnUpdate(timeStep);
 
-		BaldLion::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-		BaldLion::RenderCommand::Clear();
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		RenderCommand::Clear();
 
-		BaldLion::Renderer::BeginScene(m_cameraController.GetCamera(), directionalLight, pointLights);
+		Renderer::BeginScene(m_cameraController.GetCamera(), directionalLight, pointLights);
 
 		for (auto submesh : m_model->GetSubMeshes())
 		{
@@ -68,7 +70,7 @@ public:
 
 		m_model->Draw();
 
-		BaldLion::Renderer::EndScene();
+		Renderer::EndScene();
 	}
 
 	virtual void OnImGuiRender() override 
@@ -115,21 +117,21 @@ public:
 		m_cameraController.GetCamera()->SetWidth((float)width);
 		m_cameraController.GetCamera()->SetHeight((float)height);
 
-		BaldLion::Renderer::OnWindowResize(width, height);		
+		Renderer::OnWindowResize(width, height);		
 
 		return true;
 	}
 
 private:
 
-	BaldLion::Ref<BaldLion::VertexArray> m_squareVertexArray;
-	BaldLion::Ref<BaldLion::Texture2D> m_texture, m_textureAlpha;
+	Ref<VertexArray> m_squareVertexArray;
+	Ref<Texture2D> m_texture, m_textureAlpha;
 
-	BaldLion::Ref<BaldLion::Model> m_model;
-	BaldLion::ProjectionCameraController m_cameraController;
+	Ref<Model> m_model;
+	ProjectionCameraController m_cameraController;
 
-	BaldLion::DirectionalLight directionalLight;
-	std::vector<BaldLion::PointLight> pointLights;
+	DirectionalLight directionalLight;
+	std::vector<PointLight> pointLights;
 
 	glm::vec3 m_emissiveColor;
 	glm::vec3 m_diffuseColor;
@@ -138,7 +140,7 @@ private:
 	float m_shininess;
 };
 
-class Sandbox : public BaldLion::Application
+class Sandbox : public Application
 {
 public:
 	Sandbox()

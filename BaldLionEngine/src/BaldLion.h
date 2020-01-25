@@ -15,13 +15,13 @@
 #include "BaldLion/ImGui/ImGuiLayer.h"
 
 // --------------- Renderer -----------------------
-#include "BaldLion/Renderer/Renderer.h"
-#include "BaldLion/Renderer/RenderCommand.h"
+#include "BaldLion/Rendering/Renderer.h"
+#include "BaldLion/Rendering/RenderCommand.h"
 
-#include "BaldLion/Renderer/Buffer.h"
-#include "BaldLion/Renderer/Model.h"
+#include "BaldLion/Rendering/Buffer.h"
+#include "BaldLion/Rendering/Model.h"
 
-#include "BaldLion/Renderer/CameraController.h"
+#include "BaldLion/Rendering/CameraController.h"
 
 // --------------- Entry point -----------------------
 

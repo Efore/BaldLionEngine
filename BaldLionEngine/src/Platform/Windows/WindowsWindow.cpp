@@ -4,7 +4,7 @@
 #include "BaldLion/Events/MouseEvent.h"
 #include "BaldLion/Events/ApplicationEvent.h"
 #include "BaldLion/Events/KeyEvent.h"
-#include "Platform/OpenGL/OpenGLContext.h"
+#include "BaldLion/Rendering/Platform/OpenGL/OpenGLContext.h"
 
 #include <glad/glad.h>
 
@@ -49,7 +49,7 @@ namespace BaldLion
 		}
 
 		m_window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
-		m_context = new OpenGLContext(m_window);
+		m_context = new Rendering::OpenGLContext(m_window);
 
 		m_context->Init();			   		 
 
