@@ -108,10 +108,10 @@ namespace BaldLion
 
 			return Mesh(vertices, indices,
 				Material::Create("assets/shaders/BaseLit.glsl", glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), 32.0f,
-					"assets/textures/diffuseTex.png",
-					"assets/textures/diffuseTex.png",
-					"assets/textures/specularTex.png",
-					"assets/textures/diffuseTex.png"));
+					"assets/textures/Glock_17/albedo.png",
+					"assets/textures/Glock_17/albedo.png",
+					"assets/textures/Glock_17/metallic.png",
+					"assets/textures/Glock_17/normal.png"));
 		}
 	}
 

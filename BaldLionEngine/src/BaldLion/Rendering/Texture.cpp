@@ -35,7 +35,7 @@ namespace BaldLion
 
 		Ref<Texture2D> TextureLibrary::Load(const std::string& filepath)
 		{	
-			std::string name = Texture::GetNameFromPath(filepath);
+			const std::string name = TextureLibrary::GetNameFromPath(filepath);
 			
 			if (Exists(name))
 				return Get(name);
@@ -67,7 +67,7 @@ namespace BaldLion
 			return m_textures.find(name) != m_textures.end();
 		}
 
-		std::string Texture::GetNameFromPath(const std::string &path)
+		std::string TextureLibrary::GetNameFromPath(const std::string &path)
 		{
 			// Extracting name from lastpath
 			auto lastSlash = path.find_last_of("/\\");

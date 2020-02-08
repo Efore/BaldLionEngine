@@ -19,14 +19,13 @@ namespace BaldLion {
 
 			virtual const std::string& GetName() const = 0;
 
-			static std::string GetNameFromPath(const std::string &path);
+			
 		};
 
 		class Texture2D : public Texture
 		{
 		public:
 			static Ref<Texture2D> Create(const std::string& path);
-
 		};
 
 		class TextureLibrary
@@ -41,6 +40,8 @@ namespace BaldLion {
 			Ref<Texture2D> Get(const std::string& name);
 
 			bool Exists(const std::string& name) const;
+
+			static std::string GetNameFromPath(const std::string &path);
 
 		private:
 			std::unordered_map<std::string, Ref<Texture2D>> m_textures;

@@ -46,7 +46,7 @@ namespace BaldLion
 			static Ref<Shader> Create(const std::string& filepath);
 			static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 
-			static std::string GetNameFromPath(const std::string& path);
+		
 		};
 
 		class ShaderLibrary
@@ -61,6 +61,8 @@ namespace BaldLion
 			Ref<Shader> Get(const std::string& name);
 
 			bool Exists(const std::string& name) const;
+
+			static std::string GetNameFromPath(const std::string& path);
 
 		private:
 			std::unordered_map<std::string, Ref<Shader>> m_shaders;

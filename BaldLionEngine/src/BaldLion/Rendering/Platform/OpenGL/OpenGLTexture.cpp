@@ -48,7 +48,7 @@ namespace BaldLion
 
 			stbi_image_free(data);
 
-			m_name = Texture::GetNameFromPath(path);
+			m_name = TextureLibrary::GetNameFromPath(path);
 		}
 
 		OpenGLTexture2D::~OpenGLTexture2D()

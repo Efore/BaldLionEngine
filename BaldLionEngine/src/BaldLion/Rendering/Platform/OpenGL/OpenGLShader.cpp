@@ -26,7 +26,7 @@ namespace BaldLion
 			auto shaderSources = PreProcess(source);
 			Compile(shaderSources);
 
-			m_name = Shader::GetNameFromPath(filepath);
+			m_name = ShaderLibrary::GetNameFromPath(filepath);
 		}
 
 		OpenGLShader::OpenGLShader(const std::string& name, const std::string & vertexSrc, const std::string & fragmentSrc)

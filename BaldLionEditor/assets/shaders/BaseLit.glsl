@@ -18,7 +18,7 @@ void main()
 {
 	vs_position = vec3(u_transform * vec4(vertex_position, 1.f)).xyz;
 	vs_color = vertex_color;
-	vs_texcoord = vertex_texcoord;
+	vs_texcoord = vec2(vertex_texcoord.x,-vertex_texcoord.y);
 	vs_normal = mat3(transpose(inverse(u_transform))) * vertex_normal;
 
 	gl_Position = u_viewProjection * u_transform * vec4(vertex_position, 1.f);
