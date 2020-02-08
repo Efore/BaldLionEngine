@@ -9,6 +9,22 @@ namespace BaldLion
 	{
 		class OpenGLMaterial : public Material
 		{
+
+		public:
+
+			OpenGLMaterial(const std::string& shaderPath, const glm::vec3& emissive, const glm::vec3& diffuse, const glm::vec3& specular, float shininess, const std::string& diffuseTexPath, const std::string& emissiveTexPath, const std::string& specularTexPath, const std::string& normalTexPath);
+
+			virtual void SetEmissiveColor(const glm::vec3 & emissive) override;
+			virtual void SetDiffuseColor(const glm::vec3 & diffuse) override;
+			virtual void SetSpecularColor(const glm::vec3 & specular) override;
+			virtual void SetShininess(float value) override;
+
+			virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex) override;
+
+			virtual Ref<Shader> GetShader() const override { return m_shader; }
+
+			virtual void Bind() const override;
+
 		private:
 			Ref<OpenGLShader> m_shader;
 
@@ -28,22 +44,6 @@ namespace BaldLion
 
 			Ref<OpenGLTexture2D> m_normalTex;
 			int m_normalTexSlot;
-
-
-		public:
-
-			OpenGLMaterial(const std::string& shaderPath, const glm::vec3& emissive, const glm::vec3& diffuse, const glm::vec3& specular, float shininess, const std::string& diffuseTexPath, const std::string& emissiveTexPath, const std::string& specularTexPath, const std::string& normalTexPath);
-
-			virtual void SetEmissiveColor(const glm::vec3 & emissive) override;
-			virtual void SetDiffuseColor(const glm::vec3 & diffuse) override;
-			virtual void SetSpecularColor(const glm::vec3 & specular) override;
-			virtual void SetShininess(float value) override;
-
-			virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex) override;
-
-			virtual Ref<Shader> GetShader() const override { return m_shader; }
-
-			virtual void Bind() const override;
 		};
 	}
 }

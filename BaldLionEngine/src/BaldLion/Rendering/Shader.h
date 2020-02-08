@@ -45,6 +45,8 @@ namespace BaldLion
 
 			static Ref<Shader> Create(const std::string& filepath);
 			static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
+
+			static std::string GetNameFromPath(const std::string& path);
 		};
 
 		class ShaderLibrary

@@ -21,6 +21,8 @@ namespace BaldLion
 
 		void Mesh::SetUpMesh()
 		{
+			m_vertexArray = VertexArray::Create();
+
 			Ref<VertexBuffer> vertexBuffer;
 			vertexBuffer = VertexBuffer::Create(&m_vertices[0], (uint32_t)(m_vertices.size() * sizeof(Vertex)));
 
@@ -31,14 +33,11 @@ namespace BaldLion
 				{ ShaderDataType::Float2, "vertex_texcoord"}
 				});
 
-			m_vertexArray = VertexArray::Create();
-			m_vertexArray->AddVertexBuffer(vertexBuffer);
-
 			Ref<IndexBuffer> indexBuffer;
 			indexBuffer = (IndexBuffer::Create(&m_indices[0], (uint32_t)m_indices.size()));
-			m_vertexArray->AddIndexBuffer(indexBuffer);
 
-			m_material->Bind();
+			m_vertexArray->AddIndexBuffer(indexBuffer);
+			m_vertexArray->AddVertexBuffer(vertexBuffer);
 		}
 
 		void Mesh::Draw() const

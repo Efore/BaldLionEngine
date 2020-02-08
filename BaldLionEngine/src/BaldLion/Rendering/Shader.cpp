@@ -35,6 +35,17 @@ namespace BaldLion
 			return nullptr;
 		}
 
+		std::string Shader::GetNameFromPath(const std::string& path)
+		{
+			// Extracting name from lastpath
+			auto lastSlash = path.find_last_of("/\\");
+			lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+			auto lastDot = path.rfind('.');
+			auto count = lastDot == std::string::npos ? path.size() - lastSlash : lastDot - lastSlash;
+
+			return path.substr(lastSlash, count);
+		}
+
 		void ShaderLibrary::Add(const Ref<Shader>& shader)
 		{
 			auto& name = shader->GetName();
@@ -51,6 +62,11 @@ namespace BaldLion
 
 		Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
 		{
+			std::string name = Shader::GetNameFromPath(filepath);
+
+			if (Exists(name))
+				return Get(name);
+
 			auto shader = Shader::Create(filepath);
 			Add(shader);
 			return shader;
@@ -58,10 +74,12 @@ namespace BaldLion
 
 		Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
 		{
-			auto shader = Shader::Create(filepath);
-			Add(name, shader);
-			return shader;
+			if (Exists(name))
+				return Get(name);
 
+			auto shader = Shader::Create(filepath);
+			Add(shader);
+			return shader;
 		}
 
 		Ref<Shader> ShaderLibrary::Get(const std::string& name)

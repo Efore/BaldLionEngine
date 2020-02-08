@@ -16,7 +16,7 @@ public:
 		: BaldLion::Layer("Example"), m_emissiveColor(1.0f), m_diffuseColor(1.0f), m_specularColor(1.0f), m_shininess(32.0f)
 	{
 
-		m_model = std::make_shared<Model>("assets/models/model.obj");
+		m_model = std::make_shared<Model>("assets/models/Glock_17.FBX");
 		m_cameraController = ProjectionCameraController(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 500.0f, 100.0f);
 
 		directionalLight = { 
@@ -54,9 +54,6 @@ public:
 	virtual void OnUpdate(BaldLion::TimeStep timeStep) override
 	{
 		m_cameraController.OnUpdate(timeStep);
-
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-		RenderCommand::Clear();
 
 		Renderer::BeginScene(m_cameraController.GetCamera(), directionalLight, pointLights);
 
@@ -123,9 +120,6 @@ public:
 	}
 
 private:
-
-	Ref<VertexArray> m_squareVertexArray;
-	Ref<Texture2D> m_texture, m_textureAlpha;
 
 	Ref<Model> m_model;
 	ProjectionCameraController m_cameraController;

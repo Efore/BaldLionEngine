@@ -24,6 +24,9 @@ namespace BaldLion
 
 		void Renderer::BeginScene(const Ref<ProjectionCamera>& camera, const DirectionalLight& directionalLight, const std::vector<PointLight>& pointLights)
 		{
+			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+			RenderCommand::Clear();
+
 			m_sceneData->ViewProjectionMatrix = camera->GetViewProjectionMatrix();
 			m_sceneData->CameraPosition = camera->GetPosition();
 
@@ -65,6 +68,7 @@ namespace BaldLion
 
 			vertexArray->Bind();
 			RenderCommand::DrawIndexed(vertexArray);
+			vertexArray->Unbind();
 		}
 	}
 }

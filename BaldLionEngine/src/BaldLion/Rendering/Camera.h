@@ -43,7 +43,7 @@ namespace BaldLion
 		{
 		public:
 			ProjectionCamera() {}
-			ProjectionCamera(const glm::vec3& initialPosition, float width, float height, float farPlane, float nearPlane);
+			ProjectionCamera(const glm::vec3& initialPosition, float width, float height, float nearPlane, float farPlane);
 
 			const inline glm::vec3& GetDirection() const { return m_direction; }
 

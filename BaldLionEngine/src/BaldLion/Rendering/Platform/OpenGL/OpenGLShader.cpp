@@ -26,13 +26,7 @@ namespace BaldLion
 			auto shaderSources = PreProcess(source);
 			Compile(shaderSources);
 
-			// Extracting name from lastpath
-			auto lastSlash = filepath.find_last_of("/\\");
-			lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
-			auto lastDot = filepath.rfind('.');
-			auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
-
-			m_name = filepath.substr(lastSlash, count);
+			m_name = Shader::GetNameFromPath(filepath);
 		}
 
 		OpenGLShader::OpenGLShader(const std::string& name, const std::string & vertexSrc, const std::string & fragmentSrc)

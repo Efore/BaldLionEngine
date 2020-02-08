@@ -17,21 +17,21 @@ namespace BaldLion
 
 			m_diffuseTexSlot = 0;
 			m_diffuseTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(diffuseTexPath));
-			m_diffuseTex->Bind(m_diffuseTexSlot);
+			
 
 			m_emissiveTexSlot = 1;
 			m_emissiveTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(emissiveTexPath));
-			m_emissiveTex->Bind(m_emissiveTexSlot);
+			
 
 			m_specularTexSlot = 2;
 			m_specularTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(specularTexPath));
-			m_specularTex->Bind(m_specularTexSlot);
+			
 
 			m_normalTexSlot = 3;
 			m_normalTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(normalTexPath));
-			m_normalTex->Bind(m_normalTexSlot);
+			
 
-			m_shader->Bind();
+			
 
 			m_shader->SetUniform("u_material.diffuseColor", ShaderDataType::Float3, &m_diffuseColor);
 			m_shader->SetUniform("u_material.emissiveColor", ShaderDataType::Float3, &m_emissiveColor);
@@ -78,8 +78,7 @@ namespace BaldLion
 			m_diffuseTex->Bind(m_diffuseTexSlot);
 			m_emissiveTex->Bind(m_emissiveTexSlot);
 			m_specularTex->Bind(m_specularTexSlot);
-			m_normalTex->Bind(m_normalTexSlot);
-			m_shader->Bind();
+			m_normalTex->Bind(m_normalTexSlot);			
 		}
 	}
 }

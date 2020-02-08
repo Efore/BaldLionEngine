@@ -33,6 +33,7 @@ namespace BaldLion
 		OpenGLVertexArray::OpenGLVertexArray()
 		{
 			glCreateVertexArrays(1, &m_rendererID);
+			glBindVertexArray(m_rendererID);
 		}
 
 		OpenGLVertexArray::~OpenGLVertexArray()
@@ -54,9 +55,6 @@ namespace BaldLion
 		{
 			BL_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex buffer has no layout!");
 
-			glBindVertexArray(m_rendererID);
-			vertexBuffer->Bind();
-
 			uint32_t index = 0;
 			const auto& layout = vertexBuffer->GetLayout();
 			for (const auto& element : layout)
@@ -73,13 +71,11 @@ namespace BaldLion
 			}
 
 			m_vertexBuffers.push_back(vertexBuffer);
+			glBindVertexArray(0);
 		}
 
 		void OpenGLVertexArray::AddIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 		{
-			glBindVertexArray(m_rendererID);
-			indexBuffer->Bind();
-
 			m_indexBuffer = indexBuffer;
 		}
 	}

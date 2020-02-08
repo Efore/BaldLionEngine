@@ -10,7 +10,7 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		ProjectionCameraController::ProjectionCameraController(const glm::vec3 & initialPosition, float width, float height, float farPlane, float nearPlane, float cameraMovementSpeed) : m_cameraMovementSpeed(cameraMovementSpeed)
+		ProjectionCameraController::ProjectionCameraController(const glm::vec3 & initialPosition, float width, float height, float nearPlane, float farPlane, float cameraMovementSpeed) : m_cameraMovementSpeed(cameraMovementSpeed)
 		{
 			m_cameraRotationSpeed = 10.0f;
 
@@ -20,7 +20,7 @@ namespace BaldLion
 			m_prevX = BaldLion::Input::GetMouseX();
 			m_prevY = BaldLion::Input::GetMouseY();
 
-			m_camera = std::make_shared<ProjectionCamera>(initialPosition, width, height, farPlane, nearPlane);
+			m_camera = std::make_shared<ProjectionCamera>(initialPosition, width, height, nearPlane, farPlane);
 		}
 
 		ProjectionCameraController::ProjectionCameraController(const Ref<ProjectionCamera>& camera)

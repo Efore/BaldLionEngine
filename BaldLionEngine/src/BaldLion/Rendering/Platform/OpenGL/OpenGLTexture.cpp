@@ -48,13 +48,7 @@ namespace BaldLion
 
 			stbi_image_free(data);
 
-			// Extracting name from lastpath
-			auto lastSlash = path.find_last_of("/\\");
-			lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
-			auto lastDot = path.rfind('.');
-			auto count = lastDot == std::string::npos ? path.size() - lastSlash : lastDot - lastSlash;
-
-			m_name = path.substr(lastSlash, count);
+			m_name = Texture::GetNameFromPath(path);
 		}
 
 		OpenGLTexture2D::~OpenGLTexture2D()
@@ -64,7 +58,9 @@ namespace BaldLion
 
 		void OpenGLTexture2D::Bind(uint32_t slot) const
 		{
+			glActiveTexture(GL_TEXTURE0 + slot);
 			glBindTextureUnit(slot, m_rendererID);
+			glActiveTexture(GL_TEXTURE0);
 		}
 	}
 }

@@ -33,18 +33,25 @@ namespace BaldLion
 			m_textures[name] = texture;
 		}
 
-
 		Ref<Texture2D> TextureLibrary::Load(const std::string& filepath)
-		{
+		{	
+			std::string name = Texture::GetNameFromPath(filepath);
+			
+			if (Exists(name))
+				return Get(name);
+
 			auto texture = Texture2D::Create(filepath);
 			Add(texture);
 			return texture;
 		}
 
 		Ref<Texture2D> TextureLibrary::Load(const std::string& name, const std::string& filepath)
-		{
+		{	
+			if (Exists(name))
+				return Get(name);
+
 			auto texture = Texture2D::Create(filepath);
-			Add(name, texture);
+			Add(texture);
 			return texture;
 
 		}
@@ -59,5 +66,17 @@ namespace BaldLion
 		{
 			return m_textures.find(name) != m_textures.end();
 		}
+
+		std::string Texture::GetNameFromPath(const std::string &path)
+		{
+			// Extracting name from lastpath
+			auto lastSlash = path.find_last_of("/\\");
+			lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+			auto lastDot = path.rfind('.');
+			auto count = lastDot == std::string::npos ? path.size() - lastSlash : lastDot - lastSlash;
+
+			return path.substr(lastSlash, count);
+		}
+
 	}
 }
