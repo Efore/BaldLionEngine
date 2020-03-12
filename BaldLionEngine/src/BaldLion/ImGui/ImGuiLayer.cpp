@@ -7,7 +7,7 @@
 #include "examples/imgui_impl_opengl3.cpp"
 #include "examples/imgui_impl_glfw.cpp"
 
-#include "BaldLion/Application.h"
+#include "BaldLion/Core/Application.h"
 
 //TEMPORARY
 #include <GLFW/glfw3.h>

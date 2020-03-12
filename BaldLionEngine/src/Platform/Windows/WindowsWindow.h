@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaldLion/Window.h"
+#include "BaldLion/Core/Window.h"
 #include "BaldLion/Rendering/GraphicsContext.h"
 #include <GLFW/glfw3.h>
 

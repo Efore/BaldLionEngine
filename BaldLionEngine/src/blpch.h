@@ -12,8 +12,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "BaldLion/Log.h"
-#include "BaldLion/Core.h"
+#include "BaldLion/Core/Log.h"
+#include "BaldLion/Core/Core.h"
 
 #ifdef BL_PLATFORM_WINDOWS
 	#include <Windows.h>

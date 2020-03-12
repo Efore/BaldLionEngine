@@ -1,7 +1,7 @@
 #pragma once
 #include "Shader.h"
 #include "Texture.h"
-#include "BaldLion/Core.h"
+#include "BaldLion/Core/Core.h"
 #include <glm/glm.hpp>
 
 namespace BaldLion{

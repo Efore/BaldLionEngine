@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaldLion/Input.h"
+#include "BaldLion/Core/Input.h"
 
 namespace BaldLion
 {

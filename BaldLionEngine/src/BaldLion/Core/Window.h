@@ -2,7 +2,7 @@
 
 #include "blpch.h"
 
-#include "BaldLion/Core.h"
+#include "BaldLion/Core/Core.h"
 #include "BaldLion/Events/Event.h"
 
 namespace BaldLion

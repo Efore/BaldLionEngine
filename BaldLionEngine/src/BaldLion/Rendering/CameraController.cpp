@@ -1,8 +1,8 @@
 #include "blpch.h"
 
-#include "BaldLion/Input.h"
-#include "BaldLion/KeyCodes.h"
-#include "BaldLion/MouseButtonCodes.h"
+#include "BaldLion/Core/Input.h"
+#include "BaldLion/Core/KeyCodes.h"
+#include "BaldLion/Core/MouseButtonCodes.h"
 
 #include "CameraController.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaldLion/Core.h"
+#include "BaldLion/Core/Core.h"
 
 
 namespace BaldLion

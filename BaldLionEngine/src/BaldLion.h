@@ -2,15 +2,15 @@
 
 //For use by BaldLion application
 
-#include "BaldLion/Application.h"
-#include "BaldLion/Layer.h"
-#include "BaldLion/Log.h"
+#include "BaldLion/Core/Application.h"
+#include "BaldLion/Core/Layer.h"
+#include "BaldLion/Core/Log.h"
 
 #include "BaldLion/Core/TimeStep.h"
 
-#include "BaldLion/Input.h"
-#include "BaldLion/KeyCodes.h"
-#include "BaldLion/MouseButtonCodes.h"
+#include "BaldLion/Core/Input.h"
+#include "BaldLion/Core/KeyCodes.h"
+#include "BaldLion/Core/MouseButtonCodes.h"
 
 #include "BaldLion/ImGui/ImGuiLayer.h"
 
@@ -21,6 +21,6 @@
 
 // --------------- Entry point -----------------------
 
-#include "BaldLion/EntryPoint.h"
+#include "BaldLion/Core/EntryPoint.h"
 
 // ---------------------------------------------------

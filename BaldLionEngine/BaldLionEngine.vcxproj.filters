@@ -63,17 +63,8 @@
     <ClInclude Include="src\BaldLion.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Application.h">
-      <Filter>src\BaldLion</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Core.h">
-      <Filter>src\BaldLion</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Core\TimeStep.h">
       <Filter>src\BaldLion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\EntryPoint.h">
-      <Filter>src\BaldLion</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h">
       <Filter>src\BaldLion\Events</Filter>
@@ -89,24 +80,6 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h">
       <Filter>src\BaldLion\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Input.h">
-      <Filter>src\BaldLion</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\KeyCodes.h">
-      <Filter>src\BaldLion</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Layer.h">
-      <Filter>src\BaldLion</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\LayerStack.h">
-      <Filter>src\BaldLion</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Log.h">
-      <Filter>src\BaldLion</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\MouseButtonCodes.h">
-      <Filter>src\BaldLion</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h">
       <Filter>src\BaldLion\Rendering</Filter>
@@ -179,9 +152,6 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\VertexArray.h">
       <Filter>src\BaldLion\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Window.h">
-      <Filter>src\BaldLion</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsInput.h">
       <Filter>src\Platform\Windows</Filter>
@@ -1281,22 +1251,23 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Timer.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Application.h" />
+    <ClInclude Include="src\BaldLion\Core\Core.h" />
+    <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
+    <ClInclude Include="src\BaldLion\Core\Input.h" />
+    <ClInclude Include="src\BaldLion\Core\KeyCodes.h" />
+    <ClInclude Include="src\BaldLion\Core\Layer.h" />
+    <ClInclude Include="src\BaldLion\Core\LayerStack.h" />
+    <ClInclude Include="src\BaldLion\Core\Log.h" />
+    <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h" />
+    <ClInclude Include="src\BaldLion\Core\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\BaldLion\Application.cpp">
-      <Filter>src\BaldLion</Filter>
-    </ClCompile>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
       <Filter>src\BaldLion\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Layer.cpp">
-      <Filter>src\BaldLion</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\LayerStack.cpp">
-      <Filter>src\BaldLion</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Log.cpp">
-      <Filter>src\BaldLion</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
@@ -1370,5 +1341,9 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Application.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Layer.cpp" />
+    <ClCompile Include="src\BaldLion\Core\LayerStack.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Log.cpp" />
   </ItemGroup>
 </Project>

@@ -19,7 +19,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BaldLionEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -144,21 +144,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h" />
-    <ClInclude Include="src\BaldLion\Application.h" />
-    <ClInclude Include="src\BaldLion\Core.h" />
+    <ClInclude Include="src\BaldLion\Core\Application.h" />
+    <ClInclude Include="src\BaldLion\Core\Core.h" />
+    <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
+    <ClInclude Include="src\BaldLion\Core\Input.h" />
+    <ClInclude Include="src\BaldLion\Core\KeyCodes.h" />
+    <ClInclude Include="src\BaldLion\Core\Layer.h" />
+    <ClInclude Include="src\BaldLion\Core\LayerStack.h" />
+    <ClInclude Include="src\BaldLion\Core\Log.h" />
+    <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h" />
     <ClInclude Include="src\BaldLion\Core\TimeStep.h" />
-    <ClInclude Include="src\BaldLion\EntryPoint.h" />
+    <ClInclude Include="src\BaldLion\Core\Window.h" />
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h" />
     <ClInclude Include="src\BaldLion\Events\Event.h" />
     <ClInclude Include="src\BaldLion\Events\KeyEvent.h" />
     <ClInclude Include="src\BaldLion\Events\MouseEvent.h" />
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\BaldLion\Input.h" />
-    <ClInclude Include="src\BaldLion\KeyCodes.h" />
-    <ClInclude Include="src\BaldLion\Layer.h" />
-    <ClInclude Include="src\BaldLion\LayerStack.h" />
-    <ClInclude Include="src\BaldLion\Log.h" />
-    <ClInclude Include="src\BaldLion\MouseButtonCodes.h" />
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Camera.h" />
     <ClInclude Include="src\BaldLion\Rendering\CameraController.h" />
@@ -183,10 +184,10 @@
     <ClInclude Include="src\BaldLion\Rendering\Texture.h" />
     <ClInclude Include="src\BaldLion\Rendering\Vertex.h" />
     <ClInclude Include="src\BaldLion\Rendering\VertexArray.h" />
-    <ClInclude Include="src\BaldLion\Window.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\blpch.h" />
+    <ClInclude Include="src\BaldLion\Core\Timer.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -552,11 +553,11 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\BaldLion\Application.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Application.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Layer.cpp" />
+    <ClCompile Include="src\BaldLion\Core\LayerStack.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Log.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\BaldLion\Layer.cpp" />
-    <ClCompile Include="src\BaldLion\LayerStack.cpp" />
-    <ClCompile Include="src\BaldLion\Log.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Camera.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\CameraController.cpp" />

@@ -1,7 +1,7 @@
 #include "blpch.h"
 #include "WindowsInput.h"
 
-#include "BaldLion/Application.h"
+#include "BaldLion/Core/Application.h"
 #include <GLFW/glfw3.h>
 
 namespace BaldLion

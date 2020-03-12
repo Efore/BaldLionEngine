@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "BaldLion/Core.h"
+#include "BaldLion/Core/Core.h"
 
 namespace BaldLion {
 	namespace Rendering
