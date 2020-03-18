@@ -17,13 +17,9 @@ namespace BaldLion
 		BL_LOG_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
-	Window* Window::Create(const WindowProps& props)
-	{
-		return new WindowsWindow(props);
-	}
-
 	WindowsWindow::WindowsWindow(const WindowProps & props)
 	{
+		BL_PROFILE_FUNCTION();
 		Init(props);
 	}
 
@@ -34,6 +30,8 @@ namespace BaldLion
 
 	void WindowsWindow::Init(const WindowProps & props)
 	{
+		BL_PROFILE_FUNCTION();
+
 		m_data.Title = props.Title;
 		m_data.Width = props.Width;
 		m_data.Height = props.Height;		
@@ -149,11 +147,15 @@ namespace BaldLion
 
 	void WindowsWindow::Shutdown()
 	{
+		BL_PROFILE_FUNCTION();
+
 		glfwDestroyWindow(m_window);
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
+		BL_PROFILE_FUNCTION();
+
 		glfwPollEvents();
 		m_context->SwapBuffers();		
 	}

@@ -11,6 +11,8 @@ namespace BaldLion
 
 			inline static void Init()
 			{
+				BL_PROFILE_FUNCTION();
+
 				s_rendererAPI->Init();
 			}
 

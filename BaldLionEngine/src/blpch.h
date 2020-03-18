@@ -14,6 +14,7 @@
 
 #include "BaldLion/Core/Log.h"
 #include "BaldLion/Core/Core.h"
+#include "BaldLion/Profiling/Instrumentor.h"
 
 #ifdef BL_PLATFORM_WINDOWS
 	#include <Windows.h>

@@ -12,11 +12,13 @@ namespace BaldLion
 
 	Application::Application()
 	{
+		BL_PROFILE_FUNCTION();
+
 		BL_CORE_ASSERT(!s_instance, "Application already exists");
 
 		s_instance = this;
 
-		m_window = std::unique_ptr<Window>(Window::Create());
+		m_window = Window::Create();
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		Rendering::Renderer::Init();
@@ -34,20 +36,28 @@ namespace BaldLion
 
 	void Application::PushLayer(Layer * layer)
 	{
+		BL_PROFILE_FUNCTION();
+
 		m_layerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer * overlay)
 	{
+		BL_PROFILE_FUNCTION();
+
 		m_layerStack.PushOverlay(overlay);
 		overlay->OnAttach();
 	}
 
 	void Application::Run()
 	{		
+		BL_PROFILE_FUNCTION();
+
 		while (m_running)
 		{	
+			BL_PROFILE_SCOPE("RunLoop");
+
 			float time = (float)glfwGetTime(); // Platform::GetTime
 
 			TimeStep timeStep = time - m_lastFrameTime;
@@ -56,16 +66,24 @@ namespace BaldLion
 
 			if (!m_minimized)
 			{
-				for (Layer* layer : m_layerStack)
-					layer->OnUpdate(timeStep);
+				{
+					BL_PROFILE_SCOPE("LayerStack OnUpdates");
+
+					for (Layer* layer : m_layerStack)
+						layer->OnUpdate(timeStep);
+				}
+
+				m_imGuiLayer->Begin();
+
+				{
+					BL_PROFILE_SCOPE("LayerStack OnImGuiRender");
+					for (Layer* layer : m_layerStack)
+						layer->OnImGuiRender();
+				}
+
+				m_imGuiLayer->End();
 			}
 
-			m_imGuiLayer->Begin();
-
-			for (Layer* layer : m_layerStack)
-				layer->OnImGuiRender();
-
-			m_imGuiLayer->End();
 
 			m_window->OnUpdate();
 		}

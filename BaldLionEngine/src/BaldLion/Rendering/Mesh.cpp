@@ -21,6 +21,8 @@ namespace BaldLion
 
 		void Mesh::SetUpMesh()
 		{
+			BL_PROFILE_FUNCTION();
+
 			m_vertexArray = VertexArray::Create();
 
 			Ref<VertexBuffer> vertexBuffer;

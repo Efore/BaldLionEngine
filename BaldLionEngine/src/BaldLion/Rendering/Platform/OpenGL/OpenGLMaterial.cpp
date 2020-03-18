@@ -8,6 +8,8 @@ namespace BaldLion
 	{
 		OpenGLMaterial::OpenGLMaterial(const std::string& shaderPath, const glm::vec3& emissive, const glm::vec3& diffuse, const glm::vec3& specular, float shininess, const std::string& diffuseTexPath, const std::string& emissiveTexPath, const std::string& specularTexPath, const std::string& normalTexPath)
 		{
+			BL_PROFILE_FUNCTION();
+
 			m_shader = std::dynamic_pointer_cast<OpenGLShader>(Renderer::GetShaderLibrary().Load(shaderPath));
 
 			m_emissiveColor = emissive;
@@ -70,11 +72,15 @@ namespace BaldLion
 
 		void OpenGLMaterial::SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex)
 		{
+			BL_PROFILE_FUNCTION();
+
 			m_shader->SetUniform(uniformName, dataType, uniformIndex);
 		}
 
 		void OpenGLMaterial::Bind() const
 		{
+			BL_PROFILE_FUNCTION();
+
 			m_diffuseTex->Bind(m_diffuseTexSlot);
 			m_emissiveTex->Bind(m_emissiveTexSlot);
 			m_specularTex->Bind(m_specularTexSlot);

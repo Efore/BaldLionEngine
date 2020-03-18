@@ -20,7 +20,7 @@ namespace BaldLion
 			m_prevX = BaldLion::Input::GetMouseX();
 			m_prevY = BaldLion::Input::GetMouseY();
 
-			m_camera = std::make_shared<ProjectionCamera>(initialPosition, width, height, nearPlane, farPlane);
+			m_camera = CreateRef<ProjectionCamera>(initialPosition, width, height, nearPlane, farPlane);
 		}
 
 		ProjectionCameraController::ProjectionCameraController(const Ref<ProjectionCamera>& camera)
@@ -36,6 +36,8 @@ namespace BaldLion
 
 		void ProjectionCameraController::OnUpdate(BaldLion::TimeStep timeStep)
 		{
+			BL_PROFILE_FUNCTION();
+
 			HandleCameraMovement(timeStep);
 		}
 

@@ -12,10 +12,16 @@ namespace BaldLion
 		OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 			: m_path(path)
 		{
-			int width, height, channels;
+			BL_PROFILE_FUNCTION();
 
+			int width, height, channels;
+			stbi_uc* data = nullptr;
 			stbi_set_flip_vertically_on_load(1);
-			stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+
+			{
+				BL_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D")
+				 data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+			}
 
 			BL_CORE_ASSERT(data, "Failed to load image!");
 
@@ -53,11 +59,15 @@ namespace BaldLion
 
 		OpenGLTexture2D::~OpenGLTexture2D()
 		{
+			BL_PROFILE_FUNCTION();
+
 			glDeleteTextures(1, &m_rendererID);
 		}
 
 		void OpenGLTexture2D::Bind(uint32_t slot) const
 		{
+			BL_PROFILE_FUNCTION();
+
 			glActiveTexture(GL_TEXTURE0 + slot);
 			glBindTextureUnit(slot, m_rendererID);
 			glActiveTexture(GL_TEXTURE0);

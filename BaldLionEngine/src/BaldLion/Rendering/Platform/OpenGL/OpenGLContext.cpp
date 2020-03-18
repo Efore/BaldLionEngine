@@ -15,6 +15,8 @@ namespace BaldLion
 
 		void OpenGLContext::Init()
 		{
+			BL_PROFILE_FUNCTION();
+
 			glfwMakeContextCurrent(m_windowHandle);
 			int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 			BL_CORE_ASSERT(status, "Failed to initialize Glad");
@@ -27,6 +29,8 @@ namespace BaldLion
 
 		void OpenGLContext::SwapBuffers()
 		{
+			BL_PROFILE_FUNCTION();
+
 			BL_CORE_ASSERT(m_windowHandle, "Window handle is null!");
 			glfwSwapBuffers(m_windowHandle);
 		}

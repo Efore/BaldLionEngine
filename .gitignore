@@ -6,3 +6,6 @@ bin/
 # Files
 *.user
 
+BaldLionEditor/BaldLionProfile-Startup.json
+BaldLionEditor/BaldLionProfile-Shutdown.json
+BaldLionEditor/BaldLionProfile-Runtime.json

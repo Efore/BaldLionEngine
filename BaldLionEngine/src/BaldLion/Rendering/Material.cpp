@@ -12,7 +12,7 @@ namespace BaldLion
 			switch (RendererAPI::GetAPI())
 			{
 			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return std::make_shared<OpenGLMaterial>(shaderPath, emissive, diffuse, specular, shininess, diffuseTexPath, emissiveTexPath, specularTexPath, normalTexPath);
+			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLMaterial>(shaderPath, emissive, diffuse, specular, shininess, diffuseTexPath, emissiveTexPath, specularTexPath, normalTexPath);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");

@@ -16,7 +16,7 @@ public:
 		: BaldLion::Layer("Example"), m_emissiveColor(1.0f), m_diffuseColor(1.0f), m_specularColor(1.0f), m_shininess(32.0f)
 	{
 
-		m_model = std::make_shared<Model>("assets/models/Glock_17.FBX");
+		m_model = CreateRef<Model>("assets/models/Glock_17.FBX");
 		m_cameraController = ProjectionCameraController(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 500.0f, 100.0f);
 
 		directionalLight = { 
@@ -53,9 +53,18 @@ public:
 
 	virtual void OnUpdate(BaldLion::TimeStep timeStep) override
 	{
-		m_cameraController.OnUpdate(timeStep);
+		BL_PROFILE_FUNCTION();
 
-		Renderer::BeginScene(m_cameraController.GetCamera(), directionalLight, pointLights);
+		{
+			BL_PROFILE_SCOPE("CameraController::OnUpdate")
+			m_cameraController.OnUpdate(timeStep);
+		}
+
+		{
+			BL_PROFILE_SCOPE("Renderer::BeginScene")
+			Renderer::BeginScene(m_cameraController.GetCamera(), directionalLight, pointLights);
+		}
+
 
 		for (auto submesh : m_model->GetSubMeshes())
 		{
@@ -65,13 +74,16 @@ public:
 			submesh.GetMaterial()->SetShininess(m_shininess);
 		}
 
-		m_model->Draw();
-
-		Renderer::EndScene();
+		{
+			BL_PROFILE_SCOPE("Renderer::Draw")
+			m_model->Draw();
+			Renderer::EndScene();
+		}
 	}
 
 	virtual void OnImGuiRender() override 
 	{
+		BL_PROFILE_FUNCTION();
 		ImGui::Begin("Settings");
 		ImGui::Text("Material");
 		ImGui::SliderFloat3("Emissive Color", glm::value_ptr(m_emissiveColor), 0.0f, 5.0f);

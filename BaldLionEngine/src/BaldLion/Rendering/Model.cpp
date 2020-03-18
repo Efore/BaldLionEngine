@@ -11,6 +11,7 @@ namespace BaldLion
 	{
 		Model::Model(const std::string& filePath)
 		{
+			BL_PROFILE_FUNCTION();
 			SetUpModel(filePath);
 		}
 
@@ -35,6 +36,7 @@ namespace BaldLion
 
 		void Model::Draw() const
 		{
+			BL_PROFILE_FUNCTION();
 			for (const Mesh& m : m_subMeshes)
 			{
 				m.Draw();

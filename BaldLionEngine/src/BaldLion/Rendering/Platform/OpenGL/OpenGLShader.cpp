@@ -22,6 +22,8 @@ namespace BaldLion
 
 		OpenGLShader::OpenGLShader(const std::string & filepath)
 		{
+			BL_PROFILE_FUNCTION();
+
 			std::string source = ReadFile(filepath);
 			auto shaderSources = PreProcess(source);
 			Compile(shaderSources);
@@ -32,6 +34,8 @@ namespace BaldLion
 		OpenGLShader::OpenGLShader(const std::string& name, const std::string & vertexSrc, const std::string & fragmentSrc)
 			: m_name(name)
 		{
+			BL_PROFILE_FUNCTION();
+
 			std::unordered_map<GLenum, std::string> shaderSources;
 			shaderSources[GL_VERTEX_SHADER] = vertexSrc;
 			shaderSources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -40,11 +44,15 @@ namespace BaldLion
 
 		OpenGLShader::~OpenGLShader()
 		{
+			BL_PROFILE_FUNCTION();
+
 			glDeleteProgram(m_rendererID);
 		}
 
 		std::string OpenGLShader::ReadFile(const std::string& filepath)
 		{
+			BL_PROFILE_FUNCTION();
+
 			std::ifstream in(filepath, std::ios::in | std::ios::binary);
 			std::string result;
 
@@ -66,6 +74,8 @@ namespace BaldLion
 
 		std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string & source)
 		{
+			BL_PROFILE_FUNCTION();
+
 			std::unordered_map<GLenum, std::string> shaderSources;
 
 			const char* typeToken = "#type";
@@ -91,6 +101,8 @@ namespace BaldLion
 
 		void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
 		{
+			BL_PROFILE_FUNCTION();
+
 			GLuint program = glCreateProgram();
 			BL_CORE_ASSERT(shaderSources.size() <= 2, "Only 2 shaders supported");
 
@@ -172,16 +184,22 @@ namespace BaldLion
 
 		void OpenGLShader::Bind() const
 		{
+			BL_PROFILE_FUNCTION();
+
 			glUseProgram(m_rendererID);
 		}
 
 		void OpenGLShader::Unbind() const
 		{
+			BL_PROFILE_FUNCTION();
+
 			glUseProgram(0);
 		}
 
 		void OpenGLShader::SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex)
 		{
+			BL_PROFILE_FUNCTION();
+
 			int uniformID = GetUniformLocation(uniformName);
 			switch (dataType)
 			{
@@ -213,6 +231,8 @@ namespace BaldLion
 
 		int OpenGLShader::GetUniformLocation(const std::string& name) const
 		{
+			BL_PROFILE_FUNCTION();
+
 			if (m_uniformLocationCache.find(name) != m_uniformLocationCache.end())
 				return m_uniformLocationCache[name];
 

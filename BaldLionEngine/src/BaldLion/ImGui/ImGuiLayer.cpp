@@ -27,6 +27,8 @@ namespace BaldLion
 
 	void ImGuiLayer::OnAttach()
 	{
+		BL_PROFILE_FUNCTION();
+
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -57,6 +59,8 @@ namespace BaldLion
 
 	void ImGuiLayer::OnDetach()
 	{
+		BL_PROFILE_FUNCTION();
+
 		// Cleanup
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
@@ -65,6 +69,8 @@ namespace BaldLion
 
 	void ImGuiLayer::Begin()
 	{
+		BL_PROFILE_FUNCTION();
+
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -79,6 +85,8 @@ namespace BaldLion
 
 	void ImGuiLayer::End()
 	{
+		BL_PROFILE_FUNCTION();
+
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());

@@ -13,6 +13,8 @@ namespace BaldLion
 
 		void Renderer::Init()
 		{
+			BL_PROFILE_FUNCTION();
+
 			RenderCommand::Init();
 			LightManager::Init();
 		}
@@ -24,6 +26,8 @@ namespace BaldLion
 
 		void Renderer::BeginScene(const Ref<ProjectionCamera>& camera, const DirectionalLight& directionalLight, const std::vector<PointLight>& pointLights)
 		{
+			BL_PROFILE_FUNCTION();
+
 			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 			RenderCommand::Clear();
 
@@ -40,6 +44,8 @@ namespace BaldLion
 
 		void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader, const glm::mat4& transform)
 		{
+			BL_PROFILE_FUNCTION();
+
 			shader->Bind();
 
 			std::dynamic_pointer_cast<OpenGLShader>(shader)->SetUniform("u_transform", ShaderDataType::Mat4, &(transform[0][0]));

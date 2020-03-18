@@ -1251,9 +1251,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\Timer.h">
-      <Filter>src\BaldLion\Core</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Application.h" />
     <ClInclude Include="src\BaldLion\Core\Core.h" />
     <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
@@ -1264,6 +1261,7 @@
     <ClInclude Include="src\BaldLion\Core\Log.h" />
     <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h" />
     <ClInclude Include="src\BaldLion\Core\Window.h" />
+    <ClInclude Include="src\BaldLion\Profiling\Instrumentor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
@@ -1345,5 +1343,6 @@
     <ClCompile Include="src\BaldLion\Core\Layer.cpp" />
     <ClCompile Include="src\BaldLion\Core\LayerStack.cpp" />
     <ClCompile Include="src\BaldLion\Core\Log.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Window.cpp" />
   </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@ namespace BaldLion
 			switch (RendererAPI::GetAPI())
 			{
 			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return std::make_shared<OpenGLVertexBuffer>(vertices, size);
+			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLVertexBuffer>(vertices, size);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
@@ -30,7 +30,7 @@ namespace BaldLion
 			switch (RendererAPI::GetAPI())
 			{
 			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return std::make_shared<OpenGLVertexBuffer>(vertices[0].GetFirstElement(), size);
+			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLVertexBuffer>(vertices[0].GetFirstElement(), size);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
@@ -45,7 +45,7 @@ namespace BaldLion
 			switch (RendererAPI::GetAPI())
 			{
 				case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-				case RendererAPI::API::OpenGL:		return std::make_shared<OpenGLIndexBuffer>(indices, count);
+				case RendererAPI::API::OpenGL:		return CreateRef<OpenGLIndexBuffer>(indices, count);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");

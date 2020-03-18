@@ -14,7 +14,7 @@ namespace BaldLion
 			switch (RendererAPI::GetAPI())
 			{
 			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return std::make_shared<OpenGLShader>(filepath);
+			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLShader>(filepath);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown renderereAPI!");
@@ -27,7 +27,7 @@ namespace BaldLion
 			switch (RendererAPI::GetAPI())
 			{
 			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return std::make_shared<OpenGLShader>(name, vertexSrc, fragmentSrc);
+			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown renderereAPI!");
