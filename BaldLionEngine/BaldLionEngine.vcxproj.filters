@@ -1262,6 +1262,9 @@
     <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h" />
     <ClInclude Include="src\BaldLion\Core\Window.h" />
     <ClInclude Include="src\BaldLion\Profiling\Instrumentor.h" />
+    <ClInclude Include="src\BaldLion\Animation\Joint.h" />
+    <ClInclude Include="src\BaldLion\Rendering\AnimatedMesh.h" />
+    <ClInclude Include="src\BaldLion\Rendering\AnimatedModel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
@@ -1344,5 +1347,7 @@
     <ClCompile Include="src\BaldLion\Core\LayerStack.cpp" />
     <ClCompile Include="src\BaldLion\Core\Log.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\AnimatedMesh.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\AnimatedModel.cpp" />
   </ItemGroup>
 </Project>

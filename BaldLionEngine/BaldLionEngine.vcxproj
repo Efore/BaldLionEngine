@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h" />
+    <ClInclude Include="src\BaldLion\Animation\Joint.h" />
     <ClInclude Include="src\BaldLion\Core\Application.h" />
     <ClInclude Include="src\BaldLion\Core\Core.h" />
     <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
@@ -161,6 +162,8 @@
     <ClInclude Include="src\BaldLion\Events\MouseEvent.h" />
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\BaldLion\Profiling\Instrumentor.h" />
+    <ClInclude Include="src\BaldLion\Rendering\AnimatedMesh.h" />
+    <ClInclude Include="src\BaldLion\Rendering\AnimatedModel.h" />
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Camera.h" />
     <ClInclude Include="src\BaldLion\Rendering\CameraController.h" />
@@ -559,6 +562,8 @@
     <ClCompile Include="src\BaldLion\Core\Log.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\AnimatedMesh.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\AnimatedModel.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Camera.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\CameraController.cpp" />

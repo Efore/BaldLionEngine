@@ -3,8 +3,6 @@
 #include "Buffer.h"
 #include "Renderer.h"
 
-#include <string_view>
-
 namespace BaldLion
 {
 	namespace Rendering
