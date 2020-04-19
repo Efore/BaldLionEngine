@@ -138,7 +138,6 @@ namespace BaldLion
 			}
 
 			std::string diffuseTexPath = "";
-			int asd = aimaterial->GetTextureCount(aiTextureType_DIFFUSE);
 			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
 				aiString diffuseTex;

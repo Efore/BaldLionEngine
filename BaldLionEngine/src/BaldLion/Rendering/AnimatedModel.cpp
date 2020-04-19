@@ -89,23 +89,90 @@ namespace BaldLion
 					indices.push_back(face.mIndices[j]);
 			}
 
+			for (unsigned int i = 0; i < aimesh->mNumFaces; i++)
+			{
+				aiFace face = aimesh->mFaces[i];
+				for (unsigned int j = 0; j < face.mNumIndices; j++)
+					indices.push_back(face.mIndices[j]);
+			}
+
+			const aiMaterial* aimaterial = aiscene->mMaterials[aimesh->mMaterialIndex];
+
+			aiColor3D ambientColor;
+			aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, ambientColor);
+
+			aiColor3D diffuseColor;
+			aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
+
+			aiColor3D specularColor;
+			aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, specularColor);
+
+			aiColor3D emissiveColor;
+			aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);
+
+			std::string ambientTexPath = "";
+			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
+			{
+				aiString ambientTex;
+				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &ambientTex);
+				ambientTexPath = m_modelPath;
+				ambientTexPath.append(ambientTex.C_Str());
+			}
+
+			std::string diffuseTexPath = "";
+			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+			{
+				aiString diffuseTex;
+				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &diffuseTex);
+				diffuseTexPath = m_modelPath;
+				diffuseTexPath.append(diffuseTex.C_Str());
+			}
+
+			std::string specularTexPath = "";
+			if (aimaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
+			{
+				aiString specularTex;
+				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &specularTex);
+				specularTexPath = m_modelPath;
+				specularTexPath.append(specularTex.C_Str());
+			}
+
+			std::string emissiveTexPath = "";
+			if (aimaterial->GetTextureCount(aiTextureType_EMISSIVE) > 0)
+			{
+				aiString emissiveTex;
+				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &emissiveTex);
+				emissiveTexPath = m_modelPath;
+				emissiveTexPath.append(emissiveTex.C_Str());
+			}
+
+			std::string normalTexPath = "";
+			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
+			{
+				aiString normalTex;
+				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &normalTex);
+				normalTexPath = m_modelPath;
+				normalTexPath.append(normalTex.C_Str());
+			}			
+
 			return AnimatedMesh(vertices, verticesBoneData, joints, indices,
-				Material::Create("assets/shaders/BaseLit.glsl", 
-					glm::vec3(1.0f),
-					glm::vec3(1.0f), 
-					glm::vec3(1.0f), 
-					glm::vec3(1.0f), 
+				Material::Create("assets/shaders/BaseLit.glsl",
+					glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
+					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
+					glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
+					glm::vec3(specularColor.r, specularColor.g, specularColor.b),
 					32.0f,
-					"assets/textures/Glock_17/albedo.png",
-					"assets/textures/Glock_17/albedo.png",
-					"assets/textures/Glock_17/albedo.png",
-					"assets/textures/Glock_17/metallic.png",
-					"assets/textures/Glock_17/normal.png"));
+					ambientTexPath,
+					diffuseTexPath,
+					emissiveTexPath,
+					specularTexPath,
+					normalTexPath));
 		}
 
 		int AnimatedModel::GenerateJoints(std::vector<Animation::Joint>& joints, const int parentID, int& currentID, const aiNode* node)
 		{
 			std::vector<int> childrenIDs(node->mNumChildren);
+
 			int jointID = ++currentID;
 			glm::mat4 transformMatrix = glm::mat4(
 				node->mTransformation.a1, node->mTransformation.a2, node->mTransformation.a3, node->mTransformation.a4,

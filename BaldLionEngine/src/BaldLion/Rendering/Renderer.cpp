@@ -28,7 +28,7 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+			RenderCommand::SetClearColor({ 0.3f, 0.3f, 0.8f, 1.0f });
 			RenderCommand::Clear();
 
 			m_sceneData->ViewProjectionMatrix = camera->GetViewProjectionMatrix();

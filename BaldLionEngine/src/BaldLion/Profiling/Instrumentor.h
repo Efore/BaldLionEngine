@@ -128,7 +128,7 @@ namespace BaldLion
 	};
 }
 
-#define BL_PROFILE 1
+#define BL_PROFILE 0
 
 #if BL_PROFILE
 
