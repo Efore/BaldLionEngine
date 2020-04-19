@@ -22,19 +22,19 @@ public:
 		directionalLight = { 
 			glm::vec3(-0.2f, -1.0f, -0.3f), 
 			glm::vec3(1.0f, 1.0f, 1.0f),
-			glm::vec3(0.4f, 0.4f, 0.4f), 
-			glm::vec3(0.5f, 0.5f, 0.5f)
+			glm::vec3(1.0f, 1.0f, 1.0f),
+			glm::vec3(1.0f, 1.0f, 1.0f)
 		};
 
-		pointLights.emplace_back(PointLight 
-			({
-				glm::vec3(0.7f,  0.2f,  2.0f),
-				1.0f,
-				0.009f,
-				0.032f,
-				glm::vec3(1.0f, 1.0f, 1.0f),
-				glm::vec3(0.8f, 0.8f, 0.8f),
-				glm::vec3(1.0f, 1.0f, 1.0f)
+		pointLights.emplace_back(PointLight
+		({
+			glm::vec3(0.7f,  0.2f,  2.0f),
+			1.0f,
+			0.009f,
+			0.032f,
+			glm::vec3(1.0f, 1.0f, 1.0f),
+			glm::vec3(0.8f, 0.8f, 0.8f),
+			glm::vec3(1.0f, 1.0f, 1.0f)
 			})
 		);
 
@@ -76,29 +76,24 @@ public:
 	{
 		BL_PROFILE_FUNCTION();
 		ImGui::Begin("Settings");
-		ImGui::Text("Material");
-		ImGui::SliderFloat3("Emissive Color", glm::value_ptr(m_emissiveColor), 0.0f, 5.0f);
-		ImGui::ColorEdit3("Diffuse Color", glm::value_ptr(m_diffuseColor));
-		ImGui::ColorEdit3("Specular Color", glm::value_ptr(m_specularColor));
-		ImGui::SliderFloat("Shininess", &m_shininess, 1.0f, 300.0f);
 
 		ImGui::Text("Directional Light");
 		ImGui::SliderFloat3("Light Direction", glm::value_ptr(directionalLight.direction), -300.0f, 300.0f);
-		//ImGui::ColorEdit3("Light Ambient Color", glm::value_ptr(directionalLight.ambientColor));
-		//ImGui::ColorEdit3("Light Diffuse Color", glm::value_ptr(directionalLight.diffuseColor));
-		//ImGui::ColorEdit3("Light Specular Color", glm::value_ptr(directionalLight.specularColor));
+		ImGui::ColorEdit3("Light Ambient Color", glm::value_ptr(directionalLight.ambientColor));
+		ImGui::ColorEdit3("Light Diffuse Color", glm::value_ptr(directionalLight.diffuseColor));
+		ImGui::ColorEdit3("Light Specular Color", glm::value_ptr(directionalLight.specularColor));
 
-		//for (int i = 0; i < pointLights.size(); ++i)
-		//{
-		//	ImGui::Text(("Point Light " + std::to_string(i)).c_str());
-		//	ImGui::SliderFloat3(("Light Position " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].position), -300.0f, 300.0f);
-		//	ImGui::SliderFloat(("Constant " + std::to_string(i)).c_str(), &(pointLights[i].constant), 0.001f, 1.0f);
-		//	ImGui::SliderFloat(("Linear " + std::to_string(i)).c_str(), &(pointLights[i].linear), 0.001f, 1.0f);
-		//	ImGui::SliderFloat(("Quadratic " + std::to_string(i)).c_str(), &(pointLights[i].quadratic), 0.001f, 1.0f);
-		//	ImGui::ColorEdit3(("LP Ambient Color " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].ambientColor));
-		//	ImGui::ColorEdit3(("LP Diffuse Color " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].diffuseColor));
-		//	ImGui::ColorEdit3(("LP Specular Color " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].specularColor));
-		//}
+		for (int i = 0; i < pointLights.size(); ++i)
+		{
+			ImGui::Text(("Point Light " + std::to_string(i)).c_str());
+			ImGui::SliderFloat3(("Light Position " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].position), -300.0f, 300.0f);
+			ImGui::SliderFloat(("Constant " + std::to_string(i)).c_str(), &(pointLights[i].constant), 0.001f, 1.0f);
+			ImGui::SliderFloat(("Linear " + std::to_string(i)).c_str(), &(pointLights[i].linear), 0.001f, 1.0f);
+			ImGui::SliderFloat(("Quadratic " + std::to_string(i)).c_str(), &(pointLights[i].quadratic), 0.001f, 1.0f);
+			ImGui::ColorEdit3(("LP Ambient Color " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].ambientColor));
+			ImGui::ColorEdit3(("LP Diffuse Color " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].diffuseColor));
+			ImGui::ColorEdit3(("LP Specular Color " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].specularColor));
+		}
 
 		ImGui::End();
 	}

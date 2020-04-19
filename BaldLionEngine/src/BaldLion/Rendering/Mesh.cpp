@@ -31,7 +31,7 @@ namespace BaldLion
 				{ ShaderDataType::Float3, "vertex_color"},
 				{ ShaderDataType::Float3, "vertex_normal"},
 				{ ShaderDataType::Float2, "vertex_texcoord"}
-				});
+			});
 
 			Ref<IndexBuffer> indexBuffer;
 			indexBuffer = (IndexBuffer::Create(&m_indices[0], (uint32_t)m_indices.size()));

@@ -3,15 +3,19 @@
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
-#include <assimp/scene.h>
 
 namespace BaldLion
 {
 	namespace Rendering
 	{
-		Model::Model(const std::string& filePath) : m_modelPath(filePath)
+		Model::Model(const std::string& filePath)
 		{
 			BL_PROFILE_FUNCTION();
+
+			// Extracting folder path from filePath
+			auto lastSlash = filePath.find_last_of("/\\");		
+			m_modelPath = filePath.substr(0, lastSlash + 1);
+
 			SetUpModel(filePath);
 		}
 
@@ -22,6 +26,8 @@ namespace BaldLion
 
 		void Model::SetUpModel(const std::string& filePath)
 		{
+			BL_PROFILE_FUNCTION();
+
 			Assimp::Importer import;
 			const aiScene *scene = import.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs);
 
@@ -132,6 +138,7 @@ namespace BaldLion
 			}
 
 			std::string diffuseTexPath = "";
+			int asd = aimaterial->GetTextureCount(aiTextureType_DIFFUSE);
 			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
 				aiString diffuseTex;
@@ -171,14 +178,14 @@ namespace BaldLion
 			return Mesh(vertices, indices,
 				Material::Create("assets/shaders/BaseLit.glsl", 
 					glm::vec3(ambientColor.r,ambientColor.g,ambientColor.b),
-					glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
 					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
+					glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
 					glm::vec3(specularColor.r, specularColor.g, specularColor.b),
 					32.0f,
 					ambientTexPath,
 					diffuseTexPath,
-					specularTexPath,
 					emissiveTexPath,
+					specularTexPath,
 					normalTexPath));
 		}
 	}

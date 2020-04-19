@@ -2,9 +2,6 @@
 #include "AnimatedModel.h"
 #include "AnimatedMesh.h"
 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-
 namespace BaldLion
 {
 	namespace Rendering

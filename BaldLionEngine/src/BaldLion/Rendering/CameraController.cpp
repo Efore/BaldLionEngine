@@ -61,7 +61,7 @@ namespace BaldLion
 			if (cameraMovement != glm::vec3(0, 0, 0))
 				m_camera->SetPosition(m_camera->GetPosition() + cameraMovement);
 
-			if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
+			if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_1))
 			{
 				float deltaX = BaldLion::Input::GetMouseX() - m_prevX;
 				float deltaY = BaldLion::Input::GetMouseY() - m_prevY;

@@ -6,8 +6,17 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		OpenGLMaterial::OpenGLMaterial(const std::string& shaderPath, const glm::vec3& ambientColor, const glm::vec3& emissiveColor, const glm::vec3& diffuseColor, const glm::vec3& specularColor, float shininess,
-			const std::string& ambientTexPath, const std::string& diffuseTexPath, const std::string& emissiveTexPath, const std::string& specularTexPath, const std::string& normalTexPath)
+		OpenGLMaterial::OpenGLMaterial(const std::string& shaderPath, 
+			const glm::vec3& ambientColor, 
+			const glm::vec3& diffuseColor, 
+			const glm::vec3& emissiveColor, 
+			const glm::vec3& specularColor, 
+			float shininess,
+			const std::string& ambientTexPath, 
+			const std::string& diffuseTexPath, 
+			const std::string& emissiveTexPath, 
+			const std::string& specularTexPath, 
+			const std::string& normalTexPath)
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -19,37 +28,39 @@ namespace BaldLion
 			m_specularColor = specularColor;
 			m_shininess = shininess;
 
-			m_ambientTexSlot = 0;
+			short slotIndex = 0;
+
 			if (ambientTexPath.length() > 0)
 			{
+				m_ambientTexSlot = slotIndex++;
 				m_ambientTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(ambientTexPath));
 				m_ambientTex->Bind(m_ambientTexSlot);
 			}
 
-			m_diffuseTexSlot = 1;
 			if (diffuseTexPath.length() > 0)
 			{
+				m_diffuseTexSlot = slotIndex++;
 				m_diffuseTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(diffuseTexPath));
 				m_diffuseTex->Bind(m_diffuseTexSlot);
 			}
 
-			m_emissiveTexSlot = 2;
 			if (emissiveTexPath.length() > 0)
 			{
+				m_emissiveTexSlot = slotIndex++;
 				m_emissiveTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(emissiveTexPath));
 				m_emissiveTex->Bind(m_emissiveTexSlot);
 			}
 
-			m_specularTexSlot = 3;
 			if (specularTexPath.length() > 0)
 			{
+				m_specularTexSlot = slotIndex++;
 				m_specularTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(specularTexPath));
 				m_specularTex->Bind(m_specularTexSlot);
 			}
 
-			m_normalTexSlot = 4;
 			if (normalTexPath.length() > 0)
 			{
+				m_normalTexSlot = slotIndex++;
 				m_normalTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(normalTexPath));
 				m_normalTex->Bind(m_normalTexSlot);
 			}
@@ -62,11 +73,20 @@ namespace BaldLion
 			m_shader->SetUniform(MATKEY_SPECULAR_COLOR, ShaderDataType::Float3, &m_specularColor);
 			m_shader->SetUniform(MATKEY_SHININESS, ShaderDataType::Float, &m_shininess);
 
-			m_shader->SetUniform(MATKEY_AMBIENT_TEX, ShaderDataType::Int, &m_ambientTexSlot);
-			m_shader->SetUniform(MATKEY_DIFFUSE_TEX, ShaderDataType::Int, &m_diffuseTexSlot);
-			m_shader->SetUniform(MATKEY_EMISSIVE_TEX, ShaderDataType::Int, &m_emissiveTexSlot);
-			m_shader->SetUniform(MATKEY_SPECULAR_TEX, ShaderDataType::Int, &m_specularTexSlot);
-			m_shader->SetUniform(MATKEY_NORMAL_TEX, ShaderDataType::Int, &m_normalTexSlot);
+			if (m_ambientTex != nullptr)
+				m_shader->SetUniform(MATKEY_AMBIENT_TEX, ShaderDataType::Int, &m_ambientTexSlot);
+
+			if (m_diffuseTex != nullptr)
+				m_shader->SetUniform(MATKEY_DIFFUSE_TEX, ShaderDataType::Int, &m_diffuseTexSlot);
+
+			if (m_emissiveTex != nullptr)
+				m_shader->SetUniform(MATKEY_EMISSIVE_TEX, ShaderDataType::Int, &m_emissiveTexSlot);
+
+			if (m_specularTex != nullptr)
+				m_shader->SetUniform(MATKEY_SPECULAR_TEX, ShaderDataType::Int, &m_specularTexSlot);
+
+			if (m_normalTex != nullptr)
+				m_shader->SetUniform(MATKEY_NORMAL_TEX, ShaderDataType::Int, &m_normalTexSlot);
 		}
 
 		void OpenGLMaterial::SetAmbientColor(const glm::vec3 & ambient)

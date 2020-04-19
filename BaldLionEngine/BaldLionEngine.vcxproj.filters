@@ -1251,20 +1251,44 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\Application.h" />
-    <ClInclude Include="src\BaldLion\Core\Core.h" />
-    <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
-    <ClInclude Include="src\BaldLion\Core\Input.h" />
-    <ClInclude Include="src\BaldLion\Core\KeyCodes.h" />
-    <ClInclude Include="src\BaldLion\Core\Layer.h" />
-    <ClInclude Include="src\BaldLion\Core\LayerStack.h" />
-    <ClInclude Include="src\BaldLion\Core\Log.h" />
-    <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h" />
-    <ClInclude Include="src\BaldLion\Core\Window.h" />
-    <ClInclude Include="src\BaldLion\Profiling\Instrumentor.h" />
-    <ClInclude Include="src\BaldLion\Animation\Joint.h" />
     <ClInclude Include="src\BaldLion\Rendering\AnimatedMesh.h" />
     <ClInclude Include="src\BaldLion\Rendering\AnimatedModel.h" />
+    <ClInclude Include="src\BaldLion\Core\Application.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Core.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\EntryPoint.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Input.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Profiling\Instrumentor.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Animation\Joint.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\KeyCodes.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Layer.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\LayerStack.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Log.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Window.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
@@ -1342,12 +1366,22 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\Application.cpp" />
-    <ClCompile Include="src\BaldLion\Core\Layer.cpp" />
-    <ClCompile Include="src\BaldLion\Core\LayerStack.cpp" />
-    <ClCompile Include="src\BaldLion\Core\Log.cpp" />
-    <ClCompile Include="src\BaldLion\Core\Window.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\AnimatedMesh.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\AnimatedModel.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\AnimatedMesh.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Application.cpp">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Layer.cpp">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\LayerStack.cpp">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Log.cpp">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Window.cpp">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
