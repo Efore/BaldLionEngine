@@ -175,7 +175,7 @@ namespace BaldLion
 
 
 			return Mesh(vertices, indices,
-				Material::Create("assets/shaders/BaseLit.glsl", 
+				Material::Create("assets/shaders/nanosuit.glsl", 
 					glm::vec3(ambientColor.r,ambientColor.g,ambientColor.b),
 					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
 					glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),

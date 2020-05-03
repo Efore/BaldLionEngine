@@ -19,10 +19,10 @@ namespace BaldLion
 			const std::string& specularTexPath, 
 			const std::string& normalTexPath)
 		{
-			switch (RendererAPI::GetAPI())
+			switch (RendererPlatformInterface::GetAPI())
 			{
-			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLMaterial>(shaderPath, ambientColor, diffuseColor, emissiveColor, specularColor, shininess, ambientTexPath, diffuseTexPath, emissiveTexPath, specularTexPath, normalTexPath);
+			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+			case RendererPlatformInterface::RendererPlatform::OpenGL:		return CreateRef<OpenGLMaterial>(shaderPath, ambientColor, diffuseColor, emissiveColor, specularColor, shininess, ambientTexPath, diffuseTexPath, emissiveTexPath, specularTexPath, normalTexPath);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");

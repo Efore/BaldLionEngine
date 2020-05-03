@@ -33,35 +33,35 @@ namespace BaldLion
 			if (ambientTexPath.length() > 0)
 			{
 				m_ambientTexSlot = slotIndex++;
-				m_ambientTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(ambientTexPath));
+				m_ambientTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(ambientTexPath,TEXTURE_TYPE_2D));
 				m_ambientTex->Bind(m_ambientTexSlot);
 			}
 
 			if (diffuseTexPath.length() > 0)
 			{
 				m_diffuseTexSlot = slotIndex++;
-				m_diffuseTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(diffuseTexPath));
+				m_diffuseTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(diffuseTexPath, TEXTURE_TYPE_2D));
 				m_diffuseTex->Bind(m_diffuseTexSlot);
 			}
 
 			if (emissiveTexPath.length() > 0)
 			{
 				m_emissiveTexSlot = slotIndex++;
-				m_emissiveTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(emissiveTexPath));
+				m_emissiveTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(emissiveTexPath, TEXTURE_TYPE_2D));
 				m_emissiveTex->Bind(m_emissiveTexSlot);
 			}
 
 			if (specularTexPath.length() > 0)
 			{
 				m_specularTexSlot = slotIndex++;
-				m_specularTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(specularTexPath));
+				m_specularTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(specularTexPath, TEXTURE_TYPE_2D));
 				m_specularTex->Bind(m_specularTexSlot);
 			}
 
 			if (normalTexPath.length() > 0)
 			{
 				m_normalTexSlot = slotIndex++;
-				m_normalTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(normalTexPath));
+				m_normalTex = std::dynamic_pointer_cast<OpenGLTexture2D>(Renderer::GetTextureLibrary().Load(normalTexPath, TEXTURE_TYPE_2D));
 				m_normalTex->Bind(m_normalTexSlot);
 			}
 

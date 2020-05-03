@@ -52,9 +52,11 @@ struct PointLight
 
 struct Material
 {
+	vec3 ambientColor;
 	vec3 diffuseColor;
 	vec3 emissiveColor;
 	vec3 specularColor;
+	sampler2D ambientTex;
 	sampler2D diffuseTex;
 	sampler2D emissiveTex;
 	sampler2D specularTex;
@@ -91,10 +93,11 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_material.shininess);
 
 	// combine results
-    vec3 ambient  = light.ambientColor * u_material.diffuseColor * vec3(texture(u_material.diffuseTex, vs_texcoord));
+    vec3 ambient  = light.ambientColor * u_material.ambientColor * vec3(texture(u_material.ambientTex, vs_texcoord));
     vec3 diffuse  = light.diffuseColor  * diff * u_material.diffuseColor * vec3(texture(u_material.diffuseTex, vs_texcoord));
     vec3 specular = light.specularColor * spec * u_material.specularColor * vec3(texture(u_material.specularTex, vs_texcoord));
-    return (ambient + diffuse + specular);
+    
+	return (ambient + diffuse + specular);	
 }  
 
 
@@ -114,7 +117,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
   			     light.quadratic * (distance * distance));    
 
     // combine results
-    vec3 ambient  = light.ambientColor  *  u_material.diffuseColor * vec3(texture(u_material.diffuseTex, vs_texcoord));
+    vec3 ambient  = light.ambientColor  * u_material.ambientColor * vec3(texture(u_material.ambientTex, vs_texcoord));
     vec3 diffuse  = light.diffuseColor  * diff * u_material.diffuseColor * vec3(texture(u_material.diffuseTex, vs_texcoord));
     vec3 specular = light.specularColor * spec * u_material.specularColor * vec3(texture(u_material.specularTex, vs_texcoord));
 

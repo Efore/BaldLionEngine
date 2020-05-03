@@ -17,7 +17,7 @@ public:
 	{
 
 		m_model = CreateRef<Model>("assets/nanosuit/nanosuit.obj");
-		m_cameraController = ProjectionCameraController(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 500.0f, 100.0f);
+		m_cameraController = ProjectionCameraController(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 5000.0f, 100.0f);
 
 		directionalLight = { 
 			glm::vec3(-0.2f, -1.0f, -0.3f), 

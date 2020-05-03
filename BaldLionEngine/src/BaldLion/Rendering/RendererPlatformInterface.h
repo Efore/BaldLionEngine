@@ -7,11 +7,11 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		class RendererAPI
+		class RendererPlatformInterface
 		{
 		public:
 
-			enum class API
+			enum class RendererPlatform
 			{
 				None = 0, OpenGL = 1
 			};
@@ -24,10 +24,10 @@ namespace BaldLion
 
 			virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
 
-			inline static API GetAPI() { return s_rendererAPI; }
+			inline static RendererPlatform GetAPI() { return s_rendererPlatform; }
 
 		private:
-			static API s_rendererAPI;
+			static RendererPlatform s_rendererPlatform;
 		};
 	}
 }

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "BaldLion/Rendering/RendererAPI.h"
+#include "BaldLion/Rendering/RendererPlatformInterface.h"
 
 namespace BaldLion
 {
 	namespace Rendering
 	{
-		class OpenGLRendererAPI : public RendererAPI
+		class OpenGLRenderer : public RendererPlatformInterface
 		{
 			virtual void Init() override;
 			virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;

@@ -1,8 +1,9 @@
 #include "blpch.h"
 #include "Texture.h"
 
-#include "RendererAPI.h"
-#include "Platform/OpenGL/OpenGLTexture.h"
+#include "RendererPlatformInterface.h"
+#include "Platform/OpenGL/OpenGLTexture2D.h"
+#include "Platform/OpenGL/OpenGLTextureCubemap.h"
 
 namespace BaldLion 
 {
@@ -10,55 +11,91 @@ namespace BaldLion
 	{
 		Ref<Texture2D> Texture2D::Create(const std::string & path)
 		{
-			switch (RendererAPI::GetAPI())
+			switch (RendererPlatformInterface::GetAPI())
 			{
-			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLTexture2D>(path);
+			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+			case RendererPlatformInterface::RendererPlatform::OpenGL:		return CreateRef<OpenGLTexture2D>(path);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
 			return nullptr;
 		}
 
-		void TextureLibrary::Add(const Ref<Texture2D>& texture)
+		Ref<TextureCubeMap> TextureCubeMap::Create(const std::string & path)
+		{
+			switch (RendererPlatformInterface::GetAPI())
+			{
+			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+			case RendererPlatformInterface::RendererPlatform::OpenGL:		return CreateRef<OpenGLTextureCubemap>(path);
+			}
+
+			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
+			return nullptr;
+		}
+
+		const std::string TextureCubeMap::GetSkyboxTexturePath(const std::string& path, int index)
+		{
+			// Extracting name from lastpath			
+			auto lastDot = path.rfind('.');
+
+			const std::string extension = path.substr(lastDot, path.size() - 1);
+			const std::string subpath = path.substr(0, lastDot);
+
+			char textureIndex[3];
+			sprintf(textureIndex, "_%d", index);
+
+			return subpath + textureIndex + extension;
+		}
+
+		void TextureLibrary::Add(const Ref<Texture>& texture)
 		{
 			auto& name = texture->GetName();
 			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
 			m_textures[name] = texture;
 		}
 
-		void TextureLibrary::Add(const std::string& name, const Ref<Texture2D>& texture)
+		void TextureLibrary::Add(const std::string& name, const Ref<Texture>& texture)
 		{
 			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
 			m_textures[name] = texture;
 		}
 
-		Ref<Texture2D> TextureLibrary::Load(const std::string& filepath)
+		Ref<Texture> TextureLibrary::Load(const std::string& filepath, int textureType)
 		{	
 			const std::string name = TextureLibrary::GetNameFromPath(filepath);
 			
-			if (Exists(name))
-				return Get(name);
-
-			auto texture = Texture2D::Create(filepath);
-			Add(texture);
-			return texture;
+			return Load(name,filepath,textureType);
 		}
 
-		Ref<Texture2D> TextureLibrary::Load(const std::string& name, const std::string& filepath)
+		Ref<Texture> TextureLibrary::Load(const std::string& name, const std::string& filepath, int textureType)
 		{	
 			if (Exists(name))
 				return Get(name);
 
-			auto texture = Texture2D::Create(filepath);
+			Ref<Texture> texture = nullptr;
+
+			switch (textureType)
+			{
+				case TEXTURE_TYPE_2D:
+					texture = Texture2D::Create(filepath);
+					break;
+
+				case TEXTURE_TYPE_CUBEMAP:
+					texture = TextureCubeMap::Create(filepath);
+					break;
+
+				default:
+					texture = Texture2D::Create(filepath);
+					break;
+			}
+
 			Add(texture);
 			return texture;
-
 		}
 
-		Ref<Texture2D> TextureLibrary::Get(const std::string& name)
+		Ref<Texture> TextureLibrary::Get(const std::string& name)
 		{
-			BL_CORE_ASSERT(Exists(name), "Shader not found!");
+			BL_CORE_ASSERT(Exists(name), "Texture not found!");
 			return m_textures[name];
 		}
 

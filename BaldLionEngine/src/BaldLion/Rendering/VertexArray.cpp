@@ -4,7 +4,7 @@
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 
 #include "Renderer.h"
-#include "RendererAPI.h"
+#include "RendererPlatformInterface.h"
 
 namespace BaldLion
 {
@@ -12,10 +12,10 @@ namespace BaldLion
 	{
 		Ref<VertexArray> VertexArray::Create()
 		{
-			switch (RendererAPI::GetAPI())
+			switch (RendererPlatformInterface::GetAPI())
 			{
-			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLVertexArray>();
+			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+			case RendererPlatformInterface::RendererPlatform::OpenGL:		return CreateRef<OpenGLVertexArray>();
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");

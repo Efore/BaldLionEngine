@@ -120,25 +120,13 @@
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLMaterial.h">
       <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLRendererAPI.h">
-      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLShader.h">
-      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTexture.h">
       <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\RenderCommand.h">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Renderer.h">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\RendererAPI.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Shader.h">
@@ -1289,6 +1277,18 @@
     <ClInclude Include="src\BaldLion\Core\Window.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTexture2D.h">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLSkybox.h" />
+    <ClInclude Include="src\BaldLion\Rendering\RendererPlatformInterface.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\SkyboxPlatformInterface.h" />
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLRenderer.h">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTextureCubemap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
@@ -1324,25 +1324,13 @@
     <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLMaterial.cpp">
       <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLRendererAPI.cpp">
-      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
-    </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLShader.cpp">
-      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTexture.cpp">
       <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLVertexArray.cpp">
       <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\RenderCommand.cpp">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Renderer.cpp">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\RendererAPI.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Shader.cpp">
@@ -1383,5 +1371,17 @@
     <ClCompile Include="src\BaldLion\Core\Window.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTexture2D.cpp">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\RendererPlatformInterface.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\SkyboxPlatformInterface.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLRenderer.cpp">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLSkybox.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTextureCubemap.cpp" />
   </ItemGroup>
 </Project>

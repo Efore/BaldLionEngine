@@ -1,7 +1,7 @@
 #pragma once
 #include "BaldLion/Rendering/Material.h"
 #include "OpenGLShader.h"
-#include "OpenGLTexture.h"
+#include "OpenGLTexture2D.h"
 
 namespace BaldLion
 {

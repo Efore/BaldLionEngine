@@ -1,5 +1,5 @@
 #include "blpch.h"
-#include "OpenGLTexture.h"
+#include "OpenGLTexture2D.h"
 
 #include "stb_image.h"
 
@@ -45,11 +45,11 @@ namespace BaldLion
 
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_rendererID);
 			glTextureStorage2D(m_rendererID, 1, internalFormat, m_width, m_height);
+			glTextureSubImage2D(m_rendererID, 0, 0, 0, m_width, m_height, dataFormat, GL_UNSIGNED_BYTE, data);
 
 			glTextureParameteri(m_rendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTextureParameteri(m_rendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-			glTextureSubImage2D(m_rendererID, 0, 0, 0, m_width, m_height, dataFormat, GL_UNSIGNED_BYTE, data);
 			glGenerateTextureMipmap(m_rendererID);
 
 			stbi_image_free(data);

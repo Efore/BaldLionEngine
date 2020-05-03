@@ -2,7 +2,7 @@
 #include "Buffer.h"
 
 #include "Renderer.h"
-#include "RendererAPI.h"
+#include "RendererPlatformInterface.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"
 
 
@@ -15,10 +15,10 @@ namespace BaldLion
 		//-------------------------------------------------
 		Ref<VertexBuffer> VertexBuffer::Create(float * vertices, uint32_t size)
 		{
-			switch (RendererAPI::GetAPI())
+			switch (RendererPlatformInterface::GetAPI())
 			{
-			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLVertexBuffer>(vertices, size);
+			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+			case RendererPlatformInterface::RendererPlatform::OpenGL:		return CreateRef<OpenGLVertexBuffer>(vertices, size);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
@@ -27,10 +27,10 @@ namespace BaldLion
 
 		Ref<VertexBuffer> VertexBuffer::Create(Vertex* vertices, uint32_t size)
 		{
-			switch (RendererAPI::GetAPI())
+			switch (RendererPlatformInterface::GetAPI())
 			{
-			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLVertexBuffer>(vertices[0].GetFirstElement(), size);
+			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+			case RendererPlatformInterface::RendererPlatform::OpenGL:		return CreateRef<OpenGLVertexBuffer>(vertices[0].GetFirstElement(), size);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
@@ -42,10 +42,10 @@ namespace BaldLion
 		//-------------------------------------------------
 		Ref<IndexBuffer> IndexBuffer::Create(uint32_t * indices, uint32_t count)
 		{
-			switch (RendererAPI::GetAPI())
+			switch (RendererPlatformInterface::GetAPI())
 			{
-				case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-				case RendererAPI::API::OpenGL:		return CreateRef<OpenGLIndexBuffer>(indices, count);
+				case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+				case RendererPlatformInterface::RendererPlatform::OpenGL:		return CreateRef<OpenGLIndexBuffer>(indices, count);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");

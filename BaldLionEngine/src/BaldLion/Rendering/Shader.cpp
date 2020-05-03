@@ -11,10 +11,10 @@ namespace BaldLion
 	{
 		Ref<Shader> Shader::Create(const std::string & filepath)
 		{
-			switch (RendererAPI::GetAPI())
+			switch (RendererPlatformInterface::GetAPI())
 			{
-			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLShader>(filepath);
+			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+			case RendererPlatformInterface::RendererPlatform::OpenGL:		return CreateRef<OpenGLShader>(filepath);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown renderereAPI!");
@@ -24,10 +24,10 @@ namespace BaldLion
 
 		Ref<Shader> Shader::Create(const std::string& name, const std::string & vertexSrc, const std::string & fragmentSrc)
 		{
-			switch (RendererAPI::GetAPI())
+			switch (RendererPlatformInterface::GetAPI())
 			{
-			case RendererAPI::API::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererAPI::API::OpenGL:		return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
+			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+			case RendererPlatformInterface::RendererPlatform::OpenGL:		return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown renderereAPI!");

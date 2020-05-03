@@ -38,6 +38,7 @@ namespace BaldLion
 
 		BL_LOG_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
+
 		if (!s_GLFWInitialized)
 		{
 			int success = glfwInit();			
@@ -46,6 +47,7 @@ namespace BaldLion
 			s_GLFWInitialized = true;
 		}
 
+		glfwWindowHint(GLFW_SAMPLES, 4);
 		m_window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
 		m_context = new Rendering::OpenGLContext(m_window);
 
