@@ -60,12 +60,23 @@ namespace BaldLion
 		glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			bool wasMinimized = data.Width == 0 || data.Height == 0;
+
 			data.Width = width;
 			data.Height = height;
 
-			WindowResizeEvent event(width, height);
-			data.EventCallback(event);
-		});
+			if (wasMinimized || width == 0 || height == 0)
+			{
+				WindowMinimizeEvent event(width == 0 || height == 0);
+				data.EventCallback(event);
+			}
+			else
+			{
+				WindowResizeEvent event(width, height);
+				data.EventCallback(event);
+			}
+		});		
 
 		glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window)
 		{

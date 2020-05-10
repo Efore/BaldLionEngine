@@ -30,6 +30,7 @@ namespace BaldLion
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowMinimized(WindowMinimizeEvent& e);
 
 	private:
 		Scope<Window> m_window;

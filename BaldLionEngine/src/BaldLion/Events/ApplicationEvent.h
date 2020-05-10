@@ -26,6 +26,35 @@ namespace BaldLion
 		unsigned int m_width, m_height;
 	};
 
+	class BL_API WindowMinimizeEvent : public Event
+	{
+	public:
+		WindowMinimizeEvent(bool minimized) : m_minimized(minimized) {}
+
+		inline bool GetMinimized() const { return m_minimized; }
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			if (m_minimized)
+			{
+				ss << "WindowMinimizeEvent: true";
+			}
+			else
+			{
+				ss << "WindowMinimizeEvent: false";
+			}
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(WindowMinimize)
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+
+	private:
+		bool m_minimized;
+
+	};
+
 	class BL_API WindowCloseEvent : public Event
 	{
 	public:

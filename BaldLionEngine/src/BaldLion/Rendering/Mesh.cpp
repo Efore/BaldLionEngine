@@ -30,7 +30,9 @@ namespace BaldLion
 				{ ShaderDataType::Float3, "vertex_position"},
 				{ ShaderDataType::Float3, "vertex_color"},
 				{ ShaderDataType::Float3, "vertex_normal"},
-				{ ShaderDataType::Float2, "vertex_texcoord"}
+				{ ShaderDataType::Float2, "vertex_texcoord"},
+				{ ShaderDataType::Float3, "vertex_tangent"},
+				{ ShaderDataType::Float3, "vertex_bitangent"},
 			});
 
 			Ref<IndexBuffer> indexBuffer;

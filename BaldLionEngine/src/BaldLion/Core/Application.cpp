@@ -93,6 +93,7 @@ namespace BaldLion
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+		dispatcher.Dispatch<WindowMinimizeEvent>(BIND_EVENT_FN(OnWindowMinimized));
 
 		for (auto it = m_layerStack.end(); it != m_layerStack.begin(); )
 		{
@@ -107,4 +108,11 @@ namespace BaldLion
 		m_running = false;
 		return true;
 	}
+
+	bool Application::OnWindowMinimized(WindowMinimizeEvent& e)
+	{
+		m_minimized = e.GetMinimized();
+		return true;
+	}
+
 }

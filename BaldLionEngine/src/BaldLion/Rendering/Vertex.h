@@ -11,6 +11,8 @@ namespace BaldLion
 			glm::vec3 color;
 			glm::vec3 normal;
 			glm::vec2 textCoord;
+			glm::vec3 tangent;
+			glm::vec3 bitangent;
 
 			float * GetFirstElement() {
 				return &position.x;

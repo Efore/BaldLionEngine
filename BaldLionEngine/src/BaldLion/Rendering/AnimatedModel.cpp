@@ -60,7 +60,18 @@ namespace BaldLion
 					texCoord.y = aimesh->mTextureCoords[0][i].y;
 				}
 
-				vertices.emplace_back(Vertex({ position, color, normal, texCoord }));
+				glm::vec3 tangent = glm::vec3(0.0f);
+				glm::vec3 bitangent = glm::vec3(0.0f);
+				if (aimesh->HasTangentsAndBitangents())
+				{
+					tangent.x = aimesh->mTangents[i].x;
+					tangent.y = aimesh->mTangents[i].y;
+
+					bitangent.x = aimesh->mBitangents[i].x;
+					bitangent.y = aimesh->mBitangents[i].y;
+				}
+
+				vertices.emplace_back(Vertex({ position, color, normal, texCoord, tangent, bitangent }));
 			}
 
 			//Create vertex bones array
