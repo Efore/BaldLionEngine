@@ -35,6 +35,18 @@ namespace BaldLion
 				const std::string& specularTexPath, 
 				const std::string& normalTexPath);
 
+			static Ref<Material> Create(const std::string& shaderPath,
+				const glm::vec3& ambientColor,
+				const glm::vec3& diffuseColor,
+				const glm::vec3& emissiveColor,
+				const glm::vec3& specularColor,
+				float shininess,
+				const std::string& ambientTexPath, const unsigned char* ambientTexData, int ambientTexDataSize,
+				const std::string& diffuseTexPath, const unsigned char* diffuseTexData, int diffuseTexDataSize,
+				const std::string& emissiveTexPath, const unsigned char* emissiveTexData, int emissiveTexDataSize,
+				const std::string& specularTexPath, const unsigned char* specularTexData, int specularTexDataSize,
+				const std::string& normalTexPath, const unsigned char* normalTexData,int normalTexDataSize);
+
 			virtual void SetAmbientColor(const glm::vec3& ambient) = 0;
 			virtual void SetEmissiveColor(const glm::vec3& emissive) = 0;
 			virtual void SetDiffuseColor(const glm::vec3& diffuse) = 0;

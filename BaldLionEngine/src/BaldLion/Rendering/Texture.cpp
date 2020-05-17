@@ -13,8 +13,20 @@ namespace BaldLion
 		{
 			switch (RendererPlatformInterface::GetAPI())
 			{
-			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+			case RendererPlatformInterface::RendererPlatform::None:			BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
 			case RendererPlatformInterface::RendererPlatform::OpenGL:		return CreateRef<OpenGLTexture2D>(path);
+			}
+
+			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
+			return nullptr;
+		}
+
+		Ref<Texture2D> Texture2D::Create(const std::string& path, const unsigned char* textureData, int size)
+		{
+			switch (RendererPlatformInterface::GetAPI())
+			{
+				case RendererPlatformInterface::RendererPlatform::None:			BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+				case RendererPlatformInterface::RendererPlatform::OpenGL:		return CreateRef<OpenGLTexture2D>(path, textureData, size);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
@@ -87,6 +99,34 @@ namespace BaldLion
 				default:
 					texture = Texture2D::Create(filepath);
 					break;
+			}
+
+			Add(texture);
+			return texture;
+		}
+
+		BaldLion::Ref<BaldLion::Rendering::Texture> TextureLibrary::Load(const std::string& filepath, const unsigned char* textureData, int size, int textureType)
+		{
+			const std::string name = TextureLibrary::GetNameFromPath(filepath);
+
+			if (Exists(name))
+				return Get(name);
+
+			Ref<Texture> texture = nullptr;
+
+			switch (textureType)
+			{
+			case TEXTURE_TYPE_2D:
+				texture = Texture2D::Create(filepath, textureData, size);
+				break;
+
+			case TEXTURE_TYPE_CUBEMAP:
+				texture = TextureCubeMap::Create(filepath);
+				break;
+
+			default:
+				texture = Texture2D::Create(filepath, textureData, size);
+				break;
 			}
 
 			Add(texture);

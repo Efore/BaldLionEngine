@@ -19,11 +19,11 @@ namespace BaldLion
 			}
 		};		
 
-		const uint32_t NUM_BONES_PER_VEREX = 3;
+		const uint32_t NUM_WEIGHTS_PER_VEREX = 3;
 		struct VertexBoneData
 		{
-			uint32_t vertexids[NUM_BONES_PER_VEREX];
-			float weights[NUM_BONES_PER_VEREX];
+			uint32_t vertexids[NUM_WEIGHTS_PER_VEREX];
+			float weights[NUM_WEIGHTS_PER_VEREX];
 		};
 	}
 }

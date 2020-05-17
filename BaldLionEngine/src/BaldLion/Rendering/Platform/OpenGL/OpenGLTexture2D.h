@@ -9,6 +9,7 @@ namespace BaldLion
 		{
 		public:
 			OpenGLTexture2D(const std::string& path);
+			OpenGLTexture2D(const std::string& path, const unsigned char* textureData, int size);
 			virtual ~OpenGLTexture2D();
 
 			virtual uint32_t GetWidth() const override { return m_width; }

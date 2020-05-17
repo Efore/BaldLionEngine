@@ -15,7 +15,7 @@ namespace BaldLion
 			~AnimatedModel();
 
 		protected:
-			virtual Mesh processMesh(const aiMesh *aimesh, const aiScene *aiscene) override;
+			virtual Mesh ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene) override;
 
 		private:
 			int GenerateJoints(std::vector<Animation::Joint>& joints, const int parentID, int& currentID, const aiNode* node);

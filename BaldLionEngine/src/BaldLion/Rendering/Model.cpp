@@ -3,6 +3,7 @@
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 namespace BaldLion
 {
@@ -13,10 +14,10 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 
 			// Extracting folder path from filePath
-			auto lastSlash = filePath.find_last_of("/\\");		
-			m_modelPath = filePath.substr(0, lastSlash + 1);
 
-			SetUpModel(filePath);
+			m_modelPath = filePath;
+			auto lastSlash = filePath.find_last_of("/\\");		
+			m_modelFolderPath = filePath.substr(0, lastSlash + 1);
 		}
 
 		Model::~Model()
@@ -24,12 +25,14 @@ namespace BaldLion
 
 		}
 
-		void Model::SetUpModel(const std::string& filePath)
+		void Model::SetUpModel()
 		{
 			BL_PROFILE_FUNCTION();
 
 			Assimp::Importer import;
-			const aiScene *scene = import.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+			import.SetPropertyInteger(AI_CONFIG_PP_LBW_MAX_WEIGHTS, Rendering::NUM_WEIGHTS_PER_VEREX);
+
+			const aiScene *scene = import.ReadFile(m_modelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights);
 
 			if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 			{
@@ -37,7 +40,7 @@ namespace BaldLion
 				return;
 			}
 
-			processNode(scene->mRootNode, scene);
+			ProcessNode(scene->mRootNode, scene);
 		}
 
 		void Model::Draw() const
@@ -49,27 +52,23 @@ namespace BaldLion
 			}
 		}
 
-		void Model::processNode(const aiNode *node, const aiScene *scene)
+		void Model::ProcessNode(const aiNode *node, const aiScene *scene)
 		{
 			// process all the node's meshes (if any)
 			for (unsigned int i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-				m_subMeshes.emplace_back(processMesh(mesh, scene));
+				m_subMeshes.emplace_back(ProcessMesh(mesh, scene));
 			}
 			// then do the same for each of its children
 			for (unsigned int i = 0; i < node->mNumChildren; i++)
 			{
-				processNode(node->mChildren[i], scene);
+				ProcessNode(node->mChildren[i], scene);
 			}
 		}
 
-		Mesh Model::processMesh(const aiMesh *aimesh, const aiScene *aiscene)
+		void Model::FillVertexArrayData(const aiMesh *aimesh, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
 		{
-			std::vector<Vertex> vertices;
-			std::vector<uint32_t> indices;
-			std::vector<Texture> textures;
-
 			for (unsigned int i = 0; i < aimesh->mNumVertices; i++)
 			{
 				// process vertex positions, normals and texture coordinates
@@ -124,66 +123,78 @@ namespace BaldLion
 				for (unsigned int j = 0; j < face.mNumIndices; j++)
 					indices.push_back(face.mIndices[j]);
 			}
-			
+		}
+
+		void Model::FillTextureData(const aiMesh *aimesh, const aiScene *aiscene, aiColor3D& ambientColor, aiColor3D& diffuseColor, aiColor3D& specularColor, aiColor3D& emissiveColor, std::string& ambientTexPath,
+			std::string& diffuseTexPath, std::string& specularTexPath, std::string& emissiveTexPath, std::string& normalTexPath)
+		{
 			const aiMaterial* aimaterial = aiscene->mMaterials[aimesh->mMaterialIndex];
 
-			aiColor3D ambientColor;
 			aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, ambientColor);
-
-			aiColor3D diffuseColor;
 			aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
-
-			aiColor3D specularColor;
 			aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, specularColor);
+			aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);			
 
-			aiColor3D emissiveColor;
-			aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);		
-			
-			std::string ambientTexPath = "";
 			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
 			{
 				aiString ambientTex;
-				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &ambientTex);
-				ambientTexPath = m_modelPath;
+				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &ambientTex);								
+				ambientTexPath = m_modelFolderPath;
 				ambientTexPath.append(ambientTex.C_Str());
 			}
 
-			std::string diffuseTexPath = "";
 			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
 				aiString diffuseTex;
-				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &diffuseTex);
-				diffuseTexPath = m_modelPath;
+				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &diffuseTex);		
+				diffuseTexPath = m_modelFolderPath;
 				diffuseTexPath.append(diffuseTex.C_Str());
 			}
 
-			std::string specularTexPath = "";
 			if (aimaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
 			{
 				aiString specularTex;
 				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &specularTex);
-				specularTexPath = m_modelPath;
+				specularTexPath = m_modelFolderPath;
 				specularTexPath.append(specularTex.C_Str());
 			}
 
-			std::string emissiveTexPath = "";
 			if (aimaterial->GetTextureCount(aiTextureType_EMISSIVE) > 0)
 			{
 				aiString emissiveTex;
 				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &emissiveTex);
-				emissiveTexPath = m_modelPath;
+				emissiveTexPath = m_modelFolderPath;
 				emissiveTexPath.append(emissiveTex.C_Str());
-			}
-
-			std::string normalTexPath = "";
+			}			
+			
 			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
-			{
+			{				 
 				aiString normalTex;
 				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &normalTex);
-				normalTexPath = m_modelPath;
+				normalTexPath = m_modelFolderPath;
 				normalTexPath.append(normalTex.C_Str());
 			}
+		}
 
+		Mesh Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
+		{
+			std::vector<Vertex> vertices;
+			std::vector<uint32_t> indices;
+
+			FillVertexArrayData(aimesh, vertices, indices);
+
+			aiColor3D ambientColor;
+			aiColor3D diffuseColor;
+			aiColor3D specularColor;
+			aiColor3D emissiveColor;
+			
+			std::string ambientTexPath = "";
+			std::string diffuseTexPath = "";
+			std::string specularTexPath = "";
+			std::string emissiveTexPath = "";
+			std::string normalTexPath = "";
+
+			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTexPath, diffuseTexPath, specularTexPath, emissiveTexPath, normalTexPath);
 
 			return Mesh(vertices, indices,
 				Material::Create("assets/shaders/nanosuit.glsl", 
@@ -198,6 +209,8 @@ namespace BaldLion
 					specularTexPath,
 					normalTexPath));
 		}
+
+
 	}
 
 }

@@ -32,6 +32,7 @@ namespace BaldLion
 		{
 		public:
 			static Ref<Texture2D> Create(const std::string& path);
+			static Ref<Texture2D> Create(const std::string& path, const unsigned char* textureData, int size);
 		};
 
 		class TextureCubeMap : public Texture
@@ -52,6 +53,7 @@ namespace BaldLion
 			void Add(const std::string& name, const Ref<Texture>& texture);
 
 			Ref<Texture> Load(const std::string& filepath, int textureType);
+			Ref<Texture> Load(const std::string& filepath, const unsigned char* textureData, int size, int textureType);
 			Ref<Texture> Load(const std::string& name, const std::string& filepath, int textureType);
 
 			Ref<Texture> Get(const std::string& name);
