@@ -10,7 +10,7 @@ namespace BaldLion
 	namespace Rendering
 	{
 		OpenGLTextureCubemap::OpenGLTextureCubemap(const std::string& path)
-			: m_path(path)
+			: m_path(path), m_name(TextureLibrary::GetNameFromPath(path))
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -58,9 +58,7 @@ namespace BaldLion
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-			m_name = TextureLibrary::GetNameFromPath(path);			
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);		
 		}
 
 		OpenGLTextureCubemap::~OpenGLTextureCubemap()

@@ -1,5 +1,6 @@
 #include "blpch.h"
 #include "Model.h"
+#include "Renderer.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -125,55 +126,112 @@ namespace BaldLion
 			}
 		}
 
-		void Model::FillTextureData(const aiMesh *aimesh, const aiScene *aiscene, aiColor3D& ambientColor, aiColor3D& diffuseColor, aiColor3D& specularColor, aiColor3D& emissiveColor, std::string& ambientTexPath,
-			std::string& diffuseTexPath, std::string& specularTexPath, std::string& emissiveTexPath, std::string& normalTexPath)
+		void Model::FillTextureData(const aiMesh *aimesh, 
+			const aiScene *aiscene, 
+			aiColor3D& ambientColor, 
+			aiColor3D& diffuseColor, 
+			aiColor3D& specularColor, 
+			aiColor3D& emissiveColor, 
+			Ref<Texture>& ambientTex,
+			Ref<Texture>& diffuseTex, 
+			Ref<Texture>& specularTex, 
+			Ref<Texture>& emissiveTex, 
+			Ref<Texture>& normalTex)
 		{
 			const aiMaterial* aimaterial = aiscene->mMaterials[aimesh->mMaterialIndex];
 
 			aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, ambientColor);
 			aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
 			aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, specularColor);
-			aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);			
+			aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);	
+
+			aiString relativeTexPath;
+			std::string completeTexPath;
 
 			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
-			{
-				aiString ambientTex;
-				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &ambientTex);								
-				ambientTexPath = m_modelFolderPath;
-				ambientTexPath.append(ambientTex.C_Str());
+			{				
+				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &relativeTexPath);
+				completeTexPath = m_modelFolderPath;
+				completeTexPath.append(relativeTexPath.C_Str());
+
+				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
+				{
+					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
+					ambientTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+				}
+				else
+				{
+					ambientTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+				}
 			}
 
 			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
-				aiString diffuseTex;
-				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &diffuseTex);		
-				diffuseTexPath = m_modelFolderPath;
-				diffuseTexPath.append(diffuseTex.C_Str());
+				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &relativeTexPath);
+				completeTexPath = m_modelFolderPath;
+				completeTexPath.append(relativeTexPath.C_Str());
+
+				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
+				{
+					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
+					diffuseTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+				}
+				else
+				{
+					diffuseTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+				}
 			}
 
 			if (aimaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
 			{
-				aiString specularTex;
-				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &specularTex);
-				specularTexPath = m_modelFolderPath;
-				specularTexPath.append(specularTex.C_Str());
+				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &relativeTexPath);
+				completeTexPath = m_modelFolderPath;
+				completeTexPath.append(relativeTexPath.C_Str());
+
+				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
+				{
+					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
+					specularTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+				}
+				else
+				{
+					specularTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+				}
 			}
 
 			if (aimaterial->GetTextureCount(aiTextureType_EMISSIVE) > 0)
 			{
-				aiString emissiveTex;
-				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &emissiveTex);
-				emissiveTexPath = m_modelFolderPath;
-				emissiveTexPath.append(emissiveTex.C_Str());
+				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &relativeTexPath);
+				completeTexPath = m_modelFolderPath;
+				completeTexPath.append(relativeTexPath.C_Str());
+
+				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
+				{
+					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
+					emissiveTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+				}
+				else
+				{
+					emissiveTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+				}
 			}			
 			
 			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
 			{				 
-				aiString normalTex;
-				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &normalTex);
-				normalTexPath = m_modelFolderPath;
-				normalTexPath.append(normalTex.C_Str());
-			}
+				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &relativeTexPath);
+				completeTexPath = m_modelFolderPath;
+				completeTexPath.append(relativeTexPath.C_Str());
+
+				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
+				{
+					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
+					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+				}
+				else
+				{
+					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+				}
+			} 
 		}
 
 		Mesh Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
@@ -188,13 +246,13 @@ namespace BaldLion
 			aiColor3D specularColor;
 			aiColor3D emissiveColor;
 			
-			std::string ambientTexPath = "";
-			std::string diffuseTexPath = "";
-			std::string specularTexPath = "";
-			std::string emissiveTexPath = "";
-			std::string normalTexPath = "";
+			Ref<Texture> ambientTex = nullptr;
+			Ref<Texture> diffuseTex = nullptr;
+			Ref<Texture> specularTex = nullptr;
+			Ref<Texture> emissiveTex = nullptr;
+			Ref<Texture> normalTex = nullptr;
 
-			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTexPath, diffuseTexPath, specularTexPath, emissiveTexPath, normalTexPath);
+			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
 
 			return Mesh(vertices, indices,
 				Material::Create("assets/shaders/nanosuit.glsl", 
@@ -203,11 +261,11 @@ namespace BaldLion
 					glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
 					glm::vec3(specularColor.r, specularColor.g, specularColor.b),
 					32.0f,
-					ambientTexPath,
-					diffuseTexPath,
-					emissiveTexPath,
-					specularTexPath,
-					normalTexPath));
+					ambientTex,
+					diffuseTex,
+					specularTex,
+					emissiveTex,
+					normalTex));
 		}
 
 

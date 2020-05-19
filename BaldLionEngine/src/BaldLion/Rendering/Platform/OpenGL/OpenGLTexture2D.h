@@ -19,7 +19,7 @@ namespace BaldLion
 
 			virtual const std::string& GetName() const override { return m_name; }
 
-			virtual const int GetTextureType() const override { return TEXTURE_TYPE_2D; }
+			virtual const int GetTextureType() const override { return BL_TEXTURE_TYPE_2D; }
 
 		private:
 			std::string m_path;

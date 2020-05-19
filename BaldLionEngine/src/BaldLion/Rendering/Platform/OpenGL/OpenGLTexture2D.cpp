@@ -10,7 +10,7 @@ namespace BaldLion
 	namespace Rendering
 	{
 		OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
-			: m_path(path)
+			: m_path(path), m_name(TextureLibrary::GetNameFromPath(path))
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -53,12 +53,11 @@ namespace BaldLion
 			glGenerateTextureMipmap(m_rendererID);
 
 			stbi_image_free(data);
-
-			m_name = TextureLibrary::GetNameFromPath(path);
 		}
 		
 
-		OpenGLTexture2D::OpenGLTexture2D(const std::string& path, const unsigned char* textureData, int size)
+		OpenGLTexture2D::OpenGLTexture2D(const std::string& path, const unsigned char* textureData, int size) 
+			: m_path(path), m_name(TextureLibrary::GetNameFromPath(path))
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -101,8 +100,6 @@ namespace BaldLion
 			glGenerateTextureMipmap(m_rendererID);
 
 			stbi_image_free(data);
-
-			m_name = TextureLibrary::GetNameFromPath(path);
 		}
 
 		OpenGLTexture2D::~OpenGLTexture2D()

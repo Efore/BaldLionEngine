@@ -29,11 +29,11 @@ namespace BaldLion
 				aiColor3D& diffuseColor,
 				aiColor3D& specularColor,
 				aiColor3D& emissiveColor,
-				std::string& ambientTexPath,
-				std::string& diffuseTexPath,
-				std::string& specularTexPath,
-				std::string& emissiveTexPath, 
-				std::string& normalTexPath);
+				Ref<Texture>& ambientTex,
+				Ref<Texture>& diffuseTex,
+				Ref<Texture>& specularTex,
+				Ref<Texture>& emissiveTex,
+				Ref<Texture>& normalTex);
 			
 		protected:
 			std::string m_modelPath;

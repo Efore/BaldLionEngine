@@ -57,13 +57,13 @@ namespace BaldLion
 			aiColor3D specularColor;
 			aiColor3D emissiveColor;
 
-			std::string ambientTexPath = "";
-			std::string diffuseTexPath = "";
-			std::string specularTexPath = "";
-			std::string emissiveTexPath = "";
-			std::string normalTexPath = "";
+			Ref<Texture> ambientTex = nullptr;
+			Ref<Texture> diffuseTex = nullptr;
+			Ref<Texture> specularTex = nullptr;
+			Ref<Texture> emissiveTex = nullptr;
+			Ref<Texture> normalTex = nullptr;
 
-			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTexPath, diffuseTexPath, specularTexPath, emissiveTexPath, normalTexPath);
+			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
 
 			//Create vertex bones array
 			for (size_t i = 0; i < aimesh->mNumBones; ++i)
@@ -90,11 +90,11 @@ namespace BaldLion
 					glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
 					glm::vec3(specularColor.r, specularColor.g, specularColor.b),
 					32.0f,
-					ambientTexPath,
-					diffuseTexPath,
-					emissiveTexPath,
-					specularTexPath,
-					normalTexPath));
+					ambientTex,
+					diffuseTex,
+					specularTex,
+					emissiveTex,
+					normalTex));
 		}
 
 

@@ -88,11 +88,11 @@ namespace BaldLion
 
 			switch (textureType)
 			{
-				case TEXTURE_TYPE_2D:
+				case BL_TEXTURE_TYPE_2D:
 					texture = Texture2D::Create(filepath);
 					break;
 
-				case TEXTURE_TYPE_CUBEMAP:
+				case BL_TEXTURE_TYPE_CUBEMAP:
 					texture = TextureCubeMap::Create(filepath);
 					break;
 
@@ -116,11 +116,11 @@ namespace BaldLion
 
 			switch (textureType)
 			{
-			case TEXTURE_TYPE_2D:
+			case BL_TEXTURE_TYPE_2D:
 				texture = Texture2D::Create(filepath, textureData, size);
 				break;
 
-			case TEXTURE_TYPE_CUBEMAP:
+			case BL_TEXTURE_TYPE_CUBEMAP:
 				texture = TextureCubeMap::Create(filepath);
 				break;
 
