@@ -36,8 +36,8 @@ namespace BaldLion
 			s_rendererPlatformInterface->SetClearColor({ 0.3f, 0.3f, 0.8f, 1.0f });
 			s_rendererPlatformInterface->Clear();
 
-			s_sceneData.ViewProjectionMatrix = camera->GetViewProjectionMatrix();
-			s_sceneData.CameraPosition = camera->GetPosition();
+			s_sceneData.viewProjectionMatrix = camera->GetViewProjectionMatrix();
+			s_sceneData.cameraPosition = camera->GetPosition();
 
 			LightManager::BeginScene(directionalLight, pointLights);
 		}
@@ -54,8 +54,8 @@ namespace BaldLion
 			shader->Bind();
 
 			shader->SetUniform("u_transform", ShaderDataType::Mat4, &(transform[0][0]));
-			shader->SetUniform("u_viewProjection", ShaderDataType::Mat4, &(s_sceneData.ViewProjectionMatrix));
-			shader->SetUniform("u_cameraPos", ShaderDataType::Float3, &(s_sceneData.CameraPosition));
+			shader->SetUniform("u_viewProjection", ShaderDataType::Mat4, &(s_sceneData.viewProjectionMatrix));
+			shader->SetUniform("u_cameraPos", ShaderDataType::Float3, &(s_sceneData.cameraPosition));
 
 			shader->SetUniform("u_directionalLight.direction", ShaderDataType::Float3, &(LightManager::GetDirectionalLight().direction));
 			shader->SetUniform("u_directionalLight.ambientColor",ShaderDataType::Float3, &(LightManager::GetDirectionalLight().ambientColor));

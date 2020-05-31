@@ -30,10 +30,9 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			Assimp::Importer import;
-			import.SetPropertyInteger(AI_CONFIG_PP_LBW_MAX_WEIGHTS, Rendering::NUM_WEIGHTS_PER_VEREX);
+			Assimp::Importer import;			
 
-			const aiScene *scene = import.ReadFile(m_modelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights);
+			const aiScene *scene = import.ReadFile(m_modelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 			if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 			{
@@ -115,7 +114,7 @@ namespace BaldLion
 					bitangent.y = aimesh->mBitangents[i].y;
 				}
 
-				vertices.emplace_back(Vertex({ position, color, normal, texCoord, tangent, bitangent }));
+				vertices[i] = (Vertex({ position, color, normal, texCoord, tangent, bitangent }));
 			}
 
 			for (unsigned int i = 0; i < aimesh->mNumFaces; i++)
@@ -236,7 +235,7 @@ namespace BaldLion
 
 		Mesh Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{
-			std::vector<Vertex> vertices;
+			std::vector<Vertex> vertices(aimesh->mNumVertices);
 			std::vector<uint32_t> indices;
 
 			FillVertexArrayData(aimesh, vertices, indices);

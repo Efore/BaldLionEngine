@@ -1289,6 +1289,9 @@
       <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTextureCubemap.h" />
+    <ClInclude Include="src\BaldLion\Animation\Animator.h" />
+    <ClInclude Include="src\BaldLion\Animation\AnimationManager.h" />
+    <ClInclude Include="src\BaldLion\Animation\AnimationData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
@@ -1383,5 +1386,7 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLSkybox.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTextureCubemap.cpp" />
+    <ClCompile Include="src\BaldLion\Animation\Animator.cpp" />
+    <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp" />
   </ItemGroup>
 </Project>

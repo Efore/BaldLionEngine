@@ -1,24 +1,63 @@
 #pragma once
-#include "Model.h"
-#include "BaldLion/Animation/Joint.h"
+
+#include "AnimatedMesh.h"
+#include <vector>
 #include <assimp/scene.h>
 
 namespace BaldLion
 {
 	namespace Rendering
 	{
-		class AnimatedModel : public Model {
+		class AnimatedModel{
 
 		public:
 
 			AnimatedModel(const std::string& filePath);
 			~AnimatedModel();
 
-		protected:
-			virtual Mesh ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene) override;
+			void SetUpModel();
+			void Draw() const;
+
+			inline const std::vector<AnimatedMesh>& GetSubMeshes() const { return m_subMeshes; }
+			inline std::vector<AnimatedMesh>& GetSubMeshes() { return m_subMeshes; }
 
 		private:
-			int GenerateJoints(std::vector<Animation::Joint>& joints, const int parentID, int& currentID, const aiNode* node);
+
+			void ProcessNode(const aiNode *node, const aiScene *scene);
+
+			AnimatedMesh ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
+
+			void FillJointData(std::map<std::string, uint32_t>& jointMapping, 
+				std::vector<Animation::Joint>& jointData, 
+				const std::map<std::string, glm::mat4>& jointOffsetMapping, 
+				uint32_t& currentID, 
+				const int32_t parentID, 
+				const aiNode* node);
+
+			void FillVertexArrayData(const aiMesh *aimesh, 
+				std::vector<AnimatedVertex>& vertices, 
+				std::vector<uint32_t>& indices,  
+				std::map<std::string, uint32_t>& jointMap, 
+				std::map<std::string, glm::mat4>& jointOffsetMapping);
+
+			void FillTextureData(const aiMesh *aimesh,
+				const aiScene *aiscene,
+				aiColor3D& ambientColor,
+				aiColor3D& diffuseColor,
+				aiColor3D& specularColor,
+				aiColor3D& emissiveColor,
+				Ref<Texture>& ambientTex,
+				Ref<Texture>& diffuseTex,
+				Ref<Texture>& specularTex,
+				Ref<Texture>& emissiveTex,
+				Ref<Texture>& normalTex);
+
+			void GenerateAnimator(const aiScene *scene,const std::map<std::string, uint32_t>& jointMap);
+
+		protected:
+			std::string m_modelPath;
+			std::string m_modelFolderPath;
+			std::vector<AnimatedMesh> m_subMeshes;
 
 		};
 	}

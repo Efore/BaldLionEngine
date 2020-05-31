@@ -50,6 +50,14 @@ namespace BaldLion
 		overlay->OnAttach();
 	}
 
+	Application& Application::GetInstance()
+	{
+		if (s_instance == nullptr)
+			s_instance = new Application();
+
+		return *s_instance;
+	}
+
 	void Application::Run()
 	{		
 		BL_PROFILE_FUNCTION();

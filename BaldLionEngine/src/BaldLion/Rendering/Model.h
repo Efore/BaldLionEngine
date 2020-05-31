@@ -19,9 +19,11 @@ namespace BaldLion
 
 			const std::vector<Mesh>& GetSubMeshes() const { return m_subMeshes; }
 
-		protected:
-			virtual void ProcessNode(const aiNode *node, const aiScene *scene);
-			virtual Mesh ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
+		private:
+
+			void ProcessNode(const aiNode *node, const aiScene *scene);
+			Mesh ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
+
 			void FillVertexArrayData(const aiMesh *aimesh, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 			void FillTextureData(const aiMesh *aimesh,
 				const aiScene *aiscene,

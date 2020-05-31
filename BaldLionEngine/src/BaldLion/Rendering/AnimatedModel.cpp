@@ -1,15 +1,28 @@
 #include "blpch.h"
 #include "AnimatedModel.h"
-#include "AnimatedMesh.h"
+#include "Renderer.h"
+#include "BaldLion/Animation/AnimationManager.h"
+
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+
+using namespace BaldLion::Animation;
 
 namespace BaldLion
 {
 	namespace Rendering
 	{
 
-		AnimatedModel::AnimatedModel(const std::string& filePath) : Model(filePath)
+		AnimatedModel::AnimatedModel(const std::string& filePath)
 		{
+			BL_PROFILE_FUNCTION();
 
+			// Extracting folder path from filePath
+
+			m_modelPath = filePath;
+			auto lastSlash = filePath.find_last_of("/\\");
+			m_modelFolderPath = filePath.substr(0, lastSlash + 1);
 		}
 
 		AnimatedModel::~AnimatedModel()
@@ -17,40 +30,338 @@ namespace BaldLion
 
 		}
 
-		int AnimatedModel::GenerateJoints(std::vector<Animation::Joint>& joints, const int parentID, int& currentID, const aiNode* node)
+		void AnimatedModel::SetUpModel()
 		{
-			int jointID = ++currentID;
-			glm::mat4 transformMatrix = glm::mat4(
-				node->mTransformation.a1, node->mTransformation.a2, node->mTransformation.a3, node->mTransformation.a4,
-				node->mTransformation.b1, node->mTransformation.b2, node->mTransformation.b3, node->mTransformation.b4,
-				node->mTransformation.c1, node->mTransformation.c2, node->mTransformation.c3, node->mTransformation.c4,
-				node->mTransformation.d1, node->mTransformation.d2, node->mTransformation.d3, node->mTransformation.d4
-			);
+			BL_PROFILE_FUNCTION();
 
-			std::vector<int> childrenIDs(node->mNumChildren);
-			joints.emplace_back(Animation::Joint({ jointID, parentID, childrenIDs }));
+			Assimp::Importer import;
+			import.SetPropertyInteger(AI_CONFIG_PP_LBW_MAX_WEIGHTS, BL_JOINT_WEIGHTS_PER_VERTEX);
 
-			for (size_t i = 0; i < node->mNumChildren; ++i)
+			const aiScene *scene = import.ReadFile(m_modelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights);
+
+			if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 			{
-				int childID = GenerateJoints(joints, jointID, currentID, node->mChildren[i]);
-				childrenIDs[i] = childID;
+				std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
+				return;
 			}
 
-			joints[jointID].childrenJointIDs = std::vector<int>(childrenIDs);
-
-			return jointID;
+			ProcessNode(scene->mRootNode, scene);
 		}
 
-
-		Mesh AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
+		void AnimatedModel::Draw() const
 		{
-			std::vector<VertexBoneData> verticesBoneData;
-			std::vector<Animation::Joint> joints;
+			BL_PROFILE_FUNCTION();
+			for (const AnimatedMesh& m : m_subMeshes)
+			{
+				m.Draw();
+			}
+		}
 
-			std::vector<Vertex> vertices;
+		void AnimatedModel::ProcessNode(const aiNode *node, const aiScene *scene)
+		{
+			// process all the node's meshes (if any)
+			for (unsigned int i = 0; i < node->mNumMeshes; i++)
+			{
+				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+				m_subMeshes.emplace_back(ProcessMesh(mesh, scene));
+			}
+			// then do the same for each of its children
+			for (unsigned int i = 0; i < node->mNumChildren; i++)
+			{
+				ProcessNode(node->mChildren[i], scene);
+			}
+		}
+
+		void AnimatedModel::FillJointData(std::map<std::string, uint32_t>& jointMapping,
+			std::vector<Animation::Joint>& jointsData,
+			const std::map<std::string, glm::mat4>& jointOffsetMapping,
+			uint32_t& currentID,
+			const int32_t parentID,
+			const aiNode* node)
+		{
+			auto it = jointMapping.find(node->mName.data);
+
+			if (it != jointMapping.end())
+			{
+				jointMapping[node->mName.data] = currentID;
+				jointsData[currentID].jointID = currentID;
+				jointsData[currentID].parentID = parentID;
+				jointsData[currentID].jointOffsetTransform = jointOffsetMapping.at(node->mName.data);
+				++currentID;
+			}
+						
+			for (size_t i = 0; i < node->mNumChildren; ++i)
+			{
+				FillJointData(jointMapping, jointsData, jointOffsetMapping, currentID, it != jointMapping.end() ? it->second : parentID, node->mChildren[i]);
+			}			
+		}
+		
+		void AnimatedModel::FillVertexArrayData(const aiMesh *aimesh, 
+			std::vector<AnimatedVertex>& vertices, 
+			std::vector<uint32_t>& indices, 
+			std::map<std::string, uint32_t>& jointMapping, 
+			std::map<std::string, glm::mat4>& jointOffsetMapping)
+		{
+			for (size_t i = 0; i < aimesh->mNumVertices; i++)
+			{
+				// process vertex positions, normals and texture coordinates
+				glm::vec3 position = glm::vec3(0.0f);
+				if (aimesh->HasPositions())
+				{
+					position.x = aimesh->mVertices[i].x;
+					position.y = aimesh->mVertices[i].y;
+					position.z = aimesh->mVertices[i].z;
+				}
+
+				glm::vec3 normal = glm::vec3(0.0f);
+				if (aimesh->HasNormals())
+				{
+					normal.x = aimesh->mNormals[i].x;
+					normal.y = aimesh->mNormals[i].y;
+					normal.z = aimesh->mNormals[i].z;
+				}
+
+				glm::vec3 color = glm::vec3(0.0f);
+				if (aimesh->HasVertexColors((uint32_t)i))
+				{
+					color.x = aimesh->mColors[i]->r;
+					color.y = aimesh->mColors[i]->g;
+					color.z = aimesh->mColors[i]->b;
+				}
+
+				glm::vec2 texCoord = glm::vec2(0.0f);
+				if (aimesh->HasTextureCoords(0)) // does the mesh contain texture coordinates?
+				{
+					texCoord.x = aimesh->mTextureCoords[0][i].x;
+					texCoord.y = aimesh->mTextureCoords[0][i].y;
+				}
+
+				glm::vec3 tangent = glm::vec3(0.0f);
+				glm::vec3 bitangent = glm::vec3(0.0f);
+				if (aimesh->HasTangentsAndBitangents())
+				{
+					tangent.x = aimesh->mTangents[i].x;
+					tangent.y = aimesh->mTangents[i].y;
+
+					bitangent.x = aimesh->mBitangents[i].x;
+					bitangent.y = aimesh->mBitangents[i].y;
+				}
+
+				vertices[i] = AnimatedVertex({ position, color, normal, texCoord, tangent, bitangent });
+			}
+			
+			for (unsigned int i = 0; i < aimesh->mNumFaces; i++)
+			{
+				aiFace face = aimesh->mFaces[i];
+				for (unsigned int j = 0; j < face.mNumIndices; j++)
+					indices.push_back(face.mIndices[j]);
+			}
+
+			uint32_t* jointsAssigned = new uint32_t[aimesh->mNumVertices]{ 0 };						
+			
+			//Fill jointIDs and weights
+			for (uint32_t i = 0; i < aimesh->mNumBones; ++i)
+			{
+				for (uint32_t j = 0; j < aimesh->mBones[i]->mNumWeights; ++j)
+				{
+					uint32_t vertexID = aimesh->mBones[i]->mWeights[j].mVertexId;
+
+					switch (jointsAssigned[vertexID])
+					{
+					case 0:
+						vertices[vertexID].jointIDs.x = i;
+						vertices[vertexID].weights.x = aimesh->mBones[i]->mWeights[j].mWeight;
+						break;
+					case 1:
+						vertices[vertexID].jointIDs.y = i;
+						vertices[vertexID].weights.y = aimesh->mBones[i]->mWeights[j].mWeight;
+						break;
+					case 2:
+						vertices[vertexID].jointIDs.z = i;
+						vertices[vertexID].weights.z = aimesh->mBones[i]->mWeights[j].mWeight;
+						break;
+					}
+
+					jointsAssigned[vertexID]++;
+				}
+
+				jointMapping.emplace(aimesh->mBones[i]->mName.data, i);				
+
+				jointOffsetMapping.emplace(aimesh->mBones[i]->mName.data, glm::mat4(
+					aimesh->mBones[i]->mOffsetMatrix.a1, aimesh->mBones[i]->mOffsetMatrix.a2, aimesh->mBones[i]->mOffsetMatrix.a3, aimesh->mBones[i]->mOffsetMatrix.a4,
+					aimesh->mBones[i]->mOffsetMatrix.b1, aimesh->mBones[i]->mOffsetMatrix.b2, aimesh->mBones[i]->mOffsetMatrix.b3, aimesh->mBones[i]->mOffsetMatrix.b4,
+					aimesh->mBones[i]->mOffsetMatrix.c1, aimesh->mBones[i]->mOffsetMatrix.c2, aimesh->mBones[i]->mOffsetMatrix.c3, aimesh->mBones[i]->mOffsetMatrix.c4,
+					aimesh->mBones[i]->mOffsetMatrix.d1, aimesh->mBones[i]->mOffsetMatrix.d2, aimesh->mBones[i]->mOffsetMatrix.d3, aimesh->mBones[i]->mOffsetMatrix.d4
+				));
+			}
+
+			delete jointsAssigned;
+		}
+
+		void AnimatedModel::FillTextureData(const aiMesh *aimesh,
+			const aiScene *aiscene,
+			aiColor3D& ambientColor,
+			aiColor3D& diffuseColor,
+			aiColor3D& specularColor,
+			aiColor3D& emissiveColor,
+			Ref<Texture>& ambientTex,
+			Ref<Texture>& diffuseTex,
+			Ref<Texture>& specularTex,
+			Ref<Texture>& emissiveTex,
+			Ref<Texture>& normalTex)
+		{
+			const aiMaterial* aimaterial = aiscene->mMaterials[aimesh->mMaterialIndex];
+
+			aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, ambientColor);
+			aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
+			aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, specularColor);
+			aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);
+
+			aiString relativeTexPath;
+			std::string completeTexPath;
+
+			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
+			{
+				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &relativeTexPath);
+				completeTexPath = m_modelFolderPath;
+				completeTexPath.append(relativeTexPath.C_Str());
+
+				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
+				{
+					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
+					ambientTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+				}
+				else
+				{
+					ambientTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+				}
+			}
+
+			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+			{
+				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &relativeTexPath);
+				completeTexPath = m_modelFolderPath;
+				completeTexPath.append(relativeTexPath.C_Str());
+
+				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
+				{
+					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
+					diffuseTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+				}
+				else
+				{
+					diffuseTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+				}
+			}
+
+			if (aimaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
+			{
+				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &relativeTexPath);
+				completeTexPath = m_modelFolderPath;
+				completeTexPath.append(relativeTexPath.C_Str());
+
+				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
+				{
+					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
+					specularTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+				}
+				else
+				{
+					specularTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+				}
+			}
+
+			if (aimaterial->GetTextureCount(aiTextureType_EMISSIVE) > 0)
+			{
+				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &relativeTexPath);
+				completeTexPath = m_modelFolderPath;
+				completeTexPath.append(relativeTexPath.C_Str());
+
+				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
+				{
+					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
+					emissiveTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+				}
+				else
+				{
+					emissiveTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+				}
+			}
+
+			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
+			{
+				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &relativeTexPath);
+				completeTexPath = m_modelFolderPath;
+				completeTexPath.append(relativeTexPath.C_Str());
+
+				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
+				{
+					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
+					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+				}
+				else
+				{
+					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+				}
+			}
+		}
+
+		void AnimatedModel::GenerateAnimator( const aiScene *scene, const std::map<std::string, uint32_t>& jointMapping)
+		{
+			if (scene->HasAnimations())
+			{
+				std::vector<Ref<AnimationData>> animations = std::vector<Ref<AnimationData>>(scene->mNumAnimations);
+				for (size_t i = 0; i < scene->mNumAnimations; ++i)
+				{
+					Ref<AnimationData> animationData = std::make_shared<AnimationData>();
+
+					animationData->animationName = scene->mAnimations[i]->mName.data;
+					animationData->animationLength = (float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond);
+					animationData->frames = std::vector<KeyFrame>((int)scene->mAnimations[i]->mDuration);
+
+					float timeStamp = (float)(1.0f / scene->mAnimations[i]->mTicksPerSecond);
+
+					for (size_t j = 0; j < scene->mAnimations[i]->mDuration; ++j)
+					{
+						KeyFrame keyFrame;
+
+						keyFrame.timeStamp = timeStamp * j;
+						keyFrame.jointTranforms = std::vector<JointTransform>(scene->mAnimations[i]->mNumChannels + 1);
+
+						for (size_t k = 0; k < scene->mAnimations[i]->mNumChannels; ++k)
+						{							
+							keyFrame.jointTranforms[jointMapping.at(scene->mAnimations[i]->mChannels[k]->mNodeName.data)] = (JointTransform({
+								glm::vec3(scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.z),
+								glm::quat(scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.z, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.w),
+								glm::vec3(scene->mAnimations[i]->mChannels[k]->mScalingKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mScalingKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mScalingKeys[j].mValue.z)								
+							}));							
+						}
+
+						animationData->frames[j] = keyFrame;
+					}
+
+					animations[i] = animationData;
+				}
+
+				glm::mat4 rootTransform = glm::mat4(
+					scene->mRootNode->mTransformation.a1, scene->mRootNode->mTransformation.a2, scene->mRootNode->mTransformation.a3, scene->mRootNode->mTransformation.a4,
+					scene->mRootNode->mTransformation.b1, scene->mRootNode->mTransformation.b2, scene->mRootNode->mTransformation.b3, scene->mRootNode->mTransformation.b4,
+					scene->mRootNode->mTransformation.c1, scene->mRootNode->mTransformation.c2, scene->mRootNode->mTransformation.c3, scene->mRootNode->mTransformation.c4,
+					scene->mRootNode->mTransformation.d1, scene->mRootNode->mTransformation.d2, scene->mRootNode->mTransformation.d3, scene->mRootNode->mTransformation.d4
+				);
+
+				Ref<Animator> animator = std::make_shared<Animator>(this, animations, rootTransform);
+				AnimationManager::GetInstance()->RegisterAnimator(animator);
+			}
+		}
+
+		AnimatedMesh AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
+		{		
+			std::vector<AnimatedVertex> vertices(aimesh->mNumVertices);
 			std::vector<uint32_t> indices;
-
-			FillVertexArrayData(aimesh, vertices, indices);
+			std::map<std::string, uint32_t> jointMapping;
+			std::map<std::string, glm::mat4> jointOffsetMapping;
+			std::vector<Animation::Joint> jointsData = std::vector<Animation::Joint>(aimesh->mNumBones);
 
 			aiColor3D ambientColor;
 			aiColor3D diffuseColor;
@@ -63,28 +374,17 @@ namespace BaldLion
 			Ref<Texture> emissiveTex = nullptr;
 			Ref<Texture> normalTex = nullptr;
 
-			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
+			FillVertexArrayData(aimesh, vertices, indices, jointMapping, jointOffsetMapping);
 
-			//Create vertex bones array
-			for (size_t i = 0; i < aimesh->mNumBones; ++i)
-			{
-				VertexBoneData vertexBoneData;
-				
-				for (size_t j = 0; j < NUM_WEIGHTS_PER_VEREX; ++j)
-				{
-					vertexBoneData.vertexids[j] = aimesh->mBones[i]->mWeights[j].mVertexId;
-					vertexBoneData.weights[j] = aimesh->mBones[i]->mWeights[j].mWeight;
-				}
+			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);			
 
-				verticesBoneData.push_back(vertexBoneData);
-			}
+			uint32_t firstID = 0;
+			FillJointData(jointMapping, jointsData, jointOffsetMapping, firstID, -1, aiscene->mRootNode);
 
-			//Create Joints array
-			int currentID = -1;
-			GenerateJoints(joints, -1, currentID, aiscene->mRootNode);					
+			GenerateAnimator(aiscene, jointMapping);
 
-			return AnimatedMesh(vertices, verticesBoneData, joints, indices,
-				Material::Create("assets/shaders/BaseLit.glsl",
+			return AnimatedMesh(vertices, indices, jointMapping, jointsData,
+				Material::Create("assets/shaders/monster.glsl",
 					glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
 					glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),

@@ -14,8 +14,8 @@ namespace BaldLion
 			Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, const Ref<Material>& material);
 			~Mesh();
 
-			virtual void SetUpMesh();
-			virtual void Draw() const;
+			void SetUpMesh();
+			void Draw() const;
 
 			const Ref<Material>& GetMaterial() const { return m_material; }
 

@@ -13,8 +13,7 @@ namespace BaldLion
 {
 	class Application
 	{
-	public:
-		Application();
+	public:	
 		virtual ~Application();
 
 		void Run();
@@ -26,13 +25,15 @@ namespace BaldLion
 
 		inline Window& GetWindow() const { return *m_window; }
 
-		inline static Application& Get(){ return *s_instance; }
+		static Application& GetInstance();
 
-	private:
+	protected:
+		Application();
+
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowMinimized(WindowMinimizeEvent& e);
 
-	private:
+	protected:
 		Scope<Window> m_window;
 		ImGuiLayer* m_imGuiLayer;
 
@@ -40,14 +41,12 @@ namespace BaldLion
 		bool m_minimized = false;
 
 		LayerStack m_layerStack;
-		float m_lastFrameTime;
-		
+		float m_lastFrameTime;		
 
-	private:
 		static Application* s_instance;
 	};
 
 	//To be defined in client
-	Application* CreateApplication();
+	Application& CreateApplication();
 }
 

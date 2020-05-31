@@ -17,13 +17,12 @@ namespace BaldLion
 			float * GetFirstElement() {
 				return &position.x;
 			}
-		};		
+		};	
 
-		const uint32_t NUM_WEIGHTS_PER_VEREX = 3;
-		struct VertexBoneData
-		{
-			uint32_t vertexids[NUM_WEIGHTS_PER_VEREX];
-			float weights[NUM_WEIGHTS_PER_VEREX];
+		struct AnimatedVertex : public Vertex {
+
+			glm::lowp_ivec3 jointIDs;
+			glm::vec3 weights;
 		};
 	}
 }

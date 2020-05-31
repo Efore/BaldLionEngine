@@ -49,7 +49,7 @@ namespace BaldLion
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		Application& app = Application::Get();
+		Application& app = Application::GetInstance();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
 		// Setup Platform/Renderer bindings
@@ -88,7 +88,7 @@ namespace BaldLion
 		BL_PROFILE_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();
-		Application& app = Application::Get();
+		Application& app = Application::GetInstance();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 
 		//Rendering

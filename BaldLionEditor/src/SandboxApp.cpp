@@ -68,6 +68,11 @@ public:
 		}
 		
 		{
+			BL_PROFILE_SCOPE("AnimationManager::OnUpdate")
+			Animation::AnimationManager::GetInstance()->OnUpdate(timeStep);
+		}
+
+		{
 			BL_PROFILE_SCOPE("Renderer::Draw")
 			m_model->Draw();
 			Renderer::EndScene();
@@ -137,18 +142,28 @@ private:
 class Sandbox : public Application
 {
 public:
+	~Sandbox()
+	{
+		
+	}
+
+	static Application& GetInstance()
+	{
+		if (s_instance == nullptr)
+			s_instance = new Sandbox();
+
+		return *s_instance;
+	}
+
+private:
+
 	Sandbox()
 	{		
 		PushLayer(new RendererTestLayer(GetWindow().GetWidth(),GetWindow().GetHeight()));
 	}
-
-	~Sandbox()
-	{
-
-	}
 };
 
-BaldLion::Application* BaldLion::CreateApplication()
+BaldLion::Application& BaldLion::CreateApplication()
 {
-	return new Sandbox();
+	return Sandbox::GetInstance();
 }

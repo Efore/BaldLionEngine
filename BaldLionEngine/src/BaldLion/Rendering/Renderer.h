@@ -15,8 +15,8 @@ namespace BaldLion
 		public:
 			struct SceneData
 			{
-				glm::mat4 ViewProjectionMatrix;
-				glm::vec3 CameraPosition;
+				glm::mat4 viewProjectionMatrix;
+				glm::vec3 cameraPosition;
 			};
 
 			static void Init();

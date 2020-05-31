@@ -19,6 +19,9 @@
 #include "BaldLion/Rendering/AnimatedModel.h"
 #include "BaldLion/Rendering/CameraController.h"
 
+// --------------- Animation -----------------------
+#include "BaldLion/Animation/AnimationManager.h"
+
 // --------------- Entry point -----------------------
 
 #include "BaldLion/Core/EntryPoint.h"
