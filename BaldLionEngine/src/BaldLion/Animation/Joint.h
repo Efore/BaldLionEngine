@@ -17,12 +17,12 @@ namespace BaldLion
 			int32_t parentID;
 			
 			glm::mat4 jointOffsetTransform;
-			glm::mat4 globalTransform;
+			glm::mat4 jointGlobalTransform;
 			glm::mat4 jointAnimationTransform;
 
 			void GenerateAnimationTransform(const glm::mat4& rootInverseTransform)
-			{
-				jointAnimationTransform = rootInverseTransform * globalTransform * jointOffsetTransform;
+			{				
+				jointAnimationTransform = rootInverseTransform * jointGlobalTransform * jointOffsetTransform;
 			}
 		};
 

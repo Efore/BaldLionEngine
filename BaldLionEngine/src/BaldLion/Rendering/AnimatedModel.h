@@ -52,7 +52,12 @@ namespace BaldLion
 				Ref<Texture>& emissiveTex,
 				Ref<Texture>& normalTex);
 
-			void GenerateAnimator(const aiScene *scene,const std::map<std::string, uint32_t>& jointMap);
+			void FillVertexWeightData(const aiMesh* aimesh, 
+				const std::map<std::string, uint32_t>& jointMapping, 
+				std::vector<AnimatedVertex>& vertices);
+
+			void GenerateAnimator(const aiScene *scene,
+				const std::map<std::string, uint32_t>& jointMap);
 
 		protected:
 			std::string m_modelPath;

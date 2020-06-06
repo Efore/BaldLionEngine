@@ -72,29 +72,6 @@ namespace BaldLion
 			}
 		}
 
-		void AnimatedModel::FillJointData(std::map<std::string, uint32_t>& jointMapping,
-			std::vector<Animation::Joint>& jointsData,
-			const std::map<std::string, glm::mat4>& jointOffsetMapping,
-			uint32_t& currentID,
-			const int32_t parentID,
-			const aiNode* node)
-		{
-			auto it = jointMapping.find(node->mName.data);
-
-			if (it != jointMapping.end())
-			{
-				jointMapping[node->mName.data] = currentID;
-				jointsData[currentID].jointID = currentID;
-				jointsData[currentID].parentID = parentID;
-				jointsData[currentID].jointOffsetTransform = jointOffsetMapping.at(node->mName.data);
-				++currentID;
-			}
-						
-			for (size_t i = 0; i < node->mNumChildren; ++i)
-			{
-				FillJointData(jointMapping, jointsData, jointOffsetMapping, currentID, it != jointMapping.end() ? it->second : parentID, node->mChildren[i]);
-			}			
-		}
 		
 		void AnimatedModel::FillVertexArrayData(const aiMesh *aimesh, 
 			std::vector<AnimatedVertex>& vertices, 
@@ -147,7 +124,7 @@ namespace BaldLion
 					bitangent.y = aimesh->mBitangents[i].y;
 				}
 
-				vertices[i] = AnimatedVertex({ position, color, normal, texCoord, tangent, bitangent });
+				vertices[i] = AnimatedVertex({ position, color, normal, texCoord, tangent, bitangent, glm::ivec3(0), glm::vec3(0.0f) });
 			}
 			
 			for (unsigned int i = 0; i < aimesh->mNumFaces; i++)
@@ -155,37 +132,11 @@ namespace BaldLion
 				aiFace face = aimesh->mFaces[i];
 				for (unsigned int j = 0; j < face.mNumIndices; j++)
 					indices.push_back(face.mIndices[j]);
-			}
+			}	
 
-			uint32_t* jointsAssigned = new uint32_t[aimesh->mNumVertices]{ 0 };						
-			
-			//Fill jointIDs and weights
 			for (uint32_t i = 0; i < aimesh->mNumBones; ++i)
-			{
-				for (uint32_t j = 0; j < aimesh->mBones[i]->mNumWeights; ++j)
-				{
-					uint32_t vertexID = aimesh->mBones[i]->mWeights[j].mVertexId;
-
-					switch (jointsAssigned[vertexID])
-					{
-					case 0:
-						vertices[vertexID].jointIDs.x = i;
-						vertices[vertexID].weights.x = aimesh->mBones[i]->mWeights[j].mWeight;
-						break;
-					case 1:
-						vertices[vertexID].jointIDs.y = i;
-						vertices[vertexID].weights.y = aimesh->mBones[i]->mWeights[j].mWeight;
-						break;
-					case 2:
-						vertices[vertexID].jointIDs.z = i;
-						vertices[vertexID].weights.z = aimesh->mBones[i]->mWeights[j].mWeight;
-						break;
-					}
-
-					jointsAssigned[vertexID]++;
-				}
-
-				jointMapping.emplace(aimesh->mBones[i]->mName.data, i);				
+			{				
+				jointMapping.emplace(aimesh->mBones[i]->mName.data, i);
 
 				jointOffsetMapping.emplace(aimesh->mBones[i]->mName.data, glm::mat4(
 					aimesh->mBones[i]->mOffsetMatrix.a1, aimesh->mBones[i]->mOffsetMatrix.a2, aimesh->mBones[i]->mOffsetMatrix.a3, aimesh->mBones[i]->mOffsetMatrix.a4,
@@ -194,8 +145,6 @@ namespace BaldLion
 					aimesh->mBones[i]->mOffsetMatrix.d1, aimesh->mBones[i]->mOffsetMatrix.d2, aimesh->mBones[i]->mOffsetMatrix.d3, aimesh->mBones[i]->mOffsetMatrix.d4
 				));
 			}
-
-			delete jointsAssigned;
 		}
 
 		void AnimatedModel::FillTextureData(const aiMesh *aimesh,
@@ -306,11 +255,74 @@ namespace BaldLion
 			}
 		}
 
-		void AnimatedModel::GenerateAnimator( const aiScene *scene, const std::map<std::string, uint32_t>& jointMapping)
+		void AnimatedModel::FillJointData(std::map<std::string, uint32_t>& jointMapping,
+			std::vector<Animation::Joint>& jointsData,
+			const std::map<std::string, glm::mat4>& jointOffsetMapping,
+			uint32_t& currentID,
+			const int32_t parentID,
+			const aiNode* node)
+		{
+			auto it = jointMapping.find(node->mName.data);
+
+			if (it != jointMapping.end())
+			{
+				jointMapping[node->mName.data] = currentID;
+				jointsData[currentID].jointID = currentID;
+				jointsData[currentID].parentID = parentID;
+				jointsData[currentID].jointOffsetTransform = jointOffsetMapping.at(node->mName.data);
+				jointsData[currentID].jointAnimationTransform = jointsData[currentID].jointGlobalTransform = glm::mat4(1.0f);
+
+				++currentID;
+			}
+						
+			for (size_t i = 0; i < node->mNumChildren; ++i)
+			{
+				FillJointData(jointMapping, jointsData, jointOffsetMapping, currentID, it != jointMapping.end() ? it->second : parentID, node->mChildren[i]);
+			}			
+		}
+
+		void AnimatedModel::FillVertexWeightData(const aiMesh* aimesh,const std::map<std::string, uint32_t>& jointMapping,  std::vector<AnimatedVertex>& vertices)
+		{
+			uint32_t* jointsAssigned = new uint32_t[aimesh->mNumVertices]{ 0 };
+
+			//Fill jointIDs and weights
+			for (uint32_t i = 0; i < aimesh->mNumBones; ++i)
+			{
+				for (uint32_t j = 0; j < aimesh->mBones[i]->mNumWeights; ++j)
+				{
+					uint32_t vertexID = aimesh->mBones[i]->mWeights[j].mVertexId;
+
+					switch (jointsAssigned[vertexID])
+					{
+					case 0:
+						vertices[vertexID].jointIDs.x = jointMapping.at(aimesh->mBones[i]->mName.data);
+						vertices[vertexID].weights.x = aimesh->mBones[i]->mWeights[j].mWeight;
+						break;
+					case 1:
+						vertices[vertexID].jointIDs.y = jointMapping.at(aimesh->mBones[i]->mName.data);
+						vertices[vertexID].weights.y = aimesh->mBones[i]->mWeights[j].mWeight;
+						break;
+					case 2:
+						vertices[vertexID].jointIDs.z = jointMapping.at(aimesh->mBones[i]->mName.data);
+						vertices[vertexID].weights.z = aimesh->mBones[i]->mWeights[j].mWeight;
+						break;
+					default:
+						break;
+					}
+
+					jointsAssigned[vertexID]++;
+				}		
+
+			}
+
+			delete jointsAssigned;
+		}
+
+		void AnimatedModel::GenerateAnimator(const aiScene *scene, const std::map<std::string, uint32_t>& jointMapping)
 		{
 			if (scene->HasAnimations())
 			{
-				std::vector<Ref<AnimationData>> animations = std::vector<Ref<AnimationData>>(scene->mNumAnimations);
+				std::vector<Ref<AnimationData>> animations(scene->mNumAnimations);
 				for (size_t i = 0; i < scene->mNumAnimations; ++i)
 				{
 					Ref<AnimationData> animationData = std::make_shared<AnimationData>();
@@ -361,7 +373,7 @@ namespace BaldLion
 			std::vector<uint32_t> indices;
 			std::map<std::string, uint32_t> jointMapping;
 			std::map<std::string, glm::mat4> jointOffsetMapping;
-			std::vector<Animation::Joint> jointsData = std::vector<Animation::Joint>(aimesh->mNumBones);
+			std::vector<Animation::Joint> jointsData(aimesh->mNumBones);
 
 			aiColor3D ambientColor;
 			aiColor3D diffuseColor;
@@ -381,6 +393,8 @@ namespace BaldLion
 			uint32_t firstID = 0;
 			FillJointData(jointMapping, jointsData, jointOffsetMapping, firstID, -1, aiscene->mRootNode);
 
+			FillVertexWeightData(aimesh, jointMapping, vertices);
+
 			GenerateAnimator(aiscene, jointMapping);
 
 			return AnimatedMesh(vertices, indices, jointMapping, jointsData,
@@ -396,7 +410,5 @@ namespace BaldLion
 					emissiveTex,
 					normalTex));
 		}
-
-
 	}
 }

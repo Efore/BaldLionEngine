@@ -25,8 +25,7 @@ namespace BaldLion
 
 			m_vertexArray = VertexArray::Create();
 
-			Ref<VertexBuffer> vertexBuffer;
-			vertexBuffer = VertexBuffer::Create(&m_vertices[0], (uint32_t)(m_vertices.size() * sizeof(AnimatedVertex)));
+			Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(&m_vertices[0], (uint32_t)(m_vertices.size() * sizeof(AnimatedVertex)));
 
 			vertexBuffer->SetLayout({
 				{ ShaderDataType::Float3,	"vertex_position"},
@@ -35,8 +34,8 @@ namespace BaldLion
 				{ ShaderDataType::Float2,	"vertex_texcoord"},
 				{ ShaderDataType::Float3,	"vertex_tangent"},
 				{ ShaderDataType::Float3,	"vertex_bitangent"},
-				{ ShaderDataType::Int3,		"vertex_bone_ids"},
-				{ ShaderDataType::Float3,	"vertex_bone_weights"}
+				{ ShaderDataType::Int3,		"vertex_joint_ids"},
+				{ ShaderDataType::Float3,	"vertex_joint_weights"}
 			});
 
 			Ref<IndexBuffer> indexBuffer;
@@ -44,7 +43,6 @@ namespace BaldLion
 
 			m_vertexArray->AddIndexBuffer(indexBuffer);
 			m_vertexArray->AddVertexBuffer(vertexBuffer);
-
 		}
 
 		void AnimatedMesh::Draw() const
@@ -58,8 +56,7 @@ namespace BaldLion
 				m_material->GetShader()->SetUniform("u_joints[" + std::to_string(i) + "]", ShaderDataType::Mat4, &(m_joints[i].jointAnimationTransform));
 			}
 
-			Renderer::Submit(m_vertexArray, m_material->GetShader());				
-
+			Renderer::Submit(m_vertexArray, m_material->GetShader());		
 		}
 	}
 }

@@ -21,7 +21,7 @@ namespace BaldLion
 
 		struct AnimatedVertex : public Vertex {
 
-			glm::lowp_ivec3 jointIDs;
+			glm::ivec3 jointIDs;
 			glm::vec3 weights;
 		};
 	}

@@ -139,6 +139,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\shaders\BaseLit.glsl" />
+    <None Include="assets\shaders\monster.glsl" />
+    <None Include="assets\shaders\nanosuit.glsl" />
     <None Include="assets\shaders\skybox.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

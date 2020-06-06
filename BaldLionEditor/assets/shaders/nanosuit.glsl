@@ -8,8 +8,8 @@ layout (location = 3) in vec2 vertex_texcoord;
 layout (location = 4) in vec3 vertex_tangent;
 layout (location = 5) in vec3 vertex_bitangent;
 
-uniform mat4 u_viewProjection;  
-uniform mat4 u_transform;
+uniform mat4 u_viewProjectionMatrix;  
+uniform mat4 u_worldTransformMatrix;
 		
 out VS_OUT
 {
@@ -21,17 +21,17 @@ out VS_OUT
 
 void main()
 {
-	vs_out.vs_position = vec3(u_transform * vec4(vertex_position, 1.f)).xyz;
+	vs_out.vs_position = vec3(u_worldTransformMatrix * vec4(vertex_position, 1.f)).xyz;
 	vs_out.vs_color = vertex_color;
 	vs_out.vs_texcoord = vec2(vertex_texcoord.x,-vertex_texcoord.y);
 
-	vec3 T = normalize(mat3(u_transform) * vertex_tangent);
-	vec3 N = normalize(mat3(u_transform) * vertex_normal);
-	vec3 B = normalize(mat3(u_transform) * vertex_bitangent);
+	vec3 T = normalize(mat3(u_worldTransformMatrix) * vertex_tangent);
+	vec3 N = normalize(mat3(u_worldTransformMatrix) * vertex_normal);
+	vec3 B = normalize(mat3(u_worldTransformMatrix) * vertex_bitangent);
 
 	vs_out.TBN = mat3(T,B,N);	
 
-	gl_Position = u_viewProjection * u_transform * vec4(vertex_position, 1.f);
+	gl_Position = u_viewProjectionMatrix * u_worldTransformMatrix * vec4(vertex_position, 1.f);
 }
 
 #type fragment

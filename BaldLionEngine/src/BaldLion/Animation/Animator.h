@@ -21,7 +21,7 @@ namespace BaldLion
 			void OnUpdate(BaldLion::TimeStep timeStep);
 			inline void SetCurrentAnimation(const std::string& animationName);
 
-			static std::vector<JointTransform> CalculateInterpolatedTransforms(const Ref<AnimationData>& animation, float animationTime);
+			static void CalculateInterpolatedTransforms(const Ref<AnimationData>& animation, float animationTime, std::vector<JointTransform>& result);
 
 		private:	
 

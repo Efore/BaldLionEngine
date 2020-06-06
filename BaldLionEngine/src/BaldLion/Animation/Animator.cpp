@@ -26,7 +26,7 @@ namespace BaldLion
 
 		}
 
-		std::vector<JointTransform> Animator::CalculateInterpolatedTransforms(const Ref<AnimationData>& animation, float animationTime)
+		void Animator::CalculateInterpolatedTransforms(const Ref<AnimationData>& animation, float animationTime, std::vector<JointTransform>& result)
 		{
 			int prevFrameIndex = 0;
 			int nextFrameIndex = 0;
@@ -44,16 +44,14 @@ namespace BaldLion
 
 			float interpolant = (animationTime - animation->frames[prevFrameIndex].timeStamp) / (animation->frames[nextFrameIndex].timeStamp - animation->frames[prevFrameIndex].timeStamp) ;
 
-			std::vector<JointTransform> result = std::vector(animation->frames[prevFrameIndex].jointTranforms);
+			result = std::vector(animation->frames[prevFrameIndex].jointTranforms);
 
 			for (int i = 0; i < result.size(); ++i)
 			{
 				result[i].position = glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].position, animation->frames[nextFrameIndex].jointTranforms[i].position, interpolant);
 				result[i].rotation = glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].rotation, animation->frames[nextFrameIndex].jointTranforms[i].rotation, interpolant);
 				result[i].scale = glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].scale, animation->frames[nextFrameIndex].jointTranforms[i].scale, interpolant);
-			}
-
-			return result;
+			}			
 		}
 
 		void Animator::OnUpdate(BaldLion::TimeStep timeStep)
@@ -63,16 +61,17 @@ namespace BaldLion
 			if (m_currentAnimation->currentAnimationtime > m_currentAnimation->animationLength)
 				m_currentAnimation->currentAnimationtime = m_currentAnimation->currentAnimationtime - m_currentAnimation->animationLength;
 
-			const std::vector<JointTransform> transforms = Animator::CalculateInterpolatedTransforms(m_currentAnimation, m_currentAnimation->currentAnimationtime);
+			std::vector<JointTransform> transforms;
+			Animator::CalculateInterpolatedTransforms(m_currentAnimation, m_currentAnimation->currentAnimationtime, transforms);
 			
 			for (int i = 0;  i < transforms.size(); ++i)
 			{
 				int parentID = m_animatedModel->GetSubMeshes()[0].GetJoints()[i].parentID;
 
-				glm::mat4 parentTransform = parentID == -1 ? glm::mat4(1.0f) : m_animatedModel->GetSubMeshes()[0].GetJoints()[parentID].globalTransform;
+				glm::mat4 parentTransform = parentID == -1 ? glm::mat4(1.0f) : m_animatedModel->GetSubMeshes()[0].GetJoints()[parentID].jointGlobalTransform;
 				glm::mat4 animationTransform = glm::translate(glm::mat4(1.0f), transforms[i].position) *  glm::mat4_cast(transforms[i].rotation) * glm::scale(glm::mat4(1.0f), transforms[i].scale);
 
-				m_animatedModel->GetSubMeshes()[0].GetJoints()[i].globalTransform = parentTransform * animationTransform;
+				m_animatedModel->GetSubMeshes()[0].GetJoints()[i].jointGlobalTransform = parentTransform * animationTransform;
 				m_animatedModel->GetSubMeshes()[0].GetJoints()[i].GenerateAnimationTransform(m_rootInverseTransform);
 			}			
 		}

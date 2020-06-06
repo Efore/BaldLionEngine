@@ -203,8 +203,24 @@ namespace BaldLion
 			int uniformID = GetUniformLocation(uniformName);
 			switch (dataType)
 			{
+			case ShaderDataType::Bool:
+				glUniform1i(uniformID, *(bool*)uniformIndex);
+				return;
+
 			case ShaderDataType::Int:
-				glUniform1i(uniformID, *(int*)uniformIndex);
+				glUniform1i(uniformID, *(uint32_t*)uniformIndex);
+				return;
+
+			case ShaderDataType::Int2:
+				glUniform2i(uniformID, ((glm::ivec2*)uniformIndex)->x, ((glm::ivec2*)uniformIndex)->y);
+				return;
+
+			case ShaderDataType::Int3:
+				glUniform3i(uniformID, ((glm::ivec3*)uniformIndex)->x, ((glm::ivec3*)uniformIndex)->y, ((glm::ivec3*)uniformIndex)->z);
+				return;
+
+			case ShaderDataType::Int4:
+				glUniform4i(uniformID, ((glm::ivec4*)uniformIndex)->x, ((glm::ivec4*)uniformIndex)->y, ((glm::ivec4*)uniformIndex)->z, ((glm::ivec4*)uniformIndex)->w);
 				return;
 
 			case ShaderDataType::Float:
@@ -221,6 +237,10 @@ namespace BaldLion
 
 			case ShaderDataType::Float4:
 				glUniform4f(uniformID, ((glm::vec4*)uniformIndex)->x, ((glm::vec4*)uniformIndex)->y, ((glm::vec4*)uniformIndex)->z, ((glm::vec4*)uniformIndex)->w);
+				return;
+
+			case ShaderDataType::Mat3:
+				glUniformMatrix3fv(uniformID, 1, GL_FALSE, (float*)uniformIndex);
 				return;
 
 			case ShaderDataType::Mat4:

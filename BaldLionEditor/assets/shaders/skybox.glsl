@@ -4,13 +4,13 @@ layout (location = 0) in vec3 vertex_position;
 
 out vec3 TexCoords;
 
-uniform mat4 u_viewProjection;  
-uniform mat4 u_transform;
+uniform mat4 u_viewProjectionMatrix;  
+uniform mat4 u_worldTransformMatrix;
 		
 void main()
 {
     TexCoords = vertex_position;
-    vec4 pos = u_viewProjection * u_transform * vec4(vertex_position, 1.0);
+    vec4 pos = u_viewProjectionMatrix * u_worldTransformMatrix * vec4(vertex_position, 1.0);
     gl_Position = pos.xyww;
 }  
 

@@ -53,8 +53,8 @@ namespace BaldLion
 
 			shader->Bind();
 
-			shader->SetUniform("u_transform", ShaderDataType::Mat4, &(transform[0][0]));
-			shader->SetUniform("u_viewProjection", ShaderDataType::Mat4, &(s_sceneData.viewProjectionMatrix));
+			shader->SetUniform("u_worldTransformMatrix", ShaderDataType::Mat4, &(transform[0][0]));
+			shader->SetUniform("u_viewProjectionMatrix", ShaderDataType::Mat4, &(s_sceneData.viewProjectionMatrix));
 			shader->SetUniform("u_cameraPos", ShaderDataType::Float3, &(s_sceneData.cameraPosition));
 
 			shader->SetUniform("u_directionalLight.direction", ShaderDataType::Float3, &(LightManager::GetDirectionalLight().direction));

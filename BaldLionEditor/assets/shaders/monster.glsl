@@ -7,11 +7,11 @@ layout (location = 2) in vec3 vertex_normal;
 layout (location = 3) in vec2 vertex_texcoord;
 layout (location = 4) in vec3 vertex_tangent;
 layout (location = 5) in vec3 vertex_bitangent;
-layout (location = 6) in ivec3 vertex_joint_ids;
+layout (location = 6) in vec3 vertex_joint_ids;
 layout (location = 7) in vec3 vertex_joint_weights;
 
-uniform mat4 u_viewProjection;  
-uniform mat4 u_transform;
+uniform mat4 u_viewProjectionMatrix;  
+uniform mat4 u_worldTransformMatrix;
 		
 const int MAX_JOINTS = 100;
 uniform mat4 u_joints[MAX_JOINTS];
@@ -26,21 +26,21 @@ out VS_OUT
 
 void main()
 {
-	mat4 jointTransform = u_joints[vertex_joint_ids[0]] * vertex_joint_weights[0];
-    jointTransform += u_joints[vertex_joint_ids[1]] * vertex_joint_weights[1];
-    jointTransform += u_joints[vertex_joint_ids[2]] * vertex_joint_weights[2];   
+	mat4 jointTransform = u_joints[int(vertex_joint_ids.x)] * vertex_joint_weights.x;
+    jointTransform += u_joints[int(vertex_joint_ids.y)] * vertex_joint_weights.y;
+    jointTransform += u_joints[int(vertex_joint_ids.z)] * vertex_joint_weights.z;  
 
-	vs_out.vs_position = vec3(u_transform * (jointTransform * vec4(vertex_position, 1.f))).xyz;
+	vs_out.vs_position = vec3(u_worldTransformMatrix * (jointTransform * vec4(vertex_position, 1.f))).xyz;
 	vs_out.vs_color = vertex_color;
 	vs_out.vs_texcoord = vec2(vertex_texcoord.x,-vertex_texcoord.y);
 
-	vec3 T = normalize(u_transform * (jointTransform * vec4(vertex_tangent,1.f))).xyz;
-	vec3 N = normalize(u_transform * (jointTransform * vec4(vertex_normal,1.f))).xyz;
-	vec3 B = normalize(u_transform * (jointTransform * vec4(vertex_bitangent,1.f))).xyz;;
+	vec3 T = normalize(u_worldTransformMatrix * (jointTransform * vec4(vertex_tangent,1.f))).xyz;
+	vec3 N = normalize(u_worldTransformMatrix * (jointTransform * vec4(vertex_normal,1.f))).xyz;
+	vec3 B = normalize(u_worldTransformMatrix * (jointTransform * vec4(vertex_bitangent,1.f))).xyz;;
 
 	vs_out.TBN = mat3(T,B,N);	
 
-	gl_Position = u_viewProjection * (jointTransform * vec4(vertex_position, 1.f));
+	gl_Position = (u_viewProjectionMatrix * u_worldTransformMatrix) * (jointTransform * vec4(vertex_position, 1.f));
 }
 
 #type fragment
@@ -155,7 +155,6 @@ void main()
 	vec3 norm = (texture(u_material.normalTex, fs_in.vs_texcoord).rgb);
 	norm = norm * 2.0 - 1.0;   
 	norm = normalize(fs_in.TBN * norm); 
-	//vec3 norm = normalize(fs_in.vs_normal);
 
 	vec3 posToViewDir = normalize(u_cameraPos - fs_in.vs_position);
 
