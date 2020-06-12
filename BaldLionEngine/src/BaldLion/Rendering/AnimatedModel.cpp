@@ -5,7 +5,6 @@
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
-#include <assimp/scene.h>
 
 using namespace BaldLion::Animation;
 
@@ -51,9 +50,9 @@ namespace BaldLion
 		void AnimatedModel::Draw() const
 		{
 			BL_PROFILE_FUNCTION();
-			for (const AnimatedMesh& m : m_subMeshes)
+			for (auto const &m : m_subMeshes)
 			{
-				m.Draw();
+				m->Draw();
 			}
 		}
 
@@ -137,13 +136,7 @@ namespace BaldLion
 			for (uint32_t i = 0; i < aimesh->mNumBones; ++i)
 			{				
 				jointMapping.emplace(aimesh->mBones[i]->mName.data, i);
-
-				jointOffsetMapping.emplace(aimesh->mBones[i]->mName.data, glm::mat4(
-					aimesh->mBones[i]->mOffsetMatrix.a1, aimesh->mBones[i]->mOffsetMatrix.a2, aimesh->mBones[i]->mOffsetMatrix.a3, aimesh->mBones[i]->mOffsetMatrix.a4,
-					aimesh->mBones[i]->mOffsetMatrix.b1, aimesh->mBones[i]->mOffsetMatrix.b2, aimesh->mBones[i]->mOffsetMatrix.b3, aimesh->mBones[i]->mOffsetMatrix.b4,
-					aimesh->mBones[i]->mOffsetMatrix.c1, aimesh->mBones[i]->mOffsetMatrix.c2, aimesh->mBones[i]->mOffsetMatrix.c3, aimesh->mBones[i]->mOffsetMatrix.c4,
-					aimesh->mBones[i]->mOffsetMatrix.d1, aimesh->mBones[i]->mOffsetMatrix.d2, aimesh->mBones[i]->mOffsetMatrix.d3, aimesh->mBones[i]->mOffsetMatrix.d4
-				));
+				jointOffsetMapping.emplace(aimesh->mBones[i]->mName.data, AnimatedMesh::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));					
 			}
 		}
 
@@ -267,9 +260,10 @@ namespace BaldLion
 			if (it != jointMapping.end())
 			{
 				jointMapping[node->mName.data] = currentID;
+
 				jointsData[currentID].jointID = currentID;
 				jointsData[currentID].parentID = parentID;
-				jointsData[currentID].jointOffsetTransform = jointOffsetMapping.at(node->mName.data);
+				jointsData[currentID].jointOffsetMatrix = jointOffsetMapping.at(node->mName.data);
 				jointsData[currentID].jointAnimationTransform = jointsData[currentID].jointGlobalTransform = glm::mat4(1.0f);
 
 				++currentID;
@@ -316,58 +310,9 @@ namespace BaldLion
 			}
 
 			delete jointsAssigned;
-		}
+		}		
 
-		void AnimatedModel::GenerateAnimator(const aiScene *scene, const std::map<std::string, uint32_t>& jointMapping)
-		{
-			if (scene->HasAnimations())
-			{
-				std::vector<Ref<AnimationData>> animations(scene->mNumAnimations);
-				for (size_t i = 0; i < scene->mNumAnimations; ++i)
-				{
-					Ref<AnimationData> animationData = std::make_shared<AnimationData>();
-
-					animationData->animationName = scene->mAnimations[i]->mName.data;
-					animationData->animationLength = (float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond);
-					animationData->frames = std::vector<KeyFrame>((int)scene->mAnimations[i]->mDuration);
-
-					float timeStamp = (float)(1.0f / scene->mAnimations[i]->mTicksPerSecond);
-
-					for (size_t j = 0; j < scene->mAnimations[i]->mDuration; ++j)
-					{
-						KeyFrame keyFrame;
-
-						keyFrame.timeStamp = timeStamp * j;
-						keyFrame.jointTranforms = std::vector<JointTransform>(scene->mAnimations[i]->mNumChannels + 1);
-
-						for (size_t k = 0; k < scene->mAnimations[i]->mNumChannels; ++k)
-						{							
-							keyFrame.jointTranforms[jointMapping.at(scene->mAnimations[i]->mChannels[k]->mNodeName.data)] = (JointTransform({
-								glm::vec3(scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.z),
-								glm::quat(scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.z, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.w),
-								glm::vec3(scene->mAnimations[i]->mChannels[k]->mScalingKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mScalingKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mScalingKeys[j].mValue.z)								
-							}));							
-						}
-
-						animationData->frames[j] = keyFrame;
-					}
-
-					animations[i] = animationData;
-				}
-
-				glm::mat4 rootTransform = glm::mat4(
-					scene->mRootNode->mTransformation.a1, scene->mRootNode->mTransformation.a2, scene->mRootNode->mTransformation.a3, scene->mRootNode->mTransformation.a4,
-					scene->mRootNode->mTransformation.b1, scene->mRootNode->mTransformation.b2, scene->mRootNode->mTransformation.b3, scene->mRootNode->mTransformation.b4,
-					scene->mRootNode->mTransformation.c1, scene->mRootNode->mTransformation.c2, scene->mRootNode->mTransformation.c3, scene->mRootNode->mTransformation.c4,
-					scene->mRootNode->mTransformation.d1, scene->mRootNode->mTransformation.d2, scene->mRootNode->mTransformation.d3, scene->mRootNode->mTransformation.d4
-				);
-
-				Ref<Animator> animator = std::make_shared<Animator>(this, animations, rootTransform);
-				AnimationManager::GetInstance()->RegisterAnimator(animator);
-			}
-		}
-
-		AnimatedMesh AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
+		Ref<AnimatedMesh> AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{		
 			std::vector<AnimatedVertex> vertices(aimesh->mNumVertices);
 			std::vector<uint32_t> indices;
@@ -395,9 +340,7 @@ namespace BaldLion
 
 			FillVertexWeightData(aimesh, jointMapping, vertices);
 
-			GenerateAnimator(aiscene, jointMapping);
-
-			return AnimatedMesh(vertices, indices, jointMapping, jointsData,
+			Ref<AnimatedMesh> animatedMesh = CreateRef<AnimatedMesh>(vertices, indices, jointsData,
 				Material::Create("assets/shaders/monster.glsl",
 					glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
@@ -409,6 +352,10 @@ namespace BaldLion
 					specularTex,
 					emissiveTex,
 					normalTex));
+
+			AnimationManager::GetInstance()->GenerateAnimator(aiscene, jointMapping, animatedMesh);
+
+			return animatedMesh;
 		}
 	}
 }

@@ -7,8 +7,8 @@ namespace BaldLion
 {
 	namespace Animation
 	{
-		Animator::Animator(AnimatedModel* animatedModel, const std::vector<Ref<AnimationData>>& animations, const glm::mat4& rootTransform)
-			: m_animatedModel(animatedModel)
+		Animator::Animator(Ref<AnimatedMesh> animatedMesh, const std::vector<Ref<AnimationData>>& animations, const glm::mat4& rootTransform)
+			: m_animatedMesh(animatedMesh)
 		{
 			for (auto animation : animations)
 			{
@@ -26,14 +26,14 @@ namespace BaldLion
 
 		}
 
-		void Animator::CalculateInterpolatedTransforms(const Ref<AnimationData>& animation, float animationTime, std::vector<JointTransform>& result)
+		void Animator::CalculateInterpolatedTransforms(const Ref<AnimationData>& animation, std::vector<JointTransform>& result)
 		{
 			int prevFrameIndex = 0;
 			int nextFrameIndex = 0;
 
 			for (int i = 1; i < animation->frames.size(); ++i)
 			{
-				if (animationTime > animation->frames[i].timeStamp)
+				if (m_animationTime > animation->frames[i].timeStamp)
 					continue;
 
 				prevFrameIndex = i - 1;
@@ -42,7 +42,7 @@ namespace BaldLion
 				break;
 			}
 
-			float interpolant = (animationTime - animation->frames[prevFrameIndex].timeStamp) / (animation->frames[nextFrameIndex].timeStamp - animation->frames[prevFrameIndex].timeStamp) ;
+			float interpolant = (m_animationTime - animation->frames[prevFrameIndex].timeStamp) / (animation->frames[nextFrameIndex].timeStamp - animation->frames[prevFrameIndex].timeStamp) ;
 
 			result = std::vector(animation->frames[prevFrameIndex].jointTranforms);
 
@@ -56,23 +56,19 @@ namespace BaldLion
 
 		void Animator::OnUpdate(BaldLion::TimeStep timeStep)
 		{
-			m_currentAnimation->currentAnimationtime += timeStep;
-
-			if (m_currentAnimation->currentAnimationtime > m_currentAnimation->animationLength)
-				m_currentAnimation->currentAnimationtime = m_currentAnimation->currentAnimationtime - m_currentAnimation->animationLength;
+			m_animationTime = glm::mod(m_animationTime + timeStep, m_currentAnimation->animationLength);
 
 			std::vector<JointTransform> transforms;
-			Animator::CalculateInterpolatedTransforms(m_currentAnimation, m_currentAnimation->currentAnimationtime, transforms);
+			CalculateInterpolatedTransforms(m_currentAnimation, transforms);
 			
 			for (int i = 0;  i < transforms.size(); ++i)
 			{
-				int parentID = m_animatedModel->GetSubMeshes()[0].GetJoints()[i].parentID;
+				int parentID = m_animatedMesh->GetJoints()[i].parentID;
 
-				glm::mat4 parentTransform = parentID == -1 ? glm::mat4(1.0f) : m_animatedModel->GetSubMeshes()[0].GetJoints()[parentID].jointGlobalTransform;
-				glm::mat4 animationTransform = glm::translate(glm::mat4(1.0f), transforms[i].position) *  glm::mat4_cast(transforms[i].rotation) * glm::scale(glm::mat4(1.0f), transforms[i].scale);
-
-				m_animatedModel->GetSubMeshes()[0].GetJoints()[i].jointGlobalTransform = parentTransform * animationTransform;
-				m_animatedModel->GetSubMeshes()[0].GetJoints()[i].GenerateAnimationTransform(m_rootInverseTransform);
+				const glm::mat4& parentTransform = parentID == -1 ? glm::mat4(1.0f) : m_animatedMesh->GetJoints()[parentID].jointGlobalTransform;
+				const glm::mat4& animationTransform = glm::translate(glm::mat4(1.0f), transforms[i].position) * glm::mat4_cast(glm::normalize(transforms[i].rotation)) * glm::scale(glm::mat4(1.0f), transforms[i].scale);
+				
+				m_animatedMesh->GetJoints()[i].UpdateJointTransforms(m_rootInverseTransform, parentTransform, animationTransform);
 			}			
 		}
 
@@ -82,6 +78,7 @@ namespace BaldLion
 
 			if(it != m_animations.end())
 			{
+				m_animationTime = 0;
 				m_currentAnimation = it->second;
 			}
 		}

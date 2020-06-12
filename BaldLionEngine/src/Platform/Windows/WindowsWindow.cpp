@@ -46,7 +46,7 @@ namespace BaldLion
 			glfwSetErrorCallback(GLFWErrorCallback);
 			s_GLFWInitialized = true;
 		}
-
+		
 		glfwWindowHint(GLFW_SAMPLES, 4);
 		m_window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
 		m_context = new Rendering::OpenGLContext(m_window);

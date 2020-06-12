@@ -13,6 +13,7 @@ namespace BaldLion
 			void OnUpdate(float timeStep);
 
 			static AnimationManager* GetInstance();
+			void GenerateAnimator(const aiScene *scene, const std::map<std::string, uint32_t>& jointMapping, const Ref<AnimatedMesh>& animatedMesh);
 
 			void RegisterAnimator(Ref<Animator> animator);
 			void UnregisterAnimator(Ref<Animator> animator);

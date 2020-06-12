@@ -14,19 +14,20 @@ namespace BaldLion
 		{
 		public:
 			uint32_t jointID;
-			int32_t parentID;
+			int32_t parentID;			
 			
-			glm::mat4 jointOffsetTransform;
+			glm::mat4 jointOffsetMatrix;
 			glm::mat4 jointGlobalTransform;
 			glm::mat4 jointAnimationTransform;
 
-			void GenerateAnimationTransform(const glm::mat4& rootInverseTransform)
+			void UpdateJointTransforms(const glm::mat4& rootInverseTransform, const glm::mat4& parentTransform, const glm::mat4& localAnimationTransform)
 			{				
-				jointAnimationTransform = rootInverseTransform * jointGlobalTransform * jointOffsetTransform;
+				jointGlobalTransform = parentTransform * localAnimationTransform;
+				jointAnimationTransform = rootInverseTransform * jointGlobalTransform * jointOffsetMatrix;
 			}
 		};
 
-		struct JointTransform {		
+		struct JointTransform {	
 			glm::vec3 position;
 			glm::quat rotation;
 			glm::vec3 scale;

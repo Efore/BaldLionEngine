@@ -2,7 +2,6 @@
 
 #include "AnimatedMesh.h"
 #include <vector>
-#include <assimp/scene.h>
 
 namespace BaldLion
 {
@@ -18,14 +17,14 @@ namespace BaldLion
 			void SetUpModel();
 			void Draw() const;
 
-			inline const std::vector<AnimatedMesh>& GetSubMeshes() const { return m_subMeshes; }
-			inline std::vector<AnimatedMesh>& GetSubMeshes() { return m_subMeshes; }
+			inline const std::vector<Ref<AnimatedMesh>>& GetSubMeshes() const { return m_subMeshes; }
+			inline std::vector<Ref<AnimatedMesh>>& GetSubMeshes() { return m_subMeshes; }
 
-		private:
+		private:			
 
 			void ProcessNode(const aiNode *node, const aiScene *scene);
 
-			AnimatedMesh ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
+			Ref<AnimatedMesh> ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
 
 			void FillJointData(std::map<std::string, uint32_t>& jointMapping, 
 				std::vector<Animation::Joint>& jointData, 
@@ -56,13 +55,10 @@ namespace BaldLion
 				const std::map<std::string, uint32_t>& jointMapping, 
 				std::vector<AnimatedVertex>& vertices);
 
-			void GenerateAnimator(const aiScene *scene,
-				const std::map<std::string, uint32_t>& jointMap);
-
 		protected:
 			std::string m_modelPath;
 			std::string m_modelFolderPath;
-			std::vector<AnimatedMesh> m_subMeshes;
+			std::vector<Ref<AnimatedMesh>> m_subMeshes;
 
 		};
 	}

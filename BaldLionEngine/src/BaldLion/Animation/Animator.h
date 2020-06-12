@@ -1,6 +1,6 @@
 #pragma once
 #include "AnimationData.h"
-#include "BaldLion/Rendering/AnimatedModel.h"
+#include "BaldLion/Rendering/AnimatedMesh.h"
 #include "BaldLion/Core/Core.h"
 #include "BaldLion/Core/TimeStep.h"
 #include <map>
@@ -15,17 +15,17 @@ namespace BaldLion
 		class Animator {
 			
 		public:
-			Animator(AnimatedModel* animatedModel, const std::vector<Ref<AnimationData>>& animations, const glm::mat4& rootTransform);
+			Animator(Ref<AnimatedMesh> animatedMesh, const std::vector<Ref<AnimationData>>& animations, const glm::mat4& rootTransform);
 			~Animator();
 
 			void OnUpdate(BaldLion::TimeStep timeStep);
 			inline void SetCurrentAnimation(const std::string& animationName);
 
-			static void CalculateInterpolatedTransforms(const Ref<AnimationData>& animation, float animationTime, std::vector<JointTransform>& result);
+			void CalculateInterpolatedTransforms(const Ref<AnimationData>& animation, std::vector<JointTransform>& result);
 
 		private:	
 
-			AnimatedModel* m_animatedModel;
+			Ref<AnimatedMesh> m_animatedMesh;
 
 			Ref<AnimationData> m_currentAnimation;
 			std::map<std::string,Ref<AnimationData>> m_animations;

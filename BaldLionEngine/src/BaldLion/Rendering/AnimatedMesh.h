@@ -3,6 +3,7 @@
 #include "VertexArray.h"
 #include "Material.h"
 #include "BaldLion/Animation/Joint.h"
+#include <assimp/scene.h>
 #include <vector>
 #include <map>
 
@@ -14,7 +15,7 @@ namespace BaldLion
 
 		public:
 
-			AnimatedMesh(std::vector<AnimatedVertex> vertices, std::vector<uint32_t> indices, std::map<std::string, uint32_t> jointMapping, std::vector<Animation::Joint> joints, const Ref<Material>& material);
+			AnimatedMesh(std::vector<AnimatedVertex> vertices, std::vector<uint32_t> indices, std::vector<Animation::Joint> joints, const Ref<Material>& material);
 			~AnimatedMesh();
 
 			void SetUpMesh();
@@ -23,8 +24,7 @@ namespace BaldLion
 			inline std::vector<Animation::Joint>& GetJoints() { return m_joints; }
 			inline const std::vector<Animation::Joint>& GetJoints() const { return m_joints; }
 
-			inline std::map<std::string, uint32_t>& GetJointMapping() { return m_jointMapping; }
-			inline const std::map<std::string, uint32_t>& GetJointMapping() const { return m_jointMapping; }
+			static glm::mat4 AiMat4ToGlmMat4(const aiMatrix4x4& aiMat4);
 
 		private:
 

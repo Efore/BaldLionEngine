@@ -15,17 +15,7 @@ namespace BaldLion
 
 			std::string animationName;
 			std::vector<KeyFrame> frames;
-			float animationLength;			
-			float currentAnimationtime;		
-
-			void SetCurrentAnimationTime(const float timeStep) {
-
-				currentAnimationtime += timeStep;
-
-				if (currentAnimationtime > animationLength)
-					currentAnimationtime = currentAnimationtime - animationLength;
-			}
-
+			float animationLength;
 		};
 
 	}
