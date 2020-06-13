@@ -260,11 +260,10 @@ namespace BaldLion
 			if (it != jointMapping.end())
 			{
 				jointMapping[node->mName.data] = currentID;
-
 				jointsData[currentID].jointID = currentID;
 				jointsData[currentID].parentID = parentID;
-				jointsData[currentID].jointOffsetMatrix = jointOffsetMapping.at(node->mName.data);
-				jointsData[currentID].jointAnimationTransform = jointsData[currentID].jointGlobalTransform = glm::mat4(1.0f);
+				jointsData[currentID].jointBindTransform = jointOffsetMapping.at(node->mName.data);
+				jointsData[currentID].jointAnimationTransform = jointsData[currentID].jointModelSpaceTransform = glm::mat4(1.0f);
 
 				++currentID;
 			}

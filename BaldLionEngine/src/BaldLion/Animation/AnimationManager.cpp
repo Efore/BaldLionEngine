@@ -58,7 +58,7 @@ namespace BaldLion
 						{
 							keyFrame.jointTranforms[jointMapping.at(scene->mAnimations[i]->mChannels[k]->mNodeName.data)] = (JointTransform({
 								glm::vec3(scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.z),
-								glm::quat(scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.z, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.w),
+								glm::quat(scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.w, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.z),
 								glm::vec3(scene->mAnimations[i]->mChannels[k]->mScalingKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mScalingKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mScalingKeys[j].mValue.z)
 								}));
 						}

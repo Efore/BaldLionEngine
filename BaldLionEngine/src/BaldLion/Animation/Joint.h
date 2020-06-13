@@ -12,18 +12,18 @@ namespace BaldLion
 
 		struct Joint
 		{
-		public:
+		public:			
 			uint32_t jointID;
 			int32_t parentID;			
 			
-			glm::mat4 jointOffsetMatrix;
-			glm::mat4 jointGlobalTransform;
+			glm::mat4 jointBindTransform;
+			glm::mat4 jointModelSpaceTransform;
 			glm::mat4 jointAnimationTransform;
 
 			void UpdateJointTransforms(const glm::mat4& rootInverseTransform, const glm::mat4& parentTransform, const glm::mat4& localAnimationTransform)
 			{				
-				jointGlobalTransform = parentTransform * localAnimationTransform;
-				jointAnimationTransform = rootInverseTransform * jointGlobalTransform * jointOffsetMatrix;
+				jointModelSpaceTransform = parentTransform * localAnimationTransform;
+				jointAnimationTransform = rootInverseTransform * jointModelSpaceTransform * jointBindTransform;
 			}
 		};
 
