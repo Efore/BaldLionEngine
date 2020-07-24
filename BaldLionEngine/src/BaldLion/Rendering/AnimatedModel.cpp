@@ -73,7 +73,7 @@ namespace BaldLion
 
 		
 		void AnimatedModel::FillVertexArrayData(const aiMesh *aimesh, 
-			std::vector<AnimatedVertex>& vertices, 
+			std::vector<Vertex>& vertices, 			
 			std::vector<uint32_t>& indices, 
 			std::map<std::string, uint32_t>& jointMapping, 
 			std::map<std::string, glm::mat4>& jointOffsetMapping)
@@ -123,7 +123,7 @@ namespace BaldLion
 					bitangent.y = aimesh->mBitangents[i].y;
 				}
 
-				vertices[i] = AnimatedVertex({ position, color, normal, texCoord, tangent, bitangent, glm::ivec3(0), glm::vec3(0.0f) });
+				vertices[i] = Vertex({ position, color, normal, texCoord, tangent, bitangent});
 			}
 			
 			for (unsigned int i = 0; i < aimesh->mNumFaces; i++)
@@ -274,7 +274,9 @@ namespace BaldLion
 			}			
 		}
 
-		void AnimatedModel::FillVertexWeightData(const aiMesh* aimesh,const std::map<std::string, uint32_t>& jointMapping,  std::vector<AnimatedVertex>& vertices)
+		void AnimatedModel::FillVertexWeightData(const aiMesh* aimesh,
+			const std::map<std::string, uint32_t>& jointMapping,  
+			std::vector<VertexBoneData>& vertices)
 		{
 			uint32_t* jointsAssigned = new uint32_t[aimesh->mNumVertices]{ 0 };
 
@@ -313,7 +315,8 @@ namespace BaldLion
 
 		Ref<AnimatedMesh> AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{		
-			std::vector<AnimatedVertex> vertices(aimesh->mNumVertices);
+			std::vector<Vertex> vertices(aimesh->mNumVertices);
+			std::vector<VertexBoneData> verticesBoneData(aimesh->mNumVertices);
 			std::vector<uint32_t> indices;
 			std::map<std::string, uint32_t> jointMapping;
 			std::map<std::string, glm::mat4> jointOffsetMapping;
@@ -337,9 +340,9 @@ namespace BaldLion
 			uint32_t firstID = 0;
 			FillJointData(jointMapping, jointsData, jointOffsetMapping, firstID, -1, aiscene->mRootNode);
 
-			FillVertexWeightData(aimesh, jointMapping, vertices);
+			FillVertexWeightData(aimesh, jointMapping, verticesBoneData);
 
-			Ref<AnimatedMesh> animatedMesh = CreateRef<AnimatedMesh>(vertices, indices, jointsData,
+			Ref<AnimatedMesh> animatedMesh = CreateRef<AnimatedMesh>(vertices, verticesBoneData, indices, jointsData,
 				Material::Create("assets/shaders/monster.glsl",
 					glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),

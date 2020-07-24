@@ -7,9 +7,10 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, const Ref<Material>& material) : m_vertices(vertices), m_indices(indices), m_material(material)
+		Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const Ref<Material>& material) : 
+			m_material(material)
 		{
-			SetUpMesh();
+			SetUpMesh(vertices, indices);
 		}
 
 		Mesh::~Mesh()
@@ -17,14 +18,17 @@ namespace BaldLion
 
 		}
 
-		void Mesh::SetUpMesh()
+		void Mesh::SetUpMesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
 		{
 			BL_PROFILE_FUNCTION();
 
 			m_vertexArray = VertexArray::Create();
 
+			Ref<IndexBuffer> indexBuffer;
+			indexBuffer = (IndexBuffer::Create(&indices[0], (uint32_t)indices.size()));
+
 			Ref<VertexBuffer> vertexBuffer;
-			vertexBuffer = VertexBuffer::Create(&m_vertices[0], (uint32_t)(m_vertices.size() * sizeof(Vertex)));
+			vertexBuffer = VertexBuffer::Create(vertices[0].GetFirstElement(), (uint32_t)(vertices.size() * sizeof(Vertex)));
 
 			vertexBuffer->SetLayout({
 				{ ShaderDataType::Float3, "vertex_position"},
@@ -34,9 +38,6 @@ namespace BaldLion
 				{ ShaderDataType::Float3, "vertex_tangent"},
 				{ ShaderDataType::Float3, "vertex_bitangent"},
 			});
-
-			Ref<IndexBuffer> indexBuffer;
-			indexBuffer = (IndexBuffer::Create(&m_indices[0], (uint32_t)m_indices.size()));
 
 			m_vertexArray->AddIndexBuffer(indexBuffer);
 			m_vertexArray->AddVertexBuffer(vertexBuffer);

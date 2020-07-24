@@ -59,7 +59,7 @@ namespace BaldLion
 			m_animationTime = glm::mod(m_animationTime + timeStep, m_currentAnimation->animationLength);
 
 			std::vector<JointTransform> transforms;
-			CalculateInterpolatedTransforms(m_currentAnimation, transforms);
+			CalculateInterpolatedTransforms(m_currentAnimation, transforms); 
 			
 			for (int i = 0;  i < transforms.size(); ++i)
 			{

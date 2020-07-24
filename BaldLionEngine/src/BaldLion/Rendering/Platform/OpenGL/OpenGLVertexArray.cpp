@@ -34,6 +34,7 @@ namespace BaldLion
 		{
 			glCreateVertexArrays(1, &m_rendererID);
 			glBindVertexArray(m_rendererID);
+			m_currentLayoutIndex = 0;
 		}
 
 		OpenGLVertexArray::~OpenGLVertexArray()
@@ -54,23 +55,25 @@ namespace BaldLion
 		void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 		{
 			BL_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex buffer has no layout!");
+			
+			glBindVertexArray(m_rendererID);
 
-			uint32_t index = 0;
 			const auto& layout = vertexBuffer->GetLayout();
 			for (const auto& element : layout)
 			{
-				glEnableVertexAttribArray(index);
-				glVertexAttribPointer(index,
+				glEnableVertexAttribArray(m_currentLayoutIndex);
+				glVertexAttribPointer(m_currentLayoutIndex,
 					element.GetComponentCount(),
 					ShaderDataTypeToGLEnum(element.Type),
 					element.Normalized,
 					layout.GetStride(),
 					(const void*)element.Offset);
 
-				index++;
+				m_currentLayoutIndex++;
 			}
 
 			m_vertexBuffers.push_back(vertexBuffer);
+
 			glBindVertexArray(0);
 		}
 

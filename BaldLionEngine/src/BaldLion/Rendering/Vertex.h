@@ -14,15 +14,19 @@ namespace BaldLion
 			glm::vec3 tangent;
 			glm::vec3 bitangent;
 
-			float * GetFirstElement() {
+			const void * GetFirstElement() const{
 				return &position.x;
 			}
 		};	
 
-		struct AnimatedVertex : public Vertex {
+		struct VertexBoneData{
 
 			glm::ivec3 jointIDs;
 			glm::vec3 weights;
+
+			const void * GetFirstElement() const{
+				return &jointIDs.x;
+			}
 		};
 	}
 }

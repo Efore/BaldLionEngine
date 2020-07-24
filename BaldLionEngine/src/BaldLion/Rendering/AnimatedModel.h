@@ -34,7 +34,7 @@ namespace BaldLion
 				const aiNode* node);
 
 			void FillVertexArrayData(const aiMesh *aimesh, 
-				std::vector<AnimatedVertex>& vertices, 
+				std::vector<Vertex>& vertices, 
 				std::vector<uint32_t>& indices,  
 				std::map<std::string, uint32_t>& jointMap, 
 				std::map<std::string, glm::mat4>& jointOffsetMapping);
@@ -53,7 +53,7 @@ namespace BaldLion
 
 			void FillVertexWeightData(const aiMesh* aimesh, 
 				const std::map<std::string, uint32_t>& jointMapping, 
-				std::vector<AnimatedVertex>& vertices);
+				std::vector<VertexBoneData>& verticesBoneData);
 
 		protected:
 			std::string m_modelPath;

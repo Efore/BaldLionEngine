@@ -8,10 +8,10 @@ namespace BaldLion
 	namespace Rendering
 	{
 
-		AnimatedMesh::AnimatedMesh(std::vector<AnimatedVertex> vertices, std::vector<uint32_t> indices, std::vector<Animation::Joint> joints, const Ref<Material>& material)
-			:m_vertices(vertices), m_indices(indices), m_material(material), m_joints(joints)
+		AnimatedMesh::AnimatedMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices, std::vector<Animation::Joint> joints, const Ref<Material>& material)
+			: m_material(material), m_joints(joints)
 		{
-			SetUpMesh();
+			SetUpMesh(vertices, verticesBoneData, indices);
 		}
 
 		AnimatedMesh::~AnimatedMesh()
@@ -19,13 +19,18 @@ namespace BaldLion
 
 		}
 
-		void AnimatedMesh::SetUpMesh()
+		void AnimatedMesh::SetUpMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices)
 		{
 			BL_PROFILE_FUNCTION();
 
 			m_vertexArray = VertexArray::Create();
 
-			Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(&m_vertices[0], (uint32_t)(m_vertices.size() * sizeof(AnimatedVertex)));
+			//Setting index buffer
+			Ref<IndexBuffer> indexBuffer = (IndexBuffer::Create(&indices[0], (uint32_t)indices.size()));
+			m_vertexArray->AddIndexBuffer(indexBuffer);
+
+			//Setting vertex buffer
+			Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(vertices[0].GetFirstElement(), (uint32_t)(vertices.size() * sizeof(Vertex)));
 
 			vertexBuffer->SetLayout({
 				{ ShaderDataType::Float3,	"vertex_position"},
@@ -33,16 +38,20 @@ namespace BaldLion
 				{ ShaderDataType::Float3,	"vertex_normal"},
 				{ ShaderDataType::Float2,	"vertex_texcoord"},
 				{ ShaderDataType::Float3,	"vertex_tangent"},
-				{ ShaderDataType::Float3,	"vertex_bitangent"},
-				{ ShaderDataType::Int3,		"vertex_joint_ids"},
-				{ ShaderDataType::Float3,	"vertex_joint_weights"}
+				{ ShaderDataType::Float3,	"vertex_bitangent"}
 			});
 
-			Ref<IndexBuffer> indexBuffer;
-			indexBuffer = (IndexBuffer::Create(&m_indices[0], (uint32_t)m_indices.size()));
-
-			m_vertexArray->AddIndexBuffer(indexBuffer);
 			m_vertexArray->AddVertexBuffer(vertexBuffer);
+
+			//Setting bone data vertex buffer
+			Ref<VertexBuffer> boneDataVertexBuffer = VertexBuffer::Create(verticesBoneData[0].GetFirstElement(), (uint32_t)(verticesBoneData.size() * sizeof(VertexBoneData)));
+
+			boneDataVertexBuffer->SetLayout({
+				{ ShaderDataType::Int3,		"vertex_joint_ids" },
+				{ ShaderDataType::Float3,	"vertex_joint_weights" }
+			});
+
+			m_vertexArray->AddVertexBuffer(boneDataVertexBuffer);
 		}
 
 		void AnimatedMesh::Draw() const

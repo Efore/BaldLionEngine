@@ -15,10 +15,10 @@ namespace BaldLion
 
 		public:
 
-			AnimatedMesh(std::vector<AnimatedVertex> vertices, std::vector<uint32_t> indices, std::vector<Animation::Joint> joints, const Ref<Material>& material);
+			AnimatedMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices, std::vector<Animation::Joint> joints, const Ref<Material>& material);
 			~AnimatedMesh();
 
-			void SetUpMesh();
+			void SetUpMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices);
 			void Draw() const;
 
 			inline std::vector<Animation::Joint>& GetJoints() { return m_joints; }
@@ -27,11 +27,7 @@ namespace BaldLion
 			static glm::mat4 AiMat4ToGlmMat4(const aiMatrix4x4& aiMat4);
 
 		private:
-
-			std::vector<AnimatedVertex> m_vertices;
-			std::vector<uint32_t> m_indices;
 			
-			std::map < std::string, uint32_t> m_jointMapping;
 			std::vector<Animation::Joint> m_joints;
 
 			Ref<VertexArray> m_vertexArray;
