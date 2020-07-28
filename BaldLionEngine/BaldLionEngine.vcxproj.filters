@@ -87,9 +87,6 @@
     <ClInclude Include="src\BaldLion\Rendering\Camera.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\CameraController.h">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
@@ -1292,6 +1289,9 @@
     <ClInclude Include="src\BaldLion\Animation\Animator.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationManager.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationData.h" />
+    <ClInclude Include="src\BaldLion\Rendering\CameraManager.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
@@ -1301,9 +1301,6 @@
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Camera.cpp">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\CameraController.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\LightManager.cpp">
@@ -1388,5 +1385,8 @@
     <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLTextureCubemap.cpp" />
     <ClCompile Include="src\BaldLion\Animation\Animator.cpp" />
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\CameraManager.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

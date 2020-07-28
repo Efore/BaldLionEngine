@@ -17,7 +17,7 @@
 // --------------- Renderer -----------------------
 #include "BaldLion/Rendering/Renderer.h"
 #include "BaldLion/Rendering/AnimatedModel.h"
-#include "BaldLion/Rendering/CameraController.h"
+#include "BaldLion/Rendering/CameraManager.h"
 
 // --------------- Animation -----------------------
 #include "BaldLion/Animation/AnimationManager.h"

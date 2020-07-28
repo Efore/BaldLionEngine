@@ -19,7 +19,8 @@ public:
 		m_model = CreateRef<AnimatedModel>("assets/creature/creature.fbx");
 
 		m_model->SetUpModel();
-		m_cameraController = ProjectionCameraController(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 5000.0f, 100.0f);
+
+		ProjectionCameraManager::GetInstance()->SetUpInitialValues(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 5000.0f, 100.0f);
 
 		directionalLight = { 
 			glm::vec3(-0.2f, -1.0f, -0.3f), 
@@ -59,12 +60,12 @@ public:
 
 		{
 			BL_PROFILE_SCOPE("CameraController::OnUpdate")
-			m_cameraController.OnUpdate(timeStep);
+			ProjectionCameraManager::GetInstance()->OnUpdate(timeStep);
 		}
 
 		{
 			BL_PROFILE_SCOPE("Renderer::BeginScene")
-			Renderer::BeginScene(m_cameraController.GetCamera(), directionalLight, pointLights);
+			Renderer::BeginScene(ProjectionCameraManager::GetInstance()->GetCamera(), directionalLight, pointLights);
 		}
 		
 		{
@@ -116,8 +117,8 @@ public:
 		uint32_t width = e.GetWidth();
 		uint32_t height = e.GetHeight();
 		
-		m_cameraController.GetCamera()->SetWidth((float)width);
-		m_cameraController.GetCamera()->SetHeight((float)height);
+		ProjectionCameraManager::GetInstance()->GetCamera()->SetWidth((float)width);
+		ProjectionCameraManager::GetInstance()->GetCamera()->SetHeight((float)height);
 
 		Renderer::OnWindowResize(width, height);		
 
@@ -127,7 +128,6 @@ public:
 private:
 
 	Ref<AnimatedModel> m_model;
-	ProjectionCameraController m_cameraController;
 
 	DirectionalLight directionalLight;
 	std::vector<PointLight> pointLights;

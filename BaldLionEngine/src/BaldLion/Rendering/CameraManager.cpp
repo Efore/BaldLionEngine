@@ -4,16 +4,18 @@
 #include "BaldLion/Core/KeyCodes.h"
 #include "BaldLion/Core/MouseButtonCodes.h"
 
-#include "CameraController.h"
+#include "CameraManager.h"
 
 namespace BaldLion
 {
 	namespace Rendering
 	{
-		ProjectionCameraController::ProjectionCameraController(const glm::vec3 & initialPosition, float width, float height, float nearPlane, float farPlane, float cameraMovementSpeed) : m_cameraMovementSpeed(cameraMovementSpeed)
-		{
-			m_cameraRotationSpeed = 10.0f;
+		ProjectionCameraManager* ProjectionCameraManager::s_instance;
 
+		void ProjectionCameraManager::SetUpInitialValues(const glm::vec3 & initialPosition, float width, float height, float nearPlane, float farPlane, float cameraMovementSpeed)
+		{
+			m_cameraMovementSpeed = cameraMovementSpeed;
+			m_cameraRotationSpeed = 10.0f;
 			m_cameraYawRotation = 0.0f;
 			m_cameraPitchRotation = 0.0f;
 
@@ -23,7 +25,7 @@ namespace BaldLion
 			m_camera = CreateRef<ProjectionCamera>(initialPosition, width, height, nearPlane, farPlane);
 		}
 
-		ProjectionCameraController::ProjectionCameraController(const Ref<ProjectionCamera>& camera)
+		void ProjectionCameraManager::SetCamera(const Ref<ProjectionCamera>& camera)
 		{
 			m_camera = camera;
 
@@ -34,14 +36,22 @@ namespace BaldLion
 			m_prevY = BaldLion::Input::GetMouseY();
 		}
 
-		void ProjectionCameraController::OnUpdate(BaldLion::TimeStep timeStep)
+		void ProjectionCameraManager::OnUpdate(BaldLion::TimeStep timeStep)
 		{
 			BL_PROFILE_FUNCTION();
 
 			HandleCameraMovement(timeStep);
 		}
 
-		void ProjectionCameraController::HandleCameraMovement(float deltaTime)
+		BaldLion::Rendering::ProjectionCameraManager* ProjectionCameraManager::GetInstance()
+		{
+			if (s_instance == nullptr)
+				s_instance = new ProjectionCameraManager();
+
+			return s_instance;
+		}
+
+		void ProjectionCameraManager::HandleCameraMovement(float deltaTime)
 		{
 			glm::vec3 cameraMovement = glm::vec3(0, 0, 0);
 

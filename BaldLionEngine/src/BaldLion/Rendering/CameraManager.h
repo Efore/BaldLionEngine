@@ -7,7 +7,7 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		class CameraController
+		class CameraManager
 		{
 
 		public:
@@ -15,15 +15,16 @@ namespace BaldLion
 		};
 
 
-		class ProjectionCameraController : public CameraController
+		class ProjectionCameraManager : public CameraManager
 		{
 
 		public:
-			ProjectionCameraController() {}
+			~ProjectionCameraManager() {}
+		
+			static ProjectionCameraManager* GetInstance();
 
-			ProjectionCameraController(const glm::vec3& initialPosition, float width, float height, float nearPlane, float farPlane, float cameraMovementSpeed);
-
-			ProjectionCameraController(const Ref<ProjectionCamera>& camera);
+			void SetUpInitialValues(const glm::vec3& initialPosition, float width, float height, float nearPlane, float farPlane, float cameraMovementSpeed);
+			void SetCamera(const Ref<ProjectionCamera>& camera);
 
 			virtual void OnUpdate(BaldLion::TimeStep timeStep) override;
 
@@ -31,9 +32,15 @@ namespace BaldLion
 			const Ref<ProjectionCamera>& GetCamera() const { return m_camera; }
 
 		private:
+
+			ProjectionCameraManager() {}
+
 			void HandleCameraMovement(float deltaTime);
 
 		private:
+
+			static ProjectionCameraManager* s_instance;
+
 			Ref<ProjectionCamera> m_camera;
 
 			float m_prevX;
