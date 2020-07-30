@@ -19,7 +19,7 @@ namespace BaldLion
 			~AnimatedMesh();
 
 			void SetUpMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices);
-			void Draw() const;
+			void Draw(const glm::mat4& worldTransform) const;
 
 			inline std::vector<Animation::Joint>& GetJoints() { return m_joints; }
 			inline const std::vector<Animation::Joint>& GetJoints() const { return m_joints; }

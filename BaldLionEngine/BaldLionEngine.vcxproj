@@ -113,7 +113,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc141-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>vendor\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -138,16 +138,16 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc141-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>vendor\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h" />
+    <ClInclude Include="src\BaldLion\Animation\AnimationData.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationManager.h" />
     <ClInclude Include="src\BaldLion\Animation\Animator.h" />
     <ClInclude Include="src\BaldLion\Animation\Joint.h" />
-    <ClInclude Include="src\BaldLion\Animation\AnimationData.h" />
     <ClInclude Include="src\BaldLion\Core\Application.h" />
     <ClInclude Include="src\BaldLion\Core\Core.h" />
     <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
@@ -170,6 +170,7 @@
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Camera.h" />
     <ClInclude Include="src\BaldLion\Rendering\CameraManager.h" />
+    <ClInclude Include="src\BaldLion\Rendering\Framebuffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\BaldLion\Rendering\LightClasses\DirectionalLight.h" />
     <ClInclude Include="src\BaldLion\Rendering\LightClasses\PointLight.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="src\BaldLion\Rendering\Model.h" />
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLMaterial.h" />
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLRenderer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLShader.h" />
@@ -189,10 +191,10 @@
     <ClInclude Include="src\BaldLion\Rendering\Renderer.h" />
     <ClInclude Include="src\BaldLion\Rendering\RendererPlatformInterface.h" />
     <ClInclude Include="src\BaldLion\Rendering\Shader.h" />
+    <ClInclude Include="src\BaldLion\Rendering\SkyboxPlatformInterface.h" />
     <ClInclude Include="src\BaldLion\Rendering\Texture.h" />
     <ClInclude Include="src\BaldLion\Rendering\Vertex.h" />
     <ClInclude Include="src\BaldLion\Rendering\VertexArray.h" />
-    <ClInclude Include="src\BaldLion\Rendering\SkyboxPlatformInterface.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\blpch.h" />
@@ -574,12 +576,14 @@
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Camera.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\CameraManager.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\Framebuffer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\LightManager.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Material.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Mesh.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Model.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLMaterial.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLRenderer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLShader.cpp" />

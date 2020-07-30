@@ -11,7 +11,7 @@ namespace BaldLion
 
 		public:
 
-			AnimatedModel(const std::string& filePath);
+			AnimatedModel(const std::string& filePath, const glm::mat4& initialWorldTransform);
 			~AnimatedModel();
 
 			void SetUpModel();
@@ -59,7 +59,7 @@ namespace BaldLion
 			std::string m_modelPath;
 			std::string m_modelFolderPath;
 			std::vector<Ref<AnimatedMesh>> m_subMeshes;
-
+			glm::mat4 m_worldTransform;
 		};
 	}
 }

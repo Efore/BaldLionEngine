@@ -18,9 +18,11 @@ IncludeDir["glm"] = "BaldLionEngine/vendor/glm/"
 IncludeDir["stb_image"] = "BaldLionEngine/vendor/stb_image/"
 IncludeDir["assimp"] = "BaldLionEngine/vendor/assimp/include"
 
-include "BaldLionEngine/vendor/GLFW"
-include "BaldLionEngine/vendor/Glad"
-include "BaldLionEngine/vendor/imgui"
+group "Dependencies"
+	include "BaldLionEngine/vendor/GLFW"
+	include "BaldLionEngine/vendor/Glad"
+	include "BaldLionEngine/vendor/imgui"
+group ""
 
 project "BaldLionEngine"
 	location "BaldLionEngine"
@@ -73,7 +75,7 @@ project "BaldLionEngine"
 		"GLFW",
 		"Glad",
 		"ImGui",
-		"assimp.lib"
+		"assimp-vc141-mtd.lib"
 	}
 
 	filter "system:windows"		

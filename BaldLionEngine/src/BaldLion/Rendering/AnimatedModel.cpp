@@ -13,7 +13,8 @@ namespace BaldLion
 	namespace Rendering
 	{
 
-		AnimatedModel::AnimatedModel(const std::string& filePath)
+		AnimatedModel::AnimatedModel(const std::string& filePath, const glm::mat4& initialWorldTransform) : 
+			m_worldTransform (initialWorldTransform)
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -52,7 +53,7 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 			for (auto const &m : m_subMeshes)
 			{
-				m->Draw();
+				m->Draw(m_worldTransform);
 			}
 		}
 

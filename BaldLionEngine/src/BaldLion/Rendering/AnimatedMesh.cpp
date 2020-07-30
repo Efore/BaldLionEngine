@@ -54,7 +54,7 @@ namespace BaldLion
 			m_vertexArray->AddVertexBuffer(boneDataVertexBuffer);
 		}
 
-		void AnimatedMesh::Draw() const
+		void AnimatedMesh::Draw(const glm::mat4& worldTransform) const
 		{
 			m_material->Bind();
 
@@ -65,7 +65,7 @@ namespace BaldLion
 				m_material->GetShader()->SetUniform("u_joints[" + std::to_string(i) + "]", ShaderDataType::Mat4, &(m_joints[i].jointAnimationTransform));
 			}
 
-			Renderer::Submit(m_vertexArray, m_material->GetShader());		
+			Renderer::Submit(m_vertexArray, m_material->GetShader(), worldTransform);		
 		}
 
 		glm::mat4 AnimatedMesh::AiMat4ToGlmMat4(const aiMatrix4x4& aiMat4)

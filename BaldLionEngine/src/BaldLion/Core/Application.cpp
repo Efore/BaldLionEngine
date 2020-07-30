@@ -50,6 +50,11 @@ namespace BaldLion
 		overlay->OnAttach();
 	}
 
+	void Application::Close()
+	{
+		m_running = false;
+	}
+
 	Application& Application::GetInstance()
 	{
 		if (s_instance == nullptr)

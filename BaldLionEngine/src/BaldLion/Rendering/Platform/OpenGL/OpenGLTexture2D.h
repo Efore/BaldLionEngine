@@ -14,12 +14,13 @@ namespace BaldLion
 
 			virtual uint32_t GetWidth() const override { return m_width; }
 			virtual uint32_t GetHeight() const override { return m_height; }
+			virtual uint32_t GetRendererID() const override { return m_rendererID; }
 
 			virtual void Bind(uint32_t slot = 0) const override;
 
 			virtual const std::string& GetName() const override { return m_name; }
 
-			virtual const int GetTextureType() const override { return BL_TEXTURE_TYPE_2D; }
+			virtual int GetTextureType() const override { return BL_TEXTURE_TYPE_2D; }
 
 		private:
 			std::string m_path;

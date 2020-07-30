@@ -15,7 +15,7 @@ namespace BaldLion
 		virtual void OnDetach() {}
 		virtual void OnUpdate(TimeStep timeStep) {}
 		virtual void OnImGuiRender() {}
-		virtual void OnEvent(Event& event) {}
+		virtual void OnEvent(Event& e) {}
 
 		inline const std::string& GetName() const { return m_debugName; }
 

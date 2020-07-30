@@ -25,6 +25,8 @@ namespace BaldLion
 
 		inline Window& GetWindow() const { return *m_window; }
 
+		void Close();
+
 		static Application& GetInstance();
 
 	protected:

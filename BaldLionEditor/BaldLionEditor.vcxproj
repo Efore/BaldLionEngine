@@ -131,18 +131,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\SandboxApp.cpp" />
+    <ClInclude Include="src\BaldLionEditorLayer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\BaldLionEditorApp.cpp" />
+    <ClCompile Include="src\BaldLionEditorLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaldLionEngine\BaldLionEngine.vcxproj">
       <Project>{403C0D4C-2C0A-0152-159E-7178010BDDB6}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\shaders\BaseLit.glsl" />
-    <None Include="assets\shaders\monster.glsl" />
-    <None Include="assets\shaders\nanosuit.glsl" />
-    <None Include="assets\shaders\skybox.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
