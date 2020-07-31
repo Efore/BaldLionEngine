@@ -27,10 +27,10 @@ namespace BaldLion
 
 		void Close();
 
-		static Application& GetInstance();
+		static Application& GetInstance(const std::string& applicationName = "");
 
 	protected:
-		Application();
+		Application(const std::string& applicationName);
 
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowMinimized(WindowMinimizeEvent& e);
@@ -49,6 +49,6 @@ namespace BaldLion
 	};
 
 	//To be defined in client
-	Application& CreateApplication();
+	Application& CreateApplication(const std::string& applicationName = "");
 }
 

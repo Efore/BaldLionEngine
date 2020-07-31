@@ -1,6 +1,6 @@
 workspace "BaldLionEngine"
 	architecture "x64"
-	startproject "Sandbox"
+	startproject "BaldLionEditor"
 	
 	configurations
 	{
@@ -104,6 +104,63 @@ project "BaldLionEngine"
 
 project "BaldLionEditor"
 	location "BaldLionEditor"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	debugenvs { 
+		"PATH=%PATH%;$(ProjectDir)lib"
+	}
+	
+	files
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+
+	includedirs
+	{
+		"BaldLionEngine/vendor/spdlog/include",
+		"BaldLionEngine/src",
+		"BaldLionEngine/vendor",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.assimp}"
+	}
+
+	links
+	{
+		"BaldLionEngine"
+	}
+
+	filter "system:windows"	
+		systemversion "latest"
+
+		defines
+		{
+			"BL_PLATFORM_WINDOWS"
+		}
+
+	filter "configurations:Debug"
+		defines "BL_DEBUG"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "BL_RELEASE"
+		runtime "Release"
+		optimize "on"
+
+	filter "configurations:Dist"
+		defines "BL_DIST"
+		runtime "Release"
+		optimize "on"
+		
+project "BaldLionSandbox"
+	location "BaldLionSandbox"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"

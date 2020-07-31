@@ -15,17 +15,17 @@ namespace BaldLion
 
 			}
 
-			static Application& GetInstance()
+			static Application& GetInstance(const std::string& applicationName)
 			{
 				if (s_instance == nullptr)
-					s_instance = new BaldLionEditorApp();
+					s_instance = new BaldLionEditorApp(applicationName);
 
 				return *s_instance;
 			}
 
 		private:
 
-			BaldLionEditorApp()
+			BaldLionEditorApp(const std::string& applicationName) : Application(applicationName)
 			{
 				PushLayer(new BaldLionEditorLayer());
 			}
@@ -33,8 +33,8 @@ namespace BaldLion
 		};		
 	}
 
-	Application& CreateApplication()
+	Application& CreateApplication(const std::string& applicationName)
 	{
-		return Editor::BaldLionEditorApp::GetInstance();
+		return Editor::BaldLionEditorApp::GetInstance(applicationName);
 	}
 }

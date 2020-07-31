@@ -10,7 +10,7 @@ namespace BaldLion
 
 	Application* Application::s_instance = nullptr;
 
-	Application::Application()
+	Application::Application(const std::string& applicationName)
 	{
 		BL_PROFILE_FUNCTION();
 
@@ -18,7 +18,7 @@ namespace BaldLion
 
 		s_instance = this;
 
-		m_window = Window::Create();
+		m_window = Window::Create(WindowProps(applicationName));
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		Rendering::Renderer::Init();
@@ -55,10 +55,10 @@ namespace BaldLion
 		m_running = false;
 	}
 
-	Application& Application::GetInstance()
+	Application& Application::GetInstance(const std::string& applicationName)
 	{
 		if (s_instance == nullptr)
-			s_instance = new Application();
+			s_instance = new Application(applicationName);
 
 		return *s_instance;
 	}

@@ -14,8 +14,8 @@ namespace BaldLion
 
 		void OnUpdate() override;
 
-		inline unsigned int GetWidth() const override { return m_data.Width; }
-		inline unsigned int GetHeight() const override { return m_data.Height; }
+		inline uint32_t GetWidth() const override { return m_data.Width; }
+		inline uint32_t GetHeight() const override { return m_data.Height; }
 
 		//Window attributes
 		inline void SetEventCallback(const EventCallbackFn& callback) override { m_data.EventCallback = callback; }
@@ -34,7 +34,7 @@ namespace BaldLion
 		struct WindowData
 		{
 			std::string Title;
-			unsigned int Width, Height;
+			uint32_t Width, Height;
 			bool VSync;
 
 			EventCallbackFn EventCallback;

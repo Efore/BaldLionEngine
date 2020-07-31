@@ -13,7 +13,7 @@ namespace BaldLion
 	{
 
 		BaldLionEditorLayer::BaldLionEditorLayer()
-			: Layer("BaldLion Editor")
+			: Layer("BaldLion Editor Layer")
 		{
 			
 		}
