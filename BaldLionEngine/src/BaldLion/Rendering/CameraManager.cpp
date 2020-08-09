@@ -10,30 +10,31 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		ProjectionCameraManager* ProjectionCameraManager::s_instance;
+		ProjectionCameraManager::ProjectionCameraManagerData ProjectionCameraManager::s_cameraData;
+		bool ProjectionCameraManager::s_initialized = false;
 
-		void ProjectionCameraManager::SetUpInitialValues(const glm::vec3 & initialPosition, float width, float height, float nearPlane, float farPlane, float cameraMovementSpeed)
+		void ProjectionCameraManager::Init(const glm::vec3 & initialPosition, float width, float height, float nearPlane, float farPlane, float cameraMovementSpeed)
 		{
-			m_cameraMovementSpeed = cameraMovementSpeed;
-			m_cameraRotationSpeed = 10.0f;
-			m_cameraYawRotation = 0.0f;
-			m_cameraPitchRotation = 0.0f;
-
-			m_prevX = BaldLion::Input::GetMouseX();
-			m_prevY = BaldLion::Input::GetMouseY();
-
-			m_camera = CreateRef<ProjectionCamera>(initialPosition, width, height, nearPlane, farPlane);
+			s_cameraData.cameraMovementSpeed = cameraMovementSpeed;
+			s_cameraData.cameraRotationSpeed = 10.0f;
+			s_cameraData.cameraYawRotation = 0.0f;
+			s_cameraData.cameraPitchRotation = 0.0f;
+			
+			s_cameraData.prevX = BaldLion::Input::GetMouseX();
+			s_cameraData.prevY = BaldLion::Input::GetMouseY();
+			
+			s_cameraData.camera = CreateRef<ProjectionCamera>(initialPosition, width, height, nearPlane, farPlane);
 		}
 
 		void ProjectionCameraManager::SetCamera(const Ref<ProjectionCamera>& camera)
 		{
-			m_camera = camera;
-
-			m_cameraYawRotation = 0.0f;
-			m_cameraPitchRotation = 0.0f;
-
-			m_prevX = BaldLion::Input::GetMouseX();
-			m_prevY = BaldLion::Input::GetMouseY();
+			s_cameraData.camera = camera;
+			
+			s_cameraData.cameraYawRotation = 0.0f;
+			s_cameraData.cameraPitchRotation = 0.0f;
+			
+			s_cameraData.prevX = BaldLion::Input::GetMouseX();
+			s_cameraData.prevY = BaldLion::Input::GetMouseY();
 		}
 
 		void ProjectionCameraManager::OnUpdate(BaldLion::TimeStep timeStep)
@@ -42,47 +43,39 @@ namespace BaldLion
 
 			HandleCameraMovement(timeStep);
 		}
-
-		BaldLion::Rendering::ProjectionCameraManager* ProjectionCameraManager::GetInstance()
-		{
-			if (s_instance == nullptr)
-				s_instance = new ProjectionCameraManager();
-
-			return s_instance;
-		}
-
+		
 		void ProjectionCameraManager::HandleCameraMovement(float deltaTime)
 		{
 			glm::vec3 cameraMovement = glm::vec3(0, 0, 0);
 
 			if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
-				cameraMovement -= m_camera->GetForwardDirection() * deltaTime * m_cameraMovementSpeed;
+				cameraMovement -= s_cameraData.camera->GetForwardDirection() * deltaTime * s_cameraData.cameraMovementSpeed;
 			else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
-				cameraMovement += m_camera->GetForwardDirection() * deltaTime * m_cameraMovementSpeed;
+				cameraMovement += s_cameraData.camera->GetForwardDirection() * deltaTime * s_cameraData.cameraMovementSpeed;
 
 			if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
-				cameraMovement -= m_camera->GetRightDirection() * deltaTime * m_cameraMovementSpeed;
+				cameraMovement -= s_cameraData.camera->GetRightDirection() * deltaTime * s_cameraData.cameraMovementSpeed;
 			else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
-				cameraMovement += m_camera->GetRightDirection() * deltaTime * m_cameraMovementSpeed;
+				cameraMovement += s_cameraData.camera->GetRightDirection() * deltaTime * s_cameraData.cameraMovementSpeed;
 
 			if (BaldLion::Input::IsKeyPressed(BL_KEY_LEFT_SHIFT))
 				cameraMovement *= 2;
 
 			if (cameraMovement != glm::vec3(0, 0, 0))
-				m_camera->SetPosition(m_camera->GetPosition() + cameraMovement);
+				s_cameraData.camera->SetPosition(s_cameraData.camera->GetPosition() + cameraMovement);
 
 			if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 			{
-				float deltaX = BaldLion::Input::GetMouseX() - m_prevX;
-				float deltaY = BaldLion::Input::GetMouseY() - m_prevY;
+				float deltaX = BaldLion::Input::GetMouseX() - s_cameraData.prevX;
+				float deltaY = BaldLion::Input::GetMouseY() - s_cameraData.prevY;
 
-				m_cameraYawRotation -= deltaX * m_cameraRotationSpeed * deltaTime;
-				m_cameraPitchRotation -= deltaY * m_cameraRotationSpeed * deltaTime;
-				m_camera->SetRotation(m_cameraPitchRotation, m_cameraYawRotation);
+				s_cameraData.cameraYawRotation -= deltaX * s_cameraData.cameraRotationSpeed * deltaTime;
+				s_cameraData.cameraPitchRotation -= deltaY * s_cameraData.cameraRotationSpeed * deltaTime;
+				s_cameraData.camera->SetRotation(s_cameraData.cameraPitchRotation, s_cameraData.cameraYawRotation);
 			}
 
-			m_prevX = BaldLion::Input::GetMouseX();
-			m_prevY = BaldLion::Input::GetMouseY();
+			s_cameraData.prevX = BaldLion::Input::GetMouseX();
+			s_cameraData.prevY = BaldLion::Input::GetMouseY();
 		}
 	}
 }

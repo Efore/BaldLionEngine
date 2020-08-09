@@ -39,7 +39,7 @@ namespace BaldLion
 				initialTransform = glm::translate(initialTransform, glm::vec3(150, 0, 0));
 			}
 
-			ProjectionCameraManager::GetInstance()->SetUpInitialValues(glm::vec3(0, 0, 250), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 100.0f);
+			ProjectionCameraManager::Init(glm::vec3(0, 0, 250), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 100.0f);
 
 			directionalLight = {
 				glm::vec3(-0.2f, -1.0f, -0.3f),
@@ -84,18 +84,18 @@ namespace BaldLion
 
 			{
 				BL_PROFILE_SCOPE("CameraController::OnUpdate");
-				ProjectionCameraManager::GetInstance()->OnUpdate(timeStep);
+				ProjectionCameraManager::OnUpdate(timeStep);
 			}
 
 			{
 				BL_PROFILE_SCOPE("AnimationManager::OnUpdate");
-				Animation::AnimationManager::GetInstance()->OnUpdate(timeStep);
+				Animation::AnimationManager::OnUpdate(timeStep);
 			}
 
 			{
 				BL_PROFILE_SCOPE("Renderer::BeginScene");
 				m_frameBuffer->Bind();
-				Renderer::BeginScene(ProjectionCameraManager::GetInstance()->GetCamera(), directionalLight, pointLights);
+				Renderer::BeginScene(ProjectionCameraManager::GetCamera(), directionalLight, pointLights);
 			}
 
 			{
@@ -116,8 +116,14 @@ namespace BaldLion
 			RenderDockSpace();
 
 			ImGui::Begin("Viewport");
+			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+			if (m_viewportSize != glm::vec2{ viewportPanelSize.x, viewportPanelSize.y })
+			{
+				m_viewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+				m_frameBuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
+			}
 
-			ImGui::Image((void*)m_frameBuffer->GetColorAttachmentID(), ImVec2{ ImGui::GetWindowWidth(), ImGui::GetWindowHeight() }, ImVec2{ 0, 0 }, ImVec2{ 1, -1 });
+			ImGui::Image((void*)m_frameBuffer->GetColorAttachmentID(), ImVec2{ m_viewportSize.x , m_viewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 			ImGui::End();
 
 			ImGui::Begin("Settings");
@@ -219,8 +225,8 @@ namespace BaldLion
 			uint32_t width = e.GetWidth();
 			uint32_t height = e.GetHeight();
 
-			ProjectionCameraManager::GetInstance()->GetCamera()->SetWidth((float)width);
-			ProjectionCameraManager::GetInstance()->GetCamera()->SetHeight((float)height);
+			ProjectionCameraManager::GetCamera()->SetWidth((float)width);
+			ProjectionCameraManager::GetCamera()->SetHeight((float)height);
 
 			Renderer::OnWindowResize(width, height);
 

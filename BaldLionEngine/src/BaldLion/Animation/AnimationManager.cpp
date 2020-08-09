@@ -5,32 +5,24 @@ namespace BaldLion
 {
 	namespace Animation
 	{
-		AnimationManager* AnimationManager::s_instance;
+		std::vector<Ref<Animator>> AnimationManager::s_registeredAnimators;
+		bool AnimationManager::s_initialized = false;
 
-		AnimationManager::AnimationManager()
+		void AnimationManager::Init()
 		{
-			m_registeredAnimators.reserve(10);
-		}
-
-		AnimationManager::~AnimationManager()
-		{
-
+			if (!s_initialized)
+			{
+				s_initialized = true;
+				s_registeredAnimators.reserve(10);
+			}
 		}
 
 		void AnimationManager::OnUpdate(float timeStep)
 		{
-			for (Ref<Animator> animator : m_registeredAnimators)
+			for (Ref<Animator> animator : s_registeredAnimators)
 			{
 				animator->OnUpdate(timeStep);
 			}
-		}
-
-		AnimationManager* AnimationManager::GetInstance()
-		{
-			if (s_instance == nullptr)
-				s_instance = new AnimationManager();
-
-			return s_instance;
 		}
 
 		void AnimationManager::GenerateAnimator(const aiScene *scene, const std::map<std::string, uint32_t>& jointMapping, const Ref<AnimatedMesh>& animatedMesh)
@@ -78,20 +70,20 @@ namespace BaldLion
 
 		void AnimationManager::RegisterAnimator(Ref<Animator> animator)
 		{
-			if (std::find(m_registeredAnimators.begin(), m_registeredAnimators.end(), animator) == m_registeredAnimators.end())
+			if (std::find(s_registeredAnimators.begin(), s_registeredAnimators.end(), animator) == s_registeredAnimators.end())
 			{
-				m_registeredAnimators.push_back(animator);
+				s_registeredAnimators.push_back(animator);
 			}
 		}
 
 		void AnimationManager::UnregisterAnimator(Ref<Animator> animator)
 		{
-			auto it = std::find(m_registeredAnimators.begin(), m_registeredAnimators.end(), animator);				
+			auto it = std::find(s_registeredAnimators.begin(), s_registeredAnimators.end(), animator);
 
-			if (it != m_registeredAnimators.end())
+			if (it != s_registeredAnimators.end())
 			{
-				std::swap(*it, m_registeredAnimators.back());				
-				m_registeredAnimators.pop_back();
+				std::swap(*it, s_registeredAnimators.back());
+				s_registeredAnimators.pop_back();
 			}
 		}
 	}

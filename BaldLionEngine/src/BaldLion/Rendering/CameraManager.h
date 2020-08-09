@@ -7,50 +7,40 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		class CameraManager
+		class ProjectionCameraManager 
 		{
 
 		public:
-			virtual void OnUpdate(BaldLion::TimeStep timeStep) = 0;
-		};
+			static void Init(const glm::vec3& initialPosition, float width, float height, float nearPlane, float farPlane, float cameraMovementSpeed);
+			static void SetCamera(const Ref<ProjectionCamera>& camera);
 
+			static void OnUpdate(BaldLion::TimeStep timeStep);
 
-		class ProjectionCameraManager : public CameraManager
-		{
-
-		public:
-			~ProjectionCameraManager() {}
-		
-			static ProjectionCameraManager* GetInstance();
-
-			void SetUpInitialValues(const glm::vec3& initialPosition, float width, float height, float nearPlane, float farPlane, float cameraMovementSpeed);
-			void SetCamera(const Ref<ProjectionCamera>& camera);
-
-			virtual void OnUpdate(BaldLion::TimeStep timeStep) override;
-
-			Ref<ProjectionCamera>& GetCamera() { return m_camera; }
-			const Ref<ProjectionCamera>& GetCamera() const { return m_camera; }
+			static const Ref<ProjectionCamera>& GetCamera() { return s_cameraData.camera; }
 
 		private:
 
-			ProjectionCameraManager() {}
-
-			void HandleCameraMovement(float deltaTime);
+			static void HandleCameraMovement(float deltaTime);
 
 		private:
 
-			static ProjectionCameraManager* s_instance;
+			struct ProjectionCameraManagerData
+			{
+				Ref<ProjectionCamera> camera;
 
-			Ref<ProjectionCamera> m_camera;
+				float prevX;
+				float prevY;
 
-			float m_prevX;
-			float m_prevY;
+				float cameraPitchRotation;
+				float cameraYawRotation;
 
-			float m_cameraPitchRotation;
-			float m_cameraYawRotation;
+				float cameraRotationSpeed;
+				float cameraMovementSpeed;
+			};
 
-			float m_cameraRotationSpeed;
-			float m_cameraMovementSpeed;
+			static ProjectionCameraManagerData s_cameraData;
+			static bool s_initialized;
+			
 		};
 	}
 }

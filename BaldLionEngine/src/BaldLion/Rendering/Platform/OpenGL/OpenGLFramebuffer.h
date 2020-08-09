@@ -14,6 +14,7 @@ namespace BaldLion
 
 			virtual void Bind() override;
 			virtual void Unbind() override;
+			virtual void Resize(uint32_t width, uint32_t height) override;
 
 			void Invalidate();
 
@@ -22,8 +23,8 @@ namespace BaldLion
 			virtual const FramebufferSpecification& GetSpecification() const override { return m_framebufferSpecification; }
 
 		private:
-			uint32_t m_rendererID;
-			uint32_t m_colorAttachmentID, m_depthAttachmentID;
+			uint32_t m_rendererID = 0;
+			uint32_t m_colorAttachmentID = 0, m_depthAttachmentID = 0;
 			FramebufferSpecification m_framebufferSpecification;
 		};
 	}

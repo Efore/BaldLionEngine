@@ -9,21 +9,19 @@ namespace BaldLion
 		class AnimationManager
 		{
 		public:
-			~AnimationManager();
-			void OnUpdate(float timeStep);
 
-			static AnimationManager* GetInstance();
-			void GenerateAnimator(const aiScene *scene, const std::map<std::string, uint32_t>& jointMapping, const Ref<AnimatedMesh>& animatedMesh);
+			static void Init();
 
-			void RegisterAnimator(Ref<Animator> animator);
-			void UnregisterAnimator(Ref<Animator> animator);
+			static void OnUpdate(float timeStep);
 
-		private:
-			AnimationManager();
+			static void GenerateAnimator(const aiScene *scene, const std::map<std::string, uint32_t>& jointMapping, const Ref<AnimatedMesh>& animatedMesh);
 
-		private:
-			static AnimationManager* s_instance;
-			std::vector<Ref<Animator>> m_registeredAnimators;
+			static void RegisterAnimator(Ref<Animator> animator);
+			static void UnregisterAnimator(Ref<Animator> animator);
+
+		private:			
+			static bool s_initialized;
+			static std::vector<Ref<Animator>> s_registeredAnimators;
 		};
 	}
 }

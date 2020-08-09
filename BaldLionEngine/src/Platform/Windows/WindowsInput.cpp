@@ -1,28 +1,27 @@
 #include "blpch.h"
-#include "WindowsInput.h"
 
+#include "BaldLion/Core/Input.h"
 #include "BaldLion/Core/Application.h"
 #include <GLFW/glfw3.h>
 
 namespace BaldLion
 {
-	Input* Input::m_Instance = new WindowsInput();
 
-	bool WindowsInput::IsKeyPressedImpl(int keycode)
+	bool Input::IsKeyPressed(int keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::GetInstance().GetWindow().GetNativeWindow());
 		auto state = glfwGetKey(window, keycode);
 		return state == GLFW_PRESS;
 	}
 
-	bool WindowsInput::IsMousePressedImpl(int button)
+	bool Input::IsMouseButtonPress(int button)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::GetInstance().GetWindow().GetNativeWindow());
 		auto state = glfwGetMouseButton(window, button);
 		return state == GLFW_PRESS;
 	}
 
-	std::pair<float, float> WindowsInput::GetMousePositionImpl()
+	std::pair<float, float> Input::GetMousePosition()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::GetInstance().GetWindow().GetNativeWindow());
 		double xpos, ypos;
@@ -31,13 +30,13 @@ namespace BaldLion
 		return { (float)xpos, (float)ypos };
 	}
 
-	float WindowsInput::GetMouseXImpl()
+	float Input::GetMouseX()
 	{
 		auto mousePosition = GetMousePosition();
 		return std::get<0>(mousePosition);
 	}
 
-	float WindowsInput::GetMouseYImpl()
+	float Input::GetMouseY()
 	{
 		auto mousePosition = GetMousePosition();
 		return std::get<1>(mousePosition);

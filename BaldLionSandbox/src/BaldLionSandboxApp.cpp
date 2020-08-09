@@ -21,7 +21,7 @@ public:
 
 		m_model->SetUpModel();
 
-		ProjectionCameraManager::GetInstance()->SetUpInitialValues(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 5000.0f, 100.0f);
+		ProjectionCameraManager::Init(glm::vec3(0, 0, 250), (float)width, (float)height, 0.1f, 5000.0f, 100.0f);
 
 		directionalLight = {
 			glm::vec3(-0.2f, -1.0f, -0.3f),
@@ -61,17 +61,17 @@ public:
 
 		{
 			BL_PROFILE_SCOPE("CameraController::OnUpdate");
-			ProjectionCameraManager::GetInstance()->OnUpdate(timeStep);
+			ProjectionCameraManager::OnUpdate(timeStep);
 		}
 
 		{
 			BL_PROFILE_SCOPE("Renderer::BeginScene");
-			Renderer::BeginScene(ProjectionCameraManager::GetInstance()->GetCamera(), directionalLight, pointLights);
+			Renderer::BeginScene(ProjectionCameraManager::GetCamera(), directionalLight, pointLights);
 		}
 
 		{
 			BL_PROFILE_SCOPE("AnimationManager::OnUpdate");
-			Animation::AnimationManager::GetInstance()->OnUpdate(timeStep);
+			Animation::AnimationManager::OnUpdate(timeStep);
 		}
 
 		{
@@ -118,8 +118,8 @@ public:
 		uint32_t width = e.GetWidth();
 		uint32_t height = e.GetHeight();
 
-		ProjectionCameraManager::GetInstance()->GetCamera()->SetWidth((float)width);
-		ProjectionCameraManager::GetInstance()->GetCamera()->SetHeight((float)height);
+		ProjectionCameraManager::GetCamera()->SetWidth((float)width);
+		ProjectionCameraManager::GetCamera()->SetHeight((float)height);
 
 		Renderer::OnWindowResize(width, height);
 

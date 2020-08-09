@@ -356,7 +356,7 @@ namespace BaldLion
 					emissiveTex,
 					normalTex));
 
-			AnimationManager::GetInstance()->GenerateAnimator(aiscene, jointMapping, animatedMesh);
+			AnimationManager::GenerateAnimator(aiscene, jointMapping, animatedMesh);
 
 			return animatedMesh;
 		}

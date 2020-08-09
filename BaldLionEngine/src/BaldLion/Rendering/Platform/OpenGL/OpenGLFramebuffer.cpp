@@ -16,11 +16,14 @@ namespace BaldLion
 		OpenGLFramebuffer::~OpenGLFramebuffer()
 		{
 			glDeleteFramebuffers(1, &m_rendererID);
+			glDeleteTextures(1, &m_colorAttachmentID);
+			glDeleteTextures(1, &m_depthAttachmentID);
 		}
 
 		void OpenGLFramebuffer::Bind()
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, m_rendererID);
+			glViewport(0, 0, m_framebufferSpecification.Width, m_framebufferSpecification.Height);
 		}
 
 		void OpenGLFramebuffer::Unbind()
@@ -28,8 +31,22 @@ namespace BaldLion
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
+		void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
+		{
+			m_framebufferSpecification.Width = width;
+			m_framebufferSpecification.Height = height;
+			Invalidate();
+		}
+
 		void OpenGLFramebuffer::Invalidate()
 		{
+			if (m_rendererID)
+			{
+				glDeleteFramebuffers(1, &m_rendererID);
+				glDeleteTextures(1, &m_colorAttachmentID);
+				glDeleteTextures(1, &m_depthAttachmentID);
+			}
+
 			glCreateFramebuffers(1, &m_rendererID);
 			glBindFramebuffer(GL_FRAMEBUFFER, m_rendererID);
 

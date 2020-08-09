@@ -28,6 +28,8 @@ namespace BaldLion
 			std::vector<Ref<Rendering::AnimatedModel>> m_models;
 			Ref<Rendering::Framebuffer> m_frameBuffer;
 
+			glm::vec2 m_viewportSize;
+
 			DirectionalLight directionalLight;
 			std::vector<PointLight> pointLights;
 		};
