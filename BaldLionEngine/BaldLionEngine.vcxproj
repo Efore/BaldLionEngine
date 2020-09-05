@@ -156,6 +156,12 @@
     <ClInclude Include="src\BaldLion\Core\Layer.h" />
     <ClInclude Include="src\BaldLion\Core\LayerStack.h" />
     <ClInclude Include="src\BaldLion\Core\Log.h" />
+    <ClInclude Include="src\BaldLion\Core\Memory\Allocator.h" />
+    <ClInclude Include="src\BaldLion\Core\Memory\FreeListAllocator.h" />
+    <ClInclude Include="src\BaldLion\Core\Memory\LinearAllocator.h" />
+    <ClInclude Include="src\BaldLion\Core\Memory\MemoryManager.h" />
+    <ClInclude Include="src\BaldLion\Core\Memory\MemoryUtils.h" />
+    <ClInclude Include="src\BaldLion\Core\Memory\StackAllocator.h" />
     <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h" />
     <ClInclude Include="src\BaldLion\Core\TimeStep.h" />
     <ClInclude Include="src\BaldLion\Core\Window.h" />
@@ -568,6 +574,10 @@
     <ClCompile Include="src\BaldLion\Core\Layer.cpp" />
     <ClCompile Include="src\BaldLion\Core\LayerStack.cpp" />
     <ClCompile Include="src\BaldLion\Core\Log.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Memory\Allocator.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Memory\FreeListAllocator.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Memory\LinearAllocator.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\AnimatedMesh.cpp" />

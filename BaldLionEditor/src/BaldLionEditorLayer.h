@@ -29,6 +29,7 @@ namespace BaldLion
 			Ref<Rendering::Framebuffer> m_frameBuffer;
 
 			glm::vec2 m_viewportSize;
+			bool m_viewPortFocused;
 
 			DirectionalLight directionalLight;
 			std::vector<PointLight> pointLights;

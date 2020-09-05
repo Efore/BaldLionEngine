@@ -84,7 +84,9 @@ namespace BaldLion
 
 			{
 				BL_PROFILE_SCOPE("CameraController::OnUpdate");
-				ProjectionCameraManager::OnUpdate(timeStep);
+				
+				if (m_viewPortFocused)
+					ProjectionCameraManager::OnUpdate(timeStep);
 			}
 
 			{
@@ -116,6 +118,9 @@ namespace BaldLion
 			RenderDockSpace();
 
 			ImGui::Begin("Viewport");
+
+			m_viewPortFocused = ImGui::IsWindowFocused();
+
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 			if (m_viewportSize != glm::vec2{ viewportPanelSize.x, viewportPanelSize.y })
 			{

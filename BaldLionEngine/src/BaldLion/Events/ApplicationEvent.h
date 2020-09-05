@@ -4,7 +4,7 @@
 
 namespace BaldLion
 {
-	class BL_API WindowResizeEvent : public Event
+	class  WindowResizeEvent : public Event
 	{
 	public: 
 		WindowResizeEvent(unsigned int width, unsigned int height) : m_width(width), m_height(height){}
@@ -26,7 +26,7 @@ namespace BaldLion
 		unsigned int m_width, m_height;
 	};
 
-	class BL_API WindowMinimizeEvent : public Event
+	class  WindowMinimizeEvent : public Event
 	{
 	public:
 		WindowMinimizeEvent(bool minimized) : m_minimized(minimized) {}
@@ -55,7 +55,7 @@ namespace BaldLion
 
 	};
 
-	class BL_API WindowCloseEvent : public Event
+	class  WindowCloseEvent : public Event
 	{
 	public:
 		WindowCloseEvent(){}
@@ -64,7 +64,7 @@ namespace BaldLion
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 	
-	class BL_API AppTickEvent : public Event
+	class  AppTickEvent : public Event
 	{
 	public:
 		AppTickEvent(){}
@@ -73,7 +73,7 @@ namespace BaldLion
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
-	class BL_API AppUpdateEvent : public Event
+	class  AppUpdateEvent : public Event
 	{
 	public:
 		AppUpdateEvent(){}
@@ -82,7 +82,7 @@ namespace BaldLion
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
-	class BL_API AppRenderEvent : public Event
+	class  AppRenderEvent : public Event
 	{
 	public:
 		AppRenderEvent(){}

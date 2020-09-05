@@ -4,7 +4,7 @@
 
 namespace BaldLion
 {
-	class BL_API MouseMovedEvent : public Event
+	class  MouseMovedEvent : public Event
 	{
 	public:
 		MouseMovedEvent(float x, float y) : m_mouseX(x), m_mouseY(y){}
@@ -26,7 +26,7 @@ namespace BaldLion
 		float m_mouseX, m_mouseY;
 	};
 
-	class BL_API MouseScrolledEvent : public Event
+	class  MouseScrolledEvent : public Event
 	{
 	public:
 		MouseScrolledEvent(float offsetX, float offsetY) : m_offsetX(offsetX), m_offsetY(offsetY) {}
@@ -48,7 +48,7 @@ namespace BaldLion
 		float m_offsetX, m_offsetY;
 	};
 
-	class BL_API MouseButtonEvent : public Event
+	class  MouseButtonEvent : public Event
 	{
 	public:
 		inline int GetMouseButton() const { return m_button; }
@@ -61,7 +61,7 @@ namespace BaldLion
 		int m_button;
 	};
 
-	class BL_API MouseButtonPressedEvent : public MouseButtonEvent
+	class  MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonPressedEvent(int button) : MouseButtonEvent(button) {}
@@ -76,7 +76,7 @@ namespace BaldLion
 		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
 
-	class BL_API MouseButtonReleasedEvent : public MouseButtonEvent
+	class  MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonReleasedEvent(int button) : MouseButtonEvent(button) {}

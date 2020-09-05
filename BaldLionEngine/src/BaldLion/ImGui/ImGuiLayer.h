@@ -8,7 +8,7 @@
 
 namespace BaldLion
 {
-	class BL_API ImGuiLayer : public Layer
+	class  ImGuiLayer : public Layer
 	{
 	public:
 		ImGuiLayer();

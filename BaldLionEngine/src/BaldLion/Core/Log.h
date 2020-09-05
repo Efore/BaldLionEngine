@@ -6,7 +6,7 @@
 
 namespace BaldLion
 {
-	class BL_API Log
+	class  Log
 	{
 	public:
 		static void Init();

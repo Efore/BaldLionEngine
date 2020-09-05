@@ -5,7 +5,7 @@
 
 namespace BaldLion
 {
-	class BL_API Input
+	class  Input
 	{
 	public:
 		static bool IsKeyPressed(int keycode);

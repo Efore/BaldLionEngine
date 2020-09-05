@@ -1317,6 +1317,12 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Memory\Allocator.h" />
+    <ClInclude Include="src\BaldLion\Core\Memory\MemoryUtils.h" />
+    <ClInclude Include="src\BaldLion\Core\Memory\StackAllocator.h" />
+    <ClInclude Include="src\BaldLion\Core\Memory\LinearAllocator.h" />
+    <ClInclude Include="src\BaldLion\Core\Memory\FreeListAllocator.h" />
+    <ClInclude Include="src\BaldLion\Core\Memory\MemoryManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1433,5 +1439,9 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Memory\Allocator.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Memory\LinearAllocator.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Memory\FreeListAllocator.cpp" />
   </ItemGroup>
 </Project>

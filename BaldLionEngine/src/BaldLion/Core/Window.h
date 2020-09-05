@@ -23,7 +23,7 @@ namespace BaldLion
 	};
 
 	//Interface representing a desktop system based Window
-	class BL_API Window
+	class  Window
 	{
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;

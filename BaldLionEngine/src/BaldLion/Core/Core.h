@@ -1,19 +1,8 @@
 #pragma once
 #include <memory>
+#include "Log.h"
 
-#ifdef BL_PLATFORM_WINDOWS
-	#if BL_DYNAMIC_LINK
-		#ifdef BL_BUILD_DLL
-			#define BL_API __declspec(dllexport)
-		#else
-			#define BL_API __declspec(dllimport)
-		#endif
-	#else
-		#define BL_API
-	#endif
-#else
-	#error BaldLion only support Wiwndos!
-#endif
+#define BL_ENABLE_ASSERTS
 
 #ifdef BL_ENABLE_ASSERTS
 	#define BL_ASSERT(x, ...) { if(!(x)) { BL_LOG_ERROR ("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
@@ -22,6 +11,7 @@
 	#define BL_ASSERT(x, ...)
 	#define BL_CORE_ASSERT(x,...)
 #endif
+
 
 #define BIT(x) (1 << x)
 
@@ -44,4 +34,7 @@ namespace BaldLion
 	{
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
+
+
+
 }

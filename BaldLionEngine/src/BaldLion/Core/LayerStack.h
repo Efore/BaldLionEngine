@@ -6,7 +6,7 @@
 
 namespace BaldLion
 {
-	class BL_API LayerStack
+	class  LayerStack
 	{
 	public:
 		LayerStack();
