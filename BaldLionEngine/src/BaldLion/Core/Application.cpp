@@ -1,7 +1,7 @@
 #include "blpch.h"
 #include "Application.h"
 #include "BaldLion/Rendering/Renderer.h"
-
+#include "BaldLion/Core/Memory/MemoryManager.h"
 #include <GLFW/glfw3.h>
 
 namespace BaldLion
@@ -17,6 +17,8 @@ namespace BaldLion
 		BL_CORE_ASSERT(!s_instance, "Application already exists");
 
 		s_instance = this;
+		Memory::MemoryManager::Init(0);
+
 
 		m_window = Window::Create(WindowProps(applicationName));
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));

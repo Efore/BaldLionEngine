@@ -18,7 +18,7 @@ namespace BaldLion
 
 		void* LinearAllocator::Allocate(size_t size, uint8_t alignment)
 		{
-			uint8_t adjustment = AlignBackwardAdjustment(m_current_pos, alignment);
+			uint8_t adjustment = AlignForwardAdjustment(m_current_pos, alignment);
 			size_t totalSize = size + adjustment;
 
 			if (m_used_memory + totalSize > m_size) 
