@@ -1443,5 +1443,6 @@
     <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\LinearAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\FreeListAllocator.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Memory\MemoryManager.cpp" />
   </ItemGroup>
 </Project>

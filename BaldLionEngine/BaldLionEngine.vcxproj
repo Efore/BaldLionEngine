@@ -577,6 +577,7 @@
     <ClCompile Include="src\BaldLion\Core\Memory\Allocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\FreeListAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\LinearAllocator.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Memory\MemoryManager.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />

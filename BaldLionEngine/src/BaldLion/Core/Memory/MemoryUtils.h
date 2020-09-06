@@ -6,19 +6,6 @@ namespace BaldLion
 {
 	namespace Memory
 	{
-		template <class T, class... Args >
-		T* New(Allocator& allocator)
-		{
-			return new (allocator.Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
-		}
-
-		template <class T> 
-		void Delete(Allocator& allocator, T& object)
-		{
-			object.~T();
-			allocator.Deallocate(&object);
-		}
-
 		template <class T> 
 		T* AllocateArray(Allocator& allocator, size_t length)
 		{
