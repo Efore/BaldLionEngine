@@ -16,13 +16,10 @@ namespace BaldLion
 				{
 					m_animations.emplace(animation->animationName, animation);
 				}
-				BL_LOG_CORE_INFO("Animator size: {0}", animation->frames.size() * animation->frames[0].jointTranforms.size() * sizeof(Joint));
 			}
+
 			m_currentAnimation = animations.back();
 			m_rootInverseTransform = glm::inverse(rootTransform);
-
-
-			
 		}
 
 		Animator::~Animator()
