@@ -16,9 +16,13 @@ namespace BaldLion
 				{
 					m_animations.emplace(animation->animationName, animation);
 				}
+				BL_LOG_CORE_INFO("Animator size: {0}", animation->frames.size() * animation->frames[0].jointTranforms.size() * sizeof(Joint));
 			}
 			m_currentAnimation = animations.back();
 			m_rootInverseTransform = glm::inverse(rootTransform);
+
+
+			
 		}
 
 		Animator::~Animator()
@@ -48,9 +52,8 @@ namespace BaldLion
 
 			for (int i = 0; i < result.size(); ++i)
 			{
-				result[i].position = glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].position, animation->frames[nextFrameIndex].jointTranforms[i].position, interpolant);
-				result[i].rotation = glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].rotation, animation->frames[nextFrameIndex].jointTranforms[i].rotation, interpolant);
-				result[i].scale = glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].scale, animation->frames[nextFrameIndex].jointTranforms[i].scale, interpolant);
+				result[i].SetPosition(glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].GetDecompressedPosition(), animation->frames[nextFrameIndex].jointTranforms[i].GetDecompressedPosition(), interpolant));
+				result[i].SetRotation(glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].GetDecompressedRotation(), animation->frames[nextFrameIndex].jointTranforms[i].GetDecompressedRotation(), interpolant));				
 			}			
 		}
 
@@ -66,7 +69,7 @@ namespace BaldLion
 				int parentID = m_animatedMesh->GetJoints()[i].parentID;
 
 				const glm::mat4& parentTransform = parentID == -1 ? glm::mat4(1.0f) : m_animatedMesh->GetJoints()[parentID].jointModelSpaceTransform;
-				const glm::mat4& animationTransform = glm::translate(glm::mat4(1.0f), transforms[i].position) * glm::mat4_cast(transforms[i].rotation) * glm::scale(glm::mat4(1.0f), transforms[i].scale);
+				const glm::mat4& animationTransform = glm::translate(glm::mat4(1.0f), transforms[i].GetDecompressedPosition()) * glm::mat4_cast(transforms[i].GetDecompressedRotation()) * glm::scale(glm::mat4(1.0f),glm::vec3(1.0f));
 				
 				m_animatedMesh->GetJoints()[i].UpdateJointTransforms(m_rootInverseTransform, parentTransform, animationTransform);
 			}			

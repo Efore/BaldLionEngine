@@ -150,6 +150,8 @@
     <ClInclude Include="src\BaldLion\Animation\Joint.h" />
     <ClInclude Include="src\BaldLion\Core\Application.h" />
     <ClInclude Include="src\BaldLion\Core\Core.h" />
+    <ClInclude Include="src\BaldLion\Core\DataStructures\BLMap.h" />
+    <ClInclude Include="src\BaldLion\Core\DataStructures\BLVector.h" />
     <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
     <ClInclude Include="src\BaldLion\Core\Input.h" />
     <ClInclude Include="src\BaldLion\Core\KeyCodes.h" />
@@ -201,6 +203,7 @@
     <ClInclude Include="src\BaldLion\Rendering\Texture.h" />
     <ClInclude Include="src\BaldLion\Rendering\Vertex.h" />
     <ClInclude Include="src\BaldLion\Rendering\VertexArray.h" />
+    <ClInclude Include="src\BaldLion\Utils\Quantization.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\blpch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />

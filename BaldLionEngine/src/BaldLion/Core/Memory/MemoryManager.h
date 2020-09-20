@@ -10,28 +10,33 @@ namespace BaldLion
 	namespace Memory
 	{
 		enum class AllocationType {
-			Main,
-			Temp,
-			Renderer,
-
+			FreeList_Main,
+			Linear_Frame,
+			Stack_Temp,
+			FreeList_Renderer,
 		};
 
 		class MemoryManager {
 
 		public:
 			static void Init(size_t memoryAllocationSize); 
-			static void Clear();
+			static void Clear(AllocationType allocationType);
+			static void Clear();			
 
 			template <class T, class... Args >
 			static T* New(char* allocationName, AllocationType allocationType, Args&&... args);
 
 			template <class T>
 			static void Delete(AllocationType allocationType, T* element);
+
+			static Allocator* GetAllocator(AllocationType allocationType);
+
 		private:
 
-			static FreeListAllocator* s_mainAllocator;
-			static FreeListAllocator* s_rendererAllocator;
-			static LinearAllocator* s_tempAllocator;
+			static FreeListAllocator* s_mainFreeListAllocator;
+			static FreeListAllocator* s_rendererFreeListAllocator;
+			static LinearAllocator* s_frameLinearAllocator;
+			static StackAllocator* s_tempStackAllocator;
 			static void* s_memory;
 			//static std::map<void*, AllocationType> s_allocationMap;
 		};
@@ -43,14 +48,17 @@ namespace BaldLion
 
 			switch (allocationType)
 			{
-			case AllocationType::Main:
-				result = new (s_mainAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
+			case AllocationType::FreeList_Main:
+				result = new (s_mainFreeListAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
 				break;
-			case AllocationType::Temp:
-				result = new (s_tempAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
+			case AllocationType::Linear_Frame:
+				result = new (s_frameLinearAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
 				break;
-			case AllocationType::Renderer:
-				result = new (s_rendererAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
+			case AllocationType::Stack_Temp:
+				result = new (s_tempStackAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
+				break;
+			case AllocationType::FreeList_Renderer:
+				result = new (s_rendererFreeListAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
 				break;
 			}		
 
@@ -65,14 +73,17 @@ namespace BaldLion
 			
 			switch (allocationType)
 			{
-			case AllocationType::Main:
-				s_mainAllocator->Deallocate(element);
+			case AllocationType::FreeList_Main:
+				s_mainFreeListAllocator->Deallocate(element);
 				break;
-			case AllocationType::Temp:
-				s_tempAllocator->Deallocate(element);
+			case AllocationType::Linear_Frame:
+				s_frameLinearAllocator->Deallocate(element);
 				break;
-			case AllocationType::Renderer:
-				s_rendererAllocator->Deallocate(element);
+			case AllocationType::Stack_Temp:
+				s_tempStackAllocator->Deallocate(element);
+				break;
+			case AllocationType::FreeList_Renderer:
+				s_rendererFreeListAllocator->Deallocate(element);
 				break;
 			}
 		}

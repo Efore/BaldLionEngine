@@ -1,14 +1,15 @@
 #pragma once
-#include <glm/glm.hpp>
+
 #include <vector>
-#include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "BaldLion/Utils/Quantization.h"
 
 namespace BaldLion
 {
 	namespace Animation
 	{
 		#define BL_JOINT_WEIGHTS_PER_VERTEX 3 
+		#define BL_JOINT_POSITION_RANGE 100.0F
 
 		struct Joint
 		{
@@ -28,9 +29,39 @@ namespace BaldLion
 		};
 
 		struct JointTransform {	
-			glm::vec3 position;
-			glm::quat rotation;
-			glm::vec3 scale;
+
+			Quantization::QuantizedVector3 position;
+			Quantization::QuantizedQuaterion rotation;		
+
+			JointTransform()
+			{
+			}
+
+			JointTransform(const glm::vec3& decompressedPosition, const glm::quat& decompressedRotation)
+			{
+				position = Quantization::CompressVector3(decompressedPosition, BL_JOINT_POSITION_RANGE);
+				rotation = Quantization::CompressQuaternion(decompressedRotation);
+			}
+			
+			glm::vec3 GetDecompressedPosition() 
+			{
+				return Quantization::DecompressVector3(position, BL_JOINT_POSITION_RANGE);
+			}
+
+			void SetPosition(const glm::vec3& decompressedPosition)
+			{
+				position = Quantization::CompressVector3(decompressedPosition, BL_JOINT_POSITION_RANGE);
+			}
+
+			glm::quat GetDecompressedRotation()
+			{
+				return Quantization::DecompressCuaternion(rotation);
+			}
+
+			void SetRotation(const glm::quat& decompressedRotation)
+			{
+				rotation = Quantization::CompressQuaternion(decompressedRotation);
+			}
 		};
 	}
 }

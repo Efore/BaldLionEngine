@@ -25,7 +25,7 @@ namespace BaldLion
 
 		private:
 
-			void* m_current_pos;
+			void* m_current_position;
 		};
 	}
 }

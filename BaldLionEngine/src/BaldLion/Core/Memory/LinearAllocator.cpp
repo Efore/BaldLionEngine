@@ -6,26 +6,26 @@ namespace BaldLion
 {
 	namespace Memory {
 
-		LinearAllocator::LinearAllocator(size_t size, void* start) : Allocator(size, start), m_current_pos(start)
+		LinearAllocator::LinearAllocator(size_t size, void* start) : Allocator(size, start), m_current_position(start)
 		{
 
 		}
 
 		LinearAllocator::~LinearAllocator()
 		{
-			m_current_pos = nullptr;
+			m_current_position = nullptr;
 		}
 
 		void* LinearAllocator::Allocate(size_t size, uint8_t alignment)
 		{
-			uint8_t adjustment = AlignForwardAdjustment(m_current_pos, alignment);
+			uint8_t adjustment = AlignForwardAdjustment(m_current_position, alignment);
 			size_t totalSize = size + adjustment;
 
 			if (m_used_memory + totalSize > m_size) 
 				return nullptr;
 
-			void* aligned_address = AddPointerOffset(m_current_pos, adjustment);
-			m_current_pos = AddPointerOffset(aligned_address, size);
+			void* aligned_address = AddPointerOffset(m_current_position, adjustment);
+			m_current_position = AddPointerOffset(aligned_address, size);
 			m_used_memory += totalSize;
 			m_num_allocations++;
 			
@@ -41,7 +41,7 @@ namespace BaldLion
 		{
 			m_num_allocations = 0;
 			m_used_memory = 0;
-			m_current_pos = m_start;			
+			m_current_position = m_start;			
 		}
 	}
 }

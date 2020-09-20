@@ -6,9 +6,11 @@ namespace BaldLion
 	namespace Memory
 	{
 
-		FreeListAllocator* MemoryManager::s_mainAllocator;
-		FreeListAllocator* MemoryManager::s_rendererAllocator;
-		LinearAllocator* MemoryManager::s_tempAllocator;
+		FreeListAllocator* MemoryManager::s_mainFreeListAllocator;
+		FreeListAllocator* MemoryManager::s_rendererFreeListAllocator;
+		LinearAllocator* MemoryManager::s_frameLinearAllocator;
+		StackAllocator* MemoryManager::s_tempStackAllocator;
+
 		void* MemoryManager::s_memory;
 
 		void MemoryManager::Init(size_t memoryAllocationSize)
@@ -22,35 +24,91 @@ namespace BaldLion
 				return;
 			}
 
-			s_mainAllocator = new (s_memory) FreeListAllocator(memory_size - sizeof(FreeListAllocator), AddPointerOffset(s_memory, sizeof(FreeListAllocator)));
+			s_mainFreeListAllocator = new (s_memory) FreeListAllocator(memory_size - sizeof(FreeListAllocator), AddPointerOffset(s_memory, sizeof(FreeListAllocator)));
 
-			size_t tempAllocatorSize = 4 * 1024; //4MB
-			void* tempAllocatorStart = s_mainAllocator->Allocate(tempAllocatorSize, __alignof(LinearAllocator));
-			s_tempAllocator = new (tempAllocatorStart) LinearAllocator(tempAllocatorSize, tempAllocatorStart);
+			size_t frameAllocatorSize = 4 * 1024 * 1024; //4MB
+			void* frameAllocatorStart = s_mainFreeListAllocator->Allocate(frameAllocatorSize, __alignof(LinearAllocator));
+			s_frameLinearAllocator = new (frameAllocatorStart) LinearAllocator(frameAllocatorSize, frameAllocatorStart);
+
+			size_t stackAllocatorSize = 4 * 1024 * 1024; //4MB
+			void* stackAllocatorStart = s_mainFreeListAllocator->Allocate(stackAllocatorSize, __alignof(StackAllocator));
+			s_tempStackAllocator = new (stackAllocatorStart) StackAllocator(stackAllocatorSize, stackAllocatorStart);
 
 			size_t rendererSize = 1024ULL * 1024 * 1024; //1GB
-			void *rendererAllocatorStart = s_mainAllocator->Allocate(rendererSize, __alignof(FreeListAllocator));
-			s_rendererAllocator = new (rendererAllocatorStart) FreeListAllocator(rendererSize - sizeof(FreeListAllocator), AddPointerOffset(rendererAllocatorStart, sizeof(FreeListAllocator)));
+			void *rendererAllocatorStart = s_mainFreeListAllocator->Allocate(rendererSize, __alignof(FreeListAllocator));
+			s_rendererFreeListAllocator = new (rendererAllocatorStart) FreeListAllocator(rendererSize, rendererAllocatorStart);
+
+		}
+
+		void MemoryManager::Clear(AllocationType allocationType)
+		{
+			switch (allocationType)
+			{
+			case BaldLion::Memory::AllocationType::FreeList_Main:
+				break;
+
+			case BaldLion::Memory::AllocationType::Linear_Frame:
+				s_frameLinearAllocator->Clear();
+				break;
+
+			case BaldLion::Memory::AllocationType::Stack_Temp:
+				s_tempStackAllocator->Clear();
+				break;
+
+			case BaldLion::Memory::AllocationType::FreeList_Renderer:
+				break;
+
+			default:
+				break;
+			}
 		}
 
 		void MemoryManager::Clear()
 		{
-			if (s_tempAllocator != nullptr)
+			if (s_frameLinearAllocator != nullptr)
 			{
-				s_tempAllocator->Clear();
-				Delete(AllocationType::Main, s_tempAllocator);
+				s_frameLinearAllocator->Clear();
+				Delete(AllocationType::FreeList_Main, s_frameLinearAllocator);
 			}
 
-			if (s_rendererAllocator != nullptr)
-			{
-				Delete(AllocationType::Main, s_rendererAllocator);
+			if (s_tempStackAllocator != nullptr)
+			{		
+				s_tempStackAllocator->Clear();
+				Delete(AllocationType::FreeList_Main, s_tempStackAllocator);
 			}
 
-			s_mainAllocator->~FreeListAllocator();
+			if (s_rendererFreeListAllocator != nullptr)
+			{
+				Delete(AllocationType::FreeList_Main, s_rendererFreeListAllocator);
+			}
+
+			s_mainFreeListAllocator->~FreeListAllocator();
 
 			free(s_memory);			
 		}
 
+		Allocator* MemoryManager::GetAllocator(AllocationType allocationType)
+		{
+			switch (allocationType)
+			{
+			case BaldLion::Memory::AllocationType::FreeList_Main:
+				return s_mainFreeListAllocator;
+
+			case BaldLion::Memory::AllocationType::Linear_Frame:
+				return s_frameLinearAllocator;
+
+			case BaldLion::Memory::AllocationType::Stack_Temp:
+				return s_tempStackAllocator;
+
+			case BaldLion::Memory::AllocationType::FreeList_Renderer:
+				return s_rendererFreeListAllocator;
+
+			default:
+				break;
+			}
+
+			return nullptr;
+		}
 
 	}
 }
