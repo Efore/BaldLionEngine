@@ -38,7 +38,7 @@ namespace BaldLion
 			static LinearAllocator* s_frameLinearAllocator;
 			static StackAllocator* s_tempStackAllocator;
 			static void* s_memory;
-			//static std::map<void*, AllocationType> s_allocationMap;
+			//static std::unordered_map<void*, AllocationType> s_allocationMap;
 		};
 
 		template <class T, class... Args >
@@ -69,6 +69,8 @@ namespace BaldLion
 		template <class T>
 		void MemoryManager::Delete(AllocationType allocationType,T* element)
 		{
+			BL_ASSERT(element != nullptr, "element cannot be null");
+
 			element->~T();
 			
 			switch (allocationType)

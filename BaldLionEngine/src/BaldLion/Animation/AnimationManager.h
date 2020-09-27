@@ -14,7 +14,7 @@ namespace BaldLion
 
 			static void OnUpdate(float timeStep);
 
-			static void GenerateAnimator(const aiScene *scene, const std::map<std::string, uint32_t>& jointMapping, const Ref<AnimatedMesh>& animatedMesh);
+			static void GenerateAnimator(const aiScene *scene, const std::unordered_map<std::string, uint32_t>& jointMapping, const Ref<AnimatedMesh>& animatedMesh);
 
 			static void RegisterAnimator(Ref<Animator> animator);
 			static void UnregisterAnimator(Ref<Animator> animator);

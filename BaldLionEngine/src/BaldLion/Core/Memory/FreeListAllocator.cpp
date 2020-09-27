@@ -8,7 +8,7 @@ namespace BaldLion
 
 		FreeListAllocator::FreeListAllocator(size_t size, void* start) : Allocator(size, start), m_allocationBlocksBegin((AllocationBlock*)start)
 		{
-			//ASSERT(size > sizeof(FreeBlock));
+			BL_ASSERT(size > sizeof(FreeListAllocator::AllocationBlock), "Size must be bigger than size of AllocationBlock");
 
 			m_allocationBlocksBegin->size = size;
 			m_allocationBlocksBegin->nextBlock = nullptr;
@@ -21,7 +21,7 @@ namespace BaldLion
 
 		void* FreeListAllocator::Allocate(size_t size, uint8_t alignment)
 		{
-			//ASSERT(size != 0 && alignment != 0);
+			BL_ASSERT(size != 0 && alignment != 0, "Size and alignment must be bigger than 0");
 
 			AllocationBlock* bestFitBlock = nullptr;
 			AllocationBlock* bestFitPrevBlock = nullptr;
@@ -81,7 +81,7 @@ namespace BaldLion
 			else
 			{
 				//Prevent new block from overwriting best fit block info
-				//ASSERT(best_fit_total_size > sizeof(FreeBlock));
+				BL_ASSERT(bestFitTotalSize > sizeof(AllocationBlock),"bestFitTotalSize must be bigger than size of AllocationBlock");
 
 				// create a new FreeBlock containing remaining memory
 				AllocationBlock* new_block = (AllocationBlock*)(AddPointerOffset(bestFitBlock, bestFitTotalSize));
@@ -100,8 +100,8 @@ namespace BaldLion
 			AllocationHeader* header = (AllocationHeader*)SubstractPointerOffset(alignedResult, sizeof(AllocationHeader));
 			header->size = bestFitTotalSize;
 			header->adjustment = bestFitAdjustment;
-
-			//ASSERT(HeaderIsAligned);
+			
+			BL_ASSERT(IsAligned(header), "Header must be aligned");
 
 			m_used_memory += bestFitTotalSize;
 			m_num_allocations++;
@@ -111,7 +111,7 @@ namespace BaldLion
 
 		void FreeListAllocator::Deallocate(void* p)
 		{
-			//ASSERT(p != nullptr);
+			BL_ASSERT(p != nullptr, "p cannot be null");
 
 			//Getting the header of the element to deallocate
 			AllocationHeader* header = (AllocationHeader*)SubstractPointerOffset(p, sizeof(AllocationHeader));

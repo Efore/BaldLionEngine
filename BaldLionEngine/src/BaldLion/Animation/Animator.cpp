@@ -74,7 +74,7 @@ namespace BaldLion
 
 		void Animator::SetCurrentAnimation(const std::string& animationName)
 		{
-			std::map<std::string, Ref<AnimationData>>::const_iterator it = m_animations.find(animationName);
+			std::unordered_map<std::string, Ref<AnimationData>>::const_iterator it = m_animations.find(animationName);
 
 			if(it != m_animations.end())
 			{

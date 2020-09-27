@@ -75,9 +75,9 @@ namespace BaldLion
 		
 		void AnimatedModel::FillVertexArrayData(const aiMesh *aimesh, 
 			std::vector<Vertex>& vertices, 			
-			std::vector<uint32_t>& indices, 
-			std::map<std::string, uint32_t>& jointMapping, 
-			std::map<std::string, glm::mat4>& jointOffsetMapping)
+			std::vector<uint32_t>& indices,
+			std::unordered_map<std::string, uint32_t>& jointMapping,
+			std::unordered_map<std::string, glm::mat4>& jointOffsetMapping)
 		{
 			for (size_t i = 0; i < aimesh->mNumVertices; i++)
 			{
@@ -249,9 +249,9 @@ namespace BaldLion
 			}
 		}
 
-		void AnimatedModel::FillJointData(std::map<std::string, uint32_t>& jointMapping,
+		void AnimatedModel::FillJointData(std::unordered_map<std::string, uint32_t>& jointMapping,
 			std::vector<Animation::Joint>& jointsData,
-			const std::map<std::string, glm::mat4>& jointOffsetMapping,
+			const std::unordered_map<std::string, glm::mat4>& jointOffsetMapping,
 			uint32_t& currentID,
 			const int32_t parentID,
 			const aiNode* node)
@@ -276,7 +276,7 @@ namespace BaldLion
 		}
 
 		void AnimatedModel::FillVertexWeightData(const aiMesh* aimesh,
-			const std::map<std::string, uint32_t>& jointMapping,  
+			const std::unordered_map<std::string, uint32_t>& jointMapping,
 			std::vector<VertexBoneData>& vertices)
 		{
 			uint32_t* jointsAssigned = new uint32_t[aimesh->mNumVertices]{ 0 };
@@ -319,8 +319,8 @@ namespace BaldLion
 			std::vector<Vertex> vertices(aimesh->mNumVertices);
 			std::vector<VertexBoneData> verticesBoneData(aimesh->mNumVertices);
 			std::vector<uint32_t> indices;
-			std::map<std::string, uint32_t> jointMapping;
-			std::map<std::string, glm::mat4> jointOffsetMapping;
+			std::unordered_map<std::string, uint32_t> jointMapping;
+			std::unordered_map<std::string, glm::mat4> jointOffsetMapping;
 			std::vector<Animation::Joint> jointsData(aimesh->mNumBones);
 
 			aiColor3D ambientColor;

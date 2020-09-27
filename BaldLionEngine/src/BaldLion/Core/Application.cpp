@@ -19,7 +19,6 @@ namespace BaldLion
 		s_instance = this;
 		Memory::MemoryManager::Init(0);
 
-
 		m_window = Window::Create(WindowProps(applicationName));
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
@@ -34,6 +33,7 @@ namespace BaldLion
 
 	Application::~Application()
 	{
+		Memory::MemoryManager::Clear();
 	}
 
 	void Application::PushLayer(Layer * layer)
@@ -101,6 +101,8 @@ namespace BaldLion
 
 
 			m_window->OnUpdate();
+
+			Memory::MemoryManager::Clear(Memory::AllocationType::Stack_Temp);
 		}
 	}
 

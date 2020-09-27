@@ -23,4 +23,10 @@
 // --------------- Animation -----------------------
 #include "BaldLion/Animation/AnimationManager.h"
 
-// ---------------------------------------------------
+//---------------- Memory ---------------------------
+
+#include "BaldLion/Core/Memory/MemoryManager.h"
+
+//---------------- Data Structures ------------------
+
+#include "BaldLion/Core/DataStructures/BLVector.h"

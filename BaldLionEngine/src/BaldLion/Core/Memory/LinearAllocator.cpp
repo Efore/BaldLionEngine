@@ -18,6 +18,8 @@ namespace BaldLion
 
 		void* LinearAllocator::Allocate(size_t size, uint8_t alignment)
 		{
+			BL_ASSERT(size != 0 && alignment != 0, "Size and alignment must be bigger than 0");
+
 			uint8_t adjustment = AlignForwardAdjustment(m_current_position, alignment);
 			size_t totalSize = size + adjustment;
 
@@ -34,7 +36,7 @@ namespace BaldLion
 
 		void LinearAllocator::Deallocate(void* p)
 		{
-			BL_ASSERT(false, "Use Cclear() instead");
+			BL_ASSERT(false, "Use Clear() instead");
 		}
 
 		void LinearAllocator::Clear()

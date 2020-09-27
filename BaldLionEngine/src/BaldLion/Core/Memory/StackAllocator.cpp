@@ -18,7 +18,7 @@ namespace BaldLion
 
 		void* StackAllocator::Allocate(size_t size, uint8_t alignment)
 		{
-			BL_ASSERT(size > 0, "Size must be bigger than 0");
+			BL_ASSERT(size != 0 && alignment != 0, "Size and alignment must be bigger than 0");			
 
 			uint8_t adjustment = AlignForwardAdjustmentWithHeader<AllocationHeader>(m_current_position, alignment);
 			size_t totalSize = adjustment + size;
@@ -41,6 +41,8 @@ namespace BaldLion
 
 		void StackAllocator::Deallocate(void* p)
 		{
+			BL_ASSERT(p != nullptr, "p cannot be null");
+
 			AllocationHeader* header = (AllocationHeader*)(SubstractPointerOffset(p, sizeof(AllocationHeader)));
 			m_used_memory -= (uintptr_t)m_current_position - (uintptr_t)p + header->adjustment;
 

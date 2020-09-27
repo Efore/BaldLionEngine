@@ -25,7 +25,7 @@ namespace BaldLion
 			}
 		}
 
-		void AnimationManager::GenerateAnimator(const aiScene *scene, const std::map<std::string, uint32_t>& jointMapping, const Ref<AnimatedMesh>& animatedMesh)
+		void AnimationManager::GenerateAnimator(const aiScene *scene, const std::unordered_map<std::string, uint32_t>& jointMapping, const Ref<AnimatedMesh>& animatedMesh)
 		{
 			if (scene->HasAnimations())
 			{

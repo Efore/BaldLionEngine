@@ -28,7 +28,7 @@ namespace BaldLion
 			Ref<AnimatedMesh> m_animatedMesh;
 
 			Ref<AnimationData> m_currentAnimation;
-			std::map<std::string,Ref<AnimationData>> m_animations;
+			std::unordered_map<std::string,Ref<AnimationData>> m_animations;
 			glm::mat4 m_rootInverseTransform;
 			float m_animationTime;
 		};

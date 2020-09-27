@@ -26,9 +26,9 @@ namespace BaldLion
 
 			Ref<AnimatedMesh> ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
 
-			void FillJointData(std::map<std::string, uint32_t>& jointMapping, 
+			void FillJointData(std::unordered_map<std::string, uint32_t>& jointMapping,
 				std::vector<Animation::Joint>& jointData, 
-				const std::map<std::string, glm::mat4>& jointOffsetMapping, 
+				const std::unordered_map<std::string, glm::mat4>& jointOffsetMapping,
 				uint32_t& currentID, 
 				const int32_t parentID, 
 				const aiNode* node);
@@ -36,8 +36,8 @@ namespace BaldLion
 			void FillVertexArrayData(const aiMesh *aimesh, 
 				std::vector<Vertex>& vertices, 
 				std::vector<uint32_t>& indices,  
-				std::map<std::string, uint32_t>& jointMap, 
-				std::map<std::string, glm::mat4>& jointOffsetMapping);
+				std::unordered_map<std::string, uint32_t>& jointMap, 
+				std::unordered_map<std::string, glm::mat4>& jointOffsetMapping);
 
 			void FillTextureData(const aiMesh *aimesh,
 				const aiScene *aiscene,
@@ -52,7 +52,7 @@ namespace BaldLion
 				Ref<Texture>& normalTex);
 
 			void FillVertexWeightData(const aiMesh* aimesh, 
-				const std::map<std::string, uint32_t>& jointMapping, 
+				const std::unordered_map<std::string, uint32_t>& jointMapping,
 				std::vector<VertexBoneData>& verticesBoneData);
 
 		protected:
