@@ -4,6 +4,7 @@
 #include "BaldLion/Core/Memory/MemoryManager.h"
 #include <GLFW/glfw3.h>
 
+
 namespace BaldLion
 {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -33,7 +34,6 @@ namespace BaldLion
 
 	Application::~Application()
 	{
-		Memory::MemoryManager::Clear();
 	}
 
 	void Application::PushLayer(Layer * layer)
@@ -55,6 +55,7 @@ namespace BaldLion
 	void Application::Close()
 	{
 		m_running = false;
+		Memory::MemoryManager::Clear();
 	}
 
 	Application& Application::GetInstance(const std::string& applicationName)

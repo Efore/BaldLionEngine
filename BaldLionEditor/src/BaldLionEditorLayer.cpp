@@ -11,48 +11,6 @@ namespace BaldLion
 {
 	namespace Editor
 	{
-		struct BlaVec3
-		{
-			float x;
-			float y;
-			float z;
-
-			BlaVec3() : x(0), y(0), z(0){}
-
-			BlaVec3(float _x, float _y, float _z) : x(_x), y(_y), z(_z){
-				BL_LOG_CORE_INFO("constructor");
-			}
-
-			BlaVec3(const BlaVec3& other) : x(other.x), y(other.y), z(other.z) {
-				BL_LOG_CORE_INFO("copied");
-			}
-
-			BlaVec3(BlaVec3&& other) : x(other.x), y(other.y), z(other.z) {
-				BL_LOG_CORE_INFO("moved");
-			}
-
-			BlaVec3& operator=(const BlaVec3& other) = delete;
-
-			BlaVec3& operator=(BlaVec3&& other) {
-
-				x = other.x;
-				y = other.y;
-				z = other.z;
-
-				return *this;
-			}
-
-			~BlaVec3(){
-				BL_LOG_CORE_INFO("deleted");
-			}
-
-			void Print()
-			{
-				BL_LOG_CORE_INFO("{0}, {1}, {2}", x, y, z);
-			}
-
-		};
-
 		BaldLionEditorLayer::BaldLionEditorLayer()
 			: Layer("BaldLion Editor Layer")
 		{
@@ -62,27 +20,6 @@ namespace BaldLion
 		void BaldLionEditorLayer::OnAttach()
 		{
 			BL_PROFILE_FUNCTION();
-
-			BLVector<BlaVec3> blVector(Memory::AllocationType::FreeList_Main, 3);
-			
-			blVector.EmplaceBack(1.0f, 1.0f, 1.0f);
-			blVector.EmplaceBack(2.0f, 2.0f, 2.0f);
-			blVector.EmplaceBack(3.0f, 3.0f, 3.0f);
-
-			for (int i = 0; i < blVector.Size(); ++i)
-			{
-				blVector[i].Print();
-			}
-
-			blVector.EmplaceBack(4.0f, 4.0f, 4.0f);
-			blVector.EmplaceBack(5.0f, 5.0f, 5.0f);
-			blVector.RemoveAtFast(1);
-			blVector.RemoveAt(2);
-			
-			for (int i = 0; i < blVector.Size(); ++i)
-			{
-				blVector[i].Print();
-			}
 
 			BaldLion::Rendering::FramebufferSpecification fbSpec;
 			fbSpec.Width = Application::GetInstance().GetWindow().GetWidth();
