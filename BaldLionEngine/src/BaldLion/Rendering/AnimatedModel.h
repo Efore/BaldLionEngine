@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AnimatedMesh.h"
+#include "SkinnedMesh.h"
 #include <vector>
 
 namespace BaldLion
@@ -17,14 +17,14 @@ namespace BaldLion
 			void SetUpModel();
 			void Draw() const;
 
-			inline const std::vector<Ref<AnimatedMesh>>& GetSubMeshes() const { return m_subMeshes; }
-			inline std::vector<Ref<AnimatedMesh>>& GetSubMeshes() { return m_subMeshes; }
+			inline const std::vector<Ref<SkinnedMesh>>& GetSubMeshes() const { return m_subMeshes; }
+			inline std::vector<Ref<SkinnedMesh>>& GetSubMeshes() { return m_subMeshes; }
 
 		private:			
 
 			void ProcessNode(const aiNode *node, const aiScene *scene);
 
-			Ref<AnimatedMesh> ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
+			Ref<SkinnedMesh> ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
 
 			void FillJointData(std::unordered_map<std::string, uint32_t>& jointMapping,
 				std::vector<Animation::Joint>& jointData, 
@@ -58,7 +58,7 @@ namespace BaldLion
 		protected:
 			std::string m_modelPath;
 			std::string m_modelFolderPath;
-			std::vector<Ref<AnimatedMesh>> m_subMeshes;
+			std::vector<Ref<SkinnedMesh>> m_subMeshes;
 			glm::mat4 m_worldTransform;
 		};
 	}

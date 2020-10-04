@@ -7,7 +7,7 @@ namespace BaldLion
 {
 	namespace Animation
 	{
-		Animator::Animator(Ref<AnimatedMesh> animatedMesh, const std::vector<Ref<AnimationData>>& animations, const glm::mat4& rootTransform)
+		Animator::Animator(Ref<SkinnedMesh> animatedMesh, const std::vector<Ref<AnimationData>>& animations, const glm::mat4& rootTransform)
 			: m_animatedMesh(animatedMesh)
 		{
 			for (auto animation : animations)

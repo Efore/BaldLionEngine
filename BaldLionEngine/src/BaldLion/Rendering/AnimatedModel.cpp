@@ -137,7 +137,7 @@ namespace BaldLion
 			for (uint32_t i = 0; i < aimesh->mNumBones; ++i)
 			{				
 				jointMapping.emplace(aimesh->mBones[i]->mName.data, i);
-				jointOffsetMapping.emplace(aimesh->mBones[i]->mName.data, AnimatedMesh::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));					
+				jointOffsetMapping.emplace(aimesh->mBones[i]->mName.data, SkinnedMesh::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));					
 			}
 		}
 
@@ -314,7 +314,7 @@ namespace BaldLion
 			delete jointsAssigned;
 		}		
 
-		Ref<AnimatedMesh> AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
+		Ref<SkinnedMesh> AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{		
 			std::vector<Vertex> vertices(aimesh->mNumVertices);
 			std::vector<VertexBoneData> verticesBoneData(aimesh->mNumVertices);
@@ -343,7 +343,7 @@ namespace BaldLion
 
 			FillVertexWeightData(aimesh, jointMapping, verticesBoneData);
 
-			Ref<AnimatedMesh> animatedMesh = CreateRef<AnimatedMesh>(vertices, verticesBoneData, indices, jointsData,
+			Ref<SkinnedMesh> animatedMesh = CreateRef<SkinnedMesh>(vertices, verticesBoneData, indices, jointsData,
 				Material::Create("assets/shaders/monster.glsl",
 					glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),

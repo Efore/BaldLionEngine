@@ -1,5 +1,5 @@
 #include "blpch.h"
-#include "AnimatedMesh.h"
+#include "SkinnedMesh.h"
 #include "Buffer.h"
 #include "Renderer.h"
 
@@ -8,18 +8,18 @@ namespace BaldLion
 	namespace Rendering
 	{
 
-		AnimatedMesh::AnimatedMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices, std::vector<Animation::Joint> joints, const Ref<Material>& material)
+		SkinnedMesh::SkinnedMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices, std::vector<Animation::Joint> joints, const Ref<Material>& material)
 			: m_material(material), m_joints(joints)
 		{
 			SetUpMesh(vertices, verticesBoneData, indices);
 		}
 
-		AnimatedMesh::~AnimatedMesh()
+		SkinnedMesh::~SkinnedMesh()
 		{
 
 		}
 
-		void AnimatedMesh::SetUpMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices)
+		void SkinnedMesh::SetUpMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices)
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -54,7 +54,7 @@ namespace BaldLion
 			m_vertexArray->AddVertexBuffer(boneDataVertexBuffer);
 		}
 
-		void AnimatedMesh::Draw(const glm::mat4& worldTransform) const
+		void SkinnedMesh::Draw(const glm::mat4& worldTransform) const
 		{
 			m_material->Bind();
 
@@ -68,7 +68,7 @@ namespace BaldLion
 			Renderer::Submit(m_vertexArray, m_material->GetShader(), worldTransform);		
 		}
 
-		glm::mat4 AnimatedMesh::AiMat4ToGlmMat4(const aiMatrix4x4& aiMat4)
+		glm::mat4 SkinnedMesh::AiMat4ToGlmMat4(const aiMatrix4x4& aiMat4)
 		{
 			return glm::mat4(
 				aiMat4.a1, aiMat4.b1, aiMat4.c1, aiMat4.d1,

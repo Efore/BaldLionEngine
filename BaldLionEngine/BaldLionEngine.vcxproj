@@ -173,7 +173,7 @@
     <ClInclude Include="src\BaldLion\Events\MouseEvent.h" />
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\BaldLion\Profiling\Instrumentor.h" />
-    <ClInclude Include="src\BaldLion\Rendering\AnimatedMesh.h" />
+    <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h" />
     <ClInclude Include="src\BaldLion\Rendering\AnimatedModel.h" />
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Camera.h" />
@@ -584,7 +584,7 @@
     <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\AnimatedMesh.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\SkinnedMesh.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\AnimatedModel.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Camera.cpp" />

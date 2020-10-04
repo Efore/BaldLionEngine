@@ -25,7 +25,7 @@ namespace BaldLion
 			}
 		}
 
-		void AnimationManager::GenerateAnimator(const aiScene *scene, const std::unordered_map<std::string, uint32_t>& jointMapping, const Ref<AnimatedMesh>& animatedMesh)
+		void AnimationManager::GenerateAnimator(const aiScene *scene, const std::unordered_map<std::string, uint32_t>& jointMapping, const Ref<SkinnedMesh>& animatedMesh)
 		{
 			if (scene->HasAnimations())
 			{
@@ -60,7 +60,7 @@ namespace BaldLion
 					animations[i] = animationData;
 				}
 
-				glm::mat4 rootTransform = AnimatedMesh::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
+				glm::mat4 rootTransform = SkinnedMesh::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
 
 				Ref<Animator> animator = CreateRef<Animator>(animatedMesh, animations, rootTransform);
 				RegisterAnimator(animator);

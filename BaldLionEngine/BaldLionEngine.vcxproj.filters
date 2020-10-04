@@ -132,9 +132,6 @@
     <ClInclude Include="src\BaldLion\Profiling\Instrumentor.h">
       <Filter>src\BaldLion\Profiling</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\AnimatedMesh.h">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\AnimatedModel.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
@@ -1326,6 +1323,9 @@
     <ClInclude Include="src\BaldLion\Core\DataStructures\BLVector.h" />
     <ClInclude Include="src\BaldLion\Core\DataStructures\BLMap.h" />
     <ClInclude Include="src\BaldLion\Utils\Quantization.h" />
+    <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1351,9 +1351,6 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
       <Filter>src\BaldLion\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\AnimatedMesh.cpp">
-      <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\AnimatedModel.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
@@ -1447,5 +1444,8 @@
     <ClCompile Include="src\BaldLion\Core\Memory\LinearAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\FreeListAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\MemoryManager.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\SkinnedMesh.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

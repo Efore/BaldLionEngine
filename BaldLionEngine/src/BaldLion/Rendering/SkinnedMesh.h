@@ -11,12 +11,12 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		class AnimatedMesh {
+		class SkinnedMesh {
 
 		public:
 
-			AnimatedMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices, std::vector<Animation::Joint> joints, const Ref<Material>& material);
-			~AnimatedMesh();
+			SkinnedMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices, std::vector<Animation::Joint> joints, const Ref<Material>& material);
+			~SkinnedMesh();
 
 			void SetUpMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices);
 			void Draw(const glm::mat4& worldTransform) const;
