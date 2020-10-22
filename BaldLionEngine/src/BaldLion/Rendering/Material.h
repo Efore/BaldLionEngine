@@ -23,17 +23,19 @@ namespace BaldLion
 		class Material {
 
 		public:
-			static Ref<Material> Create(const std::string& shaderPath, 
+			static Material* Create(const std::string& shaderPath, 
 				const glm::vec3& ambientColor, 
 				const glm::vec3& diffuseColor, 
 				const glm::vec3& emissiveColor, 
 				const glm::vec3& specularColor, 
 				float shininess,
-				const Ref<Texture> ambientTex, 
-				const Ref<Texture> diffuseTex,
-				const Ref<Texture> emissiveTex,
-				const Ref<Texture> specularTex,
-				const Ref<Texture> normalTex);
+				Texture* ambientTex, 
+				Texture* diffuseTex,
+				Texture* emissiveTex,
+				Texture* specularTex,
+				Texture* normalTex);
+
+			static void Destroy(Material* material);
 
 			virtual void SetAmbientColor(const glm::vec3& ambient) = 0;
 			virtual void SetEmissiveColor(const glm::vec3& emissive) = 0;
@@ -43,11 +45,13 @@ namespace BaldLion
 
 			virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex) = 0;
 
-			virtual Ref<Shader> GetShader() const = 0;
+			virtual Shader* GetShader() const = 0;
 
 			virtual ~Material() = default;
 
 			virtual void Bind() const = 0;
 		};
+
+		
 	}
 }

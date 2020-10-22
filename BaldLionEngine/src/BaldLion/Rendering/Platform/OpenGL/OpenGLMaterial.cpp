@@ -12,15 +12,20 @@ namespace BaldLion
 			const glm::vec3& emissiveColor, 
 			const glm::vec3& specularColor, 
 			float shininess,
-			const Ref<Texture> ambientTex,
-			const Ref<Texture> diffuseTex,
-			const Ref<Texture> emissiveTex,
-			const Ref<Texture> specularTex,
-			const Ref<Texture> normalTex)
+			Texture* ambientTex,
+			Texture* diffuseTex,
+			Texture* emissiveTex,
+			Texture* specularTex,
+			Texture* normalTex) :
+			m_ambientColor(ambientColor),
+			m_diffuseColor(diffuseColor),
+			m_emissiveColor(emissiveColor),
+			m_specularColor(specularColor),
+			m_shininess(shininess)
 		{
 			BL_PROFILE_FUNCTION();
 
-			m_shader = std::dynamic_pointer_cast<OpenGLShader>(Renderer::GetShaderLibrary().Load(shaderPath));
+			m_shader = (OpenGLShader*)(Renderer::GetShaderLibrary().Load(shaderPath));
 
 			m_ambientColor = ambientColor;
 			m_diffuseColor = diffuseColor;
@@ -33,35 +38,35 @@ namespace BaldLion
 			if (ambientTex != nullptr)
 			{
 				m_ambientTexSlot = slotIndex++;
-				m_ambientTex = std::dynamic_pointer_cast<OpenGLTexture2D>(ambientTex);
+				m_ambientTex = (OpenGLTexture2D*)ambientTex;
 				m_ambientTex->Bind(m_ambientTexSlot);
 			}
 
 			if (diffuseTex != nullptr)
 			{
 				m_diffuseTexSlot = slotIndex++;
-				m_diffuseTex = std::dynamic_pointer_cast<OpenGLTexture2D>(diffuseTex);
+				m_diffuseTex = (OpenGLTexture2D*)(diffuseTex);
 				m_diffuseTex->Bind(m_diffuseTexSlot);
 			}
 
 			if (emissiveTex != nullptr)
 			{
 				m_emissiveTexSlot = slotIndex++;
-				m_emissiveTex = std::dynamic_pointer_cast<OpenGLTexture2D>(emissiveTex);
+				m_emissiveTex = (OpenGLTexture2D*)(emissiveTex);
 				m_emissiveTex->Bind(m_emissiveTexSlot);
 			}
 
 			if (specularTex != nullptr)
 			{
 				m_specularTexSlot = slotIndex++;
-				m_specularTex = std::dynamic_pointer_cast<OpenGLTexture2D>(specularTex);
+				m_specularTex = (OpenGLTexture2D*)(specularTex);
 				m_specularTex->Bind(m_specularTexSlot);
 			}
 
 			if (normalTex)
 			{
 				m_normalTexSlot = slotIndex++;
-				m_normalTex = std::dynamic_pointer_cast<OpenGLTexture2D>(normalTex);
+				m_normalTex = (OpenGLTexture2D*)(normalTex);
 				m_normalTex->Bind(m_normalTexSlot);
 			}
 

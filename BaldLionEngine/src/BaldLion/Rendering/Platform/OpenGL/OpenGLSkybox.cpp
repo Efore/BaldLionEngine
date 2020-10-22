@@ -17,8 +17,8 @@ namespace BaldLion
 		{
 			SkyboxPlatformInterface::Init(path);			
 				
-			m_cubemapTexture = std::dynamic_pointer_cast<OpenGLTextureCubemap>(Renderer::GetTextureLibrary().Load(path, BL_TEXTURE_TYPE_CUBEMAP));
-			m_skyboxShader = std::dynamic_pointer_cast<OpenGLShader>(Renderer::GetShaderLibrary().Load("assets/shaders/skybox.glsl"));
+			m_cubemapTexture = (OpenGLTextureCubemap*)(Renderer::GetTextureLibrary().Load(path, BL_TEXTURE_TYPE_CUBEMAP));
+			m_skyboxShader = (OpenGLShader*)(Renderer::GetShaderLibrary().Load("assets/shaders/skybox.glsl"));
 		}
 
 		void OpenGLSkybox::Draw()

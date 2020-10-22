@@ -8,29 +8,35 @@ namespace BaldLion
 	namespace Rendering
 	{
 
-		SkinnedMesh::SkinnedMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices, std::vector<Animation::Joint> joints, const Ref<Material>& material)
-			: m_material(material), m_joints(joints)
+		SkinnedMesh::SkinnedMesh(BLVector<Vertex>& vertices, BLVector<VertexBoneData>& verticesBoneData, BLVector<uint32_t>& indices, const BLVector<Animation::Joint>& joints, Material* material)
+			: m_material(material), m_joints(std::move(joints))
 		{
 			SetUpMesh(vertices, verticesBoneData, indices);
+
+			//Freeing vertices and indices after being used
+			vertices.Free();
+			verticesBoneData.Free();
+			indices.Free();
 		}
 
 		SkinnedMesh::~SkinnedMesh()
 		{
-
+			VertexArray::Destroy(m_vertexArray);
+			Material::Destroy(m_material);
 		}
 
-		void SkinnedMesh::SetUpMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices)
+		void SkinnedMesh::SetUpMesh(const BLVector<Vertex>& vertices, const BLVector<VertexBoneData>& verticesBoneData, const BLVector<uint32_t>& indices)
 		{
 			BL_PROFILE_FUNCTION();
 
 			m_vertexArray = VertexArray::Create();
 
 			//Setting index buffer
-			Ref<IndexBuffer> indexBuffer = (IndexBuffer::Create(&indices[0], (uint32_t)indices.size()));
+			IndexBuffer* indexBuffer = (IndexBuffer::Create(&indices[0], (uint32_t)indices.Size()));
 			m_vertexArray->AddIndexBuffer(indexBuffer);
 
 			//Setting vertex buffer
-			Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(vertices[0].GetFirstElement(), (uint32_t)(vertices.size() * sizeof(Vertex)));
+			VertexBuffer* vertexBuffer = VertexBuffer::Create(vertices[0].GetFirstElement(), (uint32_t)(vertices.Size() * sizeof(Vertex)));
 
 			vertexBuffer->SetLayout({
 				{ ShaderDataType::Float3,	"vertex_position"},
@@ -44,7 +50,7 @@ namespace BaldLion
 			m_vertexArray->AddVertexBuffer(vertexBuffer);
 
 			//Setting bone data vertex buffer
-			Ref<VertexBuffer> boneDataVertexBuffer = VertexBuffer::Create(verticesBoneData[0].GetFirstElement(), (uint32_t)(verticesBoneData.size() * sizeof(VertexBoneData)));
+			VertexBuffer* boneDataVertexBuffer = VertexBuffer::Create(verticesBoneData[0].GetFirstElement(), (uint32_t)(verticesBoneData.Size() * sizeof(VertexBoneData)));
 
 			boneDataVertexBuffer->SetLayout({
 				{ ShaderDataType::Int3,		"vertex_joint_ids" },
@@ -60,7 +66,7 @@ namespace BaldLion
 
 			m_material->GetShader()->Bind();
 
-			for (size_t i = 0; i < m_joints.size(); ++i)
+			for (size_t i = 0; i < m_joints.Size(); ++i)
 			{
 				m_material->GetShader()->SetUniform("u_joints[" + std::to_string(i) + "]", ShaderDataType::Mat4, &(m_joints[i].jointAnimationTransform));
 			}

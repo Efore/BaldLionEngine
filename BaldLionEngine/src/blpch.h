@@ -21,3 +21,5 @@
 	#include <Windows.h>
 #endif
 
+using namespace BaldLion::Memory;
+

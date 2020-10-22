@@ -27,7 +27,10 @@ namespace BaldLion
 
 		AnimatedModel::~AnimatedModel()
 		{
-
+			for (size_t i = 0; i < m_subMeshes.Size(); ++i)
+			{
+				MemoryManager::DeleteNoDestructor(m_subMeshes[i]);
+			}
 		}
 
 		void AnimatedModel::SetUpModel()
@@ -51,22 +54,22 @@ namespace BaldLion
 		void AnimatedModel::Draw() const
 		{
 			BL_PROFILE_FUNCTION();
-			for (auto const &m : m_subMeshes)
+			for (size_t i = 0; i < m_subMeshes.Size(); ++i)
 			{
-				m->Draw(m_worldTransform);
+				m_subMeshes[i]->Draw(m_worldTransform);
 			}
 		}
 
 		void AnimatedModel::ProcessNode(const aiNode *node, const aiScene *scene)
 		{
 			// process all the node's meshes (if any)
-			for (unsigned int i = 0; i < node->mNumMeshes; i++)
+			for (size_t i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-				m_subMeshes.emplace_back(ProcessMesh(mesh, scene));
+				m_subMeshes.PushBack(ProcessMesh(mesh, scene));
 			}
 			// then do the same for each of its children
-			for (unsigned int i = 0; i < node->mNumChildren; i++)
+			for (size_t i = 0; i < node->mNumChildren; i++)
 			{
 				ProcessNode(node->mChildren[i], scene);
 			}
@@ -74,8 +77,8 @@ namespace BaldLion
 
 		
 		void AnimatedModel::FillVertexArrayData(const aiMesh *aimesh, 
-			std::vector<Vertex>& vertices, 			
-			std::vector<uint32_t>& indices,
+			BLVector<Vertex>& vertices,
+			BLVector<uint32_t>& indices,
 			std::unordered_map<std::string, uint32_t>& jointMapping,
 			std::unordered_map<std::string, glm::mat4>& jointOffsetMapping)
 		{
@@ -124,14 +127,14 @@ namespace BaldLion
 					bitangent.y = aimesh->mBitangents[i].y;
 				}
 
-				vertices[i] = Vertex({ position, color, normal, texCoord, tangent, bitangent});
+				vertices.PushBack(Vertex({ position, color, normal, texCoord, tangent, bitangent}));
 			}
 			
 			for (unsigned int i = 0; i < aimesh->mNumFaces; i++)
 			{
 				aiFace face = aimesh->mFaces[i];
 				for (unsigned int j = 0; j < face.mNumIndices; j++)
-					indices.push_back(face.mIndices[j]);
+					indices.PushBack(face.mIndices[j]);
 			}	
 
 			for (uint32_t i = 0; i < aimesh->mNumBones; ++i)
@@ -147,11 +150,11 @@ namespace BaldLion
 			aiColor3D& diffuseColor,
 			aiColor3D& specularColor,
 			aiColor3D& emissiveColor,
-			Ref<Texture>& ambientTex,
-			Ref<Texture>& diffuseTex,
-			Ref<Texture>& specularTex,
-			Ref<Texture>& emissiveTex,
-			Ref<Texture>& normalTex)
+			Texture* ambientTex,
+			Texture* diffuseTex,
+			Texture* specularTex,
+			Texture* emissiveTex,
+			Texture* normalTex)
 		{
 			const aiMaterial* aimaterial = aiscene->mMaterials[aimesh->mMaterialIndex];
 
@@ -250,7 +253,7 @@ namespace BaldLion
 		}
 
 		void AnimatedModel::FillJointData(std::unordered_map<std::string, uint32_t>& jointMapping,
-			std::vector<Animation::Joint>& jointsData,
+			BLVector<Animation::Joint>& jointsData,
 			const std::unordered_map<std::string, glm::mat4>& jointOffsetMapping,
 			uint32_t& currentID,
 			const int32_t parentID,
@@ -277,7 +280,7 @@ namespace BaldLion
 
 		void AnimatedModel::FillVertexWeightData(const aiMesh* aimesh,
 			const std::unordered_map<std::string, uint32_t>& jointMapping,
-			std::vector<VertexBoneData>& vertices)
+			BLVector<VertexBoneData>& vertices)
 		{
 			uint32_t* jointsAssigned = new uint32_t[aimesh->mNumVertices]{ 0 };
 
@@ -314,25 +317,29 @@ namespace BaldLion
 			delete jointsAssigned;
 		}		
 
-		Ref<SkinnedMesh> AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
+		SkinnedMesh* AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{		
-			std::vector<Vertex> vertices(aimesh->mNumVertices);
-			std::vector<VertexBoneData> verticesBoneData(aimesh->mNumVertices);
-			std::vector<uint32_t> indices;
+			BLVector<Vertex> vertices(AllocationType::Stack_Scope_Temp, aimesh->mNumVertices);
+			BLVector<VertexBoneData> verticesBoneData(AllocationType::Stack_Scope_Temp, aimesh->mNumVertices);
+			BLVector<uint32_t> indices (AllocationType::Stack_Scope_Temp, aimesh->mNumVertices * 3);
+			BLVector<Animation::Joint> jointsData(AllocationType::FreeList_Renderer, aimesh->mNumBones);
+
+			verticesBoneData.Fill();
+			jointsData.Fill();
+
 			std::unordered_map<std::string, uint32_t> jointMapping;
 			std::unordered_map<std::string, glm::mat4> jointOffsetMapping;
-			std::vector<Animation::Joint> jointsData(aimesh->mNumBones);
 
 			aiColor3D ambientColor;
 			aiColor3D diffuseColor;
 			aiColor3D specularColor;
 			aiColor3D emissiveColor;
 
-			Ref<Texture> ambientTex = nullptr;
-			Ref<Texture> diffuseTex = nullptr;
-			Ref<Texture> specularTex = nullptr;
-			Ref<Texture> emissiveTex = nullptr;
-			Ref<Texture> normalTex = nullptr;
+			Texture* ambientTex = nullptr;
+			Texture* diffuseTex = nullptr;
+			Texture* specularTex = nullptr;
+			Texture* emissiveTex = nullptr;
+			Texture* normalTex = nullptr;
 
 			FillVertexArrayData(aimesh, vertices, indices, jointMapping, jointOffsetMapping);
 
@@ -343,7 +350,7 @@ namespace BaldLion
 
 			FillVertexWeightData(aimesh, jointMapping, verticesBoneData);
 
-			Ref<SkinnedMesh> animatedMesh = CreateRef<SkinnedMesh>(vertices, verticesBoneData, indices, jointsData,
+			SkinnedMesh* animatedMesh = MemoryManager::New<SkinnedMesh>("Skinned Mesh", AllocationType::FreeList_Renderer, vertices, verticesBoneData, indices, jointsData,
 				Material::Create("assets/shaders/monster.glsl",
 					glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),

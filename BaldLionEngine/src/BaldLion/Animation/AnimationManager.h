@@ -11,17 +11,18 @@ namespace BaldLion
 		public:
 
 			static void Init();
+			static void Stop();
 
 			static void OnUpdate(float timeStep);
 
-			static void GenerateAnimator(const aiScene *scene, const std::unordered_map<std::string, uint32_t>& jointMapping, const Ref<SkinnedMesh>& animatedMesh);
+			static void GenerateAnimator(const aiScene *scene, const std::unordered_map<std::string, uint32_t>& jointMapping, SkinnedMesh* animatedMesh);
 
-			static void RegisterAnimator(Ref<Animator> animator);
-			static void UnregisterAnimator(Ref<Animator> animator);
+			static void RegisterAnimator(Animator* animator);
+			static void UnregisterAnimator(Animator* animator);
 
 		private:			
 			static bool s_initialized;
-			static std::vector<Ref<Animator>> s_registeredAnimators;
+			static BLVector<Animator*> s_registeredAnimators;
 		};
 	}
 }

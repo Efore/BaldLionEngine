@@ -42,7 +42,7 @@ namespace BaldLion
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 
-		void OpenGLRenderer::DrawIndexed(const Ref<VertexArray>& vertexArray)
+		void OpenGLRenderer::DrawIndexed(const VertexArray* vertexArray)
 		{
 			BL_PROFILE_FUNCTION();
 

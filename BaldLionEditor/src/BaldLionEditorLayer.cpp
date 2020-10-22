@@ -21,6 +21,9 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
+			m_models = BLVector<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);
+			m_pointLights = BLVector<PointLight>(AllocationType::FreeList_Renderer, 3);
+
 			BaldLion::Rendering::FramebufferSpecification fbSpec;
 			fbSpec.Width = Application::GetInstance().GetWindow().GetWidth();
 			fbSpec.Height = Application::GetInstance().GetWindow().GetHeight();
@@ -29,25 +32,25 @@ namespace BaldLion
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
 
-			for (int i = 0; i < 1; ++i)
+			for (size_t i = 0; i < 1; ++i)
 			{
-				auto model = BaldLion::CreateRef<Rendering::AnimatedModel>("assets/creature/creature.fbx", initialTransform);
+				auto model = MemoryManager::New<Rendering::AnimatedModel>("Animated Model", AllocationType::FreeList_Renderer, "assets/creature/creature.fbx", initialTransform);
 				model->SetUpModel();
-				m_models.push_back(model);
+				m_models.PushBack(model);
 
 				initialTransform = glm::translate(initialTransform, glm::vec3(150, 0, 0));
 			}
 
 			ProjectionCameraManager::Init(glm::vec3(0, 0, 250), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 100.0f);
 
-			directionalLight = {
+			m_directionalLight = {
 				glm::vec3(-0.2f, -1.0f, -0.3f),
 				glm::vec3(1.0f, 1.0f, 1.0f),
 				glm::vec3(1.0f, 1.0f, 1.0f),
 				glm::vec3(1.0f, 1.0f, 1.0f)
 			};
 
-			pointLights.emplace_back(PointLight
+			m_pointLights.EmplaceBack(PointLight
 			({
 				glm::vec3(0.7f,  0.2f,  2.0f),
 				1.0f,
@@ -59,7 +62,7 @@ namespace BaldLion
 				})
 			);
 
-			pointLights.emplace_back(PointLight
+			m_pointLights.EmplaceBack(PointLight
 			({
 				glm::vec3(0.7f,  0.2f,  2.0f),
 				1.0f,
@@ -96,14 +99,14 @@ namespace BaldLion
 			{
 				BL_PROFILE_SCOPE("Renderer::BeginScene");
 				m_frameBuffer->Bind();
-				Renderer::BeginScene(ProjectionCameraManager::GetCamera(), directionalLight, pointLights);
+				Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight, m_pointLights);
 			}
 
 			{
 				BL_PROFILE_SCOPE("Renderer::Draw");
-				for (const auto& model : m_models)
+				for (size_t i = 0; i < m_models.Size(); ++i)
 				{
-					model->Draw();
+					m_models[i]->Draw();
 				}
 				Renderer::EndScene();
 				m_frameBuffer->Unbind();
@@ -133,21 +136,21 @@ namespace BaldLion
 			ImGui::Begin("Settings");
 
 			ImGui::Text("Directional Light");
-			ImGui::SliderFloat3("Light Direction", glm::value_ptr(directionalLight.direction), -300.0f, 300.0f);
-			ImGui::ColorEdit3("Light Ambient Color", glm::value_ptr(directionalLight.ambientColor));
-			ImGui::ColorEdit3("Light Diffuse Color", glm::value_ptr(directionalLight.diffuseColor));
-			ImGui::ColorEdit3("Light Specular Color", glm::value_ptr(directionalLight.specularColor));
+			ImGui::SliderFloat3("Light Direction", glm::value_ptr(m_directionalLight.direction), -300.0f, 300.0f);
+			ImGui::ColorEdit3("Light Ambient Color", glm::value_ptr(m_directionalLight.ambientColor));
+			ImGui::ColorEdit3("Light Diffuse Color", glm::value_ptr(m_directionalLight.diffuseColor));
+			ImGui::ColorEdit3("Light Specular Color", glm::value_ptr(m_directionalLight.specularColor));
 
-			for (int i = 0; i < pointLights.size(); ++i)
+			for (size_t i = 0; i < m_pointLights.Size(); ++i)
 			{
 				ImGui::Text(("Point Light " + std::to_string(i)).c_str());
-				ImGui::SliderFloat3(("Light Position " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].position), -300.0f, 300.0f);
-				ImGui::SliderFloat(("Constant " + std::to_string(i)).c_str(), &(pointLights[i].constant), 0.001f, 1.0f);
-				ImGui::SliderFloat(("Linear " + std::to_string(i)).c_str(), &(pointLights[i].linear), 0.001f, 1.0f);
-				ImGui::SliderFloat(("Quadratic " + std::to_string(i)).c_str(), &(pointLights[i].quadratic), 0.001f, 1.0f);
-				ImGui::ColorEdit3(("LP Ambient Color " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].ambientColor));
-				ImGui::ColorEdit3(("LP Diffuse Color " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].diffuseColor));
-				ImGui::ColorEdit3(("LP Specular Color " + std::to_string(i)).c_str(), glm::value_ptr(pointLights[i].specularColor));
+				ImGui::SliderFloat3(("Light Position " + std::to_string(i)).c_str(), glm::value_ptr(m_pointLights[i].position), -300.0f, 300.0f);
+				ImGui::SliderFloat(("Constant " + std::to_string(i)).c_str(), &(m_pointLights[i].constant), 0.001f, 1.0f);
+				ImGui::SliderFloat(("Linear " + std::to_string(i)).c_str(), &(m_pointLights[i].linear), 0.001f, 1.0f);
+				ImGui::SliderFloat(("Quadratic " + std::to_string(i)).c_str(), &(m_pointLights[i].quadratic), 0.001f, 1.0f);
+				ImGui::ColorEdit3(("LP Ambient Color " + std::to_string(i)).c_str(), glm::value_ptr(m_pointLights[i].ambientColor));
+				ImGui::ColorEdit3(("LP Diffuse Color " + std::to_string(i)).c_str(), glm::value_ptr(m_pointLights[i].diffuseColor));
+				ImGui::ColorEdit3(("LP Specular Color " + std::to_string(i)).c_str(), glm::value_ptr(m_pointLights[i].specularColor));
 			}
 
 			ImGui::End();

@@ -11,17 +11,25 @@ namespace BaldLion
 		Renderer::SceneData Renderer::s_sceneData;
 		ShaderLibrary Renderer::s_shaderLibrary;
 		TextureLibrary Renderer::s_textureLibrary;
-		Ref<RendererPlatformInterface> Renderer::s_rendererPlatformInterface = std::make_shared<OpenGLRenderer>();
-		Ref<SkyboxPlatformInterface> Renderer::s_skyboxPlatformInterface = std::make_shared<OpenGLSkybox>(); 
+		RendererPlatformInterface* Renderer::s_rendererPlatformInterface;
+		SkyboxPlatformInterface* Renderer::s_skyboxPlatformInterface;
 
 		void Renderer::Init()
 		{
 			BL_PROFILE_FUNCTION();
 
+			s_rendererPlatformInterface = MemoryManager::New<OpenGLRenderer>("Renderer Platform interface", AllocationType::FreeList_Renderer);
+			s_skyboxPlatformInterface = MemoryManager::New<OpenGLSkybox>("Skybox Platform interface", AllocationType::FreeList_Renderer);
 			s_rendererPlatformInterface->Init();
 			s_skyboxPlatformInterface->Init("assets/textures/skybox/skybox.jpg");
 
 			LightManager::Init();
+		}
+
+		void Renderer::Stop()
+		{
+			MemoryManager::Delete(s_rendererPlatformInterface);
+			MemoryManager::Delete(s_skyboxPlatformInterface);
 		}
 
 		void Renderer::OnWindowResize(uint32_t width, uint32_t height)
@@ -29,7 +37,7 @@ namespace BaldLion
 			s_rendererPlatformInterface->SetViewport(0, 0, width, height);			
 		}
 
-		void Renderer::BeginScene(const Ref<ProjectionCamera>& camera, const DirectionalLight& directionalLight, const std::vector<PointLight>& pointLights)
+		void Renderer::BeginScene(const ProjectionCamera*  camera, const DirectionalLight& directionalLight, const BLVector<PointLight>& pointLights)
 		{
 			BL_PROFILE_FUNCTION();
 			
@@ -47,7 +55,7 @@ namespace BaldLion
 			s_skyboxPlatformInterface->Draw();
 		}
 
-		void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader, const glm::mat4& transform)
+		void Renderer::Submit(const VertexArray* vertexArray, Shader* shader, const glm::mat4& transform)
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -62,7 +70,8 @@ namespace BaldLion
 			shader->SetUniform("u_directionalLight.diffuseColor", ShaderDataType::Float3, &(LightManager::GetDirectionalLight().diffuseColor));
 			shader->SetUniform("u_directionalLight.specularColor", ShaderDataType::Float3, &(LightManager::GetDirectionalLight().specularColor));
 
-			size_t numPointLights = LightManager::GetScenePointLights().size();
+
+			size_t numPointLights = LightManager::GetScenePointLights().Size();
 			shader->SetUniform("u_numPointLights", ShaderDataType::Int, &(numPointLights));
 
 			for (size_t i = 0; i < numPointLights; ++i)

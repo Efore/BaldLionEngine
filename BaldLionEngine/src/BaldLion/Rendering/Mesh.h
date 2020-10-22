@@ -11,18 +11,18 @@ namespace BaldLion
 		class Mesh {
 
 		public:
-			Mesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const Ref<Material>& material);
+			Mesh(BLVector<Vertex>& vertices, BLVector<uint32_t>& indices, Material* material);
 			~Mesh();
 
-			void SetUpMesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+			void SetUpMesh(const BLVector<Vertex>& vertices, const BLVector<uint32_t>& indices);
 			void Draw() const;
 
-			const Ref<Material>& GetMaterial() const { return m_material; }
+			const Material* GetMaterial() const { return m_material; }
 
 		protected:
 
-			Ref<VertexArray> m_vertexArray;
-			Ref<Material> m_material;
+			VertexArray* m_vertexArray;
+			Material* m_material;
 		};
 	}
 }

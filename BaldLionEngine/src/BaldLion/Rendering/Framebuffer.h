@@ -15,7 +15,8 @@ namespace BaldLion
 		class Framebuffer
 		{
 		public:
-			static Ref<Framebuffer> Create(const FramebufferSpecification& specs);
+			static Framebuffer* Create(const FramebufferSpecification& specs);
+			static void Destroy(Framebuffer* element);
 
 			virtual void Bind() = 0;
 			virtual void Unbind() = 0;

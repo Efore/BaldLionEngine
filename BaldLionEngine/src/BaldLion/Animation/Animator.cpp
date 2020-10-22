@@ -7,32 +7,33 @@ namespace BaldLion
 {
 	namespace Animation
 	{
-		Animator::Animator(Ref<SkinnedMesh> animatedMesh, const std::vector<Ref<AnimationData>>& animations, const glm::mat4& rootTransform)
+		Animator::Animator(SkinnedMesh* animatedMesh, BLVector<AnimationData>& animations, const glm::mat4& rootTransform)
 			: m_animatedMesh(animatedMesh)
 		{
-			for (auto animation : animations)
+			for (size_t i = 0; i < animations.Size(); ++i)
 			{
-				if (m_animations.find(animation->animationName) == m_animations.end())
+				if (m_animations.find(animations[i].animationName) == m_animations.end())
 				{
-					m_animations.emplace(animation->animationName, animation);
+					m_animations.emplace(animations[i].animationName, &animations[i]);
 				}
 			}
 
-			m_currentAnimation = animations.back();
-			m_rootInverseTransform = glm::inverse(rootTransform);
+			m_currentAnimation = &(animations.Back());
+			m_rootInverseTransform = glm::inverse(rootTransform);		
+			m_animationDataContainer = &animations;
 		}
 
 		Animator::~Animator()
 		{
-
+			m_animationDataContainer->Free();
 		}
 
-		void Animator::CalculateInterpolatedTransforms(const Ref<AnimationData>& animation, std::vector<JointTransform>& result)
+		void Animator::CalculateInterpolatedTransforms(const AnimationData* animation, BLVector<JointTransform>& result)
 		{
 			int prevFrameIndex = 0;
 			int nextFrameIndex = 0;
 
-			for (int i = 1; i < animation->frames.size(); ++i)
+			for (int i = 1; i < animation->frames.Size(); ++i)
 			{
 				if (m_animationTime > animation->frames[i].timeStamp)
 					continue;
@@ -45,9 +46,9 @@ namespace BaldLion
 
 			float interpolant = (m_animationTime - animation->frames[prevFrameIndex].timeStamp) / (animation->frames[nextFrameIndex].timeStamp - animation->frames[prevFrameIndex].timeStamp) ;
 
-			result = std::vector(animation->frames[prevFrameIndex].jointTranforms);
+			result = BLVector<JointTransform>(AllocationType::Linear_Frame, animation->frames[prevFrameIndex].jointTranforms);
 
-			for (int i = 0; i < result.size(); ++i)
+			for (size_t i = 0; i < result.Size(); ++i)
 			{
 				result[i].SetPosition(glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].GetDecompressedPosition(), animation->frames[nextFrameIndex].jointTranforms[i].GetDecompressedPosition(), interpolant));
 				result[i].SetRotation(glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].GetDecompressedRotation(), animation->frames[nextFrameIndex].jointTranforms[i].GetDecompressedRotation(), interpolant));				
@@ -58,10 +59,10 @@ namespace BaldLion
 		{
 			m_animationTime = glm::mod(m_animationTime + timeStep, m_currentAnimation->animationLength);
 
-			std::vector<JointTransform> transforms;
+			BLVector<JointTransform> transforms;
 			CalculateInterpolatedTransforms(m_currentAnimation, transforms); 
 			
-			for (int i = 0;  i < transforms.size(); ++i)
+			for (int i = 0;  i < transforms.Size(); ++i)
 			{
 				int parentID = m_animatedMesh->GetJoints()[i].parentID;
 
@@ -74,7 +75,7 @@ namespace BaldLion
 
 		void Animator::SetCurrentAnimation(const std::string& animationName)
 		{
-			std::unordered_map<std::string, Ref<AnimationData>>::const_iterator it = m_animations.find(animationName);
+			std::unordered_map<std::string,AnimationData*>::const_iterator it = m_animations.find(animationName);
 
 			if(it != m_animations.end())
 			{

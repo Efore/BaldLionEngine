@@ -7,28 +7,31 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const Ref<Material>& material) : 
+		Mesh::Mesh(BLVector<Vertex>& vertices, BLVector<uint32_t>& indices, Material* material) :
 			m_material(material)
 		{
 			SetUpMesh(vertices, indices);
+
+			//Freeing vertices and indices after being used
+			vertices.Free();
+			indices.Free();
 		}
 
 		Mesh::~Mesh()
 		{
-
+			VertexArray::Destroy(m_vertexArray);
+			Material::Destroy(m_material);
 		}
 
-		void Mesh::SetUpMesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
+		void Mesh::SetUpMesh(const BLVector<Vertex>& vertices, const BLVector<uint32_t>& indices)
 		{
 			BL_PROFILE_FUNCTION();
 
 			m_vertexArray = VertexArray::Create();
 
-			Ref<IndexBuffer> indexBuffer;
-			indexBuffer = (IndexBuffer::Create(&indices[0], (uint32_t)indices.size()));
+			IndexBuffer* indexBuffer = IndexBuffer::Create(&indices[0], (uint32_t)indices.Size());
 
-			Ref<VertexBuffer> vertexBuffer;
-			vertexBuffer = VertexBuffer::Create(vertices[0].GetFirstElement(), (uint32_t)(vertices.size() * sizeof(Vertex)));
+			VertexBuffer* vertexBuffer = VertexBuffer::Create(vertices[0].GetFirstElement(), (uint32_t)(vertices.Size() * sizeof(Vertex)));
 
 			vertexBuffer->SetLayout({
 				{ ShaderDataType::Float3, "vertex_position"},

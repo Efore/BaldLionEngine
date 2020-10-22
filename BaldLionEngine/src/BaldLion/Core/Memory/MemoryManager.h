@@ -3,7 +3,7 @@
 #include "LinearAllocator.h"
 #include "StackAllocator.h"
 #include "FreeListAllocator.h"
-#include <map>
+#include <unordered_map>
 
 namespace BaldLion
 {
@@ -12,7 +12,7 @@ namespace BaldLion
 		enum class AllocationType {
 			FreeList_Main,
 			Linear_Frame,
-			Stack_Temp,
+			Stack_Scope_Temp,
 			FreeList_Renderer,
 		};
 
@@ -27,9 +27,14 @@ namespace BaldLion
 			static T* New(char* allocationName, AllocationType allocationType, Args&&... args);
 
 			template <class T>
-			static void Delete(AllocationType allocationType, T* element);
+			static void DeleteNoDestructor(T* element);
+			template <class T>
+			static void Delete(T* element);
 
 			static Allocator* GetAllocator(AllocationType allocationType);
+
+			template <class T>
+			static AllocationType GetAllocatorType(const T* element);
 
 		private:
 
@@ -38,7 +43,7 @@ namespace BaldLion
 			static LinearAllocator* s_frameLinearAllocator;
 			static StackAllocator* s_tempStackAllocator;
 			static void* s_memory;
-			//static std::unordered_map<void*, AllocationType> s_allocationMap;
+			static std::unordered_map<void*, AllocationType> s_allocationMap;
 		};
 
 		template <class T, class... Args >
@@ -54,7 +59,7 @@ namespace BaldLion
 			case AllocationType::Linear_Frame:
 				result = new (s_frameLinearAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
 				break;
-			case AllocationType::Stack_Temp:
+			case AllocationType::Stack_Scope_Temp:
 				result = new (s_tempStackAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
 				break;
 			case AllocationType::FreeList_Renderer:
@@ -62,17 +67,20 @@ namespace BaldLion
 				break;
 			}		
 
+			s_allocationMap.emplace((void*)result, allocationType);
 			return result;
-			//s_allocationMap.emplace((void*)result, allocationType);
 		}
 
 		template <class T>
-		void MemoryManager::Delete(AllocationType allocationType,T* element)
+		void MemoryManager::DeleteNoDestructor(T* element)
 		{
 			BL_ASSERT(element != nullptr, "element cannot be null");
 
-			element->~T();
-			
+			if (s_allocationMap.find(element) == s_allocationMap.end())
+				return;
+
+			AllocationType allocationType = s_allocationMap[element];
+
 			switch (allocationType)
 			{
 			case AllocationType::FreeList_Main:
@@ -81,7 +89,7 @@ namespace BaldLion
 			case AllocationType::Linear_Frame:
 				s_frameLinearAllocator->Deallocate(element);
 				break;
-			case AllocationType::Stack_Temp:
+			case AllocationType::Stack_Scope_Temp:
 				s_tempStackAllocator->Deallocate(element);
 				break;
 			case AllocationType::FreeList_Renderer:
@@ -89,6 +97,24 @@ namespace BaldLion
 				break;
 			}
 		}
+		
+		template <class T>
+		void MemoryManager::Delete(T* element)
+		{
+			BL_ASSERT(element != nullptr, "element cannot be null");
 
+			element->~T();
+			DeleteNoDestructor(element);
+		}
+
+
+		template <class T>
+		AllocationType MemoryManager::GetAllocatorType(const T* element)
+		{
+			if (s_allocationMap.find(element) != s_allocationMap.end())
+				return s_allocationMap[element];
+
+			return AllocationType::FreeList_Main;
+		}
 	}
 }

@@ -12,11 +12,12 @@ namespace BaldLion
 
 		public:
 			static void Init(const glm::vec3& initialPosition, float width, float height, float nearPlane, float farPlane, float cameraMovementSpeed);
-			static void SetCamera(const Ref<ProjectionCamera>& camera);
+			static void SetCamera(ProjectionCamera* camera);
+			static void Stop();
 
 			static void OnUpdate(BaldLion::TimeStep timeStep);
 
-			static const Ref<ProjectionCamera>& GetCamera() { return s_cameraData.camera; }
+			static ProjectionCamera* GetCamera() { return s_cameraData.camera; }
 
 		private:
 
@@ -26,7 +27,7 @@ namespace BaldLion
 
 			struct ProjectionCameraManagerData
 			{
-				Ref<ProjectionCamera> camera;
+				ProjectionCamera* camera;
 
 				float prevX;
 				float prevY;

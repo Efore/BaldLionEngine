@@ -5,7 +5,8 @@ namespace BaldLion
 {
 	namespace Animation
 	{
-		std::vector<Ref<Animator>> AnimationManager::s_registeredAnimators;
+		BLVector<Animator*> AnimationManager::s_registeredAnimators;
+
 		bool AnimationManager::s_initialized = false;
 
 		void AnimationManager::Init()
@@ -13,38 +14,49 @@ namespace BaldLion
 			if (!s_initialized)
 			{
 				s_initialized = true;
-				s_registeredAnimators.reserve(10);
+				s_registeredAnimators = BLVector<Animator*>(AllocationType::FreeList_Renderer, 10);
 			}
+		}
+
+		void AnimationManager::Stop()
+		{	
+			s_initialized = false;
+			for (size_t i = 0; i < s_registeredAnimators.Size(); ++i)
+			{
+				MemoryManager::DeleteNoDestructor(s_registeredAnimators[i]);
+			}
+			s_registeredAnimators.Free();
 		}
 
 		void AnimationManager::OnUpdate(float timeStep)
 		{
-			for (Ref<Animator> animator : s_registeredAnimators)
+			for (size_t i = 0; i < s_registeredAnimators.Size(); ++i)
 			{
-				animator->OnUpdate(timeStep);
+				s_registeredAnimators[i]->OnUpdate(timeStep);
 			}
 		}
 
-		void AnimationManager::GenerateAnimator(const aiScene *scene, const std::unordered_map<std::string, uint32_t>& jointMapping, const Ref<SkinnedMesh>& animatedMesh)
+		void AnimationManager::GenerateAnimator(const aiScene *scene, const std::unordered_map<std::string, uint32_t>& jointMapping, SkinnedMesh* animatedMesh)
 		{
 			if (scene->HasAnimations())
 			{
-				std::vector<Ref<AnimationData>> animations(scene->mNumAnimations);
+				BLVector<AnimationData> animations(AllocationType::FreeList_Renderer, scene->mNumAnimations);
 				for (size_t i = 0; i < scene->mNumAnimations; ++i)
 				{
-					Ref<AnimationData> animationData = CreateRef<AnimationData>();
+					AnimationData animationData;
 
-					animationData->animationName = scene->mAnimations[i]->mName.data;
-					animationData->animationLength = (float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond);
-					animationData->frames = std::vector<KeyFrame>((int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys);
+					animationData.animationName = scene->mAnimations[i]->mName.data;
+					animationData.animationLength = (float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond);
+					animationData.frames = BLVector<KeyFrame>(AllocationType::FreeList_Renderer, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys);
 
 					float timeStamp = (float)(1.0f / scene->mAnimations[i]->mTicksPerSecond);
 
-					for (size_t j = 0; j < animationData->frames.size(); ++j)
+					for (size_t j = 0; j < (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys; ++j)
 					{
 						KeyFrame keyFrame;
-						keyFrame.timeStamp = glm::min(timeStamp * j, animationData->animationLength);
-						keyFrame.jointTranforms = std::vector<JointTransform>(glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.size()));
+						keyFrame.timeStamp = glm::min(timeStamp * j, animationData.animationLength);
+						keyFrame.jointTranforms = BLVector<JointTransform>(AllocationType::FreeList_Renderer, glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.size()));
+						keyFrame.jointTranforms.Fill();
 
 						for (size_t k = 0; k < scene->mAnimations[i]->mNumChannels; ++k)
 						{
@@ -54,35 +66,32 @@ namespace BaldLion
 							);
 						}
 
-						animationData->frames[j] = keyFrame;
+						animationData.frames.PushBack(std::move(keyFrame));
 					}
 
-					animations[i] = animationData;
+					animations.PushBack(std::move(animationData));
 				}
 
 				glm::mat4 rootTransform = SkinnedMesh::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
 
-				Ref<Animator> animator = CreateRef<Animator>(animatedMesh, animations, rootTransform);
+				Animator* animator = MemoryManager::New<Animator>("Animator", AllocationType::FreeList_Renderer, animatedMesh, animations, rootTransform);
 				RegisterAnimator(animator);
 			}
 		}
 
-		void AnimationManager::RegisterAnimator(Ref<Animator> animator)
+		void AnimationManager::RegisterAnimator(Animator* animator)
 		{
-			if (std::find(s_registeredAnimators.begin(), s_registeredAnimators.end(), animator) == s_registeredAnimators.end())
+			if (!s_registeredAnimators.Exists(animator))
 			{
-				s_registeredAnimators.push_back(animator);
+				s_registeredAnimators.PushBack(animator);
 			}
 		}
 
-		void AnimationManager::UnregisterAnimator(Ref<Animator> animator)
-		{
-			auto it = std::find(s_registeredAnimators.begin(), s_registeredAnimators.end(), animator);
-
-			if (it != s_registeredAnimators.end())
-			{
-				std::swap(*it, s_registeredAnimators.back());
-				s_registeredAnimators.pop_back();
+		void AnimationManager::UnregisterAnimator(Animator* animator)
+		{			
+			if (s_registeredAnimators.Exists(animator))
+			{				
+				s_registeredAnimators.RemoveFast(animator);
 			}
 		}
 	}

@@ -9,6 +9,8 @@ namespace BaldLion
 		FreeListAllocator* MemoryManager::s_rendererFreeListAllocator;
 		LinearAllocator* MemoryManager::s_frameLinearAllocator;
 		StackAllocator* MemoryManager::s_tempStackAllocator;
+		
+		std::unordered_map<void*, AllocationType> MemoryManager::s_allocationMap;
 
 		void* MemoryManager::s_memory;
 
@@ -50,7 +52,7 @@ namespace BaldLion
 				s_frameLinearAllocator->Clear();
 				break;
 
-			case BaldLion::Memory::AllocationType::Stack_Temp:
+			case BaldLion::Memory::AllocationType::Stack_Scope_Temp:
 				s_tempStackAllocator->Clear();
 				break;
 
@@ -67,18 +69,18 @@ namespace BaldLion
 			if (s_frameLinearAllocator != nullptr)
 			{
 				s_frameLinearAllocator->Clear();
-				Delete(AllocationType::FreeList_Main, s_frameLinearAllocator);
+				Delete(s_frameLinearAllocator);
 			}
 
 			if (s_tempStackAllocator != nullptr)
 			{		
 				s_tempStackAllocator->Clear();
-				Delete(AllocationType::FreeList_Main, s_tempStackAllocator);
+				Delete(s_tempStackAllocator);
 			}
 
 			if (s_rendererFreeListAllocator != nullptr)
 			{
-				Delete(AllocationType::FreeList_Main, s_rendererFreeListAllocator);
+				Delete(s_rendererFreeListAllocator);
 			}
 
 			s_mainFreeListAllocator->~FreeListAllocator();
@@ -96,7 +98,7 @@ namespace BaldLion
 			case BaldLion::Memory::AllocationType::Linear_Frame:
 				return s_frameLinearAllocator;
 
-			case BaldLion::Memory::AllocationType::Stack_Temp:
+			case BaldLion::Memory::AllocationType::Stack_Scope_Temp:
 				return s_tempStackAllocator;
 
 			case BaldLion::Memory::AllocationType::FreeList_Renderer:

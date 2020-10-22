@@ -1320,12 +1320,12 @@
     <ClInclude Include="src\BaldLion\Core\Memory\LinearAllocator.h" />
     <ClInclude Include="src\BaldLion\Core\Memory\FreeListAllocator.h" />
     <ClInclude Include="src\BaldLion\Core\Memory\MemoryManager.h" />
-    <ClInclude Include="src\BaldLion\Core\DataStructures\BLVector.h" />
-    <ClInclude Include="src\BaldLion\Core\DataStructures\BLMap.h" />
     <ClInclude Include="src\BaldLion\Utils\Quantization.h" />
     <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Containers\BLMap.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\BLVector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">

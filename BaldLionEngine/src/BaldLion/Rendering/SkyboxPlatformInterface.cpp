@@ -34,18 +34,22 @@ namespace BaldLion
 			  5, 6, 2, 1
 			};
 
-			Ref<VertexBuffer> vertexBuffer;
-			vertexBuffer = VertexBuffer::Create(&cube_vertices[0], (uint32_t)(sizeof(cube_vertices)));
+			VertexBuffer* vertexBuffer = VertexBuffer::Create(&cube_vertices[0], (uint32_t)(sizeof(cube_vertices)));
 
 			vertexBuffer->SetLayout({
 				{ ShaderDataType::Float3, "vertex_position"}				
 			});
 
-			Ref<IndexBuffer> indexBuffer;
-			indexBuffer = (IndexBuffer::Create(&cube_indices[0], (uint32_t)(sizeof(cube_indices))));
+			IndexBuffer* indexBuffer = (IndexBuffer::Create(&cube_indices[0], (uint32_t)(sizeof(cube_indices))));
 
 			m_vertexArray->AddIndexBuffer(indexBuffer);
 			m_vertexArray->AddVertexBuffer(vertexBuffer);
 		}
+
+		void SkyboxPlatformInterface::Stop()
+		{
+			VertexArray::Destroy(m_vertexArray);
+		}
+
 	}
 }

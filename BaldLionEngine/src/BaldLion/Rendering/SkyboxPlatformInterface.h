@@ -18,7 +18,8 @@ namespace BaldLion
 			};
 
 			virtual void Init(const std::string& path);
-			virtual void Draw() = 0;			
+			virtual void Draw() = 0;	
+			virtual void Stop();
 
 			inline static SkyboxPlatform GetAPI() { return s_skyboxPlatform; }		
 
@@ -26,8 +27,8 @@ namespace BaldLion
 			static SkyboxPlatform s_skyboxPlatform;
 
 		protected:			
-			Ref<VertexArray> m_vertexArray;
-			Ref<Shader> m_skyboxShader;
+			VertexArray* m_vertexArray;
+			Shader* m_skyboxShader;
 		};
 	}
 }

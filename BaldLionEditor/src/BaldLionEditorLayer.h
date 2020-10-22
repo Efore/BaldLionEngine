@@ -25,14 +25,14 @@ namespace BaldLion
 
 		private:
 
-			std::vector<Ref<Rendering::AnimatedModel>> m_models;
-			Ref<Rendering::Framebuffer> m_frameBuffer;
+			BLVector<Rendering::AnimatedModel*> m_models;
+			Rendering::Framebuffer* m_frameBuffer;
 
 			glm::vec2 m_viewportSize;
 			bool m_viewPortFocused;
 
-			DirectionalLight directionalLight;
-			std::vector<PointLight> pointLights;
+			DirectionalLight m_directionalLight;
+			BLVector<PointLight> m_pointLights;
 		};
 	}
 }

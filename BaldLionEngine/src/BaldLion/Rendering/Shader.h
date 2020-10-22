@@ -43,8 +43,8 @@ namespace BaldLion
 
 			virtual const std::string& GetName() const = 0;
 
-			static Ref<Shader> Create(const std::string& filepath);
-			static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
+			static Shader* Create(const std::string& filepath);
+			static Shader* Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 
 		
 		};
@@ -52,20 +52,20 @@ namespace BaldLion
 		class ShaderLibrary
 		{
 		public:
-			void Add(const Ref<Shader>& shader);
-			void Add(const std::string& name, const Ref<Shader>& shader);
+			virtual ~ShaderLibrary();
 
-			Ref<Shader> Load(const std::string& filepath);
-			Ref<Shader> Load(const std::string& name, const std::string& filepath);
+			void Add(Shader* shader);
+			void Add(const std::string& name, Shader* shader);
 
-			Ref<Shader> Get(const std::string& name);
-
+			Shader* Load(const std::string& filepath);
+			Shader* Load(const std::string& name, const std::string& filepath);
+			
 			bool Exists(const std::string& name) const;
 
 			static std::string GetNameFromPath(const std::string& path);
 
 		private:
-			std::unordered_map<std::string, Ref<Shader>> m_shaders;
+			std::unordered_map<std::string, Shader*> m_shaders;
 		};
 	}
 }

@@ -150,8 +150,8 @@
     <ClInclude Include="src\BaldLion\Animation\Joint.h" />
     <ClInclude Include="src\BaldLion\Core\Application.h" />
     <ClInclude Include="src\BaldLion\Core\Core.h" />
-    <ClInclude Include="src\BaldLion\Core\DataStructures\BLMap.h" />
-    <ClInclude Include="src\BaldLion\Core\DataStructures\BLVector.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\BLMap.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\BLVector.h" />
     <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
     <ClInclude Include="src\BaldLion\Core\Input.h" />
     <ClInclude Include="src\BaldLion\Core\KeyCodes.h" />

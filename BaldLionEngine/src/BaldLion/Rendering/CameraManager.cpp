@@ -23,10 +23,10 @@ namespace BaldLion
 			s_cameraData.prevX = BaldLion::Input::GetMouseX();
 			s_cameraData.prevY = BaldLion::Input::GetMouseY();
 			
-			s_cameraData.camera = CreateRef<ProjectionCamera>(initialPosition, width, height, nearPlane, farPlane);
+			s_cameraData.camera = MemoryManager::New<ProjectionCamera>("Camera", AllocationType::FreeList_Renderer, initialPosition, width, height, nearPlane, farPlane);
 		}
 
-		void ProjectionCameraManager::SetCamera(const Ref<ProjectionCamera>& camera)
+		void ProjectionCameraManager::SetCamera(ProjectionCamera* camera)
 		{
 			s_cameraData.camera = camera;
 			
@@ -35,6 +35,11 @@ namespace BaldLion
 			
 			s_cameraData.prevX = BaldLion::Input::GetMouseX();
 			s_cameraData.prevY = BaldLion::Input::GetMouseY();
+		}
+
+		void ProjectionCameraManager::Stop()
+		{
+			MemoryManager::Delete(s_cameraData.camera);
 		}
 
 		void ProjectionCameraManager::OnUpdate(BaldLion::TimeStep timeStep)

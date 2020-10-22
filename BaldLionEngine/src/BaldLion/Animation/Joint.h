@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 #include "BaldLion/Utils/Quantization.h"
 
@@ -13,13 +12,14 @@ namespace BaldLion
 
 		struct Joint
 		{
-		public:			
 			uint32_t jointID;
 			int32_t parentID;			
 			
 			glm::mat4 jointBindTransform;
 			glm::mat4 jointModelSpaceTransform;
 			glm::mat4 jointAnimationTransform;
+
+			Joint(){}
 
 			void UpdateJointTransforms(const glm::mat4& rootInverseTransform, const glm::mat4& parentTransform, const glm::mat4& localAnimationTransform)
 			{				
@@ -43,7 +43,7 @@ namespace BaldLion
 				rotation = Quantization::CompressQuaternion(decompressedRotation);
 			}
 			
-			glm::vec3 GetDecompressedPosition() 
+			const glm::vec3 GetDecompressedPosition() const
 			{
 				return Quantization::DecompressVector3(position, BL_JOINT_POSITION_RANGE);
 			}
@@ -53,7 +53,7 @@ namespace BaldLion
 				position = Quantization::CompressVector3(decompressedPosition, BL_JOINT_POSITION_RANGE);
 			}
 
-			glm::quat GetDecompressedRotation()
+			const glm::quat GetDecompressedRotation() const
 			{
 				return Quantization::DecompressCuaternion(rotation);
 			}

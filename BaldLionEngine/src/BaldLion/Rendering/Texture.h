@@ -32,14 +32,14 @@ namespace BaldLion
 		class Texture2D : public Texture
 		{
 		public:
-			static Ref<Texture2D> Create(const std::string& path);
-			static Ref<Texture2D> Create(const std::string& path, const unsigned char* textureData, int size);
+			static Texture2D* Create(const std::string& path);
+			static Texture2D* Create(const std::string& path, const unsigned char* textureData, int size);
 		};
 
 		class TextureCubeMap : public Texture
 		{
 		public:
-			static Ref<TextureCubeMap> Create(const std::string& path);
+			static TextureCubeMap* Create(const std::string& path);
 
 		protected:
 			static const std::string GetSkyboxTexturePath(const std::string& path, int index);
@@ -50,21 +50,22 @@ namespace BaldLion
 		class TextureLibrary
 		{
 		public:
-			void Add(const Ref<Texture>& texture);
-			void Add(const std::string& name, const Ref<Texture>& texture);
 
-			Ref<Texture> Load(const std::string& filepath, int textureType);
-			Ref<Texture> Load(const std::string& filepath,const unsigned char* textureData, int size, int textureType);
-			Ref<Texture> Load(const std::string& name, const std::string& filepath, int textureType);
+			~TextureLibrary();
 
-			Ref<Texture> Get(const std::string& name);
+			void Add(Texture* texture);
+			void Add(const std::string& name, Texture* texture);
+
+			Texture* Load(const std::string& filepath, int textureType);
+			Texture* Load(const std::string& filepath,const unsigned char* textureData, int size, int textureType);
+			Texture* Load(const std::string& name, const std::string& filepath, int textureType);			
 
 			bool Exists(const std::string& name) const;
 
-			static std::string GetNameFromPath(const std::string &path);
+			static const std::string GetNameFromPath(const std::string &path);
 
 		private:
-			std::unordered_map<std::string, Ref<Texture>> m_textures;
+			std::unordered_map<std::string, Texture*> m_textures;
 		};
 	}
 }

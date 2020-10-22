@@ -103,7 +103,7 @@ namespace BaldLion
 
 			m_window->OnUpdate();
 
-			Memory::MemoryManager::Clear(Memory::AllocationType::Stack_Temp);
+			Memory::MemoryManager::Clear(Memory::AllocationType::Stack_Scope_Temp);
 		}
 	}
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "Vertex.h"
 #include "Shader.h"
+#include "BaldLion/Core/Containers/BLVector.h"
 
 namespace BaldLion
 {
@@ -48,19 +49,26 @@ namespace BaldLion
 		public:
 			BufferLayout() {}
 
-			BufferLayout(const std::initializer_list<BufferElement>& elements)
-				: m_elements(elements)
+			BufferLayout(const std::initializer_list<BufferElement>& elements)				
 			{
+				m_elements = BLVector<BufferElement>(AllocationType::FreeList_Renderer, elements.size());
+
+				for (auto& element : elements)
+				{
+					m_elements.PushBack(element);
+				}
+
 				CalculateOffsetsAndStride();
 			}
 
-			inline const uint32_t& GetStride() const { return m_stride; }
-			inline const std::vector<BufferElement>& GetElements() const { return m_elements; }
+			~BufferLayout()
+			{
 
-			std::vector<BufferElement>::iterator begin() { return m_elements.begin(); }
-			std::vector<BufferElement>::iterator end() { return m_elements.end(); }
-			std::vector<BufferElement>::const_iterator begin() const { return m_elements.begin(); }
-			std::vector<BufferElement>::const_iterator end() const { return m_elements.end(); }
+			}
+
+			inline const uint32_t& GetStride() const { return m_stride; }
+			inline const BLVector<BufferElement>& GetElements() const { return m_elements; }
+
 
 		private:
 
@@ -68,22 +76,22 @@ namespace BaldLion
 			{
 				uint32_t offset = 0;
 				m_stride = 0;
-				for (auto& element : m_elements)
+				for (size_t i = 0; i < m_elements.Size(); ++i)
 				{
-					element.Offset = offset;
-					offset += element.Size;
-					m_stride += element.Size;
+					m_elements[i].Offset = offset;
+					offset += m_elements[i].Size;
+					m_stride += m_elements[i].Size;
 				}
 			}
 
-			std::vector<BufferElement> m_elements;
+			BLVector<BufferElement> m_elements;
 			uint32_t m_stride = 0;
 		};
 
 		class VertexBuffer
 		{
 		public:
-
+			//move operator
 			virtual ~VertexBuffer() {}
 
 			virtual void Bind() const = 0;
@@ -92,19 +100,20 @@ namespace BaldLion
 			virtual const BufferLayout& GetLayout() const = 0;
 			virtual void SetLayout(const BufferLayout& layout) = 0;
 
-			static Ref<VertexBuffer> Create(const void* vertices, uint32_t size);
+			static VertexBuffer* Create(const void* vertices, uint32_t size);
 		};
 
 		class IndexBuffer
 		{
 		public:
+			//move operator
 			virtual ~IndexBuffer() {}
 
 			virtual void Bind() const = 0;
 			virtual void Unbind() const = 0;
 
 			virtual uint32_t GetCount() const = 0;
-			static Ref<IndexBuffer> Create(const uint32_t* indices, uint32_t count);
+			static IndexBuffer* Create(const uint32_t* indices, uint32_t count);
 		};
 	}
 }

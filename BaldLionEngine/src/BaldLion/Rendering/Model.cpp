@@ -18,11 +18,16 @@ namespace BaldLion
 			m_modelPath = filePath;
 			auto lastSlash = filePath.find_last_of("/\\");		
 			m_modelFolderPath = filePath.substr(0, lastSlash + 1);
+			m_subMeshes = BLVector<Mesh*>(AllocationType::FreeList_Renderer, 5);
 		}
 
 		Model::~Model()
 		{
-
+			for (size_t i = 0; i < m_subMeshes.Size(); ++i)
+			{
+				MemoryManager::DeleteNoDestructor(m_subMeshes[i]);
+			}
+			m_subMeshes.Free();
 		}
 
 		void Model::SetUpModel()
@@ -45,28 +50,28 @@ namespace BaldLion
 		void Model::Draw() const
 		{
 			BL_PROFILE_FUNCTION();
-			for (const Mesh& m : m_subMeshes)
+			for (size_t i = 0; i < m_subMeshes.Size(); ++i)
 			{
-				m.Draw();
+				m_subMeshes[i]->Draw();
 			}
 		}
 
 		void Model::ProcessNode(const aiNode *node, const aiScene *scene)
 		{
 			// process all the node's meshes (if any)
-			for (unsigned int i = 0; i < node->mNumMeshes; i++)
+			for (size_t i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-				m_subMeshes.emplace_back(ProcessMesh(mesh, scene));
+				m_subMeshes.PushBack(ProcessMesh(mesh, scene));
 			}
 			// then do the same for each of its children
-			for (unsigned int i = 0; i < node->mNumChildren; i++)
+			for (size_t i = 0; i < node->mNumChildren; i++)
 			{
 				ProcessNode(node->mChildren[i], scene);
 			}
 		}
 
-		void Model::FillVertexArrayData(const aiMesh *aimesh, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
+		void Model::FillVertexArrayData(const aiMesh *aimesh, BLVector<Vertex>& vertices, BLVector<uint32_t>& indices)
 		{
 			for (unsigned int i = 0; i < aimesh->mNumVertices; i++)
 			{
@@ -113,14 +118,14 @@ namespace BaldLion
 					bitangent.y = aimesh->mBitangents[i].y;
 				}
 
-				vertices[i] = (Vertex({ position, color, normal, texCoord, tangent, bitangent }));
+				vertices.PushBack(Vertex{ position, color, normal, texCoord, tangent, bitangent });
 			}
 
-			for (unsigned int i = 0; i < aimesh->mNumFaces; i++)
+			for (size_t i = 0; i < aimesh->mNumFaces; i++)
 			{
 				aiFace face = aimesh->mFaces[i];
-				for (unsigned int j = 0; j < face.mNumIndices; j++)
-					indices.push_back(face.mIndices[j]);
+				for (size_t j = 0; j < face.mNumIndices; j++)
+					indices.PushBack(face.mIndices[j]);
 			}
 		}
 
@@ -130,11 +135,11 @@ namespace BaldLion
 			aiColor3D& diffuseColor, 
 			aiColor3D& specularColor, 
 			aiColor3D& emissiveColor, 
-			Ref<Texture>& ambientTex,
-			Ref<Texture>& diffuseTex, 
-			Ref<Texture>& specularTex, 
-			Ref<Texture>& emissiveTex, 
-			Ref<Texture>& normalTex)
+			Texture* ambientTex,
+			Texture* diffuseTex,
+			Texture* specularTex,
+			Texture* emissiveTex,
+			Texture* normalTex)
 		{
 			const aiMaterial* aimaterial = aiscene->mMaterials[aimesh->mMaterialIndex];
 
@@ -232,10 +237,10 @@ namespace BaldLion
 			} 
 		}
 
-		Mesh Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
+		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{
-			std::vector<Vertex> vertices(aimesh->mNumVertices);
-			std::vector<uint32_t> indices;
+			BLVector<Vertex> vertices(AllocationType::Stack_Scope_Temp, aimesh->mNumVertices);
+			BLVector<uint32_t> indices(AllocationType::Stack_Scope_Temp, aimesh->mNumVertices * 3);
 
 			FillVertexArrayData(aimesh, vertices, indices);
 
@@ -244,15 +249,15 @@ namespace BaldLion
 			aiColor3D specularColor;
 			aiColor3D emissiveColor;
 			
-			Ref<Texture> ambientTex = nullptr;
-			Ref<Texture> diffuseTex = nullptr;
-			Ref<Texture> specularTex = nullptr;
-			Ref<Texture> emissiveTex = nullptr;
-			Ref<Texture> normalTex = nullptr;
+			Texture* ambientTex = nullptr;
+			Texture* diffuseTex = nullptr;
+			Texture* specularTex = nullptr;
+			Texture* emissiveTex = nullptr;
+			Texture* normalTex = nullptr;
 
 			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
 
-			return Mesh(vertices, indices,
+			return MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer, vertices, indices,
 				Material::Create("assets/shaders/nanosuit.glsl", 
 					glm::vec3(ambientColor.r,ambientColor.g,ambientColor.b),
 					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),

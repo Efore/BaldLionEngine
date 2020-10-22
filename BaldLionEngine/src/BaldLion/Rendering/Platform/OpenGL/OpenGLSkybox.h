@@ -15,7 +15,7 @@ namespace BaldLion
 			virtual void Draw() override;
 
 		private:
-			Ref<OpenGLTextureCubemap> m_cubemapTexture;
+			OpenGLTextureCubemap* m_cubemapTexture;
 		};
 	}
 }

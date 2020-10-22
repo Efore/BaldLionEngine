@@ -15,23 +15,23 @@ namespace BaldLion
 
 		public:
 
-			SkinnedMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices, std::vector<Animation::Joint> joints, const Ref<Material>& material);
+			SkinnedMesh(BLVector<Vertex>& vertices, BLVector<VertexBoneData>& verticesBoneData, BLVector<uint32_t>& indices, const BLVector<Animation::Joint>& joints, Material* material);
 			~SkinnedMesh();
 
-			void SetUpMesh(const std::vector<Vertex>& vertices, const std::vector<VertexBoneData>& verticesBoneData, const std::vector<uint32_t>& indices);
+			void SetUpMesh(const BLVector<Vertex>& vertices, const BLVector<VertexBoneData>& verticesBoneData, const BLVector<uint32_t>& indices);
 			void Draw(const glm::mat4& worldTransform) const;
 
-			inline std::vector<Animation::Joint>& GetJoints() { return m_joints; }
-			inline const std::vector<Animation::Joint>& GetJoints() const { return m_joints; }
+			inline BLVector<Animation::Joint>& GetJoints() { return m_joints; }
+			inline const BLVector<Animation::Joint>& GetJoints() const { return m_joints; }
 
 			static glm::mat4 AiMat4ToGlmMat4(const aiMatrix4x4& aiMat4);
 
 		private:
 			
-			std::vector<Animation::Joint> m_joints;
+			BLVector<Animation::Joint> m_joints;
 
-			Ref<VertexArray> m_vertexArray;
-			Ref<Material> m_material;
+			VertexArray* m_vertexArray;
+			Material* m_material;
 		};
 	}
 }

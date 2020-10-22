@@ -4,6 +4,8 @@
 #include <vector>
 #include <glad/glad.h>
 
+using namespace BaldLion::Memory;
+
 namespace BaldLion
 {
 	namespace Rendering
@@ -13,12 +15,12 @@ namespace BaldLion
 			switch (type)
 			{
 			case ShaderDataType::Float:			return GL_FLOAT;
-			case ShaderDataType::Float2:			return GL_FLOAT;
-			case ShaderDataType::Float3:			return GL_FLOAT;
-			case ShaderDataType::Float4:			return GL_FLOAT;
+			case ShaderDataType::Float2:		return GL_FLOAT;
+			case ShaderDataType::Float3:		return GL_FLOAT;
+			case ShaderDataType::Float4:		return GL_FLOAT;
 			case ShaderDataType::Mat3:			return GL_FLOAT;
 			case ShaderDataType::Mat4:			return GL_FLOAT;
-			case ShaderDataType::Int:				return GL_INT;
+			case ShaderDataType::Int:			return GL_INT;
 			case ShaderDataType::Int2:			return GL_INT;
 			case ShaderDataType::Int3:			return GL_INT;
 			case ShaderDataType::Int4:			return GL_INT;
@@ -35,11 +37,21 @@ namespace BaldLion
 			glCreateVertexArrays(1, &m_rendererID);
 			glBindVertexArray(m_rendererID);
 			m_currentLayoutIndex = 0;
+
+			m_vertexBuffers = BLVector<VertexBuffer*>(AllocationType::FreeList_Renderer, 2);
 		}
 
 		OpenGLVertexArray::~OpenGLVertexArray()
 		{
 			glDeleteVertexArrays(1, &m_rendererID);
+			
+			for (size_t i = 0; i < m_vertexBuffers.Size(); ++i)
+			{
+				MemoryManager::DeleteNoDestructor(m_vertexBuffers[i]);
+			}
+
+			MemoryManager::Delete(m_indexBuffer);
+			m_vertexBuffers.Free();
 		}
 
 		void OpenGLVertexArray::Bind() const
@@ -52,32 +64,32 @@ namespace BaldLion
 			glBindVertexArray(0);
 		}
 
-		void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
+		void OpenGLVertexArray::AddVertexBuffer(VertexBuffer* vertexBuffer)
 		{
-			BL_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex buffer has no layout!");
+			BL_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().Size(), "Vertex buffer has no layout!");
 			
 			glBindVertexArray(m_rendererID);
 
 			const auto& layout = vertexBuffer->GetLayout();
-			for (const auto& element : layout)
+			for (size_t i = 0; i < layout.GetElements().Size(); ++i)
 			{
 				glEnableVertexAttribArray(m_currentLayoutIndex);
 				glVertexAttribPointer(m_currentLayoutIndex,
-					element.GetComponentCount(),
-					ShaderDataTypeToGLEnum(element.Type),
-					element.Normalized,
+					layout.GetElements()[i].GetComponentCount(),
+					ShaderDataTypeToGLEnum(layout.GetElements()[i].Type),
+					layout.GetElements()[i].Normalized,
 					layout.GetStride(),
-					(const void*)element.Offset);
+					(const void*)layout.GetElements()[i].Offset);
 
 				m_currentLayoutIndex++;
 			}
 
-			m_vertexBuffers.push_back(vertexBuffer);
+			m_vertexBuffers.PushBack(vertexBuffer);
 
 			glBindVertexArray(0);
 		}
 
-		void OpenGLVertexArray::AddIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
+		void OpenGLVertexArray::AddIndexBuffer(IndexBuffer* indexBuffer)
 		{
 			m_indexBuffer = indexBuffer;
 		}

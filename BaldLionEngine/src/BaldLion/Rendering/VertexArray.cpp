@@ -10,16 +10,22 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Ref<VertexArray> VertexArray::Create()
+		VertexArray* VertexArray::Create()
 		{
 			switch (RendererPlatformInterface::GetAPI())
 			{
 			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererPlatformInterface::RendererPlatform::OpenGL:		return CreateRef<OpenGLVertexArray>();
+			case RendererPlatformInterface::RendererPlatform::OpenGL:	return MemoryManager::New<OpenGLVertexArray>("Vertex array", AllocationType::FreeList_Renderer);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
 			return nullptr;
 		}
+
+		void VertexArray::Destroy(VertexArray* vertexArray)
+		{
+			MemoryManager::Delete(vertexArray);
+		}
+
 	}
 }

@@ -18,11 +18,11 @@ namespace BaldLion
 				const glm::vec3& emissiveColor,
 				const glm::vec3& specularColor,
 				float shininess,
-				const Ref<Texture> ambientTex,
-				const Ref<Texture> diffuseTex,
-				const Ref<Texture> emissiveTex,
-				const Ref<Texture> specularTex,
-				const Ref<Texture> normalTex);
+				Texture* ambientTex,
+				Texture* diffuseTex,
+				Texture* emissiveTex,
+				Texture* specularTex,
+				Texture* normalTex);
 
 			virtual void SetAmbientColor(const glm::vec3 & emissive) override;
 			virtual void SetEmissiveColor(const glm::vec3 & emissive) override;
@@ -32,12 +32,12 @@ namespace BaldLion
 
 			virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex) override;
 
-			virtual Ref<Shader> GetShader() const override { return m_shader; }
+			virtual Shader* GetShader() const override { return m_shader; }
 
 			virtual void Bind() const override;
 
 		private:
-			Ref<OpenGLShader> m_shader;
+			OpenGLShader* m_shader;
 
 			glm::vec3 m_ambientColor;
 			glm::vec3 m_emissiveColor;
@@ -45,19 +45,19 @@ namespace BaldLion
 			glm::vec3 m_specularColor;
 			float m_shininess;
 
-			Ref<OpenGLTexture2D> m_ambientTex;
+			OpenGLTexture2D* m_ambientTex;
 			int m_ambientTexSlot;
 
-			Ref<OpenGLTexture2D> m_diffuseTex;
+			OpenGLTexture2D* m_diffuseTex;
 			int m_diffuseTexSlot;
 
-			Ref<OpenGLTexture2D> m_emissiveTex;
+			OpenGLTexture2D* m_emissiveTex;
 			int m_emissiveTexSlot;
 
-			Ref<OpenGLTexture2D> m_specularTex;
+			OpenGLTexture2D* m_specularTex;
 			int m_specularTexSlot;
 
-			Ref<OpenGLTexture2D> m_normalTex;
+			OpenGLTexture2D* m_normalTex;
 			int m_normalTexSlot;
 		};
 	}
