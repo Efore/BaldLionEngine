@@ -21,6 +21,8 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
+			Animation::AnimationManager::Init();
+
 			m_models = BLVector<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);
 			m_pointLights = BLVector<PointLight>(AllocationType::FreeList_Renderer, 3);
 
@@ -29,6 +31,8 @@ namespace BaldLion
 			fbSpec.Height = Application::GetInstance().GetWindow().GetHeight();
 
 			m_frameBuffer = BaldLion::Rendering::Framebuffer::Create(fbSpec);
+
+			ProjectionCameraManager::Init(glm::vec3(0, 0, 250), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 100.0f);			
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
 
@@ -40,8 +44,6 @@ namespace BaldLion
 
 				initialTransform = glm::translate(initialTransform, glm::vec3(150, 0, 0));
 			}
-
-			ProjectionCameraManager::Init(glm::vec3(0, 0, 250), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 100.0f);
 
 			m_directionalLight = {
 				glm::vec3(-0.2f, -1.0f, -0.3f),

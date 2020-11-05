@@ -84,16 +84,20 @@ namespace BaldLion
 			switch (allocationType)
 			{
 			case AllocationType::FreeList_Main:
-				s_mainFreeListAllocator->Deallocate(element);
+				if(s_mainFreeListAllocator != nullptr)
+					s_mainFreeListAllocator->Deallocate(element);
 				break;
 			case AllocationType::Linear_Frame:
-				s_frameLinearAllocator->Deallocate(element);
+				if (s_mainFreeListAllocator != nullptr)
+					s_mainFreeListAllocator->Deallocate(element);
 				break;
 			case AllocationType::Stack_Scope_Temp:
-				s_tempStackAllocator->Deallocate(element);
+				if (s_mainFreeListAllocator != nullptr)
+					s_mainFreeListAllocator->Deallocate(element);
 				break;
 			case AllocationType::FreeList_Renderer:
-				s_rendererFreeListAllocator->Deallocate(element);
+				if (s_mainFreeListAllocator != nullptr)
+					s_mainFreeListAllocator->Deallocate(element);
 				break;
 			}
 		}

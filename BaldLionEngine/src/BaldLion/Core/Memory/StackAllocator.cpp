@@ -54,8 +54,7 @@ namespace BaldLion
 
 		void StackAllocator::Clear()
 		{
-			m_num_allocations = 0;
-			m_used_memory = 0;
+			Allocator::Clear();
 			m_current_position = m_start;
 		}
 

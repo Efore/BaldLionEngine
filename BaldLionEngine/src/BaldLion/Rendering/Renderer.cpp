@@ -19,8 +19,9 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 
 			s_rendererPlatformInterface = MemoryManager::New<OpenGLRenderer>("Renderer Platform interface", AllocationType::FreeList_Renderer);
-			s_skyboxPlatformInterface = MemoryManager::New<OpenGLSkybox>("Skybox Platform interface", AllocationType::FreeList_Renderer);
 			s_rendererPlatformInterface->Init();
+
+			s_skyboxPlatformInterface = MemoryManager::New<OpenGLSkybox>("Skybox Platform interface", AllocationType::FreeList_Renderer);
 			s_skyboxPlatformInterface->Init("assets/textures/skybox/skybox.jpg");
 
 			LightManager::Init();

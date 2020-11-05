@@ -45,19 +45,19 @@ namespace BaldLion
 			glm::vec3 m_specularColor;
 			float m_shininess;
 
-			OpenGLTexture2D* m_ambientTex;
+			OpenGLTexture2D* m_ambientTex = nullptr;
 			int m_ambientTexSlot;
 
-			OpenGLTexture2D* m_diffuseTex;
+			OpenGLTexture2D* m_diffuseTex = nullptr;
 			int m_diffuseTexSlot;
 
-			OpenGLTexture2D* m_emissiveTex;
+			OpenGLTexture2D* m_emissiveTex = nullptr;
 			int m_emissiveTexSlot;
 
-			OpenGLTexture2D* m_specularTex;
+			OpenGLTexture2D* m_specularTex = nullptr;
 			int m_specularTexSlot;
 
-			OpenGLTexture2D* m_normalTex;
+			OpenGLTexture2D* m_normalTex = nullptr;
 			int m_normalTexSlot;
 		};
 	}

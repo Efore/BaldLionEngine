@@ -53,11 +53,11 @@ namespace BaldLion
 		const T& Back() const { return m_elements[m_size - 1]; }
 
 		T& operator[](size_t index) { 
-			BL_ASSERT(m_size > 0, "Size is 0"); 
+			BL_ASSERT(m_size > 0 && index < m_size, "Size is 0");
 			return index > (m_size - 1) ? Back() : m_elements[index];
 		}
 		const T& operator[](size_t index) const {  
-			BL_ASSERT(index < m_size - 1, "Size is 0");
+			BL_ASSERT(m_size > 0 && index < m_size, "Size is 0");
 			return index > (m_size - 1) ? Back() : m_elements[index];
 		}
 
@@ -76,11 +76,14 @@ namespace BaldLion
 		size_t m_size = 0;
 		size_t m_capacity = 0;
 	};
-
 	
 	template <typename T, typename Allocator>
 	BaldLion::BLVector<T, Allocator>::BLVector()
 	{
+		m_elements = nullptr;
+		m_allocator = nullptr;
+		m_capacity = 0;
+		m_size = 0;
 	}
 
 	template <typename T, typename Allocator>
@@ -94,7 +97,7 @@ namespace BaldLion
 	BaldLion::BLVector<T, Allocator>::BLVector(Memory::AllocationType allocationType, const BLVector<T, Allocator>& other)
 		: m_allocator(Memory::MemoryManager::GetAllocator(allocationType)), m_size(other.Size())
 	{
-		Reserve(other.Capacity());
+		Reserve(other.m_capacity);
 
 		std::copy(other.m_elements, other.m_elements + m_size, m_elements);
 	}
@@ -103,7 +106,7 @@ namespace BaldLion
 	BaldLion::BLVector<T, Allocator>::BLVector(const BLVector<T, Allocator>& other)
 		: m_allocator(other.m_allocator), m_size(other.Size())
 	{
-		Reserve(other.Capacity());
+		Reserve(other.m_capacity);
 
 		std::copy(other.m_elements, other.m_elements + m_size, m_elements);
 	}
@@ -137,10 +140,8 @@ namespace BaldLion
 	template <typename T, typename Allocator>
 	BLVector<T, Allocator>& BaldLion::BLVector<T, Allocator>::operator=(BLVector<T, Allocator>&& other) noexcept
 	{
-		if (this != &other && m_elements != nullptr)
-		{
-			Free();			
-		}
+		if (&other == this)
+			return *this;	
 
 		m_allocator = other.m_allocator;
 		m_size = other.m_size;
@@ -195,6 +196,8 @@ namespace BaldLion
 	template <typename... Args >
 	void BaldLion::BLVector<T, Allocator>::EmplaceBack(Args&&... args)
 	{
+		BL_ASSERT(m_capacity > 0, "Capacity is 0");
+
 		if (m_size == m_capacity)
 			Reallocate((size_t)(m_capacity * 1.5f));
 
@@ -206,22 +209,23 @@ namespace BaldLion
 	template <typename T, typename Allocator>
 	void BaldLion::BLVector<T, Allocator>::PushBack(const T& element)
 	{
+		BL_ASSERT(m_capacity > 0, "Capacity is 0");
+
 		if (m_size == m_capacity)
 			Reallocate((size_t)(m_capacity * 1.5f));
 
-		m_elements[m_size] = element;
-		++m_size;
+		m_elements[m_size++] = element;
 	}
 
 	template <typename T, typename Allocator>
 	void BaldLion::BLVector<T, Allocator>::PushBack(T&& element)
-	{
+	{		
+		BL_ASSERT(m_capacity > 0, "Capacity is 0");
+
 		if (m_size == m_capacity)
 			Reallocate((size_t)(m_capacity * 1.5f));
 
-		m_elements[m_size] = std::move(element);
-
-		++m_size;
+		m_elements[m_size++] = std::move(element);
 	}
 
 	template <typename T, typename Allocator>
@@ -340,12 +344,7 @@ namespace BaldLion
 			newLocation[i] = std::move(m_elements[i]);
 		}
 
-		for (size_t i = 0; i < m_size; ++i)
-		{
-			m_elements[m_size].~T();
-		}
-
-		m_allocator->Deallocate(m_elements);
+		Free();
 
 		m_elements = newLocation;
 		m_capacity = newCapacity;

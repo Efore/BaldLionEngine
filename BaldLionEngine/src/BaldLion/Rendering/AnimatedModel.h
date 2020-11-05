@@ -45,11 +45,11 @@ namespace BaldLion
 				aiColor3D& diffuseColor,
 				aiColor3D& specularColor,
 				aiColor3D& emissiveColor,
-				Texture* ambientTex,
-				Texture* diffuseTex,
-				Texture* specularTex,
-				Texture* emissiveTex,
-				Texture* normalTex);
+				Texture*& ambientTex,
+				Texture*& diffuseTex,
+				Texture*& specularTex,
+				Texture*& emissiveTex,
+				Texture*& normalTex);
 
 			void FillVertexWeightData(const aiMesh* aimesh, 
 				const std::unordered_map<std::string, uint32_t>& jointMapping,

@@ -20,6 +20,8 @@ namespace BaldLion
 
 			// Extracting folder path from filePath
 
+			m_subMeshes = BLVector<SkinnedMesh*>(AllocationType::FreeList_Renderer, 1);
+
 			m_modelPath = filePath;
 			auto lastSlash = filePath.find_last_of("/\\");
 			m_modelFolderPath = filePath.substr(0, lastSlash + 1);
@@ -31,6 +33,7 @@ namespace BaldLion
 			{
 				MemoryManager::DeleteNoDestructor(m_subMeshes[i]);
 			}
+			m_subMeshes.Free();
 		}
 
 		void AnimatedModel::SetUpModel()
@@ -150,11 +153,11 @@ namespace BaldLion
 			aiColor3D& diffuseColor,
 			aiColor3D& specularColor,
 			aiColor3D& emissiveColor,
-			Texture* ambientTex,
-			Texture* diffuseTex,
-			Texture* specularTex,
-			Texture* emissiveTex,
-			Texture* normalTex)
+			Texture*& ambientTex,
+			Texture*& diffuseTex,
+			Texture*& specularTex,
+			Texture*& emissiveTex,
+			Texture*& normalTex)
 		{
 			const aiMaterial* aimaterial = aiscene->mMaterials[aimesh->mMaterialIndex];
 
@@ -244,9 +247,9 @@ namespace BaldLion
 				{
 					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
 					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
-				}
-				else
-				{
+				}				
+				else			
+				{				
 					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
 				}
 			}
@@ -319,9 +322,9 @@ namespace BaldLion
 
 		SkinnedMesh* AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{		
-			BLVector<Vertex> vertices(AllocationType::Stack_Scope_Temp, aimesh->mNumVertices);
-			BLVector<VertexBoneData> verticesBoneData(AllocationType::Stack_Scope_Temp, aimesh->mNumVertices);
-			BLVector<uint32_t> indices (AllocationType::Stack_Scope_Temp, aimesh->mNumVertices * 3);
+			BLVector<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
+			BLVector<VertexBoneData> verticesBoneData(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
+			BLVector<uint32_t> indices (AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
 			BLVector<Animation::Joint> jointsData(AllocationType::FreeList_Renderer, aimesh->mNumBones);
 
 			verticesBoneData.Fill();

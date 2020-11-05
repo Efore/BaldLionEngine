@@ -104,7 +104,7 @@ namespace BaldLion
 			BL_ASSERT(IsAligned(header), "Header must be aligned");
 
 			m_used_memory += bestFitTotalSize;
-			m_num_allocations++;
+			m_num_allocations++; 
 
 			return alignedResult;
 		}
@@ -166,5 +166,12 @@ namespace BaldLion
 			m_num_allocations--;
 			m_used_memory -= blockSize;
 		}
+
+		void FreeListAllocator::Clear()
+		{
+			Allocator::Clear();
+			m_allocationBlocksBegin = nullptr;
+		}
+
 	}
 }

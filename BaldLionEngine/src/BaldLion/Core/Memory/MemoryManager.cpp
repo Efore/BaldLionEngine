@@ -29,16 +29,16 @@ namespace BaldLion
 
 			size_t frameAllocatorSize = 4 * 1024 * 1024; //4MB
 			void* frameAllocatorStart = s_mainFreeListAllocator->Allocate(frameAllocatorSize, __alignof(LinearAllocator));
-			s_frameLinearAllocator = new (frameAllocatorStart) LinearAllocator(frameAllocatorSize, frameAllocatorStart);
+			s_frameLinearAllocator = new (frameAllocatorStart) LinearAllocator(frameAllocatorSize - sizeof(LinearAllocator), AddPointerOffset(frameAllocatorStart, sizeof(LinearAllocator)));
 
 			size_t stackAllocatorSize = 4 * 1024 * 1024; //4MB
 			void* stackAllocatorStart = s_mainFreeListAllocator->Allocate(stackAllocatorSize, __alignof(StackAllocator));
-			s_tempStackAllocator = new (stackAllocatorStart) StackAllocator(stackAllocatorSize, stackAllocatorStart);
+			s_tempStackAllocator = new (stackAllocatorStart) StackAllocator(stackAllocatorSize - sizeof(StackAllocator), AddPointerOffset(stackAllocatorStart, sizeof(StackAllocator)));
 
 			size_t rendererSize = 1024ULL * 1024 * 1024; //1GB
 			void *rendererAllocatorStart = s_mainFreeListAllocator->Allocate(rendererSize, __alignof(FreeListAllocator));
-			s_rendererFreeListAllocator = new (rendererAllocatorStart) FreeListAllocator(rendererSize, rendererAllocatorStart);
-
+			s_rendererFreeListAllocator = new (rendererAllocatorStart) FreeListAllocator(rendererSize - sizeof(FreeListAllocator), AddPointerOffset(rendererAllocatorStart, sizeof(FreeListAllocator)));
+			
 		}
 
 		void MemoryManager::Clear(AllocationType allocationType)
@@ -49,11 +49,13 @@ namespace BaldLion
 				break;
 
 			case BaldLion::Memory::AllocationType::Linear_Frame:
-				s_frameLinearAllocator->Clear();
+				if(s_frameLinearAllocator != nullptr)
+					s_frameLinearAllocator->Clear();
 				break;
 
 			case BaldLion::Memory::AllocationType::Stack_Scope_Temp:
-				s_tempStackAllocator->Clear();
+				if (s_tempStackAllocator != nullptr)
+					s_tempStackAllocator->Clear();
 				break;
 
 			case BaldLion::Memory::AllocationType::FreeList_Renderer:
@@ -79,10 +81,12 @@ namespace BaldLion
 			}
 
 			if (s_rendererFreeListAllocator != nullptr)
-			{
+			{				
+				s_rendererFreeListAllocator->Clear();
 				Delete(s_rendererFreeListAllocator);
 			}
 
+			s_mainFreeListAllocator->Clear();
 			s_mainFreeListAllocator->~FreeListAllocator();
 
 			free(s_memory);			

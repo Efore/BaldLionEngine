@@ -45,9 +45,10 @@ namespace BaldLion
 				{
 					AnimationData animationData;
 
-					animationData.animationName = scene->mAnimations[i]->mName.data;
+					strcpy(animationData.animationName, scene->mAnimations[i]->mName.data);
 					animationData.animationLength = (float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond);
-					animationData.frames = BLVector<KeyFrame>(AllocationType::FreeList_Renderer, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys);
+					animationData.frames = BLVector<KeyFrame>(AllocationType::FreeList_Renderer, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys);	
+					
 
 					float timeStamp = (float)(1.0f / scene->mAnimations[i]->mTicksPerSecond);
 

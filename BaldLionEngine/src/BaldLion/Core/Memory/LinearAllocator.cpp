@@ -8,7 +8,7 @@ namespace BaldLion
 
 		LinearAllocator::LinearAllocator(size_t size, void* start) : Allocator(size, start), m_current_position(start)
 		{
-
+			BL_ASSERT(size > 0, "Size must be bigger than 0");
 		}
 
 		LinearAllocator::~LinearAllocator()
@@ -41,8 +41,7 @@ namespace BaldLion
 
 		void LinearAllocator::Clear()
 		{
-			m_num_allocations = 0;
-			m_used_memory = 0;
+			Allocator::Clear();
 			m_current_position = m_start;			
 		}
 	}

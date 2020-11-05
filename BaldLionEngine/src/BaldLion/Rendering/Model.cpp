@@ -135,11 +135,11 @@ namespace BaldLion
 			aiColor3D& diffuseColor, 
 			aiColor3D& specularColor, 
 			aiColor3D& emissiveColor, 
-			Texture* ambientTex,
-			Texture* diffuseTex,
-			Texture* specularTex,
-			Texture* emissiveTex,
-			Texture* normalTex)
+			Texture*&  ambientTex,
+			Texture*& diffuseTex,
+			Texture*& specularTex,
+			Texture*& emissiveTex,
+			Texture*& normalTex)
 		{
 			const aiMaterial* aimaterial = aiscene->mMaterials[aimesh->mMaterialIndex];
 
@@ -239,8 +239,8 @@ namespace BaldLion
 
 		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{
-			BLVector<Vertex> vertices(AllocationType::Stack_Scope_Temp, aimesh->mNumVertices);
-			BLVector<uint32_t> indices(AllocationType::Stack_Scope_Temp, aimesh->mNumVertices * 3);
+			BLVector<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
+			BLVector<uint32_t> indices(AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
 
 			FillVertexArrayData(aimesh, vertices, indices);
 

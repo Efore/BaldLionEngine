@@ -16,6 +16,8 @@ public:
 	RendererTestLayer(uint32_t width, uint32_t height)
 		: BaldLion::Layer("Example"), m_emissiveColor(1.0f), m_diffuseColor(1.0f), m_specularColor(1.0f), m_shininess(32.0f)
 	{
+		Animation::AnimationManager::Init();
+
 		glm::mat4 initialTransform = glm::mat4(1.0f);
 		m_model = CreateRef<AnimatedModel>("assets/creature/creature.fbx" , initialTransform);
 

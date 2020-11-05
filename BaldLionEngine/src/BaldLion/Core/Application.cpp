@@ -34,6 +34,7 @@ namespace BaldLion
 
 	Application::~Application()
 	{
+		
 	}
 
 	void Application::PushLayer(Layer * layer)
@@ -55,7 +56,6 @@ namespace BaldLion
 	void Application::Close()
 	{
 		m_running = false;
-		Memory::MemoryManager::Clear();
 	}
 
 	Application& Application::GetInstance(const std::string& applicationName)
@@ -100,10 +100,9 @@ namespace BaldLion
 				m_imGuiLayer->End();
 			}
 
-
 			m_window->OnUpdate();
 
-			Memory::MemoryManager::Clear(Memory::AllocationType::Stack_Scope_Temp);
+			Memory::MemoryManager::Clear(Memory::AllocationType::Linear_Frame);
 		}
 	}
 
@@ -123,7 +122,7 @@ namespace BaldLion
 
 	bool Application::OnWindowClose(WindowCloseEvent & e)
 	{
-		m_running = false;
+		Close();
 		return true;
 	}
 
