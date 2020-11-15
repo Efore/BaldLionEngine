@@ -23,7 +23,7 @@ namespace BaldLion
 
 			virtual void Bind(uint32_t slot = 0) const = 0;
 
-			virtual const std::string& GetName() const = 0;
+			virtual const char* GetName() const = 0;
 
 			virtual int GetTextureType() const = 0;
 			
@@ -42,7 +42,7 @@ namespace BaldLion
 			static TextureCubeMap* Create(const std::string& path);
 
 		protected:
-			static const std::string GetSkyboxTexturePath(const std::string& path, int index);
+			static const std::string GetSkyboxTexturePath(const std::string& path, size_t index);
 		};
 
 		
@@ -51,21 +51,22 @@ namespace BaldLion
 		{
 		public:
 
-			~TextureLibrary();
+			void Clear();
+			virtual ~TextureLibrary();
 
 			void Add(Texture* texture);
-			void Add(const std::string& name, Texture* texture);
+			void Add(const char*, Texture* texture);
 
 			Texture* Load(const std::string& filepath, int textureType);
 			Texture* Load(const std::string& filepath,const unsigned char* textureData, int size, int textureType);
-			Texture* Load(const std::string& name, const std::string& filepath, int textureType);			
+			Texture* Load(const char* name, const std::string& filepath, int textureType);
 
-			bool Exists(const std::string& name) const;
+			bool Exists(const char* name) const;
 
-			static const std::string GetNameFromPath(const std::string &path);
+			static void GetNameFromPath(const std::string &path, char* name);
 
 		private:
-			std::unordered_map<std::string, Texture*> m_textures;
+			std::unordered_map<const char*, Texture*> m_textures;
 		};
 	}
 }

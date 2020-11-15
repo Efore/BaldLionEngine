@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "BaldLion/Core/Containers/BLVector.h"
+#include "BaldLion/Core/Containers/DynamicArray.h"
 #include "Mesh.h"
 #include <assimp/scene.h>
 
@@ -18,14 +18,14 @@ namespace BaldLion
 			void SetUpModel();
 			void Draw() const;
 
-			const BLVector<Mesh*>& GetSubMeshes() const { return m_subMeshes; }
+			const DynamicArray<Mesh*>& GetSubMeshes() const { return m_subMeshes; }
 
 		private:
 
 			void ProcessNode(const aiNode *node, const aiScene *scene);
 			Mesh* ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
 
-			void FillVertexArrayData(const aiMesh *aimesh, BLVector<Vertex>& vertices, BLVector<uint32_t>& indices);
+			void FillVertexArrayData(const aiMesh *aimesh, DynamicArray<Vertex>& vertices, DynamicArray<uint32_t>& indices);
 			void FillTextureData(const aiMesh *aimesh,
 				const aiScene *aiscene,
 				aiColor3D& ambientColor,
@@ -41,7 +41,7 @@ namespace BaldLion
 		protected:
 			std::string m_modelPath;
 			std::string m_modelFolderPath;
-			BLVector<Mesh*> m_subMeshes;
+			DynamicArray<Mesh*> m_subMeshes;
 		};
 	}
 }

@@ -17,8 +17,8 @@ namespace BaldLion
 			void SetUpModel();
 			void Draw() const;
 
-			inline const BLVector<SkinnedMesh*>& GetSubMeshes() const { return m_subMeshes; }
-			inline BLVector<SkinnedMesh*>& GetSubMeshes() { return m_subMeshes; }
+			inline const DynamicArray<SkinnedMesh*>& GetSubMeshes() const { return m_subMeshes; }
+			inline DynamicArray<SkinnedMesh*>& GetSubMeshes() { return m_subMeshes; }
 
 		private:			
 
@@ -27,15 +27,15 @@ namespace BaldLion
 			SkinnedMesh* ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
 
 			void FillJointData(std::unordered_map<std::string, uint32_t>& jointMapping,
-				BLVector<Animation::Joint>& jointData,
+				DynamicArray<Animation::Joint>& jointData,
 				const std::unordered_map<std::string, glm::mat4>& jointOffsetMapping,
 				uint32_t& currentID, 
 				const int32_t parentID, 
 				const aiNode* node);
 
 			void FillVertexArrayData(const aiMesh *aimesh, 
-				BLVector<Vertex>& vertices,
-				BLVector<uint32_t>& indices,
+				DynamicArray<Vertex>& vertices,
+				DynamicArray<uint32_t>& indices,
 				std::unordered_map<std::string, uint32_t>& jointMap, 
 				std::unordered_map<std::string, glm::mat4>& jointOffsetMapping);
 
@@ -53,12 +53,12 @@ namespace BaldLion
 
 			void FillVertexWeightData(const aiMesh* aimesh, 
 				const std::unordered_map<std::string, uint32_t>& jointMapping,
-				BLVector<VertexBoneData>& verticesBoneData);
+				DynamicArray<VertexBoneData>& verticesBoneData);
 
 		protected:
 			std::string m_modelPath;
 			std::string m_modelFolderPath;
-			BLVector<SkinnedMesh*> m_subMeshes;
+			DynamicArray<SkinnedMesh*> m_subMeshes;
 			glm::mat4 m_worldTransform;
 		};
 	}

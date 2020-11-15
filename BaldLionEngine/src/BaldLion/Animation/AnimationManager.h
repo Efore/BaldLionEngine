@@ -22,7 +22,7 @@ namespace BaldLion
 
 		private:			
 			static bool s_initialized;
-			static BLVector<Animator*> s_registeredAnimators;
+			static DynamicArray<Animator*> s_registeredAnimators;
 		};
 	}
 }

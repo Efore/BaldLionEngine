@@ -5,7 +5,7 @@ namespace BaldLion
 {
 	namespace Animation
 	{
-		BLVector<Animator*> AnimationManager::s_registeredAnimators;
+		DynamicArray<Animator*> AnimationManager::s_registeredAnimators;
 
 		bool AnimationManager::s_initialized = false;
 
@@ -14,7 +14,7 @@ namespace BaldLion
 			if (!s_initialized)
 			{
 				s_initialized = true;
-				s_registeredAnimators = BLVector<Animator*>(AllocationType::FreeList_Renderer, 10);
+				s_registeredAnimators = DynamicArray<Animator*>(AllocationType::FreeList_Renderer, 10);
 			}
 		}
 
@@ -40,14 +40,14 @@ namespace BaldLion
 		{
 			if (scene->HasAnimations())
 			{
-				BLVector<AnimationData> animations(AllocationType::FreeList_Renderer, scene->mNumAnimations);
+				DynamicArray<AnimationData> animations(AllocationType::FreeList_Renderer, scene->mNumAnimations);
 				for (size_t i = 0; i < scene->mNumAnimations; ++i)
 				{
 					AnimationData animationData;
 
 					strcpy(animationData.animationName, scene->mAnimations[i]->mName.data);
 					animationData.animationLength = (float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond);
-					animationData.frames = BLVector<KeyFrame>(AllocationType::FreeList_Renderer, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys);	
+					animationData.frames = DynamicArray<KeyFrame>(AllocationType::FreeList_Renderer, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys);	
 					
 
 					float timeStamp = (float)(1.0f / scene->mAnimations[i]->mTicksPerSecond);
@@ -56,7 +56,7 @@ namespace BaldLion
 					{
 						KeyFrame keyFrame;
 						keyFrame.timeStamp = glm::min(timeStamp * j, animationData.animationLength);
-						keyFrame.jointTranforms = BLVector<JointTransform>(AllocationType::FreeList_Renderer, glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.size()));
+						keyFrame.jointTranforms = DynamicArray<JointTransform>(AllocationType::FreeList_Renderer, glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.size()));
 						keyFrame.jointTranforms.Fill();
 
 						for (size_t k = 0; k < scene->mAnimations[i]->mNumChannels; ++k)

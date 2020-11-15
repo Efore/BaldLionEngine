@@ -7,7 +7,7 @@ namespace BaldLion
 {
 	namespace Animation
 	{
-		Animator::Animator(SkinnedMesh* animatedMesh, BLVector<AnimationData>& animations, const glm::mat4& rootTransform)
+		Animator::Animator(SkinnedMesh* animatedMesh, DynamicArray<AnimationData>& animations, const glm::mat4& rootTransform)
 			: m_animatedMesh(animatedMesh)
 		{
 			for (size_t i = 0; i < animations.Size(); ++i)
@@ -28,7 +28,7 @@ namespace BaldLion
 			m_animationDataContainer->Free();
 		}
 
-		void Animator::CalculateInterpolatedTransforms(const AnimationData* animation, BLVector<JointTransform>& result)
+		void Animator::CalculateInterpolatedTransforms(const AnimationData* animation, DynamicArray<JointTransform>& result)
 		{
 			int prevFrameIndex = 0;
 			int nextFrameIndex = 0;
@@ -46,7 +46,7 @@ namespace BaldLion
 
 			float interpolant = (m_animationTime - animation->frames[prevFrameIndex].timeStamp) / (animation->frames[nextFrameIndex].timeStamp - animation->frames[prevFrameIndex].timeStamp) ;
 
-			result = BLVector<JointTransform>(AllocationType::Linear_Frame, animation->frames[prevFrameIndex].jointTranforms);
+			result = DynamicArray<JointTransform>(AllocationType::Linear_Frame, animation->frames[prevFrameIndex].jointTranforms);
 
 			for (size_t i = 0; i < result.Size(); ++i)
 			{
@@ -59,7 +59,7 @@ namespace BaldLion
 		{
 			m_animationTime = glm::mod(m_animationTime + timeStep, m_currentAnimation->animationLength);
 
-			BLVector<JointTransform> transforms;
+			DynamicArray<JointTransform> transforms;
 			CalculateInterpolatedTransforms(m_currentAnimation, transforms); 
 			
 			for (int i = 0;  i < transforms.Size(); ++i)

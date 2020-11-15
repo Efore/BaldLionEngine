@@ -11,10 +11,10 @@ namespace BaldLion
 		class Mesh {
 
 		public:
-			Mesh(BLVector<Vertex>& vertices, BLVector<uint32_t>& indices, Material* material);
+			Mesh(DynamicArray<Vertex>& vertices, DynamicArray<uint32_t>& indices, Material* material);
 			~Mesh();
 
-			void SetUpMesh(const BLVector<Vertex>& vertices, const BLVector<uint32_t>& indices);
+			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<uint32_t>& indices);
 			void Draw() const;
 
 			const Material* GetMaterial() const { return m_material; }

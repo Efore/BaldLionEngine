@@ -6,7 +6,7 @@ namespace BaldLion
 	namespace Rendering
 	{
 		DirectionalLight LightManager::s_directionalLight;
-		BLVector<PointLight> LightManager::s_scenePointLights;
+		DynamicArray<PointLight> LightManager::s_scenePointLights;
 		bool LightManager::s_initialized = false;
 
 		void LightManager::Init()
@@ -17,7 +17,7 @@ namespace BaldLion
 			}
 		}
 
-		void LightManager::BeginScene(const DirectionalLight& directionalLight, const BLVector<PointLight>& pointLights)
+		void LightManager::BeginScene(const DirectionalLight& directionalLight, const DynamicArray<PointLight>& pointLights)
 		{
 			s_directionalLight = directionalLight;
 			s_scenePointLights = std::move(pointLights);

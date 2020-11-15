@@ -52,6 +52,8 @@ namespace BaldLion
 		class ShaderLibrary
 		{
 		public:
+
+			void Clear();
 			virtual ~ShaderLibrary();
 
 			void Add(Shader* shader);

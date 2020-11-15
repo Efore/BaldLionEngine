@@ -1,7 +1,7 @@
 #pragma once
 #include "Vertex.h"
 #include "Shader.h"
-#include "BaldLion/Core/Containers/BLVector.h"
+#include "BaldLion/Core/Containers/DynamicArray.h"
 
 namespace BaldLion
 {
@@ -50,7 +50,7 @@ namespace BaldLion
 
 			BufferLayout(const std::initializer_list<BufferElement>& elements)				
 			{
-				m_elements = BLVector<BufferElement>(AllocationType::FreeList_Renderer, elements.size());
+				m_elements = DynamicArray<BufferElement>(AllocationType::FreeList_Renderer, elements.size());
 
 				for (auto& element : elements)
 				{
@@ -66,7 +66,7 @@ namespace BaldLion
 			}
 
 			inline const uint32_t& GetStride() const { return m_stride; }
-			inline const BLVector<BufferElement>& GetElements() const { return m_elements; }
+			inline const DynamicArray<BufferElement>& GetElements() const { return m_elements; }
 
 
 		private:
@@ -83,7 +83,7 @@ namespace BaldLion
 				}
 			}
 
-			BLVector<BufferElement> m_elements;
+			DynamicArray<BufferElement> m_elements;
 			uint32_t m_stride = 0;
 		};
 

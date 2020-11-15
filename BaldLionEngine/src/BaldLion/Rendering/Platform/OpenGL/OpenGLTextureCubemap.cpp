@@ -10,8 +10,9 @@ namespace BaldLion
 	namespace Rendering
 	{
 		OpenGLTextureCubemap::OpenGLTextureCubemap(const std::string& path)
-			: m_path(path), m_name(TextureLibrary::GetNameFromPath(path))
 		{
+			TextureLibrary::GetNameFromPath(path, m_name);
+
 			BL_PROFILE_FUNCTION();
 
 			glGenTextures(1, &m_rendererID);
@@ -49,11 +50,11 @@ namespace BaldLion
 
 				BL_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
 
-				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, m_width, m_height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + (int)i, 0, internalFormat, m_width, m_height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
 
 				stbi_image_free(data);
 			}
-
+			 
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaldLion/Rendering/Buffer.h"
-#include "BaldLion/Core/Containers/BLVector.h"
+#include "BaldLion/Core/Containers/DynamicArray.h"
 
 namespace BaldLion
 {
@@ -18,7 +18,7 @@ namespace BaldLion
 			virtual void AddVertexBuffer(VertexBuffer* vertexBuffer) = 0;
 			virtual void AddIndexBuffer(IndexBuffer* indexBuffer) = 0;
 
-			virtual const BLVector<VertexBuffer*> & GetVertexBuffers() const = 0;
+			virtual const DynamicArray<VertexBuffer*> & GetVertexBuffers() const = 0;
 			virtual const IndexBuffer* GetIndexBuffer() const = 0;
 
 			static VertexArray* Create();

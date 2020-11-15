@@ -8,7 +8,7 @@ namespace BaldLion
 	namespace Rendering
 	{
 
-		SkinnedMesh::SkinnedMesh(BLVector<Vertex>& vertices, BLVector<VertexBoneData>& verticesBoneData, BLVector<uint32_t>& indices, const BLVector<Animation::Joint>& joints, Material* material)
+		SkinnedMesh::SkinnedMesh(DynamicArray<Vertex>& vertices, DynamicArray<VertexBoneData>& verticesBoneData, DynamicArray<uint32_t>& indices, const DynamicArray<Animation::Joint>& joints, Material* material)
 			: m_material(material), m_joints(std::move(joints))
 		{
 			SetUpMesh(vertices, verticesBoneData, indices);
@@ -25,7 +25,7 @@ namespace BaldLion
 			Material::Destroy(m_material);
 		}
 
-		void SkinnedMesh::SetUpMesh(const BLVector<Vertex>& vertices, const BLVector<VertexBoneData>& verticesBoneData, const BLVector<uint32_t>& indices)
+		void SkinnedMesh::SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<VertexBoneData>& verticesBoneData, const DynamicArray<uint32_t>& indices)
 		{
 			BL_PROFILE_FUNCTION();
 

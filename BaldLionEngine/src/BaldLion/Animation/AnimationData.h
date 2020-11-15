@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Joint.h"
-#include "BaldLion/Core/Containers/BLVector.h"
+#include "BaldLion/Core/Containers/DynamicArray.h"
 
 namespace BaldLion
 {
@@ -9,7 +9,7 @@ namespace BaldLion
 	{
 		struct KeyFrame {
 
-			BLVector<JointTransform> jointTranforms;
+			DynamicArray<JointTransform> jointTranforms;
 			float timeStamp;
 
 			KeyFrame(){
@@ -41,21 +41,21 @@ namespace BaldLion
 		struct AnimationData {
 
 			char animationName[1024];
-			BLVector<KeyFrame> frames;
+			DynamicArray<KeyFrame> frames;
 			float animationLength;
 
 			AnimationData(){}
 
 			AnimationData(AnimationData&& other)
 			{
-				strcpy(animationName,other.animationName);				
+				strcpy_s(animationName,other.animationName);				
 				animationLength = other.animationLength;
-				frames = std::move(other.frames);				
+				frames = std::move(other.frames);		 		
 			}
 
 			AnimationData& operator=(const AnimationData& other)
 			{
-				strcpy(animationName, other.animationName);
+				strcpy_s(animationName, other.animationName);
 				animationLength = other.animationLength;
 				frames = other.frames;
 
@@ -64,7 +64,7 @@ namespace BaldLion
 
 			AnimationData& operator=(AnimationData&& other)
 			{
-				strcpy(animationName, other.animationName);
+				strcpy_s(animationName, other.animationName);
 				animationLength = other.animationLength;
 				frames = std::move(other.frames);
 

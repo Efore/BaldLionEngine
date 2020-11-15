@@ -46,13 +46,20 @@ namespace BaldLion
 			return path.substr(lastSlash, count);
 		}
 
+		void ShaderLibrary::Clear()
+		{
+			if (m_shaders.size() > 0)
+			{
+				for (auto shaderIterator = m_shaders.begin(); shaderIterator != m_shaders.end(); ++shaderIterator)
+				{
+					MemoryManager::Delete(shaderIterator->second);
+				}
+				m_shaders.clear();
+			}
+		}
+
 		ShaderLibrary::~ShaderLibrary()
 		{
-			for (auto shaderIterator = m_shaders.begin(); shaderIterator != m_shaders.end(); ++shaderIterator)
-			{
-				MemoryManager::Delete(shaderIterator->second);
-			}
-			m_shaders.clear();
 		}
 
 		void ShaderLibrary::Add(Shader* shader)

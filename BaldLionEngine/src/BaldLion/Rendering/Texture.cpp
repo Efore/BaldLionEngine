@@ -45,7 +45,7 @@ namespace BaldLion
 			return nullptr;
 		}
 
-		const std::string TextureCubeMap::GetSkyboxTexturePath(const std::string& path, int index)
+		const std::string TextureCubeMap::GetSkyboxTexturePath(const std::string& path, size_t index)
 		{
 			// Extracting name from lastpath			
 			auto lastDot = path.rfind('.');
@@ -54,28 +54,35 @@ namespace BaldLion
 			const std::string subpath = path.substr(0, lastDot);
 
 			char textureIndex[3];
-			sprintf(textureIndex, "_%d", index);
+			sprintf(textureIndex, "_%d", (int)index);
 
 			return subpath + textureIndex + extension;
 		}
 
-		TextureLibrary::~TextureLibrary()
+		void TextureLibrary::Clear()
 		{
-			for (auto textureIterator = m_textures.begin(); textureIterator != m_textures.end(); ++textureIterator)
+			if (m_textures.size() > 0)
 			{
-				MemoryManager::Delete(textureIterator->second);
+				for (auto textureIterator = m_textures.begin(); textureIterator != m_textures.end(); ++textureIterator)
+				{
+					MemoryManager::DeleteNoDestructor(textureIterator->second);
+				}
+				m_textures.clear();
 			}
-			m_textures.clear();
+		}
+
+		TextureLibrary::~TextureLibrary()
+		{			
 		}
 
 		void TextureLibrary::Add(Texture* texture)
 		{
-			auto& name = texture->GetName();
+			auto name = texture->GetName();
 			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
 			m_textures[name] = texture;
 		}
 
-		void TextureLibrary::Add(const std::string& name, Texture* texture)
+		void TextureLibrary::Add(const char* name, Texture* texture)
 		{
 			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
 			m_textures[name] = texture;
@@ -83,12 +90,13 @@ namespace BaldLion
 
 		Texture* TextureLibrary::Load(const std::string& filepath, int textureType)
 		{	
-			const std::string& name = TextureLibrary::GetNameFromPath(filepath);
+			char name[100];
+			TextureLibrary::GetNameFromPath(filepath, name);
 			
 			return Load(name,filepath,textureType);
 		}
 
-		Texture* TextureLibrary::Load(const std::string& name, const std::string& filepath, int textureType)
+		Texture* TextureLibrary::Load(const char* name, const std::string& filepath, int textureType)
 		{	
 			if (Exists(name))
 				return m_textures[name];
@@ -116,7 +124,8 @@ namespace BaldLion
 
 		Texture* TextureLibrary::Load(const std::string& filepath, const unsigned char* textureData, int size, int textureType)
 		{
-			const std::string name = TextureLibrary::GetNameFromPath(filepath);
+			char name[100];
+			TextureLibrary::GetNameFromPath(filepath, name);
 
 			if (Exists(name))
 				return m_textures[name];
@@ -143,20 +152,19 @@ namespace BaldLion
 		}
 
 
-		bool TextureLibrary::Exists(const std::string& name) const
+		bool TextureLibrary::Exists(const char* name) const
 		{
 			return m_textures.find(name) != m_textures.end();
 		}
 
-		const std::string TextureLibrary::GetNameFromPath(const std::string &path)
+		void TextureLibrary::GetNameFromPath(const std::string &path, char *name)
 		{
 			// Extracting name from lastpath
 			auto lastSlash = path.find_last_of("/\\");
 			lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
 			auto lastDot = path.rfind('.');
 			auto count = lastDot == std::string::npos ? path.size() - lastSlash : lastDot - lastSlash;
-
-			return path.substr(lastSlash, count);
+			strcpy(name, path.substr(lastSlash, count).c_str());			
 		}
 
 	}

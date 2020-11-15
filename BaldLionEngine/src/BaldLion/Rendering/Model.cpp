@@ -18,7 +18,7 @@ namespace BaldLion
 			m_modelPath = filePath;
 			auto lastSlash = filePath.find_last_of("/\\");		
 			m_modelFolderPath = filePath.substr(0, lastSlash + 1);
-			m_subMeshes = BLVector<Mesh*>(AllocationType::FreeList_Renderer, 5);
+			m_subMeshes = DynamicArray<Mesh*>(AllocationType::FreeList_Renderer, 5);
 		}
 
 		Model::~Model()
@@ -71,7 +71,7 @@ namespace BaldLion
 			}
 		}
 
-		void Model::FillVertexArrayData(const aiMesh *aimesh, BLVector<Vertex>& vertices, BLVector<uint32_t>& indices)
+		void Model::FillVertexArrayData(const aiMesh *aimesh, DynamicArray<Vertex>& vertices, DynamicArray<uint32_t>& indices)
 		{
 			for (unsigned int i = 0; i < aimesh->mNumVertices; i++)
 			{
@@ -239,8 +239,8 @@ namespace BaldLion
 
 		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{
-			BLVector<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
-			BLVector<uint32_t> indices(AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
+			DynamicArray<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
+			DynamicArray<uint32_t> indices(AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
 
 			FillVertexArrayData(aimesh, vertices, indices);
 

@@ -1324,8 +1324,8 @@
     <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\Containers\BLMap.h" />
-    <ClInclude Include="src\BaldLion\Core\Containers\BLVector.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\DynamicArray.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\HashMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">

@@ -34,7 +34,7 @@ namespace BaldLion
 
 	Application::~Application()
 	{
-		
+		Memory::MemoryManager::Clear();
 	}
 
 	void Application::PushLayer(Layer * layer)
@@ -54,7 +54,8 @@ namespace BaldLion
 	}
 
 	void Application::Close()
-	{
+	{		
+		Rendering::Renderer::Stop();
 		m_running = false;
 	}
 
@@ -104,6 +105,9 @@ namespace BaldLion
 
 			Memory::MemoryManager::Clear(Memory::AllocationType::Linear_Frame);
 		}
+		
+		for (Layer* layer : m_layerStack)
+			layer->OnDetach();		
 	}
 
 	void Application::OnEvent(Event & e)

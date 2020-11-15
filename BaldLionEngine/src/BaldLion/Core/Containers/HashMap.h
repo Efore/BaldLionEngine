@@ -3,7 +3,7 @@
 namespace BaldLion
 {
 	
-	class BLMap
+	class HashMap
 	{
 
 	};

@@ -15,19 +15,19 @@ namespace BaldLion
 		class Animator {
 			
 		public:
-			Animator(SkinnedMesh* animatedMesh, BLVector<AnimationData>& animations, const glm::mat4& rootTransform);
+			Animator(SkinnedMesh* animatedMesh, DynamicArray<AnimationData>& animations, const glm::mat4& rootTransform);
 			~Animator();
 
 			void OnUpdate(BaldLion::TimeStep timeStep);
 			inline void SetCurrentAnimation(const std::string& animationName);
 
-			void CalculateInterpolatedTransforms(const AnimationData* animation, BLVector<JointTransform>& result);
+			void CalculateInterpolatedTransforms(const AnimationData* animation, DynamicArray<JointTransform>& result);
 
 		private:	
 
 			SkinnedMesh* m_animatedMesh;
 
-			BLVector<AnimationData>* m_animationDataContainer;
+			DynamicArray<AnimationData>* m_animationDataContainer;
 			AnimationData* m_currentAnimation;			
 			std::unordered_map<std::string,AnimationData*> m_animations;
 			glm::mat4 m_rootInverseTransform;

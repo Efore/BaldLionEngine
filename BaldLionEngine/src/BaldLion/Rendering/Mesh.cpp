@@ -7,7 +7,7 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Mesh::Mesh(BLVector<Vertex>& vertices, BLVector<uint32_t>& indices, Material* material) :
+		Mesh::Mesh(DynamicArray<Vertex>& vertices, DynamicArray<uint32_t>& indices, Material* material) :
 			m_material(material)
 		{
 			SetUpMesh(vertices, indices);
@@ -23,7 +23,7 @@ namespace BaldLion
 			Material::Destroy(m_material);
 		}
 
-		void Mesh::SetUpMesh(const BLVector<Vertex>& vertices, const BLVector<uint32_t>& indices)
+		void Mesh::SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<uint32_t>& indices)
 		{
 			BL_PROFILE_FUNCTION();
 

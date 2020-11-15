@@ -38,7 +38,7 @@ namespace BaldLion
 			glBindVertexArray(m_rendererID);
 			m_currentLayoutIndex = 0;
 
-			m_vertexBuffers = BLVector<VertexBuffer*>(AllocationType::FreeList_Renderer, 2);
+			m_vertexBuffers = DynamicArray<VertexBuffer*>(AllocationType::FreeList_Renderer, 2);
 		}
 
 		OpenGLVertexArray::~OpenGLVertexArray()

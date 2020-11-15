@@ -23,8 +23,8 @@ namespace BaldLion
 
 			Animation::AnimationManager::Init();
 
-			m_models = BLVector<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);
-			m_pointLights = BLVector<PointLight>(AllocationType::FreeList_Renderer, 3);
+			m_models = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);
+			m_pointLights = DynamicArray<PointLight>(AllocationType::FreeList_Renderer, 3);
 
 			BaldLion::Rendering::FramebufferSpecification fbSpec;
 			fbSpec.Width = Application::GetInstance().GetWindow().GetWidth();
@@ -79,7 +79,16 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnDetach()
 		{
+			Animation::AnimationManager::Stop();
+			m_pointLights.Free();
 
+			for (size_t i = 0; i < m_models.Size(); ++i)
+			{
+				MemoryManager::DeleteNoDestructor(m_models[i]);
+			}
+			m_models.Free();
+
+			MemoryManager::Delete(m_frameBuffer);
 		}
 
 		void BaldLionEditorLayer::OnUpdate(TimeStep timeStep)

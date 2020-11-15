@@ -31,6 +31,8 @@ namespace BaldLion
 		{
 			MemoryManager::Delete(s_rendererPlatformInterface);
 			MemoryManager::Delete(s_skyboxPlatformInterface);
+			s_shaderLibrary.Clear();
+			s_textureLibrary.Clear();
 		}
 
 		void Renderer::OnWindowResize(uint32_t width, uint32_t height)
@@ -38,7 +40,7 @@ namespace BaldLion
 			s_rendererPlatformInterface->SetViewport(0, 0, width, height);			
 		}
 
-		void Renderer::BeginScene(const ProjectionCamera*  camera, const DirectionalLight& directionalLight, const BLVector<PointLight>& pointLights)
+		void Renderer::BeginScene(const ProjectionCamera*  camera, const DirectionalLight& directionalLight, const DynamicArray<PointLight>& pointLights)
 		{
 			BL_PROFILE_FUNCTION();
 			

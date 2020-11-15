@@ -4,16 +4,16 @@
 namespace BaldLion
 {
 	template <typename T, typename Allocator = Memory::Allocator>
-	class BLVector
+	class DynamicArray
 	{
 	public:		
-		BLVector();
-		BLVector(Memory::AllocationType allocationType, size_t capacity);
-		BLVector(Memory::AllocationType allocationType, const BLVector<T, Allocator>& other);
-		BLVector(const BLVector<T, Allocator>& other);
-		BLVector(BLVector<T, Allocator>&& other) noexcept;
+		DynamicArray();
+		DynamicArray(Memory::AllocationType allocationType, size_t capacity);
+		DynamicArray(Memory::AllocationType allocationType, const DynamicArray<T, Allocator>& other);
+		DynamicArray(const DynamicArray<T, Allocator>& other);
+		DynamicArray(DynamicArray<T, Allocator>&& other) noexcept;
 
-		~BLVector();
+		~DynamicArray();
 
 		size_t Size() const { return m_size; }
 		size_t Capacity() const { return m_capacity; }
@@ -61,8 +61,8 @@ namespace BaldLion
 			return index > (m_size - 1) ? Back() : m_elements[index];
 		}
 
-		BLVector<T,Allocator>& operator= (const BLVector<T, Allocator>& other);
-		BLVector<T,Allocator>& operator= (BLVector<T, Allocator>&& other) noexcept;
+		DynamicArray<T,Allocator>& operator= (const DynamicArray<T, Allocator>& other);
+		DynamicArray<T,Allocator>& operator= (DynamicArray<T, Allocator>&& other) noexcept;
 
 	private:
 
@@ -78,7 +78,7 @@ namespace BaldLion
 	};
 	
 	template <typename T, typename Allocator>
-	BaldLion::BLVector<T, Allocator>::BLVector()
+	BaldLion::DynamicArray<T, Allocator>::DynamicArray()
 	{
 		m_elements = nullptr;
 		m_allocator = nullptr;
@@ -87,14 +87,14 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	BaldLion::BLVector<T, Allocator>::BLVector(Memory::AllocationType allocationType, size_t capacity) 
+	BaldLion::DynamicArray<T, Allocator>::DynamicArray(Memory::AllocationType allocationType, size_t capacity) 
 		: m_allocator (Memory::MemoryManager::GetAllocator(allocationType)), m_size(0)
 	{
 		Reserve(capacity);
 	}
 
 	template <typename T, typename Allocator>
-	BaldLion::BLVector<T, Allocator>::BLVector(Memory::AllocationType allocationType, const BLVector<T, Allocator>& other)
+	BaldLion::DynamicArray<T, Allocator>::DynamicArray(Memory::AllocationType allocationType, const DynamicArray<T, Allocator>& other)
 		: m_allocator(Memory::MemoryManager::GetAllocator(allocationType)), m_size(other.Size())
 	{
 		Reserve(other.m_capacity);
@@ -103,7 +103,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	BaldLion::BLVector<T, Allocator>::BLVector(const BLVector<T, Allocator>& other)
+	BaldLion::DynamicArray<T, Allocator>::DynamicArray(const DynamicArray<T, Allocator>& other)
 		: m_allocator(other.m_allocator), m_size(other.Size())
 	{
 		Reserve(other.m_capacity);
@@ -112,7 +112,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	BaldLion::BLVector<T, Allocator>::BLVector(BLVector<T, Allocator>&& other) noexcept
+	BaldLion::DynamicArray<T, Allocator>::DynamicArray(DynamicArray<T, Allocator>&& other) noexcept
 		: m_allocator(other.m_allocator), m_size(other.Size()), m_capacity(other.m_capacity)
 	{
 		m_elements = other.m_elements;
@@ -120,7 +120,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	BLVector<T, Allocator>& BaldLion::BLVector<T, Allocator>::operator=(const BLVector<T, Allocator>& other)
+	DynamicArray<T, Allocator>& BaldLion::DynamicArray<T, Allocator>::operator=(const DynamicArray<T, Allocator>& other)
 	{
 		if (&other == this)
 			return *this;
@@ -138,7 +138,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	BLVector<T, Allocator>& BaldLion::BLVector<T, Allocator>::operator=(BLVector<T, Allocator>&& other) noexcept
+	DynamicArray<T, Allocator>& BaldLion::DynamicArray<T, Allocator>::operator=(DynamicArray<T, Allocator>&& other) noexcept
 	{
 		if (&other == this)
 			return *this;	
@@ -153,20 +153,20 @@ namespace BaldLion
 	}	
 
 	template <typename T, typename Allocator>
-	BaldLion::BLVector<T, Allocator>::~BLVector()
+	BaldLion::DynamicArray<T, Allocator>::~DynamicArray()
 	{
 		
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::BLVector<T, Allocator>::Reserve(size_t capacity)
+	void BaldLion::DynamicArray<T, Allocator>::Reserve(size_t capacity)
 	{
 		m_capacity = capacity;
 		m_elements = (T*)m_allocator->Allocate(capacity * sizeof(T), __alignof(T));
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::BLVector<T, Allocator>::Free()
+	void BaldLion::DynamicArray<T, Allocator>::Free()
 	{
 		if (m_elements == nullptr)
 			return;
@@ -182,7 +182,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::BLVector<T, Allocator>::FreeNoDestructor()
+	void BaldLion::DynamicArray<T, Allocator>::FreeNoDestructor()
 	{
 		if (m_elements == nullptr)
 			return;
@@ -194,7 +194,7 @@ namespace BaldLion
 
 	template <typename T, typename Allocator>
 	template <typename... Args >
-	void BaldLion::BLVector<T, Allocator>::EmplaceBack(Args&&... args)
+	void BaldLion::DynamicArray<T, Allocator>::EmplaceBack(Args&&... args)
 	{
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
@@ -207,7 +207,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::BLVector<T, Allocator>::PushBack(const T& element)
+	void BaldLion::DynamicArray<T, Allocator>::PushBack(const T& element)
 	{
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
@@ -218,7 +218,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::BLVector<T, Allocator>::PushBack(T&& element)
+	void BaldLion::DynamicArray<T, Allocator>::PushBack(T&& element)
 	{		
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
@@ -229,7 +229,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::BLVector<T, Allocator>::PopBack()
+	void BaldLion::DynamicArray<T, Allocator>::PopBack()
 	{		
 		if (m_size == 0)
 			return;
@@ -239,7 +239,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::BLVector<T, Allocator>::Remove(const T& element)
+	void BaldLion::DynamicArray<T, Allocator>::Remove(const T& element)
 	{
 		if (m_size == 0)
 			return;
@@ -251,7 +251,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::BLVector<T, Allocator>::RemoveFast(const T& element)
+	void BaldLion::DynamicArray<T, Allocator>::RemoveFast(const T& element)
 	{
 		if (m_size == 0)
 			return;
@@ -263,7 +263,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::BLVector<T, Allocator>::RemoveAt(size_t index)
+	void BaldLion::DynamicArray<T, Allocator>::RemoveAt(size_t index)
 	{
 		BL_ASSERT(index < m_size, "Index can't be bigger than or equal to m_size");			
 
@@ -297,7 +297,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::BLVector<T, Allocator>::RemoveAtFast(size_t index)
+	void BaldLion::DynamicArray<T, Allocator>::RemoveAtFast(size_t index)
 	{
 		BL_ASSERT(index < m_size, "Index can't be bigger than or equal to  m_size");
 
@@ -314,7 +314,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	int BaldLion::BLVector<T, Allocator>::FindIndex(const T& element)
+	int BaldLion::DynamicArray<T, Allocator>::FindIndex(const T& element)
 	{
 		for (int i = 0; i < m_size; ++i)
 		{
@@ -327,13 +327,13 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	bool BaldLion::BLVector<T, Allocator>::Exists(const T& element)
+	bool BaldLion::DynamicArray<T, Allocator>::Exists(const T& element)
 	{
 		return FindIndex(element) != -1;
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::BLVector<T, Allocator>::Reallocate(size_t newCapacity)
+	void BaldLion::DynamicArray<T, Allocator>::Reallocate(size_t newCapacity)
 	{
 		T* newLocation = (T*)m_allocator->Allocate(newCapacity * sizeof(T), __alignof(T));
 
@@ -352,7 +352,7 @@ namespace BaldLion
 	}
 	
 	template <typename T, typename Allocator >
-	void BaldLion::BLVector<T, Allocator>::Fill(int size)
+	void BaldLion::DynamicArray<T, Allocator>::Fill(int size)
 	{
 		m_size = size == -1 ? m_capacity : (size_t)size;
 

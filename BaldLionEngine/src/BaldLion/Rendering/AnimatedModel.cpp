@@ -20,7 +20,7 @@ namespace BaldLion
 
 			// Extracting folder path from filePath
 
-			m_subMeshes = BLVector<SkinnedMesh*>(AllocationType::FreeList_Renderer, 1);
+			m_subMeshes = DynamicArray<SkinnedMesh*>(AllocationType::FreeList_Renderer, 1);
 
 			m_modelPath = filePath;
 			auto lastSlash = filePath.find_last_of("/\\");
@@ -80,8 +80,8 @@ namespace BaldLion
 
 		
 		void AnimatedModel::FillVertexArrayData(const aiMesh *aimesh, 
-			BLVector<Vertex>& vertices,
-			BLVector<uint32_t>& indices,
+			DynamicArray<Vertex>& vertices,
+			DynamicArray<uint32_t>& indices,
 			std::unordered_map<std::string, uint32_t>& jointMapping,
 			std::unordered_map<std::string, glm::mat4>& jointOffsetMapping)
 		{
@@ -256,7 +256,7 @@ namespace BaldLion
 		}
 
 		void AnimatedModel::FillJointData(std::unordered_map<std::string, uint32_t>& jointMapping,
-			BLVector<Animation::Joint>& jointsData,
+			DynamicArray<Animation::Joint>& jointsData,
 			const std::unordered_map<std::string, glm::mat4>& jointOffsetMapping,
 			uint32_t& currentID,
 			const int32_t parentID,
@@ -283,7 +283,7 @@ namespace BaldLion
 
 		void AnimatedModel::FillVertexWeightData(const aiMesh* aimesh,
 			const std::unordered_map<std::string, uint32_t>& jointMapping,
-			BLVector<VertexBoneData>& vertices)
+			DynamicArray<VertexBoneData>& vertices)
 		{
 			uint32_t* jointsAssigned = new uint32_t[aimesh->mNumVertices]{ 0 };
 
@@ -322,10 +322,10 @@ namespace BaldLion
 
 		SkinnedMesh* AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{		
-			BLVector<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
-			BLVector<VertexBoneData> verticesBoneData(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
-			BLVector<uint32_t> indices (AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
-			BLVector<Animation::Joint> jointsData(AllocationType::FreeList_Renderer, aimesh->mNumBones);
+			DynamicArray<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
+			DynamicArray<VertexBoneData> verticesBoneData(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
+			DynamicArray<uint32_t> indices (AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
+			DynamicArray<Animation::Joint> jointsData(AllocationType::FreeList_Renderer, aimesh->mNumBones);
 
 			verticesBoneData.Fill();
 			jointsData.Fill();
