@@ -18,6 +18,7 @@ namespace BaldLion
 		BL_CORE_ASSERT(!s_instance, "Application already exists");
 
 		s_instance = this;
+
 		Memory::MemoryManager::Init(0);
 
 		m_window = Window::Create(WindowProps(applicationName));
@@ -29,12 +30,12 @@ namespace BaldLion
 
 		m_imGuiLayer = new ImGuiLayer();
 		PushOverlay(m_imGuiLayer);
-
 	}
 
 	Application::~Application()
 	{
-		Memory::MemoryManager::Clear();
+		Rendering::Renderer::Stop();
+		Memory::MemoryManager::Stop();
 	}
 
 	void Application::PushLayer(Layer * layer)
@@ -54,8 +55,7 @@ namespace BaldLion
 	}
 
 	void Application::Close()
-	{		
-		Rendering::Renderer::Stop();
+	{	
 		m_running = false;
 	}
 
@@ -103,7 +103,7 @@ namespace BaldLion
 
 			m_window->OnUpdate();
 
-			Memory::MemoryManager::Clear(Memory::AllocationType::Linear_Frame);
+			Memory::MemoryManager::Stop(Memory::AllocationType::Linear_Frame);
 		}
 		
 		for (Layer* layer : m_layerStack)

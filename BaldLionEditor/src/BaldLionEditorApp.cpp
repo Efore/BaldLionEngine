@@ -12,7 +12,7 @@ namespace BaldLion
 
 			~BaldLionEditorApp()
 			{
-
+				Animation::AnimationManager::Stop();
 			}
 
 			static Application& GetInstance(const std::string& applicationName)
@@ -21,12 +21,13 @@ namespace BaldLion
 					s_instance = new BaldLionEditorApp(applicationName);
 
 				return *s_instance;
-			}
+			}			
 
 		private:
 
 			BaldLionEditorApp(const std::string& applicationName) : Application(applicationName)
 			{
+				Animation::AnimationManager::Init();
 				PushLayer(new BaldLionEditorLayer());
 			}
 

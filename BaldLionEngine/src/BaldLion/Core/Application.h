@@ -25,7 +25,7 @@ namespace BaldLion
 
 		inline Window& GetWindow() const { return *m_window; }
 
-		void Close();
+		virtual void Close();
 
 		static Application& GetInstance(const std::string& applicationName = "");
 

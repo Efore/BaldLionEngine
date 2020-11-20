@@ -147,7 +147,7 @@ class Sandbox : public Application
 public:
 	~Sandbox()
 	{
-
+		Animation::AnimationManager::Stop();
 	}
 
 	static Application& GetInstance(const std::string& applicationName)
@@ -162,6 +162,7 @@ private:
 
 	Sandbox(const std::string& applicationName) : Application(applicationName)
 	{
+		Animation::AnimationManager::Init();
 		PushLayer(new RendererTestLayer(GetWindow().GetWidth(), GetWindow().GetHeight()));
 	}
 };

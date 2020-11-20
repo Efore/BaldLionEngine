@@ -20,8 +20,8 @@ namespace BaldLion
 
 		public:
 			static void Init(size_t memoryAllocationSize); 
-			static void Clear(AllocationType allocationType);
-			static void Clear();			
+			static void Stop(AllocationType allocationType);
+			static void Stop();			
 
 			template <class T, class... Args >
 			static T* New(char* allocationName, AllocationType allocationType, Args&&... args);

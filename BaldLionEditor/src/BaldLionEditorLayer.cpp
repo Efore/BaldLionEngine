@@ -21,8 +21,6 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			Animation::AnimationManager::Init();
-
 			m_models = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);
 			m_pointLights = DynamicArray<PointLight>(AllocationType::FreeList_Renderer, 3);
 
@@ -79,7 +77,6 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnDetach()
 		{
-			Animation::AnimationManager::Stop();
 			m_pointLights.Free();
 
 			for (size_t i = 0; i < m_models.Size(); ++i)

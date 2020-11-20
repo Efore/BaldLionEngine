@@ -41,7 +41,7 @@ namespace BaldLion
 			
 		}
 
-		void MemoryManager::Clear(AllocationType allocationType)
+		void MemoryManager::Stop(AllocationType allocationType)
 		{
 			switch (allocationType)
 			{
@@ -66,7 +66,7 @@ namespace BaldLion
 			}
 		}
 
-		void MemoryManager::Clear()
+		void MemoryManager::Stop()
 		{
 			if (s_frameLinearAllocator != nullptr)
 			{
