@@ -8,14 +8,19 @@
 namespace BaldLion
 {
 
-	Scope<Window> Window::Create(const WindowProps& props)
+	Window* Window::Create(const WindowProps& props)
 	{
 		#ifdef BL_PLATFORM_WINDOWS
-			return CreateScope<WindowsWindow>(props);
+			return MemoryManager::New<WindowsWindow>("Window",Memory::AllocationType::FreeList_Main, props);
 		#else
 			BL_CORE_ASSERT(false, "Unknown Platform!");
 			return nullptr;
 		#endif
+	}
+
+	void Window::Destroy(Window *window)
+	{
+		MemoryManager::Delete(window);
 	}
 
 }

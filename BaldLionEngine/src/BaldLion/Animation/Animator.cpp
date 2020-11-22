@@ -25,7 +25,7 @@ namespace BaldLion
 
 		Animator::~Animator()
 		{
-			m_animationDataContainer->Free();
+			m_animationDataContainer->Clear();
 		}
 
 		void Animator::CalculateInterpolatedTransforms(const AnimationData* animation, DynamicArray<JointTransform>& result)
@@ -46,7 +46,7 @@ namespace BaldLion
 
 			float interpolant = (m_animationTime - animation->frames[prevFrameIndex].timeStamp) / (animation->frames[nextFrameIndex].timeStamp - animation->frames[prevFrameIndex].timeStamp) ;
 
-			result = DynamicArray<JointTransform>(AllocationType::Linear_Frame, animation->frames[prevFrameIndex].jointTranforms);
+			result = DynamicArray<JointTransform>(AllocationType::Stack_Scope_Temp, animation->frames[prevFrameIndex].jointTranforms);
 
 			for (size_t i = 0; i < result.Size(); ++i)
 			{
@@ -70,7 +70,9 @@ namespace BaldLion
 				const glm::mat4& animationTransform = glm::translate(glm::mat4(1.0f), transforms[i].GetDecompressedPosition()) * glm::mat4_cast(transforms[i].GetDecompressedRotation()) * glm::scale(glm::mat4(1.0f),glm::vec3(1.0f));
 				
 				m_animatedMesh->GetJoints()[i].UpdateJointTransforms(m_rootInverseTransform, parentTransform, animationTransform);
-			}			
+			}		
+
+			transforms.Clear();
 		}
 
 		void Animator::SetCurrentAnimation(const std::string& animationName)

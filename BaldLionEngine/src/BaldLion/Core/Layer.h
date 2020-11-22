@@ -8,7 +8,7 @@ namespace BaldLion
 	class  Layer
 	{
 	public:
-		Layer(const std::string& name = "Layer");
+		Layer();
 		virtual ~Layer();
 
 		virtual void OnAttach() {}
@@ -16,11 +16,6 @@ namespace BaldLion
 		virtual void OnUpdate(TimeStep timeStep) {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& e) {}
-
-		inline const std::string& GetName() const { return m_debugName; }
-
-	protected:
-		std::string m_debugName;
 	};
 }
 

@@ -12,6 +12,7 @@ namespace BaldLion
 
 			~BaldLionEditorApp()
 			{
+				m_layerStack.PopOverlay(m_baldLionEditorLayer);
 				Animation::AnimationManager::Stop();
 			}
 
@@ -28,8 +29,11 @@ namespace BaldLion
 			BaldLionEditorApp(const std::string& applicationName) : Application(applicationName)
 			{
 				Animation::AnimationManager::Init();
-				PushLayer(new BaldLionEditorLayer());
+				m_baldLionEditorLayer = MemoryManager::New< BaldLionEditorLayer>("BaldLionEditorLayer", AllocationType::FreeList_Main);
+				PushLayer(m_baldLionEditorLayer);
 			}
+
+			BaldLionEditorLayer* m_baldLionEditorLayer = nullptr;
 
 		};		
 	}

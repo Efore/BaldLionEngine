@@ -13,8 +13,8 @@ namespace BaldLion
 			SetUpMesh(vertices, indices);
 
 			//Freeing vertices and indices after being used
-			vertices.Free();
-			indices.Free();
+			vertices.Clear();
+			indices.Clear();
 		}
 
 		Mesh::~Mesh()

@@ -17,7 +17,7 @@ namespace BaldLion
 {
 	static bool g_mouseJustPressed[5] = { false, false, false, false, false };
 
-	ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer")
+	ImGuiLayer::ImGuiLayer() 
 	{
 	}
 

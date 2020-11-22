@@ -14,9 +14,9 @@ namespace BaldLion
 			SetUpMesh(vertices, verticesBoneData, indices);
 
 			//Freeing vertices and indices after being used
-			vertices.Free();
-			verticesBoneData.Free();
-			indices.Free();
+			vertices.Clear();
+			verticesBoneData.Clear();
+			indices.Clear();
 		}
 
 		SkinnedMesh::~SkinnedMesh()

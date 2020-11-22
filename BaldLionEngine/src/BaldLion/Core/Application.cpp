@@ -26,14 +26,19 @@ namespace BaldLion
 
 		Rendering::Renderer::Init();
 
+		m_layerStack.Init();
+
 		m_lastFrameTime = 0.0f;
 
-		m_imGuiLayer = new ImGuiLayer();
+		m_imGuiLayer = MemoryManager::New<ImGuiLayer>("ImGuiLayer",Memory::AllocationType::FreeList_Main);
 		PushOverlay(m_imGuiLayer);
 	}
 
 	Application::~Application()
 	{
+		m_layerStack.PopOverlay(m_imGuiLayer);
+		m_layerStack.Clear();
+		Window::Destroy(m_window);
 		Rendering::Renderer::Stop();
 		Memory::MemoryManager::Stop();
 	}
@@ -42,16 +47,14 @@ namespace BaldLion
 	{
 		BL_PROFILE_FUNCTION();
 
-		m_layerStack.PushLayer(layer);
-		layer->OnAttach();
+		m_layerStack.PushLayer(layer);		
 	}
 
 	void Application::PushOverlay(Layer * overlay)
 	{
 		BL_PROFILE_FUNCTION();
 
-		m_layerStack.PushOverlay(overlay);
-		overlay->OnAttach();
+		m_layerStack.PushOverlay(overlay);		
 	}
 
 	void Application::Close()
@@ -86,16 +89,16 @@ namespace BaldLion
 				{
 					BL_PROFILE_SCOPE("LayerStack OnUpdates");
 
-					for (Layer* layer : m_layerStack)
-						layer->OnUpdate(timeStep);
+					for (int i = 0; i < m_layerStack.Size(); ++i)
+						m_layerStack[i]->OnUpdate(timeStep);
 				}
 
 				m_imGuiLayer->Begin();
 
 				{
 					BL_PROFILE_SCOPE("LayerStack OnImGuiRender");
-					for (Layer* layer : m_layerStack)
-						layer->OnImGuiRender();
+					for (int i = 0; i < m_layerStack.Size(); ++i)
+						m_layerStack[i]->OnImGuiRender();
 				}
 
 				m_imGuiLayer->End();
@@ -104,10 +107,7 @@ namespace BaldLion
 			m_window->OnUpdate();
 
 			Memory::MemoryManager::Stop(Memory::AllocationType::Linear_Frame);
-		}
-		
-		for (Layer* layer : m_layerStack)
-			layer->OnDetach();		
+		}		
 	}
 
 	void Application::OnEvent(Event & e)
@@ -116,9 +116,9 @@ namespace BaldLion
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowMinimizeEvent>(BIND_EVENT_FN(OnWindowMinimized));
 
-		for (auto it = m_layerStack.end(); it != m_layerStack.begin(); )
+		for (int i = 0; i < m_layerStack.Size(); ++i)
 		{
-			(*--it)->OnEvent(e);
+			m_layerStack[i]->OnEvent(e);
 			if (e.IsHandled())
 				break;
 		}

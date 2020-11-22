@@ -33,7 +33,7 @@ namespace BaldLion
 			{
 				MemoryManager::DeleteNoDestructor(m_subMeshes[i]);
 			}
-			m_subMeshes.Free();
+			m_subMeshes.Clear();
 		}
 
 		void AnimatedModel::SetUpModel()

@@ -36,7 +36,7 @@ namespace BaldLion
 		bool OnWindowMinimized(WindowMinimizeEvent& e);
 
 	protected:
-		Scope<Window> m_window;
+		Window* m_window;
 		ImGuiLayer* m_imGuiLayer;
 
 		bool m_running = true;

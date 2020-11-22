@@ -11,8 +11,7 @@ namespace BaldLion
 {
 	namespace Editor
 	{
-		BaldLionEditorLayer::BaldLionEditorLayer()
-			: Layer("BaldLion Editor Layer")
+		BaldLionEditorLayer::BaldLionEditorLayer()			
 		{
 			
 		}
@@ -77,13 +76,13 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnDetach()
 		{
-			m_pointLights.Free();
+			m_pointLights.Clear();
 
 			for (size_t i = 0; i < m_models.Size(); ++i)
 			{
 				MemoryManager::DeleteNoDestructor(m_models[i]);
 			}
-			m_models.Free();
+			m_models.Clear();
 
 			MemoryManager::Delete(m_frameBuffer);
 		}

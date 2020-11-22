@@ -18,7 +18,7 @@ namespace BaldLion
 			virtual void Clear();
 
 			void* GetStart() { return m_start; }
-			size_t GetSize() const { return m_size; }
+			size_t Size() const { return m_size; }
 			size_t GetUsedMemory() const { return m_used_memory; }
 			size_t GetNumAllocations() const { return m_num_allocations; }
 

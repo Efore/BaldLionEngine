@@ -18,15 +18,17 @@ namespace BaldLion
 		size_t Size() const { return m_size; }
 		size_t Capacity() const { return m_capacity; }
 
-		void Reserve(size_t capacity);	
-		void Free();
-		void FreeNoDestructor();
+		void Clear();
+		void ClearNoDestructor();
 
 		template <typename... Args >
 		void EmplaceBack(Args&&... args);
 
 		void PushBack(const T& element);
 		void PushBack(T&& element);
+
+		void PushAt(const T& element, size_t index);
+		void PushAt(T&& element, size_t index);
 
 		void PopBack();
 
@@ -53,11 +55,11 @@ namespace BaldLion
 		const T& Back() const { return m_elements[m_size - 1]; }
 
 		T& operator[](size_t index) { 
-			BL_ASSERT(m_size > 0 && index < m_size, "Size is 0");
+			BL_ASSERT(index < m_size, "Index is bigger than size");
 			return index > (m_size - 1) ? Back() : m_elements[index];
 		}
 		const T& operator[](size_t index) const {  
-			BL_ASSERT(m_size > 0 && index < m_size, "Size is 0");
+			BL_ASSERT(index < m_size, "Index is bigger than size");
 			return index > (m_size - 1) ? Back() : m_elements[index];
 		}
 
@@ -66,6 +68,7 @@ namespace BaldLion
 
 	private:
 
+		void Reserve(size_t capacity);	
 		void Reallocate(size_t newCapacity);
 
 	private:
@@ -107,7 +110,6 @@ namespace BaldLion
 		: m_allocator(other.m_allocator), m_size(other.Size())
 	{
 		Reserve(other.m_capacity);
-
 		std::copy(other.m_elements, other.m_elements + m_size, m_elements);
 	}
 
@@ -166,7 +168,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::DynamicArray<T, Allocator>::Free()
+	void BaldLion::DynamicArray<T, Allocator>::Clear()
 	{
 		if (m_elements == nullptr)
 			return;
@@ -182,7 +184,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::DynamicArray<T, Allocator>::FreeNoDestructor()
+	void BaldLion::DynamicArray<T, Allocator>::ClearNoDestructor()
 	{
 		if (m_elements == nullptr)
 			return;
@@ -229,6 +231,63 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
+	void BaldLion::DynamicArray<T, Allocator>::PushAt(const T& element, size_t index)
+	{
+		BL_ASSERT(m_capacity > 0, "Capacity is 0");
+
+		if (index >= m_size - 1)
+		{
+			PushBack(element);
+		}
+		else {
+
+			if (m_size == m_capacity)
+				Reallocate((size_t)(m_capacity * 1.5f));		
+
+			T* newLocation = (T*)m_allocator->Allocate((m_size == m_capacity ? (size_t)(m_capacity * 1.5f) : m_capacity) * sizeof(T), __alignof(T));
+			size_t newSize = m_size + 1;
+
+			std::copy(m_elements, m_elements + index, newLocation);
+			newLocation[index] = element;
+			std::copy(m_elements + index + 1, m_elements + m_size, newLocation + index);
+
+			Clear();
+
+			m_elements = newLocation;
+			m_size = newSize;
+		}
+	}
+
+	template <typename T, typename Allocator>
+	void BaldLion::DynamicArray<T, Allocator>::PushAt(T&& element, size_t index)
+	{
+		BL_ASSERT(m_capacity > 0, "Capacity is 0");
+		BL_ASSERT(index < m_size, "Index is bigger than size");
+
+		if (index >= m_size - 1)
+		{
+			PushBack(element);
+		}
+		else {
+
+			if (m_size == m_capacity)
+				Reallocate((size_t)(m_capacity * 1.5f));
+
+			T* newLocation = (T*)m_allocator->Allocate((m_size == m_capacity ? (size_t)(m_capacity * 1.5f) : m_capacity) * sizeof(T), __alignof(T));
+			size_t newSize = m_size + 1;
+
+			std::copy(m_elements, m_elements + index, newLocation);
+			newLocation[index] = std::move(element);
+			std::copy(m_elements + index + 1, m_elements + m_size, newLocation + index);
+
+			Clear();
+
+			m_elements = newLocation;
+			m_size = newSize;
+		}
+	}
+
+	template <typename T, typename Allocator>
 	void BaldLion::DynamicArray<T, Allocator>::PopBack()
 	{		
 		if (m_size == 0)
@@ -245,9 +304,12 @@ namespace BaldLion
 			return;
 
 		size_t i = 0;
-		for (; i <= m_size || m_elements[i] != element; ++i);
+		for (; i <= m_size && m_elements[i] != element; ++i);
 
-		RemoveAt(i);
+		if (i < m_size)
+			RemoveAt(i);
+		else
+			BL_LOG_CORE_ERROR("Element not found");
 	}
 
 	template <typename T, typename Allocator>
@@ -257,9 +319,12 @@ namespace BaldLion
 			return;
 
 		size_t i = 0;
-		for (; i <= m_size || m_elements[i] != element; ++i);
+		for (; i <= m_size && m_elements[i] != element; ++i);
 
-		RemoveAtFast(i);
+		if (i < m_size)
+			RemoveAtFast(i);
+		else
+			BL_LOG_CORE_ERROR("Element not found");
 	}
 
 	template <typename T, typename Allocator>
@@ -274,25 +339,15 @@ namespace BaldLion
 		else
 		{
 			T* newLocation = (T*)m_allocator->Allocate(m_capacity * sizeof(T), __alignof(T));
-			
-			for (size_t i = 0; i < index; ++i)
-			{
-				newLocation[i] = std::move(m_elements[i]);
-			}
-			for (size_t i = index + 1; i < m_size; ++i)
-			{
-				newLocation[i - 1] = std::move(m_elements[i]);
-			}
+			size_t newSize = m_size - 1;
 
-			for (size_t i = 0; i < m_size; ++i)
-			{
-				m_elements[m_size].~T();
-			}
+			std::copy(m_elements, m_elements + index, newLocation);
+			std::copy(m_elements + index + 1, m_elements + m_size, newLocation + index);
 
-			m_allocator->Deallocate(m_elements);
+			Clear();
 
 			m_elements = newLocation;
-			--m_size;
+			m_size = newSize;
 		}
 	}
 
@@ -344,7 +399,7 @@ namespace BaldLion
 			newLocation[i] = std::move(m_elements[i]);
 		}
 
-		Free();
+		Clear();
 
 		m_elements = newLocation;
 		m_capacity = newCapacity;
