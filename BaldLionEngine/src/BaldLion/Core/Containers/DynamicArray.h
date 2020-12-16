@@ -38,7 +38,9 @@ namespace BaldLion
 		void RemoveAt(size_t index);
 		void RemoveAtFast(size_t index);
 
-		void Fill(int size = -1);
+		void Fill();		
+		void Fill(const T& value);
+		void Fill(T&& value);
 
 		int FindIndex(const T& element);
 		bool Exists(const T& element);
@@ -54,11 +56,11 @@ namespace BaldLion
 		T& Back() { return m_elements[m_size - 1]; }
 		const T& Back() const { return m_elements[m_size - 1]; }
 
-		T& operator[](size_t index) { 
+		T& operator[](size_t index) {
 			BL_ASSERT(index < m_size, "Index is bigger than size");
 			return index > (m_size - 1) ? Back() : m_elements[index];
 		}
-		const T& operator[](size_t index) const {  
+		const T& operator[](size_t index) const {
 			BL_ASSERT(index < m_size, "Index is bigger than size");
 			return index > (m_size - 1) ? Back() : m_elements[index];
 		}
@@ -82,15 +84,11 @@ namespace BaldLion
 	
 	template <typename T, typename Allocator>
 	BaldLion::DynamicArray<T, Allocator>::DynamicArray()
-	{
-		m_elements = nullptr;
-		m_allocator = nullptr;
-		m_capacity = 0;
-		m_size = 0;
-	}
+	{	
+	} 
 
 	template <typename T, typename Allocator>
-	BaldLion::DynamicArray<T, Allocator>::DynamicArray(Memory::AllocationType allocationType, size_t capacity) 
+	BaldLion::DynamicArray<T, Allocator>::DynamicArray(Memory::AllocationType allocationType, size_t capacity)
 		: m_allocator (Memory::MemoryManager::GetAllocator(allocationType)), m_size(0)
 	{
 		Reserve(capacity);
@@ -407,13 +405,35 @@ namespace BaldLion
 	}
 	
 	template <typename T, typename Allocator >
-	void BaldLion::DynamicArray<T, Allocator>::Fill(int size)
+	void BaldLion::DynamicArray<T, Allocator>::Fill()
 	{
-		m_size = size == -1 ? m_capacity : (size_t)size;
+		m_size = m_capacity;
 
 		for (size_t i = 0; i < m_size; ++i)
 		{
 			m_elements[i] = T();
+		}
+	}
+
+	template <typename T, typename Allocator >
+	void BaldLion::DynamicArray<T, Allocator>::Fill(const T& value)
+	{
+		m_size = m_capacity;
+
+		for (size_t i = 0; i < m_size; ++i)
+		{
+			m_elements[i] = value;
+		}
+	}
+
+	template <typename T, typename Allocator >
+	void BaldLion::DynamicArray<T, Allocator>::Fill(T&& value)
+	{
+		m_size = m_capacity;
+
+		for (size_t i = 0; i < m_size; ++i)
+		{
+			m_elements[i] = value;
 		}
 	}
 }

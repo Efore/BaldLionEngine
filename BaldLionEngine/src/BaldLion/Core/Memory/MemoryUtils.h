@@ -19,7 +19,7 @@ namespace BaldLion
 			T* p = ((T*)allocator.Allocate(sizeof(T)*(length + headerSize), __alignof(T))) + headerSize;
 			*(((size_t*)p) - 1) = length;
 
-			for (size_t i = 0; i < length; i++)
+			for (uint32_t i = 0; i < length; i++)
 				new (&p) T;
 
 			return p;
@@ -47,7 +47,7 @@ namespace BaldLion
 			ASSERT(array != nullptr);
 			size_t length = *(((size_t*)array) - 1);
 
-			for (size_t i = 0; i < length; i++) 
+			for (uint32_t i = 0; i < length; i++) 
 				array.~T();
 
 			//Calculate how much extra memory was allocated to store the length before the array 

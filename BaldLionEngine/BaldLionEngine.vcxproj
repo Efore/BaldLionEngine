@@ -150,7 +150,7 @@
     <ClInclude Include="src\BaldLion\Animation\Joint.h" />
     <ClInclude Include="src\BaldLion\Core\Application.h" />
     <ClInclude Include="src\BaldLion\Core\Core.h" />
-    <ClInclude Include="src\BaldLion\Core\Containers\HashMap.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\HashTable.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\DynamicArray.h" />
     <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
     <ClInclude Include="src\BaldLion\Core\Input.h" />

@@ -18,7 +18,7 @@ namespace BaldLion
 			glGenTextures(1, &m_rendererID);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, m_rendererID);
 
-			for (size_t i = 0; i < 6; ++i)
+			for (uint32_t i = 0; i < 6; ++i)
 			{
 				int width, height, channels;
 				stbi_uc* data = nullptr;

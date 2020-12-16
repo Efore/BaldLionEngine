@@ -20,6 +20,26 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
+			HashTable<const char*, int> testHashMap(AllocationType::FreeList_Main, 10);
+
+			testHashMap.Insert("Test", 1);
+			testHashMap.Insert("Test2", 2);
+			testHashMap.Insert("Test3", 3);
+
+			int a = testHashMap["Test2"];
+
+			testHashMap["Test2"] = 3;
+
+			int b = testHashMap["Test2"];
+
+			testHashMap["Test4"] = 5;
+
+			int c = testHashMap["Test4"];
+
+			testHashMap["Test5"] = 6;
+
+			testHashMap.Insert("Test6", 1);
+
 			m_models = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);
 			m_pointLights = DynamicArray<PointLight>(AllocationType::FreeList_Renderer, 3);
 
@@ -33,7 +53,7 @@ namespace BaldLion
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
 
-			for (size_t i = 0; i < 1; ++i)
+			for (uint32_t i = 0; i < 1; ++i)
 			{
 				auto model = MemoryManager::New<Rendering::AnimatedModel>("Animated Model", AllocationType::FreeList_Renderer, "assets/creature/creature.fbx", initialTransform);
 				model->SetUpModel();
@@ -78,7 +98,7 @@ namespace BaldLion
 		{
 			m_pointLights.Clear();
 
-			for (size_t i = 0; i < m_models.Size(); ++i)
+			for (uint32_t i = 0; i < m_models.Size(); ++i)
 			{
 				MemoryManager::DeleteNoDestructor(m_models[i]);
 			}
@@ -111,7 +131,7 @@ namespace BaldLion
 
 			{
 				BL_PROFILE_SCOPE("Renderer::Draw");
-				for (size_t i = 0; i < m_models.Size(); ++i)
+				for (uint32_t i = 0; i < m_models.Size(); ++i)
 				{
 					m_models[i]->Draw();
 				}
@@ -148,7 +168,7 @@ namespace BaldLion
 			ImGui::ColorEdit3("Light Diffuse Color", glm::value_ptr(m_directionalLight.diffuseColor));
 			ImGui::ColorEdit3("Light Specular Color", glm::value_ptr(m_directionalLight.specularColor));
 
-			for (size_t i = 0; i < m_pointLights.Size(); ++i)
+			for (uint32_t i = 0; i < m_pointLights.Size(); ++i)
 			{
 				ImGui::Text(("Point Light " + std::to_string(i)).c_str());
 				ImGui::SliderFloat3(("Light Position " + std::to_string(i)).c_str(), glm::value_ptr(m_pointLights[i].position), -300.0f, 300.0f);

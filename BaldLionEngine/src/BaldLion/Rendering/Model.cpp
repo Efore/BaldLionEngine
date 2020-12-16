@@ -23,7 +23,7 @@ namespace BaldLion
 
 		Model::~Model()
 		{
-			for (size_t i = 0; i < m_subMeshes.Size(); ++i)
+			for (uint32_t i = 0; i < m_subMeshes.Size(); ++i)
 			{
 				MemoryManager::DeleteNoDestructor(m_subMeshes[i]);
 			}
@@ -50,7 +50,7 @@ namespace BaldLion
 		void Model::Draw() const
 		{
 			BL_PROFILE_FUNCTION();
-			for (size_t i = 0; i < m_subMeshes.Size(); ++i)
+			for (uint32_t i = 0; i < m_subMeshes.Size(); ++i)
 			{
 				m_subMeshes[i]->Draw();
 			}
@@ -59,13 +59,13 @@ namespace BaldLion
 		void Model::ProcessNode(const aiNode *node, const aiScene *scene)
 		{
 			// process all the node's meshes (if any)
-			for (size_t i = 0; i < node->mNumMeshes; i++)
+			for (uint32_t i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 				m_subMeshes.PushBack(ProcessMesh(mesh, scene));
 			}
 			// then do the same for each of its children
-			for (size_t i = 0; i < node->mNumChildren; i++)
+			for (uint32_t i = 0; i < node->mNumChildren; i++)
 			{
 				ProcessNode(node->mChildren[i], scene);
 			}
@@ -121,7 +121,7 @@ namespace BaldLion
 				vertices.PushBack(Vertex{ position, color, normal, texCoord, tangent, bitangent });
 			}
 
-			for (size_t i = 0; i < aimesh->mNumFaces; i++)
+			for (uint32_t i = 0; i < aimesh->mNumFaces; i++)
 			{
 				aiFace face = aimesh->mFaces[i];
 				for (size_t j = 0; j < face.mNumIndices; j++)

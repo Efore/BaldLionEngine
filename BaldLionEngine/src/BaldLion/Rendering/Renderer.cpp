@@ -77,7 +77,7 @@ namespace BaldLion
 			size_t numPointLights = LightManager::GetScenePointLights().Size();
 			shader->SetUniform("u_numPointLights", ShaderDataType::Int, &(numPointLights));
 
-			for (size_t i = 0; i < numPointLights; ++i)
+			for (uint32_t i = 0; i < numPointLights; ++i)
 			{
 				shader->SetUniform("u_pointLights[" + std::to_string(i) + "].position", ShaderDataType::Float3, &(LightManager::GetScenePointLights()[i].position));
 				shader->SetUniform("u_pointLights[" + std::to_string(i) + "].constant", ShaderDataType::Float, &(LightManager::GetScenePointLights()[i].constant));

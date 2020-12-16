@@ -10,7 +10,7 @@ namespace BaldLion
 		Animator::Animator(SkinnedMesh* animatedMesh, DynamicArray<AnimationData>& animations, const glm::mat4& rootTransform)
 			: m_animatedMesh(animatedMesh)
 		{
-			for (size_t i = 0; i < animations.Size(); ++i)
+			for (uint32_t i = 0; i < animations.Size(); ++i)
 			{
 				if (m_animations.find(animations[i].animationName) == m_animations.end())
 				{
@@ -48,7 +48,7 @@ namespace BaldLion
 
 			result = DynamicArray<JointTransform>(AllocationType::Stack_Scope_Temp, animation->frames[prevFrameIndex].jointTranforms);
 
-			for (size_t i = 0; i < result.Size(); ++i)
+			for (uint32_t i = 0; i < result.Size(); ++i)
 			{
 				result[i].SetPosition(glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].GetDecompressedPosition(), animation->frames[nextFrameIndex].jointTranforms[i].GetDecompressedPosition(), interpolant));
 				result[i].SetRotation(glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].GetDecompressedRotation(), animation->frames[nextFrameIndex].jointTranforms[i].GetDecompressedRotation(), interpolant));				

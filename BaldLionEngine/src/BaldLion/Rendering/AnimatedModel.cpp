@@ -29,7 +29,7 @@ namespace BaldLion
 
 		AnimatedModel::~AnimatedModel()
 		{
-			for (size_t i = 0; i < m_subMeshes.Size(); ++i)
+			for (uint32_t i = 0; i < m_subMeshes.Size(); ++i)
 			{
 				MemoryManager::DeleteNoDestructor(m_subMeshes[i]);
 			}
@@ -57,7 +57,7 @@ namespace BaldLion
 		void AnimatedModel::Draw() const
 		{
 			BL_PROFILE_FUNCTION();
-			for (size_t i = 0; i < m_subMeshes.Size(); ++i)
+			for (uint32_t i = 0; i < m_subMeshes.Size(); ++i)
 			{
 				m_subMeshes[i]->Draw(m_worldTransform);
 			}
@@ -66,13 +66,13 @@ namespace BaldLion
 		void AnimatedModel::ProcessNode(const aiNode *node, const aiScene *scene)
 		{
 			// process all the node's meshes (if any)
-			for (size_t i = 0; i < node->mNumMeshes; i++)
+			for (uint32_t i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 				m_subMeshes.PushBack(ProcessMesh(mesh, scene));
 			}
 			// then do the same for each of its children
-			for (size_t i = 0; i < node->mNumChildren; i++)
+			for (uint32_t i = 0; i < node->mNumChildren; i++)
 			{
 				ProcessNode(node->mChildren[i], scene);
 			}
@@ -85,7 +85,7 @@ namespace BaldLion
 			std::unordered_map<std::string, uint32_t>& jointMapping,
 			std::unordered_map<std::string, glm::mat4>& jointOffsetMapping)
 		{
-			for (size_t i = 0; i < aimesh->mNumVertices; i++)
+			for (uint32_t i = 0; i < aimesh->mNumVertices; i++)
 			{
 				// process vertex positions, normals and texture coordinates
 				glm::vec3 position = glm::vec3(0.0f);
@@ -275,7 +275,7 @@ namespace BaldLion
 				++currentID;
 			}
 						
-			for (size_t i = 0; i < node->mNumChildren; ++i)
+			for (uint32_t i = 0; i < node->mNumChildren; ++i)
 			{
 				FillJointData(jointMapping, jointsData, jointOffsetMapping, currentID, it != jointMapping.end() ? it->second : parentID, node->mChildren[i]);
 			}			

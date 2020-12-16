@@ -21,7 +21,7 @@ namespace BaldLion
 		void AnimationManager::Stop()
 		{	
 			s_initialized = false;
-			for (size_t i = 0; i < s_registeredAnimators.Size(); ++i)
+			for (uint32_t i = 0; i < s_registeredAnimators.Size(); ++i)
 			{
 				MemoryManager::DeleteNoDestructor(s_registeredAnimators[i]);
 			}
@@ -30,7 +30,7 @@ namespace BaldLion
 
 		void AnimationManager::OnUpdate(float timeStep)
 		{
-			for (size_t i = 0; i < s_registeredAnimators.Size(); ++i)
+			for (uint32_t i = 0; i < s_registeredAnimators.Size(); ++i)
 			{
 				s_registeredAnimators[i]->OnUpdate(timeStep);
 			}
@@ -41,7 +41,7 @@ namespace BaldLion
 			if (scene->HasAnimations())
 			{
 				DynamicArray<AnimationData> animations(AllocationType::FreeList_Renderer, scene->mNumAnimations);
-				for (size_t i = 0; i < scene->mNumAnimations; ++i)
+				for (uint32_t i = 0; i < scene->mNumAnimations; ++i)
 				{
 					AnimationData animationData;
 

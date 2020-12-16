@@ -75,7 +75,7 @@ namespace BaldLion
 			{
 				uint32_t offset = 0;
 				m_stride = 0;
-				for (size_t i = 0; i < m_elements.Size(); ++i)
+				for (uint32_t i = 0; i < m_elements.Size(); ++i)
 				{
 					m_elements[i].Offset = offset;
 					offset += m_elements[i].Size;

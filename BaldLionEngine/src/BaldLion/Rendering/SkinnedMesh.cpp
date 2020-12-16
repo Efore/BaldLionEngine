@@ -66,7 +66,7 @@ namespace BaldLion
 
 			m_material->GetShader()->Bind();
 
-			for (size_t i = 0; i < m_joints.Size(); ++i)
+			for (uint32_t i = 0; i < m_joints.Size(); ++i)
 			{
 				m_material->GetShader()->SetUniform("u_joints[" + std::to_string(i) + "]", ShaderDataType::Mat4, &(m_joints[i].jointAnimationTransform));
 			}

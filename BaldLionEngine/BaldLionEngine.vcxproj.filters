@@ -1325,7 +1325,7 @@
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Containers\DynamicArray.h" />
-    <ClInclude Include="src\BaldLion\Core\Containers\HashMap.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\HashTable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
