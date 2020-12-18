@@ -11,7 +11,7 @@ namespace BaldLion
 
 		bool used = false;
 		size_t hashedKey;
-		V value;
+		V value; 
 	};
 
 	template <typename K, typename V, typename Allocator = Memory::Allocator>
@@ -107,11 +107,11 @@ namespace BaldLion
 		DynamicArray<HashNode<V>> newTable = DynamicArray<HashNode<V>>(m_allocationType, capacity);
 		newTable.Fill();
 
-		for (int i = 0; i < m_table.Size(); ++i)
+		for (size_t i = 0; i < m_table.Size(); ++i)
 		{
 			if (m_table[i].used)
 			{
-				int newIndex = m_table[i].hashedKey % capacity;
+				size_t newIndex = m_table[i].hashedKey % capacity;
 
 				while (newTable[newIndex].used)
 				{
@@ -124,7 +124,7 @@ namespace BaldLion
 
 		m_table.Clear();
 		m_table = DynamicArray<HashNode<V>>(newTable);
-		newTable.Clear();
+		newTable.Clear(); 
 	}	
 
 	template <typename K, typename V, typename Allocator /*= Memory::Allocator*/>
@@ -199,9 +199,8 @@ namespace BaldLion
 
 		const size_t hashedKey = = std::hash<K>()(key);
 		const size_t tableIndex = hashedKey % m_capacity;
-
 		
-		int index = tableIndex;
+		size_t index = tableIndex;
 
 		while (index < m_capacity )
 		{
