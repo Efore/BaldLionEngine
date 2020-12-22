@@ -13,6 +13,12 @@
     <Filter Include="src\BaldLion\Core">
       <UniqueIdentifier>{9995A79E-05AC-A534-4E23-3156BA7876BC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\BaldLion\Core\Containers">
+      <UniqueIdentifier>{7E066D0B-6AC1-5CB7-1379-D501FF12A747}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\Core\Memory">
+      <UniqueIdentifier>{E1E6F51D-CD0B-459E-F656-2A2EE2DA43BC}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\BaldLion\Events">
       <UniqueIdentifier>{657105EC-D1D2-E2F9-5A40-29ACC6A019B9}</UniqueIdentifier>
     </Filter>
@@ -33,6 +39,9 @@
     </Filter>
     <Filter Include="src\BaldLion\Rendering\Platform\OpenGL">
       <UniqueIdentifier>{360656DC-2258-2DCC-0B77-6ADCF76746B5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\Utils">
+      <UniqueIdentifier>{C19AE274-AD7E-A3CA-16DF-9D1D02E28D4C}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
@@ -84,6 +93,12 @@
     <ClInclude Include="src\BaldLion\Core\Application.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Containers\DynamicArray.h">
+      <Filter>src\BaldLion\Core\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Containers\HashTable.h">
+      <Filter>src\BaldLion\Core\Containers</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Core.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
@@ -104,6 +119,24 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Log.h">
       <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Memory\Allocator.h">
+      <Filter>src\BaldLion\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Memory\FreeListAllocator.h">
+      <Filter>src\BaldLion\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Memory\LinearAllocator.h">
+      <Filter>src\BaldLion\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Memory\MemoryManager.h">
+      <Filter>src\BaldLion\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Memory\MemoryUtils.h">
+      <Filter>src\BaldLion\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Memory\StackAllocator.h">
+      <Filter>src\BaldLion\Core\Memory</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h">
       <Filter>src\BaldLion\Core</Filter>
@@ -207,6 +240,9 @@
     <ClInclude Include="src\BaldLion\Rendering\Shader.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\SkyboxPlatformInterface.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
@@ -218,6 +254,9 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\VertexArray.h">
       <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Utils\Quantization.h">
+      <Filter>src\BaldLion\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
@@ -1314,18 +1353,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\Memory\Allocator.h" />
-    <ClInclude Include="src\BaldLion\Core\Memory\MemoryUtils.h" />
-    <ClInclude Include="src\BaldLion\Core\Memory\StackAllocator.h" />
-    <ClInclude Include="src\BaldLion\Core\Memory\LinearAllocator.h" />
-    <ClInclude Include="src\BaldLion\Core\Memory\FreeListAllocator.h" />
-    <ClInclude Include="src\BaldLion\Core\Memory\MemoryManager.h" />
-    <ClInclude Include="src\BaldLion\Utils\Quantization.h" />
-    <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\Containers\DynamicArray.h" />
-    <ClInclude Include="src\BaldLion\Core\Containers\HashTable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1345,6 +1372,21 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Log.cpp">
       <Filter>src\BaldLion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Memory\Allocator.cpp">
+      <Filter>src\BaldLion\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Memory\FreeListAllocator.cpp">
+      <Filter>src\BaldLion\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Memory\LinearAllocator.cpp">
+      <Filter>src\BaldLion\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Memory\MemoryManager.cpp">
+      <Filter>src\BaldLion\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp">
+      <Filter>src\BaldLion\Core\Memory</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Window.cpp">
       <Filter>src\BaldLion\Core</Filter>
@@ -1418,6 +1460,9 @@
     <ClCompile Include="src\BaldLion\Rendering\Shader.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\SkinnedMesh.cpp">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\SkyboxPlatformInterface.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
@@ -1438,14 +1483,6 @@
     </ClCompile>
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\Memory\Allocator.cpp" />
-    <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp" />
-    <ClCompile Include="src\BaldLion\Core\Memory\LinearAllocator.cpp" />
-    <ClCompile Include="src\BaldLion\Core\Memory\FreeListAllocator.cpp" />
-    <ClCompile Include="src\BaldLion\Core\Memory\MemoryManager.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\SkinnedMesh.cpp">
-      <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

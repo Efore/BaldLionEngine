@@ -58,34 +58,27 @@ namespace BaldLion
 
 			return subpath + textureIndex + extension;
 		}
-
-		void TextureLibrary::Clear()
-		{
-			if (m_textures.size() > 0)
-			{
-				for (auto textureIterator = m_textures.begin(); textureIterator != m_textures.end(); ++textureIterator)
-				{
-					MemoryManager::DeleteNoDestructor(textureIterator->second);
-				}
-				m_textures.clear();
-			}
-		}
-
+		
 		TextureLibrary::~TextureLibrary()
 		{			
+		}
+
+		void TextureLibrary::Init()
+		{
+			m_textures = HashTable<const char*, Texture*>(BaldLion::Memory::AllocationType::FreeList_Renderer, 10);
 		}
 
 		void TextureLibrary::Add(Texture* texture)
 		{
 			auto name = texture->GetName();
 			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
-			m_textures[name] = texture;
+			m_textures.Insert(name, std::move(texture));
 		}
 
 		void TextureLibrary::Add(const char* name, Texture* texture)
 		{
 			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
-			m_textures[name] = texture;
+			m_textures.Insert(name, std::move(texture));
 		}
 
 		Texture* TextureLibrary::Load(const std::string& filepath, int textureType)
@@ -99,7 +92,7 @@ namespace BaldLion
 		Texture* TextureLibrary::Load(const char* name, const std::string& filepath, int textureType)
 		{	
 			if (Exists(name))
-				return m_textures[name];
+				return m_textures.Get(name);
 
 			Texture* texture = nullptr;
 
@@ -128,7 +121,7 @@ namespace BaldLion
 			TextureLibrary::GetNameFromPath(filepath, name);
 
 			if (Exists(name))
-				return m_textures[name];
+				return m_textures.Get(name);
 
 			Texture* texture = nullptr;
 
@@ -151,15 +144,19 @@ namespace BaldLion
 			return texture;
 		}
 
+		void TextureLibrary::Clear()
+		{
+			m_textures.Clear();
+		}
 
 		bool TextureLibrary::Exists(const char* name) const
 		{
-			return m_textures.find(name) != m_textures.end();
+			return m_textures.Contains(name);
 		}
 
 		void TextureLibrary::GetNameFromPath(const std::string &path, char *name)
 		{
-			// Extracting name from lastpath
+			// Extracting name from last path
 			auto lastSlash = path.find_last_of("/\\");
 			lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
 			auto lastDot = path.rfind('.');

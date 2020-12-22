@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "BaldLion/Core/Containers/HashTable.h"
 
 namespace BaldLion 
 {
@@ -39,35 +40,34 @@ namespace BaldLion
 
 			virtual void Bind() const = 0;
 			virtual void Unbind() const = 0;
-			virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex) = 0;
+			virtual void SetUniform(const char* uniformName, ShaderDataType dataType, const void* uniformIndex) = 0;
 
-			virtual const std::string& GetName() const = 0;
+			virtual const char* GetName() const = 0;
 
 			static Shader* Create(const std::string& filepath);
-			static Shader* Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
-
-		
 		};
 
 		class ShaderLibrary
 		{
 		public:
 
-			void Clear();
 			virtual ~ShaderLibrary();
 
+			void Init();
+
 			void Add(Shader* shader);
-			void Add(const std::string& name, Shader* shader);
+			void Add(const char*, Shader* shader);
 
 			Shader* Load(const std::string& filepath);
-			Shader* Load(const std::string& name, const std::string& filepath);
+			Shader* Load(const char* name, const std::string& filepath);
 			
-			bool Exists(const std::string& name) const;
+			void Clear();
+			bool Exists(const char*) const;
 
-			static std::string GetNameFromPath(const std::string& path);
+			static void GetNameFromPath(const std::string& path, char *name);
 
 		private:
-			std::unordered_map<std::string, Shader*> m_shaders;
+			HashTable<const char*, Shader*> m_shaders;
 		};
 	}
 }

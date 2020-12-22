@@ -20,26 +20,6 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			HashTable<const char*, int> testHashMap(AllocationType::FreeList_Main, 10);
-
-			testHashMap.Insert("Test", 1);
-			testHashMap.Insert("Test2", 2);
-			testHashMap.Insert("Test3", 3);
-
-			int a = testHashMap["Test2"];
-
-			testHashMap["Test2"] = 3;
-
-			int b = testHashMap["Test2"];
-
-			testHashMap["Test4"] = 5;
-
-			int c = testHashMap["Test4"];
-
-			testHashMap["Test5"] = 6;
-
-			testHashMap.Insert("Test6", 1);
-
 			m_models = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);
 			m_pointLights = DynamicArray<PointLight>(AllocationType::FreeList_Renderer, 3);
 

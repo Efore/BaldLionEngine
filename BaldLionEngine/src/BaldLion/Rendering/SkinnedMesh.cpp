@@ -7,7 +7,6 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-
 		SkinnedMesh::SkinnedMesh(DynamicArray<Vertex>& vertices, DynamicArray<VertexBoneData>& verticesBoneData, DynamicArray<uint32_t>& indices, const DynamicArray<Animation::Joint>& joints, Material* material)
 			: m_material(material), m_joints(std::move(joints))
 		{
@@ -68,7 +67,7 @@ namespace BaldLion
 
 			for (uint32_t i = 0; i < m_joints.Size(); ++i)
 			{
-				m_material->GetShader()->SetUniform("u_joints[" + std::to_string(i) + "]", ShaderDataType::Mat4, &(m_joints[i].jointAnimationTransform));
+				m_material->GetShader()->SetUniform(("u_joints[" + std::to_string(i) + "]").c_str(), ShaderDataType::Mat4, &(m_joints[i].jointAnimationTransform));
 			}
 
 			Renderer::Submit(m_vertexArray, m_material->GetShader(), worldTransform);		

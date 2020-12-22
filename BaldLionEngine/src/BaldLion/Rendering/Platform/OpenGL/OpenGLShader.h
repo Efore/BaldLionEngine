@@ -15,18 +15,17 @@ namespace BaldLion
 		{
 		public:
 			OpenGLShader(const std::string& filepath);
-			OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 			~OpenGLShader();
 
 			virtual void Bind() const override;
 			virtual void Unbind() const override;
-			virtual const std::string& GetName() const override { return m_name; }
+			virtual const char* GetName() const override { return m_name; }
 
-			virtual void SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex) override;
+			virtual void SetUniform(const char* uniformName, ShaderDataType dataType, const void* uniformIndex) override;
 
 		private:
 
-			virtual int GetUniformLocation(const std::string& name) const;
+			virtual int GetUniformLocation(const char* name) const;
 			std::string ReadFile(const std::string& filepath);
 			std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
 			void Compile(const std::unordered_map<GLenum, std::string>& shaderSources);
@@ -34,8 +33,8 @@ namespace BaldLion
 		private:
 
 			uint32_t m_rendererID;
-			mutable std::unordered_map<std::string, int> m_uniformLocationCache;
-			std::string m_name;
+			mutable HashTable<const char*, int> m_uniformLocationCache;
+			char m_name[100];
 		};
 	}
 }

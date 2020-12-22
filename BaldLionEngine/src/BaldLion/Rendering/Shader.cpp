@@ -22,20 +22,57 @@ namespace BaldLion
 			return nullptr;
 		}
 
-		Shader* Shader::Create(const std::string& name, const std::string & vertexSrc, const std::string & fragmentSrc)
+		ShaderLibrary::~ShaderLibrary()
 		{
-			switch (RendererPlatformInterface::GetAPI())
-			{
-			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererPlatformInterface::RendererPlatform::OpenGL:	return MemoryManager::New<OpenGLShader>("shader", AllocationType::FreeList_Renderer, name, vertexSrc, fragmentSrc);
-			}
-
-			BL_CORE_ASSERT(false, "Unknown renderereAPI!");
-
-			return nullptr;
 		}
 
-		std::string ShaderLibrary::GetNameFromPath(const std::string& path)
+		void ShaderLibrary::Init()
+		{
+			m_shaders = HashTable<const char*, Shader*>(BaldLion::Memory::AllocationType::FreeList_Renderer, 10);
+		}
+
+		void ShaderLibrary::Add(Shader* shader)
+		{
+			auto name = shader->GetName();
+			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
+			m_shaders.Insert(name , std::move(shader));
+		}
+
+		void ShaderLibrary::Add(const char* name, Shader* shader)
+		{
+			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
+			m_shaders.Insert(name, std::move(shader));
+		}
+
+		Shader* ShaderLibrary::Load(const std::string& filepath)
+		{
+			char name[100];
+			ShaderLibrary::GetNameFromPath(filepath, name);
+
+			return Load(name, filepath);
+		}
+
+		BaldLion::Rendering::Shader* ShaderLibrary::Load(const char* name, const std::string& filepath)
+		{
+			if (Exists(name))
+				return m_shaders.Get(name);
+
+			auto shader = Shader::Create(filepath);
+			Add(shader);
+			return shader;
+		}
+
+		bool ShaderLibrary::Exists(const char* name) const
+		{
+			return m_shaders.Contains(name);
+		}
+
+		void ShaderLibrary::Clear()
+		{
+			m_shaders.Clear();
+		}
+
+		void ShaderLibrary::GetNameFromPath(const std::string &path, char *name)
 		{
 			// Extracting name from lastpath
 			auto lastSlash = path.find_last_of("/\\");
@@ -43,63 +80,7 @@ namespace BaldLion
 			auto lastDot = path.rfind('.');
 			auto count = lastDot == std::string::npos ? path.size() - lastSlash : lastDot - lastSlash;
 
-			return path.substr(lastSlash, count);
-		}
-
-		void ShaderLibrary::Clear()
-		{
-			if (m_shaders.size() > 0)
-			{
-				for (auto shaderIterator = m_shaders.begin(); shaderIterator != m_shaders.end(); ++shaderIterator)
-				{
-					MemoryManager::Delete(shaderIterator->second);
-				}
-				m_shaders.clear();
-			}
-		}
-
-		ShaderLibrary::~ShaderLibrary()
-		{
-		}
-
-		void ShaderLibrary::Add(Shader* shader)
-		{
-			auto& name = shader->GetName();
-			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
-			m_shaders[name] = shader;
-		}
-
-		void ShaderLibrary::Add(const std::string& name, Shader* shader)
-		{
-			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
-			m_shaders[name] = shader;
-		}
-
-		Shader* ShaderLibrary::Load(const std::string& filepath)
-		{
-			const std::string name = ShaderLibrary::GetNameFromPath(filepath);
-
-			if (Exists(name))
-				return m_shaders[name];
-
-			auto shader = Shader::Create(filepath);
-			Add(shader);
-			return shader;
-		}
-
-		Shader* ShaderLibrary::Load(const std::string& name, const std::string& filepath)
-		{
-			if (Exists(name))
-				return m_shaders[name];
-
-			auto shader = Shader::Create(filepath);
-			Add(shader);
-			return shader;
-		}
-
-		bool ShaderLibrary::Exists(const std::string& name) const
-		{
-			return m_shaders.find(name) != m_shaders.end();
+			strcpy(name, path.substr(lastSlash, count).c_str());
 		}
 	}
 

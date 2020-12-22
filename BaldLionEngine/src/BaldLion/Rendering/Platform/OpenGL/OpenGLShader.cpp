@@ -28,18 +28,8 @@ namespace BaldLion
 			auto shaderSources = PreProcess(source);
 			Compile(shaderSources);
 
-			m_name = ShaderLibrary::GetNameFromPath(filepath);
-		}
-
-		OpenGLShader::OpenGLShader(const std::string& name, const std::string & vertexSrc, const std::string & fragmentSrc)
-			: m_name(name)
-		{
-			BL_PROFILE_FUNCTION();
-
-			std::unordered_map<GLenum, std::string> shaderSources;
-			shaderSources[GL_VERTEX_SHADER] = vertexSrc;
-			shaderSources[GL_FRAGMENT_SHADER] = fragmentSrc;
-			Compile(shaderSources);
+			ShaderLibrary::GetNameFromPath(filepath, m_name);
+			m_uniformLocationCache = HashTable<const char*, int>(BaldLion::Memory::AllocationType::FreeList_Renderer, 120);
 		}
 
 		OpenGLShader::~OpenGLShader()
@@ -47,6 +37,7 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 
 			glDeleteProgram(m_rendererID);
+			m_uniformLocationCache.Clear();
 		}
 
 		std::string OpenGLShader::ReadFile(const std::string& filepath)
@@ -196,7 +187,7 @@ namespace BaldLion
 			glUseProgram(0);
 		}
 
-		void OpenGLShader::SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex)
+		void OpenGLShader::SetUniform(const char* uniformName, ShaderDataType dataType, const void* uniformIndex)
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -249,14 +240,14 @@ namespace BaldLion
 			}
 		}
 
-		int OpenGLShader::GetUniformLocation(const std::string& name) const
+		int OpenGLShader::GetUniformLocation(const char* name) const
 		{
 			BL_PROFILE_FUNCTION();
 
-			if (m_uniformLocationCache.find(name) != m_uniformLocationCache.end())
-				return m_uniformLocationCache[name];
+			if (m_uniformLocationCache.Contains(name))
+				return m_uniformLocationCache.Get(name);
 
-			int location = glGetUniformLocation(m_rendererID, name.c_str());
+			int location = glGetUniformLocation(m_rendererID, name);
 
 			if (location == -1)
 			{
@@ -264,7 +255,7 @@ namespace BaldLion
 				return location;
 			}
 
-			m_uniformLocationCache[name] = location;
+			m_uniformLocationCache.Insert(name,std::move(location));
 
 			return location;
 		}

@@ -126,7 +126,7 @@ namespace BaldLion
 			m_shader->SetUniform(MATKEY_SHININESS, ShaderDataType::Float, &m_shininess);
 		}
 
-		void OpenGLMaterial::SetUniform(const std::string& uniformName, ShaderDataType dataType, const void* uniformIndex)
+		void OpenGLMaterial::SetUniform(const char* uniformName, ShaderDataType dataType, const void* uniformIndex)
 		{
 			BL_PROFILE_FUNCTION();
 

@@ -149,9 +149,9 @@
     <ClInclude Include="src\BaldLion\Animation\Animator.h" />
     <ClInclude Include="src\BaldLion\Animation\Joint.h" />
     <ClInclude Include="src\BaldLion\Core\Application.h" />
-    <ClInclude Include="src\BaldLion\Core\Core.h" />
-    <ClInclude Include="src\BaldLion\Core\Containers\HashTable.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\DynamicArray.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\HashTable.h" />
+    <ClInclude Include="src\BaldLion\Core\Core.h" />
     <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
     <ClInclude Include="src\BaldLion\Core\Input.h" />
     <ClInclude Include="src\BaldLion\Core\KeyCodes.h" />
@@ -173,7 +173,6 @@
     <ClInclude Include="src\BaldLion\Events\MouseEvent.h" />
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\BaldLion\Profiling\Instrumentor.h" />
-    <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h" />
     <ClInclude Include="src\BaldLion\Rendering\AnimatedModel.h" />
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Camera.h" />
@@ -199,6 +198,7 @@
     <ClInclude Include="src\BaldLion\Rendering\Renderer.h" />
     <ClInclude Include="src\BaldLion\Rendering\RendererPlatformInterface.h" />
     <ClInclude Include="src\BaldLion\Rendering\Shader.h" />
+    <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h" />
     <ClInclude Include="src\BaldLion\Rendering\SkyboxPlatformInterface.h" />
     <ClInclude Include="src\BaldLion\Rendering\Texture.h" />
     <ClInclude Include="src\BaldLion\Rendering\Vertex.h" />
@@ -584,7 +584,6 @@
     <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\SkinnedMesh.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\AnimatedModel.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Camera.cpp" />
@@ -607,6 +606,7 @@
     <ClCompile Include="src\BaldLion\Rendering\Renderer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\RendererPlatformInterface.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Shader.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\SkinnedMesh.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\SkyboxPlatformInterface.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Texture.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\VertexArray.cpp" />

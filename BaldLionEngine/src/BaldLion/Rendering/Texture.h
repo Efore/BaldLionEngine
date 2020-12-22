@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include "BaldLion/Core/Core.h"
+#include "BaldLion/Core/Containers/HashTable.h"
 
 namespace BaldLion 
 {
@@ -51,8 +51,9 @@ namespace BaldLion
 		{
 		public:
 
-			void Clear();
 			virtual ~TextureLibrary();
+
+			void Init();
 
 			void Add(Texture* texture);
 			void Add(const char*, Texture* texture);
@@ -61,12 +62,13 @@ namespace BaldLion
 			Texture* Load(const std::string& filepath,const unsigned char* textureData, int size, int textureType);
 			Texture* Load(const char* name, const std::string& filepath, int textureType);
 
+			void Clear();
 			bool Exists(const char* name) const;
 
 			static void GetNameFromPath(const std::string &path, char* name);
 
 		private:
-			std::unordered_map<const char*, Texture*> m_textures;
+			HashTable<const char*, Texture*> m_textures;
 		};
 	}
 }
