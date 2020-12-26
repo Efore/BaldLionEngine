@@ -15,9 +15,9 @@ namespace BaldLion
 
 			// Extracting folder path from filePath
 
-			m_modelPath = filePath;
+			m_modelPath = STRING_TO_ID(filePath);
 			auto lastSlash = filePath.find_last_of("/\\");		
-			m_modelFolderPath = filePath.substr(0, lastSlash + 1);
+			m_modelFolderPath = STRING_TO_ID(filePath.substr(0, lastSlash + 1));
 			m_subMeshes = DynamicArray<Mesh*>(AllocationType::FreeList_Renderer, 5);
 		}
 
@@ -36,7 +36,7 @@ namespace BaldLion
 
 			Assimp::Importer import;			
 
-			const aiScene *scene = import.ReadFile(m_modelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+			const aiScene *scene = import.ReadFile(ID_TO_STRING(m_modelPath), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 			if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 			{
@@ -154,7 +154,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
 			{				
 				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &relativeTexPath);
-				completeTexPath = m_modelFolderPath;
+				completeTexPath = ID_TO_STRING(m_modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -171,7 +171,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &relativeTexPath);
-				completeTexPath = m_modelFolderPath;
+				completeTexPath = ID_TO_STRING(m_modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -188,7 +188,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &relativeTexPath);
-				completeTexPath = m_modelFolderPath;
+				completeTexPath = ID_TO_STRING(m_modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -205,7 +205,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_EMISSIVE) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &relativeTexPath);
-				completeTexPath = m_modelFolderPath;
+				completeTexPath = ID_TO_STRING(m_modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -222,7 +222,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
 			{				 
 				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &relativeTexPath);
-				completeTexPath = m_modelFolderPath;
+				completeTexPath = ID_TO_STRING(m_modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -257,7 +257,7 @@ namespace BaldLion
 
 			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
 
-			return MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer, vertices, indices,
+			return MemoryManager::New<Mesh>(STRING_TO_ID("Mesh"), AllocationType::FreeList_Renderer, vertices, indices,
 				Material::Create("assets/shaders/nanosuit.glsl", 
 					glm::vec3(ambientColor.r,ambientColor.g,ambientColor.b),
 					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),

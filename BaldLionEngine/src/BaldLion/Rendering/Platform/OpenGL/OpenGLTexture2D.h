@@ -18,12 +18,12 @@ namespace BaldLion
 
 			virtual void Bind(uint32_t slot = 0) const override;
 
-			virtual const char* GetName() const override { return m_name; }
+			virtual StringId GetName() const override { return m_name; }
 
 			virtual int GetTextureType() const override { return BL_TEXTURE_TYPE_2D; }
 
 		private:
-			char m_name[100];
+			StringId m_name;
 
 			uint32_t m_width, m_height;
 			uint32_t m_rendererID;

@@ -36,8 +36,7 @@ namespace BaldLion
 		m_data.Width = props.Width;
 		m_data.Height = props.Height;		
 
-		BL_LOG_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
-
+		BL_LOG_CORE_INFO("Creating window {0} ({1}, {2})", ID_TO_STRING(props.Title), props.Width, props.Height);
 
 		if (!s_GLFWInitialized)
 		{
@@ -48,7 +47,7 @@ namespace BaldLion
 		}
 		
 		glfwWindowHint(GLFW_SAMPLES, 4);
-		m_window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
+		m_window = glfwCreateWindow((int)props.Width, (int)props.Height, ID_TO_STRING(props.Title), nullptr, nullptr);
 		m_context = new Rendering::OpenGLContext(m_window);
 
 		m_context->Init();			   		 

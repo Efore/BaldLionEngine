@@ -16,6 +16,7 @@
 #include "BaldLion/Core/Core.h"
 #include "BaldLion/Profiling/Instrumentor.h"
 #include "BaldLion/Core/Memory/MemoryManager.h"
+#include "BaldLion/Core/StringId.h"
 
 #ifdef BL_PLATFORM_WINDOWS
 	#include <Windows.h>

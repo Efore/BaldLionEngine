@@ -24,7 +24,7 @@ namespace BaldLion
 			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
 			case RendererPlatformInterface::RendererPlatform::OpenGL:		
 				
-				return MemoryManager::New<OpenGLMaterial>("Material",AllocationType::FreeList_Renderer,
+				return MemoryManager::New<OpenGLMaterial>(STRING_TO_ID("Material"),AllocationType::FreeList_Renderer,
 					shaderPath,
 					ambientColor, 
 					diffuseColor, 

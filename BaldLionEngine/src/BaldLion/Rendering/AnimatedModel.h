@@ -26,9 +26,9 @@ namespace BaldLion
 
 			SkinnedMesh* ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
 
-			void FillJointData(std::unordered_map<std::string, uint32_t>& jointMapping,
+			void FillJointData(HashTable<StringId, uint32_t>& jointMapping,
 				DynamicArray<Animation::Joint>& jointData,
-				const std::unordered_map<std::string, glm::mat4>& jointOffsetMapping,
+				const HashTable<StringId, glm::mat4>& jointOffsetMapping,
 				uint32_t& currentID, 
 				const int32_t parentID, 
 				const aiNode* node);
@@ -36,8 +36,8 @@ namespace BaldLion
 			void FillVertexArrayData(const aiMesh *aimesh, 
 				DynamicArray<Vertex>& vertices,
 				DynamicArray<uint32_t>& indices,
-				std::unordered_map<std::string, uint32_t>& jointMap, 
-				std::unordered_map<std::string, glm::mat4>& jointOffsetMapping);
+				HashTable<StringId, uint32_t>& jointMap,
+				HashTable<StringId, glm::mat4>& jointOffsetMapping);
 
 			void FillTextureData(const aiMesh *aimesh,
 				const aiScene *aiscene,
@@ -52,12 +52,12 @@ namespace BaldLion
 				Texture*& normalTex);
 
 			void FillVertexWeightData(const aiMesh* aimesh, 
-				const std::unordered_map<std::string, uint32_t>& jointMapping,
+				const HashTable<StringId, uint32_t>& jointMapping,
 				DynamicArray<VertexBoneData>& verticesBoneData);
 
 		protected:
-			std::string m_modelPath;
-			std::string m_modelFolderPath;
+			StringId m_modelPath;
+			StringId m_modelFolderPath;
 			DynamicArray<SkinnedMesh*> m_subMeshes;
 			glm::mat4 m_worldTransform;
 		};

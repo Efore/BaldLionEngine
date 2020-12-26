@@ -10,14 +10,15 @@ namespace BaldLion
 		struct BufferElement
 		{
 			ShaderDataType Type;
+			StringId Name;
 			uint32_t Size;
 			uint32_t Offset;
 			bool Normalized;
 
 			BufferElement() { }
 
-			BufferElement(ShaderDataType type, const std::string& name, bool normalized = false)
-				: Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
+			BufferElement(ShaderDataType type, const char* name, bool normalized = false)
+				: Type(type), Name(STRING_TO_ID(name)), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
 			{
 			}
 

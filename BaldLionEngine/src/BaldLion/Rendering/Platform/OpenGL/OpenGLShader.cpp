@@ -8,12 +8,12 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		static GLenum ShaderTypeFromString(const std::string& type)
+		static GLenum ShaderTypeFromStringId(StringId type)
 		{
-			if (type == "vertex")
+			if (type == STRING_TO_ID("vertex"))
 				return GL_VERTEX_SHADER;
 
-			if (type == "fragment" || type == "pixel")
+			if (type == STRING_TO_ID("fragment") || type == STRING_TO_ID("pixel"))
 				return GL_FRAGMENT_SHADER;
 
 			BL_CORE_ASSERT(false, "Unknown shader type!");
@@ -29,7 +29,7 @@ namespace BaldLion
 			Compile(shaderSources);
 
 			ShaderLibrary::GetNameFromPath(filepath, m_name);
-			m_uniformLocationCache = HashTable<const char*, int>(BaldLion::Memory::AllocationType::FreeList_Renderer, 120);
+			m_uniformLocationCache = HashTable<StringId, int>(BaldLion::Memory::AllocationType::FreeList_Renderer, 120);
 		}
 
 		OpenGLShader::~OpenGLShader()
@@ -79,11 +79,11 @@ namespace BaldLion
 				BL_CORE_ASSERT(eol != std::string::npos, "Syntax error");
 				size_t begin = pos + typeTokeLength + 1;
 				std::string type = source.substr(begin, eol - begin);
-				BL_CORE_ASSERT(ShaderTypeFromString(type), "Invalid shader type");
+				BL_CORE_ASSERT(ShaderTypeFromStringId(STRING_TO_ID(type)), "Invalid shader type");
 
 				size_t nextLinePos = source.find_first_of("\r\n", eol);
 				pos = source.find(typeToken, nextLinePos);
-				shaderSources[ShaderTypeFromString(type)] = source.substr(nextLinePos,
+				shaderSources[ShaderTypeFromStringId(STRING_TO_ID(type))] = source.substr(nextLinePos,
 					pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
 			}
 
@@ -187,7 +187,7 @@ namespace BaldLion
 			glUseProgram(0);
 		}
 
-		void OpenGLShader::SetUniform(const char* uniformName, ShaderDataType dataType, const void* uniformIndex)
+		void OpenGLShader::SetUniform(StringId uniformName, ShaderDataType dataType, const void* uniformIndex)
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -240,18 +240,18 @@ namespace BaldLion
 			}
 		}
 
-		int OpenGLShader::GetUniformLocation(const char* name) const
+		int OpenGLShader::GetUniformLocation(StringId name) const
 		{
 			BL_PROFILE_FUNCTION();
 
 			if (m_uniformLocationCache.Contains(name))
 				return m_uniformLocationCache.Get(name);
 
-			int location = glGetUniformLocation(m_rendererID, name);
+			int location = glGetUniformLocation(m_rendererID, ID_TO_STRING(name));
 
 			if (location == -1)
 			{
-				BL_LOG_CORE_WARN("Uniform '{0}' not found!", name);
+				BL_LOG_CORE_WARN("Uniform '{0}' not found!", ID_TO_STRING(name));
 				return location;
 			}
 

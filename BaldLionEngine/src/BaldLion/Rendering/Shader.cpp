@@ -14,7 +14,7 @@ namespace BaldLion
 			switch (RendererPlatformInterface::GetAPI())
 			{
 			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererPlatformInterface::RendererPlatform::OpenGL:	return MemoryManager::New<OpenGLShader>("shader",AllocationType::FreeList_Renderer, filepath);
+			case RendererPlatformInterface::RendererPlatform::OpenGL:	return MemoryManager::New<OpenGLShader>(STRING_TO_ID(filepath),AllocationType::FreeList_Renderer, filepath);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown renderereAPI!");
@@ -28,7 +28,7 @@ namespace BaldLion
 
 		void ShaderLibrary::Init()
 		{
-			m_shaders = HashTable<const char*, Shader*>(BaldLion::Memory::AllocationType::FreeList_Renderer, 10);
+			m_shaders = HashTable<StringId, Shader*>(BaldLion::Memory::AllocationType::FreeList_Renderer, 10);
 		}
 
 		void ShaderLibrary::Add(Shader* shader)
@@ -38,7 +38,7 @@ namespace BaldLion
 			m_shaders.Insert(name , std::move(shader));
 		}
 
-		void ShaderLibrary::Add(const char* name, Shader* shader)
+		void ShaderLibrary::Add(StringId name, Shader* shader)
 		{
 			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
 			m_shaders.Insert(name, std::move(shader));
@@ -46,13 +46,13 @@ namespace BaldLion
 
 		Shader* ShaderLibrary::Load(const std::string& filepath)
 		{
-			char name[100];
+			StringId name;
 			ShaderLibrary::GetNameFromPath(filepath, name);
 
 			return Load(name, filepath);
 		}
 
-		BaldLion::Rendering::Shader* ShaderLibrary::Load(const char* name, const std::string& filepath)
+		BaldLion::Rendering::Shader* ShaderLibrary::Load(StringId name, const std::string& filepath)
 		{
 			if (Exists(name))
 				return m_shaders.Get(name);
@@ -62,7 +62,7 @@ namespace BaldLion
 			return shader;
 		}
 
-		bool ShaderLibrary::Exists(const char* name) const
+		bool ShaderLibrary::Exists(StringId name) const
 		{
 			return m_shaders.Contains(name);
 		}
@@ -72,7 +72,7 @@ namespace BaldLion
 			m_shaders.Clear();
 		}
 
-		void ShaderLibrary::GetNameFromPath(const std::string &path, char *name)
+		void ShaderLibrary::GetNameFromPath(const std::string &path, StringId& name)
 		{
 			// Extracting name from lastpath
 			auto lastSlash = path.find_last_of("/\\");
@@ -80,7 +80,7 @@ namespace BaldLion
 			auto lastDot = path.rfind('.');
 			auto count = lastDot == std::string::npos ? path.size() - lastSlash : lastDot - lastSlash;
 
-			strcpy(name, path.substr(lastSlash, count).c_str());
+			name = STRING_TO_ID(path.substr(lastSlash, count));
 		}
 	}
 

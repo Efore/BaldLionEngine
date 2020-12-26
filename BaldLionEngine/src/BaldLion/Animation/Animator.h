@@ -19,7 +19,7 @@ namespace BaldLion
 			~Animator();
 
 			void OnUpdate(BaldLion::TimeStep timeStep);
-			inline void SetCurrentAnimation(const std::string& animationName);
+			inline void SetCurrentAnimation(StringId animationName);
 
 			void CalculateInterpolatedTransforms(const AnimationData* animation, DynamicArray<JointTransform>& result);
 
@@ -29,7 +29,7 @@ namespace BaldLion
 
 			DynamicArray<AnimationData>* m_animationDataContainer;
 			AnimationData* m_currentAnimation;			
-			std::unordered_map<std::string,AnimationData*> m_animations;
+			HashTable<StringId,AnimationData*> m_animations;
 			glm::mat4 m_rootInverseTransform;
 			float m_animationTime;
 		};

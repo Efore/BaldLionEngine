@@ -30,7 +30,7 @@ namespace BaldLion
 
 		m_lastFrameTime = 0.0f;
 
-		m_imGuiLayer = MemoryManager::New<ImGuiLayer>("ImGuiLayer",Memory::AllocationType::FreeList_Main);
+		m_imGuiLayer = MemoryManager::New<ImGuiLayer>(STRING_TO_ID("ImGuiLayer"),Memory::AllocationType::FreeList_Main);
 		PushOverlay(m_imGuiLayer);
 	}
 

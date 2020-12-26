@@ -40,9 +40,9 @@ namespace BaldLion
 
 			virtual void Bind() const = 0;
 			virtual void Unbind() const = 0;
-			virtual void SetUniform(const char* uniformName, ShaderDataType dataType, const void* uniformIndex) = 0;
+			virtual void SetUniform(StringId uniformName, ShaderDataType dataType, const void* uniformIndex) = 0;
 
-			virtual const char* GetName() const = 0;
+			virtual StringId GetName() const = 0;
 
 			static Shader* Create(const std::string& filepath);
 		};
@@ -56,18 +56,18 @@ namespace BaldLion
 			void Init();
 
 			void Add(Shader* shader);
-			void Add(const char*, Shader* shader);
+			void Add(StringId name, Shader* shader);
 
 			Shader* Load(const std::string& filepath);
-			Shader* Load(const char* name, const std::string& filepath);
+			Shader* Load(StringId name, const std::string& filepath);
 			
 			void Clear();
-			bool Exists(const char*) const;
+			bool Exists(StringId name) const;
 
-			static void GetNameFromPath(const std::string& path, char *name);
+			static void GetNameFromPath(const std::string& path, StringId& name);
 
 		private:
-			HashTable<const char*, Shader*> m_shaders;
+			HashTable<StringId, Shader*> m_shaders;
 		};
 	}
 }

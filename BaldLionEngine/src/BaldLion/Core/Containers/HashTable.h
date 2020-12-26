@@ -3,35 +3,6 @@
 #include "BaldLion/Core/Memory/MemoryManager.h"
 #include "DynamicArray.h"
 
-namespace std
-{
-	template <>
-	struct hash<char *>
-	{
-		size_t operator()(char *s) const
-		{
-			size_t h = 5381;
-			int c;
-			while ((c = *s++))
-				h = ((h << 5) + h) + c;
-			return h;
-		}
-	};
-
-	template <>
-	struct hash<const char *>
-	{
-		size_t operator()(const char *s) const
-		{
-			size_t h = 5381;
-			int c;
-			while ((c = *s++))
-				h = ((h << 5) + h) + c;
-			return h;
-		}
-	};
-}
-
 namespace BaldLion
 {
 	template <typename V>
@@ -46,7 +17,7 @@ namespace BaldLion
 		}
 	};
 
-	template <typename K, typename V, typename Allocator = Memory::Allocator>
+	template <typename K, typename V>
 	class HashTable
 	{
 		public:
@@ -67,6 +38,7 @@ namespace BaldLion
 			void ClearNoDestructor();
 
 			const size_t Size() const { return m_size; }
+			size_t IndexOf(const K& key) const;
 
 		private:						
 			void Reallocate(size_t capacity);
@@ -80,21 +52,21 @@ namespace BaldLion
 			AllocationType m_allocationType;	
 	};
 
-	template <typename K, typename V, typename Allocator /*= Memory::Allocator*/>
-	BaldLion::HashTable<K, V, Allocator>::HashTable()
+	template <typename K, typename V>
+	BaldLion::HashTable<K, V>::HashTable()
 	{
 
 	}
 
-	template <typename K, typename V, typename Allocator /*= Memory::Allocator*/>
-	BaldLion::HashTable<K, V, Allocator>::HashTable(Memory::AllocationType allocationType, size_t capacity) : m_size(0), m_capacity(capacity), m_allocationType(allocationType)
+	template <typename K, typename V>
+	BaldLion::HashTable<K, V>::HashTable(Memory::AllocationType allocationType, size_t capacity) : m_size(0), m_capacity(capacity), m_allocationType(allocationType)
 	{
 		m_table = DynamicArray<HashNode<V>>(m_allocationType, capacity);
 		m_table.Fill();
 	}
 
-	template <typename K, typename V, typename Allocator /*= Memory::Allocator*/>
-	void BaldLion::HashTable<K, V, Allocator>::Reallocate(size_t capacity)
+	template <typename K, typename V>
+	void BaldLion::HashTable<K, V>::Reallocate(size_t capacity)
 	{
 		DynamicArray<HashNode<V>> newTable = DynamicArray<HashNode<V>>(m_allocationType, capacity);
 		newTable.Fill();
@@ -121,15 +93,15 @@ namespace BaldLion
 		newTable.Clear(); 
 	}	
 
-	template <typename K, typename V, typename Allocator /*= Memory::Allocator*/>
-	bool BaldLion::HashTable<K, V, Allocator>::Contains(const K& key) const
+	template <typename K, typename V>
+	bool BaldLion::HashTable<K, V>::Contains(const K& key) const
 	{
 		const size_t hashedKey = std::hash<K>()(key);
 		return CheckContains(hashedKey);
 	}
 
-	template <typename K, typename V, typename Allocator /*= Memory::Allocator*/>	
-	bool BaldLion::HashTable<K, V, Allocator>::CheckContains(size_t hashedKey) const
+	template <typename K, typename V>	
+	bool BaldLion::HashTable<K, V>::CheckContains(size_t hashedKey) const
 	{
 		const size_t tableIndex = hashedKey % m_capacity;
 
@@ -163,8 +135,8 @@ namespace BaldLion
 		return false;
 	}
 
-	template <typename K, typename V, typename Allocator /*= Memory::Allocator*/>
-	V& BaldLion::HashTable<K, V, Allocator>::Get(const K& key)
+	template <typename K, typename V>
+	V& BaldLion::HashTable<K, V>::Get(const K& key)
 	{
 		BL_ASSERT(Contains(key), "Key not contained");
 		const size_t hashedKey = std::hash<K>()(key);
@@ -179,8 +151,8 @@ namespace BaldLion
 		return m_table[tableIndex].value;
 	}
 
-	template <typename K, typename V, typename Allocator /*= Memory::Allocator*/>
-	const V& BaldLion::HashTable<K, V, Allocator>::Get(const K& key) const
+	template <typename K, typename V>
+	const V& BaldLion::HashTable<K, V>::Get(const K& key) const
 	{
 		BL_ASSERT(Contains(key), "Key not contained");
 		const size_t hashedKey = std::hash<K>()(key);
@@ -195,11 +167,11 @@ namespace BaldLion
 		return m_table[tableIndex].value;
 	}
 
-	template <typename K, typename V, typename Allocator /*= Memory::Allocator*/>
-	void BaldLion::HashTable<K, V, Allocator>::Insert(const K& key, V&& value)
+	template <typename K, typename V>
+	void BaldLion::HashTable<K, V>::Insert(const K& key, V&& value)
 	{
 		const float ratio = (float)(++m_size) / (float)(m_capacity);
-		if (ratio >= 0.5f)
+		if (ratio > 0.5f)
 		{
 			Reallocate((size_t)(m_capacity * 1.5f));
 		}
@@ -216,10 +188,10 @@ namespace BaldLion
 		m_table[tableIndex].hashedKey = hashedKey;
 		m_table[tableIndex].value = std::move(value);
 
-	}
+	}	
 
-	template <typename K, typename V, typename Allocator /*= Memory::Allocator*/>
-	bool BaldLion::HashTable<K, V, Allocator>::Remove(const K& key)
+	template <typename K, typename V>
+	bool BaldLion::HashTable<K, V>::Remove(const K& key)
 	{
 		if (!Contains(key))
 			return false;
@@ -261,16 +233,33 @@ namespace BaldLion
 		return false;
 	}
 
-	template <typename K, typename V, typename Allocator /*= Memory::Allocator*/>
-	void BaldLion::HashTable<K, V, Allocator>::ClearNoDestructor()
+	template <typename K, typename V>
+	void BaldLion::HashTable<K, V>::ClearNoDestructor()
 	{
 		m_table.ClearNoDestructor();
 	}
 
-	template <typename K, typename V, typename Allocator /*= Memory::Allocator*/>
-	void BaldLion::HashTable<K, V, Allocator>::Clear()
+	template <typename K, typename V>
+	void BaldLion::HashTable<K, V>::Clear()
 	{
 		m_table.Clear(); 
+	}
+
+	template <typename K, typename V>
+	size_t BaldLion::HashTable<K, V>::IndexOf(const K& key) const
+	{
+		BL_ASSERT(Contains(key), "Key not contained");
+		const size_t hashedKey = std::hash<K>()(key);
+
+		size_t currentIndex = 0;
+		for (size_t i = 0; i < m_table.Size(); ++i)
+		{
+			if (m_table[i].hashedKey == hashedKey)
+				return currentIndex;
+
+			if (m_table[i].used)
+				++currentIndex;
+		}
 	}
 
 }

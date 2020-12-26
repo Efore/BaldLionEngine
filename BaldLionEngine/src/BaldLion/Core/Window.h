@@ -9,14 +9,14 @@ namespace BaldLion
 {
 	struct WindowProps
 	{
-		std::string Title;
+		StringId Title;
 		uint32_t Width;
 		uint32_t Height;
 
 		WindowProps(const std::string& title = "",
 			uint32_t width = 1366,
 			uint32_t height = 768)
-			: Title(title), Width(width), Height(height)
+			: Title(STRING_TO_ID(title)), Width(width), Height(height)
 		{
 
 		}

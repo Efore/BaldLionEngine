@@ -33,7 +33,7 @@ namespace BaldLion
 
 		struct WindowData
 		{
-			std::string Title;
+			StringId Title;
 			uint32_t Width, Height;
 			bool VSync;
 

@@ -11,7 +11,7 @@ namespace BaldLion
 	Window* Window::Create(const WindowProps& props)
 	{
 		#ifdef BL_PLATFORM_WINDOWS
-			return MemoryManager::New<WindowsWindow>("Window",Memory::AllocationType::FreeList_Main, props);
+			return MemoryManager::New<WindowsWindow>(STRING_TO_ID("Window"),Memory::AllocationType::FreeList_Main, props);
 		#else
 			BL_CORE_ASSERT(false, "Unknown Platform!");
 			return nullptr;

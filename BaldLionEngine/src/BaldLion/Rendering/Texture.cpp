@@ -14,7 +14,7 @@ namespace BaldLion
 			switch (RendererPlatformInterface::GetAPI())
 			{
 			case RendererPlatformInterface::RendererPlatform::None:			BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererPlatformInterface::RendererPlatform::OpenGL:		return MemoryManager::New<OpenGLTexture2D>("texture", AllocationType::FreeList_Renderer, path);
+			case RendererPlatformInterface::RendererPlatform::OpenGL:		return MemoryManager::New<OpenGLTexture2D>(STRING_TO_ID(path), AllocationType::FreeList_Renderer, path);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
@@ -26,7 +26,7 @@ namespace BaldLion
 			switch (RendererPlatformInterface::GetAPI())
 			{
 				case RendererPlatformInterface::RendererPlatform::None:			BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-				case RendererPlatformInterface::RendererPlatform::OpenGL:		return  MemoryManager::New<OpenGLTexture2D>("texture", AllocationType::FreeList_Renderer, path, textureData, size);
+				case RendererPlatformInterface::RendererPlatform::OpenGL:		return  MemoryManager::New<OpenGLTexture2D>(STRING_TO_ID(path), AllocationType::FreeList_Renderer, path, textureData, size);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
@@ -38,7 +38,7 @@ namespace BaldLion
 			switch (RendererPlatformInterface::GetAPI())
 			{
 			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererPlatformInterface::RendererPlatform::OpenGL:	return MemoryManager::New<OpenGLTextureCubemap>("texture", AllocationType::FreeList_Renderer, path);
+			case RendererPlatformInterface::RendererPlatform::OpenGL:	return MemoryManager::New<OpenGLTextureCubemap>(STRING_TO_ID(path), AllocationType::FreeList_Renderer, path);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
@@ -65,7 +65,7 @@ namespace BaldLion
 
 		void TextureLibrary::Init()
 		{
-			m_textures = HashTable<const char*, Texture*>(BaldLion::Memory::AllocationType::FreeList_Renderer, 10);
+			m_textures = HashTable<StringId, Texture*>(BaldLion::Memory::AllocationType::FreeList_Renderer, 10);
 		}
 
 		void TextureLibrary::Add(Texture* texture)
@@ -75,7 +75,7 @@ namespace BaldLion
 			m_textures.Insert(name, std::move(texture));
 		}
 
-		void TextureLibrary::Add(const char* name, Texture* texture)
+		void TextureLibrary::Add(StringId name, Texture* texture)
 		{
 			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
 			m_textures.Insert(name, std::move(texture));
@@ -83,13 +83,13 @@ namespace BaldLion
 
 		Texture* TextureLibrary::Load(const std::string& filepath, int textureType)
 		{	
-			char name[100];
+			StringId name;
 			TextureLibrary::GetNameFromPath(filepath, name);
 			
 			return Load(name,filepath,textureType);
 		}
 
-		Texture* TextureLibrary::Load(const char* name, const std::string& filepath, int textureType)
+		Texture* TextureLibrary::Load(StringId name, const std::string& filepath, int textureType)
 		{	
 			if (Exists(name))
 				return m_textures.Get(name);
@@ -117,7 +117,7 @@ namespace BaldLion
 
 		Texture* TextureLibrary::Load(const std::string& filepath, const unsigned char* textureData, int size, int textureType)
 		{
-			char name[100];
+			StringId name;
 			TextureLibrary::GetNameFromPath(filepath, name);
 
 			if (Exists(name))
@@ -149,19 +149,19 @@ namespace BaldLion
 			m_textures.Clear();
 		}
 
-		bool TextureLibrary::Exists(const char* name) const
+		bool TextureLibrary::Exists(StringId name) const
 		{
 			return m_textures.Contains(name);
 		}
 
-		void TextureLibrary::GetNameFromPath(const std::string &path, char *name)
+		void TextureLibrary::GetNameFromPath(const std::string &path, StringId& name)
 		{
 			// Extracting name from last path
 			auto lastSlash = path.find_last_of("/\\");
 			lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
 			auto lastDot = path.rfind('.');
 			auto count = lastDot == std::string::npos ? path.size() - lastSlash : lastDot - lastSlash;
-			strcpy(name, path.substr(lastSlash, count).c_str());			
+			name = STRING_TO_ID(path.substr(lastSlash, count));			
 		}
 
 	}

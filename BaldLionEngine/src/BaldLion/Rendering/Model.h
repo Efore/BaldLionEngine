@@ -39,8 +39,8 @@ namespace BaldLion
 				Texture*& normalTex);
 			
 		protected:
-			std::string m_modelPath;
-			std::string m_modelFolderPath;
+			StringId m_modelPath;
+			StringId m_modelFolderPath;
 			DynamicArray<Mesh*> m_subMeshes;
 		};
 	}

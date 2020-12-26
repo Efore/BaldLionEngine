@@ -4,17 +4,17 @@
 #include "BaldLion/Core/Core.h"
 #include <glm/glm.hpp>
 
-#define MATKEY_AMBIENT_COLOR	"u_material.ambientColor"
-#define MATKEY_DIFFUSE_COLOR	"u_material.diffuseColor" 
-#define MATKEY_EMISSIVE_COLOR	"u_material.emissiveColor"
-#define MATKEY_SPECULAR_COLOR	"u_material.specularColor"
-#define MATKEY_SHININESS		"u_material.shininess"
+#define MATKEY_AMBIENT_COLOR	STRING_TO_ID("u_material.ambientColor")
+#define MATKEY_DIFFUSE_COLOR	STRING_TO_ID("u_material.diffuseColor" )
+#define MATKEY_EMISSIVE_COLOR	STRING_TO_ID("u_material.emissiveColor")
+#define MATKEY_SPECULAR_COLOR	STRING_TO_ID("u_material.specularColor")
+#define MATKEY_SHININESS		STRING_TO_ID("u_material.shininess")
 
-#define MATKEY_AMBIENT_TEX		"u_material.ambientTex" 
-#define MATKEY_DIFFUSE_TEX		"u_material.diffuseTex"
-#define MATKEY_EMISSIVE_TEX		"u_material.emissiveTex"
-#define MATKEY_SPECULAR_TEX		"u_material.specularTex"
-#define MATKEY_NORMAL_TEX		"u_material.normalTex"
+#define MATKEY_AMBIENT_TEX		STRING_TO_ID("u_material.ambientTex" )
+#define MATKEY_DIFFUSE_TEX		STRING_TO_ID("u_material.diffuseTex")
+#define MATKEY_EMISSIVE_TEX		STRING_TO_ID("u_material.emissiveTex")
+#define MATKEY_SPECULAR_TEX		STRING_TO_ID("u_material.specularTex")
+#define MATKEY_NORMAL_TEX		STRING_TO_ID("u_material.normalTex")
 
 namespace BaldLion
 {
@@ -43,7 +43,7 @@ namespace BaldLion
 			virtual void SetSpecularColor(const glm::vec3& specular) = 0;
 			virtual void SetShininess(float value) = 0;
 
-			virtual void SetUniform(const char* uniformName, ShaderDataType dataType, const void* uniformIndex) = 0;
+			virtual void SetUniform(StringId uniformName, ShaderDataType dataType, const void* uniformIndex) = 0;
 
 			virtual Shader* GetShader() const = 0;
 

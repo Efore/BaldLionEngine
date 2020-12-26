@@ -23,7 +23,7 @@ namespace BaldLion
 
 			virtual void Bind(uint32_t slot = 0) const = 0;
 
-			virtual const char* GetName() const = 0;
+			virtual StringId GetName() const = 0;
 
 			virtual int GetTextureType() const = 0;
 			
@@ -56,19 +56,19 @@ namespace BaldLion
 			void Init();
 
 			void Add(Texture* texture);
-			void Add(const char*, Texture* texture);
+			void Add(StringId name, Texture* texture);
 
 			Texture* Load(const std::string& filepath, int textureType);
 			Texture* Load(const std::string& filepath,const unsigned char* textureData, int size, int textureType);
-			Texture* Load(const char* name, const std::string& filepath, int textureType);
+			Texture* Load(StringId name, const std::string& filepath, int textureType);
 
 			void Clear();
-			bool Exists(const char* name) const;
+			bool Exists(StringId name) const;
 
-			static void GetNameFromPath(const std::string &path, char* name);
+			static void GetNameFromPath(const std::string &path, StringId& name);
 
 		private:
-			HashTable<const char*, Texture*> m_textures;
+			HashTable<StringId, Texture*> m_textures;
 		};
 	}
 }

@@ -206,6 +206,7 @@
     <ClInclude Include="src\BaldLion\Utils\Quantization.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\blpch.h" />
+    <ClInclude Include="src\BaldLion\Core\StringId.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -615,6 +616,7 @@
     <ClCompile Include="src\blpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\StringId.cpp" />
     <ClCompile Include="vendor\stb_image\std_image.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@
 #include "LinearAllocator.h"
 #include "StackAllocator.h"
 #include "FreeListAllocator.h"
+#include "BaldLion/Core/StringId.h"
 #include <unordered_map>
 
 namespace BaldLion
@@ -24,7 +25,7 @@ namespace BaldLion
 			static void Stop();			
 
 			template <class T, class... Args >
-			static T* New(char* allocationName, AllocationType allocationType, Args&&... args);
+			static T* New(StringId allocationName, AllocationType allocationType, Args&&... args);
 
 			template <class T>
 			static void DeleteNoDestructor(T* element);
@@ -47,7 +48,7 @@ namespace BaldLion
 		};
 
 		template <class T, class... Args >
-		T* MemoryManager::New(char* allocationName, AllocationType allocationType, Args&&... args)
+		T* MemoryManager::New(StringId allocationName, AllocationType allocationType, Args&&... args)
 		{
 			T* result = nullptr;
 

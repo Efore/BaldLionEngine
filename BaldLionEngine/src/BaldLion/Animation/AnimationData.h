@@ -40,7 +40,7 @@ namespace BaldLion
 
 		struct AnimationData {
 
-			char animationName[1024];
+			StringId animationName;
 			DynamicArray<KeyFrame> frames;
 			float animationLength;
 
@@ -48,14 +48,14 @@ namespace BaldLion
 
 			AnimationData(AnimationData&& other)
 			{
-				strcpy_s(animationName,other.animationName);				
+				animationName = other.animationName;				
 				animationLength = other.animationLength;
 				frames = std::move(other.frames);		 		
 			}
 
 			AnimationData& operator=(const AnimationData& other)
 			{
-				strcpy_s(animationName, other.animationName);
+				animationName = other.animationName;
 				animationLength = other.animationLength;
 				frames = other.frames;
 
@@ -64,7 +64,7 @@ namespace BaldLion
 
 			AnimationData& operator=(AnimationData&& other)
 			{
-				strcpy_s(animationName, other.animationName);
+				animationName  = other.animationName;
 				animationLength = other.animationLength;
 				frames = std::move(other.frames);
 

@@ -10,11 +10,12 @@ namespace BaldLion
 		Animator::Animator(SkinnedMesh* animatedMesh, DynamicArray<AnimationData>& animations, const glm::mat4& rootTransform)
 			: m_animatedMesh(animatedMesh)
 		{
+			m_animations = HashTable<StringId, AnimationData*>(AllocationType::FreeList_Renderer, animations.Size() * 2);
 			for (uint32_t i = 0; i < animations.Size(); ++i)
 			{
-				if (m_animations.find(animations[i].animationName) == m_animations.end())
+				if (!m_animations.Contains(animations[i].animationName))
 				{
-					m_animations.emplace(animations[i].animationName, &animations[i]);
+					m_animations.Insert(animations[i].animationName, &animations[i]);
 				}
 			}
 
@@ -26,6 +27,7 @@ namespace BaldLion
 		Animator::~Animator()
 		{
 			m_animationDataContainer->Clear();
+			m_animations.Clear();
 		}
 
 		void Animator::CalculateInterpolatedTransforms(const AnimationData* animation, DynamicArray<JointTransform>& result)
@@ -75,14 +77,12 @@ namespace BaldLion
 			transforms.Clear();
 		}
 
-		void Animator::SetCurrentAnimation(const std::string& animationName)
+		void Animator::SetCurrentAnimation(StringId animationName)
 		{
-			std::unordered_map<std::string,AnimationData*>::const_iterator it = m_animations.find(animationName);
-
-			if(it != m_animations.end())
+			if(m_animations.Contains(animationName))
 			{
 				m_animationTime = 0;
-				m_currentAnimation = it->second;
+				m_currentAnimation = m_animations.Get(animationName);
 			}
 		}
 

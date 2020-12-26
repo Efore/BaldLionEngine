@@ -22,9 +22,9 @@ namespace BaldLion
 
 			m_subMeshes = DynamicArray<SkinnedMesh*>(AllocationType::FreeList_Renderer, 1);
 
-			m_modelPath = filePath;
+			m_modelPath = STRING_TO_ID(filePath);
 			auto lastSlash = filePath.find_last_of("/\\");
-			m_modelFolderPath = filePath.substr(0, lastSlash + 1);
+			m_modelFolderPath = STRING_TO_ID(filePath.substr(0, lastSlash + 1));
 		}
 
 		AnimatedModel::~AnimatedModel()
@@ -43,7 +43,7 @@ namespace BaldLion
 			Assimp::Importer import;
 			import.SetPropertyInteger(AI_CONFIG_PP_LBW_MAX_WEIGHTS, BL_JOINT_WEIGHTS_PER_VERTEX);
 
-			const aiScene *scene = import.ReadFile(m_modelPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights);
+			const aiScene *scene = import.ReadFile(ID_TO_STRING(m_modelPath), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights);
 
 			if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 			{
@@ -82,8 +82,8 @@ namespace BaldLion
 		void AnimatedModel::FillVertexArrayData(const aiMesh *aimesh, 
 			DynamicArray<Vertex>& vertices,
 			DynamicArray<uint32_t>& indices,
-			std::unordered_map<std::string, uint32_t>& jointMapping,
-			std::unordered_map<std::string, glm::mat4>& jointOffsetMapping)
+			HashTable<StringId, uint32_t>& jointMapping,
+			HashTable<StringId, glm::mat4>& jointOffsetMapping)
 		{
 			for (uint32_t i = 0; i < aimesh->mNumVertices; i++)
 			{
@@ -142,8 +142,8 @@ namespace BaldLion
 
 			for (uint32_t i = 0; i < aimesh->mNumBones; ++i)
 			{				
-				jointMapping.emplace(aimesh->mBones[i]->mName.data, i);
-				jointOffsetMapping.emplace(aimesh->mBones[i]->mName.data, SkinnedMesh::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));					
+				jointMapping.Insert(STRING_TO_ID(aimesh->mBones[i]->mName.data), std::move(i));
+				jointOffsetMapping.Insert(STRING_TO_ID(aimesh->mBones[i]->mName.data), SkinnedMesh::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
 			}
 		}
 
@@ -172,7 +172,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &relativeTexPath);
-				completeTexPath = m_modelFolderPath;
+				completeTexPath = ID_TO_STRING(m_modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -189,7 +189,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &relativeTexPath);
-				completeTexPath = m_modelFolderPath;
+				completeTexPath = ID_TO_STRING(m_modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -206,7 +206,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &relativeTexPath);
-				completeTexPath = m_modelFolderPath;
+				completeTexPath = ID_TO_STRING(m_modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -223,7 +223,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_EMISSIVE) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &relativeTexPath);
-				completeTexPath = m_modelFolderPath;
+				completeTexPath = ID_TO_STRING(m_modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -240,7 +240,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &relativeTexPath);
-				completeTexPath = m_modelFolderPath;
+				completeTexPath = ID_TO_STRING(m_modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -255,21 +255,21 @@ namespace BaldLion
 			}
 		}
 
-		void AnimatedModel::FillJointData(std::unordered_map<std::string, uint32_t>& jointMapping,
+		void AnimatedModel::FillJointData(HashTable<StringId, uint32_t>& jointMapping,
 			DynamicArray<Animation::Joint>& jointsData,
-			const std::unordered_map<std::string, glm::mat4>& jointOffsetMapping,
+			const HashTable<StringId, glm::mat4>& jointOffsetMapping,
 			uint32_t& currentID,
 			const int32_t parentID,
 			const aiNode* node)
 		{
-			auto it = jointMapping.find(node->mName.data);
+			const StringId jointName = STRING_TO_ID(node->mName.data);
 
-			if (it != jointMapping.end())
+			if (jointMapping.Contains(jointName))
 			{
-				jointMapping[node->mName.data] = currentID;
+				jointMapping.Get(jointName) = currentID;
 				jointsData[currentID].jointID = currentID;
 				jointsData[currentID].parentID = parentID;
-				jointsData[currentID].jointBindTransform = jointOffsetMapping.at(node->mName.data);
+				jointsData[currentID].jointBindTransform = jointOffsetMapping.Get(jointName);
 				jointsData[currentID].jointAnimationTransform = jointsData[currentID].jointModelSpaceTransform = glm::mat4(1.0f);
 
 				++currentID;
@@ -277,12 +277,12 @@ namespace BaldLion
 						
 			for (uint32_t i = 0; i < node->mNumChildren; ++i)
 			{
-				FillJointData(jointMapping, jointsData, jointOffsetMapping, currentID, it != jointMapping.end() ? it->second : parentID, node->mChildren[i]);
+				FillJointData(jointMapping, jointsData, jointOffsetMapping, currentID, jointMapping.Contains(jointName) ? jointMapping.Get(jointName) : parentID, node->mChildren[i]);
 			}			
 		}
 
 		void AnimatedModel::FillVertexWeightData(const aiMesh* aimesh,
-			const std::unordered_map<std::string, uint32_t>& jointMapping,
+			const HashTable<StringId, uint32_t>& jointMapping,
 			DynamicArray<VertexBoneData>& vertices)
 		{
 			uint32_t* jointsAssigned = new uint32_t[aimesh->mNumVertices]{ 0 };
@@ -294,18 +294,20 @@ namespace BaldLion
 				{
 					uint32_t vertexID = aimesh->mBones[i]->mWeights[j].mVertexId;
 
+					const StringId jointName = STRING_TO_ID(aimesh->mBones[i]->mName.data);
+
 					switch (jointsAssigned[vertexID])
 					{
 					case 0:
-						vertices[vertexID].jointIDs.x = jointMapping.at(aimesh->mBones[i]->mName.data);
+						vertices[vertexID].jointIDs.x = jointMapping.Get(jointName);
 						vertices[vertexID].weights.x = aimesh->mBones[i]->mWeights[j].mWeight;
 						break;
 					case 1:
-						vertices[vertexID].jointIDs.y = jointMapping.at(aimesh->mBones[i]->mName.data);
+						vertices[vertexID].jointIDs.y = jointMapping.Get(jointName);
 						vertices[vertexID].weights.y = aimesh->mBones[i]->mWeights[j].mWeight;
 						break;
 					case 2:
-						vertices[vertexID].jointIDs.z = jointMapping.at(aimesh->mBones[i]->mName.data);
+						vertices[vertexID].jointIDs.z = jointMapping.Get(jointName);
 						vertices[vertexID].weights.z = aimesh->mBones[i]->mWeights[j].mWeight;
 						break;
 					default:
@@ -330,8 +332,8 @@ namespace BaldLion
 			verticesBoneData.Fill();
 			jointsData.Fill();
 
-			std::unordered_map<std::string, uint32_t> jointMapping;
-			std::unordered_map<std::string, glm::mat4> jointOffsetMapping;
+			HashTable<StringId, uint32_t> jointMapping (AllocationType::Stack_Scope_Temp, aimesh->mNumBones * 2);
+			HashTable<StringId, glm::mat4> jointOffsetMapping (AllocationType::Stack_Scope_Temp, aimesh->mNumBones * 2);;
 
 			aiColor3D ambientColor;
 			aiColor3D diffuseColor;
@@ -353,7 +355,7 @@ namespace BaldLion
 
 			FillVertexWeightData(aimesh, jointMapping, verticesBoneData);
 
-			SkinnedMesh* animatedMesh = MemoryManager::New<SkinnedMesh>("Skinned Mesh", AllocationType::FreeList_Renderer, vertices, verticesBoneData, indices, jointsData,
+			SkinnedMesh* animatedMesh = MemoryManager::New<SkinnedMesh>(STRING_TO_ID("Skinned Mesh"), AllocationType::FreeList_Renderer, vertices, verticesBoneData, indices, jointsData,
 				Material::Create("assets/shaders/monster.glsl",
 					glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
@@ -367,6 +369,9 @@ namespace BaldLion
 					normalTex));
 
 			AnimationManager::GenerateAnimator(aiscene, jointMapping, animatedMesh);
+
+			jointOffsetMapping.Clear();
+			jointMapping.Clear();
 
 			return animatedMesh;
 		}
