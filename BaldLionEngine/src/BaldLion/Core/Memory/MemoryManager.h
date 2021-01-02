@@ -5,6 +5,7 @@
 #include "FreeListAllocator.h"
 #include "BaldLion/Core/StringId.h"
 #include <unordered_map>
+#include <mutex>
 
 namespace BaldLion
 {
@@ -45,11 +46,15 @@ namespace BaldLion
 			static StackAllocator* s_tempStackAllocator;
 			static void* s_memory;
 			static std::unordered_map<void*, AllocationType> s_allocationMap;
+			static std::unordered_map<void*, StringId> s_allocationDescriptions;
+			static std::mutex s_mutex;
 		};
 
 		template <class T, class... Args >
 		T* MemoryManager::New(StringId allocationName, AllocationType allocationType, Args&&... args)
 		{
+			const std::lock_guard<std::mutex> lock(s_mutex);
+
 			T* result = nullptr;
 
 			switch (allocationType)
@@ -69,6 +74,8 @@ namespace BaldLion
 			}		
 
 			s_allocationMap.emplace((void*)result, allocationType);
+			s_allocationDescriptions.emplace((void*)result, allocationName);
+
 			return result;
 		}
 

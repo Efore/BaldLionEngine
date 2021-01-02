@@ -7,7 +7,7 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Material* Material::Create(const std::string& shaderPath, 
+		Material* Material::Create( 
 			const glm::vec3& ambientColor, 
 			const glm::vec3& diffuseColor, 
 			const glm::vec3& emissiveColor, 
@@ -24,8 +24,7 @@ namespace BaldLion
 			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
 			case RendererPlatformInterface::RendererPlatform::OpenGL:		
 				
-				return MemoryManager::New<OpenGLMaterial>(STRING_TO_ID("Material"),AllocationType::FreeList_Renderer,
-					shaderPath,
+				return MemoryManager::New<OpenGLMaterial>(STRING_TO_ID("Material"),AllocationType::FreeList_Renderer,					
 					ambientColor, 
 					diffuseColor, 
 					emissiveColor, 

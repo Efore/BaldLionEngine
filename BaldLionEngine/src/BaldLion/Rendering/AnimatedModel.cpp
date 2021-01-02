@@ -355,18 +355,27 @@ namespace BaldLion
 
 			FillVertexWeightData(aimesh, jointMapping, verticesBoneData);
 
-			SkinnedMesh* animatedMesh = MemoryManager::New<SkinnedMesh>(STRING_TO_ID("Skinned Mesh"), AllocationType::FreeList_Renderer, vertices, verticesBoneData, indices, jointsData,
-				Material::Create("assets/shaders/monster.glsl",
-					glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
-					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
-					glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
-					glm::vec3(specularColor.r, specularColor.g, specularColor.b),
-					32.0f,
-					ambientTex,
-					diffuseTex,
-					specularTex,
-					emissiveTex,
-					normalTex));
+			Material* meshMaterial = Material::Create(
+				glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
+				glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
+				glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
+				glm::vec3(specularColor.r, specularColor.g, specularColor.b),
+				32.0f,
+				ambientTex,
+				diffuseTex,
+				specularTex,
+				emissiveTex,
+				normalTex);
+
+			meshMaterial->AssignShader("assets/shaders/monster.glsl");
+
+			SkinnedMesh* animatedMesh = MemoryManager::New<SkinnedMesh>(STRING_TO_ID("Skinned Mesh"), AllocationType::FreeList_Renderer, jointsData, meshMaterial);
+
+			animatedMesh->SetUpMesh(vertices, verticesBoneData, indices);
+
+			vertices.Clear();
+			verticesBoneData.Clear();
+			indices.Clear();
 
 			AnimationManager::GenerateAnimator(aiscene, jointMapping, animatedMesh);
 

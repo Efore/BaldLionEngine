@@ -11,7 +11,7 @@ namespace BaldLion
 		class Mesh {
 
 		public:
-			Mesh(DynamicArray<Vertex>& vertices, DynamicArray<uint32_t>& indices, Material* material);
+			Mesh(Material* material);
 			~Mesh();
 
 			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<uint32_t>& indices);

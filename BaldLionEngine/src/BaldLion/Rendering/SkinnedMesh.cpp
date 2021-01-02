@@ -7,15 +7,10 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		SkinnedMesh::SkinnedMesh(DynamicArray<Vertex>& vertices, DynamicArray<VertexBoneData>& verticesBoneData, DynamicArray<uint32_t>& indices, const DynamicArray<Animation::Joint>& joints, Material* material)
+		SkinnedMesh::SkinnedMesh(const DynamicArray<Animation::Joint>& joints, Material* material)
 			: m_material(material), m_joints(std::move(joints))
 		{
-			SetUpMesh(vertices, verticesBoneData, indices);
-
-			//Freeing vertices and indices after being used
-			vertices.Clear();
-			verticesBoneData.Clear();
-			indices.Clear();
+			
 		}
 
 		SkinnedMesh::~SkinnedMesh()

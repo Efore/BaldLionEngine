@@ -257,18 +257,27 @@ namespace BaldLion
 
 			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
 
-			return MemoryManager::New<Mesh>(STRING_TO_ID("Mesh"), AllocationType::FreeList_Renderer, vertices, indices,
-				Material::Create("assets/shaders/nanosuit.glsl", 
-					glm::vec3(ambientColor.r,ambientColor.g,ambientColor.b),
-					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
-					glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
-					glm::vec3(specularColor.r, specularColor.g, specularColor.b),
-					32.0f,
-					ambientTex,
-					diffuseTex,
-					specularTex,
-					emissiveTex,
-					normalTex));
+			Material* meshMaterial = Material::Create(
+				glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
+				glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
+				glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
+				glm::vec3(specularColor.r, specularColor.g, specularColor.b),
+				32.0f,
+				ambientTex,
+				diffuseTex,
+				specularTex,
+				emissiveTex,
+				normalTex);
+
+			meshMaterial->AssignShader("assets/shaders/nanosuit.glsl");
+
+			Mesh* mesh = MemoryManager::New<Mesh>(STRING_TO_ID("Mesh"), AllocationType::FreeList_Renderer,  meshMaterial);
+			mesh->SetUpMesh(vertices, indices);
+
+			vertices.Clear();
+			indices.Clear();
+
+			return mesh;
 		}
 
 

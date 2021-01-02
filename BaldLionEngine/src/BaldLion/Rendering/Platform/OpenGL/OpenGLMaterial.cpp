@@ -6,8 +6,7 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		OpenGLMaterial::OpenGLMaterial(const std::string& shaderPath, 
-			const glm::vec3& ambientColor, 
+		OpenGLMaterial::OpenGLMaterial(const glm::vec3& ambientColor, 
 			const glm::vec3& diffuseColor, 
 			const glm::vec3& emissiveColor, 
 			const glm::vec3& specularColor, 
@@ -23,9 +22,7 @@ namespace BaldLion
 			m_specularColor(specularColor),
 			m_shininess(shininess)
 		{
-			BL_PROFILE_FUNCTION();
-
-			m_shader = (OpenGLShader*)(Renderer::GetShaderLibrary().Load(shaderPath));
+			BL_PROFILE_FUNCTION();		
 
 			m_ambientColor = ambientColor;
 			m_diffuseColor = diffuseColor;
@@ -70,6 +67,11 @@ namespace BaldLion
 				m_normalTex->Bind(m_normalTexSlot);
 			}
 
+		}
+
+		void OpenGLMaterial::AssignShader(const std::string& shaderPath)
+		{
+			m_shader = (OpenGLShader*)(Renderer::GetShaderLibrary().Load(shaderPath));
 			m_shader->Bind();
 
 			m_shader->SetUniform(MATKEY_AMBIENT_COLOR, ShaderDataType::Float3, &m_ambientColor);
@@ -93,8 +95,6 @@ namespace BaldLion
 			if (m_normalTex != nullptr)
 				m_shader->SetUniform(MATKEY_NORMAL_TEX, ShaderDataType::Int, &m_normalTexSlot);
 		}
-
-		
 
 		void OpenGLMaterial::SetAmbientColor(const glm::vec3 & ambient)
 		{

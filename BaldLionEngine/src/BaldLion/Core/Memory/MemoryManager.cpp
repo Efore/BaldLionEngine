@@ -11,8 +11,10 @@ namespace BaldLion
 		StackAllocator* MemoryManager::s_tempStackAllocator;
 		
 		std::unordered_map<void*, AllocationType> MemoryManager::s_allocationMap;
+		std::unordered_map<void*, StringId> MemoryManager::s_allocationDescriptions;
 
 		void* MemoryManager::s_memory;
+		std::mutex MemoryManager::s_mutex;
 
 		void MemoryManager::Init(size_t memoryAllocationSize)
 		{

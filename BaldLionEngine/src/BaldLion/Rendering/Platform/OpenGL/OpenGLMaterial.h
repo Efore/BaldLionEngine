@@ -12,8 +12,7 @@ namespace BaldLion
 
 		public:
 
-			OpenGLMaterial(const std::string& shaderPath,
-				const glm::vec3& ambientColor,
+			OpenGLMaterial(const glm::vec3& ambientColor,
 				const glm::vec3& diffuseColor,
 				const glm::vec3& emissiveColor,
 				const glm::vec3& specularColor,
@@ -23,6 +22,8 @@ namespace BaldLion
 				Texture* emissiveTex,
 				Texture* specularTex,
 				Texture* normalTex);
+
+			virtual void AssignShader(const std::string& shaderPath) override;
 
 			virtual void SetAmbientColor(const glm::vec3 & emissive) override;
 			virtual void SetEmissiveColor(const glm::vec3 & emissive) override;

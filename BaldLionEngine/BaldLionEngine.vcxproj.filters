@@ -1356,6 +1356,7 @@
     <ClInclude Include="src\BaldLion\Core\StringId.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Threading\ThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1490,5 +1491,6 @@
     <ClCompile Include="src\BaldLion\Core\StringId.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Threading\ThreadPool.cpp" />
   </ItemGroup>
 </Project>

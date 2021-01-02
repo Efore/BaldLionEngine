@@ -7,14 +7,9 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Mesh::Mesh(DynamicArray<Vertex>& vertices, DynamicArray<uint32_t>& indices, Material* material) :
+		Mesh::Mesh(Material* material) :
 			m_material(material)
-		{
-			SetUpMesh(vertices, indices);
-
-			//Freeing vertices and indices after being used
-			vertices.Clear();
-			indices.Clear();
+		{			
 		}
 
 		Mesh::~Mesh()

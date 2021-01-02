@@ -15,7 +15,7 @@ namespace BaldLion
 
 		public:
 
-			SkinnedMesh(DynamicArray<Vertex>& vertices, DynamicArray<VertexBoneData>& verticesBoneData, DynamicArray<uint32_t>& indices, const DynamicArray<Animation::Joint>& joints, Material* material);
+			SkinnedMesh(const DynamicArray<Animation::Joint>& joints, Material* material);
 			~SkinnedMesh();
 
 			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<VertexBoneData>& verticesBoneData, const DynamicArray<uint32_t>& indices);

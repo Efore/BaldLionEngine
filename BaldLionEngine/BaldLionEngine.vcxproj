@@ -165,6 +165,7 @@
     <ClInclude Include="src\BaldLion\Core\Memory\MemoryUtils.h" />
     <ClInclude Include="src\BaldLion\Core\Memory\StackAllocator.h" />
     <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h" />
+    <ClInclude Include="src\BaldLion\Core\Threading\ThreadPool.h" />
     <ClInclude Include="src\BaldLion\Core\TimeStep.h" />
     <ClInclude Include="src\BaldLion\Core\Window.h" />
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h" />
@@ -583,6 +584,7 @@
     <ClCompile Include="src\BaldLion\Core\Memory\LinearAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\MemoryManager.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Threading\ThreadPool.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\AnimatedModel.cpp" />

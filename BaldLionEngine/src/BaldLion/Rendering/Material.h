@@ -23,7 +23,7 @@ namespace BaldLion
 		class Material {
 
 		public:
-			static Material* Create(const std::string& shaderPath, 
+			static Material* Create(
 				const glm::vec3& ambientColor, 
 				const glm::vec3& diffuseColor, 
 				const glm::vec3& emissiveColor, 
@@ -36,6 +36,8 @@ namespace BaldLion
 				Texture* normalTex);
 
 			static void Destroy(Material* material);
+
+			virtual void AssignShader(const std::string& shaderPath) = 0;
 
 			virtual void SetAmbientColor(const glm::vec3& ambient) = 0;
 			virtual void SetEmissiveColor(const glm::vec3& emissive) = 0;
@@ -50,6 +52,10 @@ namespace BaldLion
 			virtual ~Material() = default;
 
 			virtual void Bind() const = 0;
+			
+		protected:
+
+			StringId m_shaderPath;
 		};
 
 		
