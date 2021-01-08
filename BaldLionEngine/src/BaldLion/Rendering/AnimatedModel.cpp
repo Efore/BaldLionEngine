@@ -29,7 +29,7 @@ namespace BaldLion
 
 		AnimatedModel::~AnimatedModel()
 		{
-			for (uint32_t i = 0; i < m_subMeshes.Size(); ++i)
+			for (ui32 i = 0; i < m_subMeshes.Size(); ++i)
 			{
 				MemoryManager::DeleteNoDestructor(m_subMeshes[i]);
 			}
@@ -57,7 +57,7 @@ namespace BaldLion
 		void AnimatedModel::Draw() const
 		{
 			BL_PROFILE_FUNCTION();
-			for (uint32_t i = 0; i < m_subMeshes.Size(); ++i)
+			for (ui32 i = 0; i < m_subMeshes.Size(); ++i)
 			{
 				m_subMeshes[i]->Draw(m_worldTransform);
 			}
@@ -66,13 +66,13 @@ namespace BaldLion
 		void AnimatedModel::ProcessNode(const aiNode *node, const aiScene *scene)
 		{
 			// process all the node's meshes (if any)
-			for (uint32_t i = 0; i < node->mNumMeshes; i++)
+			for (ui32 i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 				m_subMeshes.PushBack(ProcessMesh(mesh, scene));
 			}
 			// then do the same for each of its children
-			for (uint32_t i = 0; i < node->mNumChildren; i++)
+			for (ui32 i = 0; i < node->mNumChildren; i++)
 			{
 				ProcessNode(node->mChildren[i], scene);
 			}
@@ -81,11 +81,11 @@ namespace BaldLion
 		
 		void AnimatedModel::FillVertexArrayData(const aiMesh *aimesh, 
 			DynamicArray<Vertex>& vertices,
-			DynamicArray<uint32_t>& indices,
-			HashTable<StringId, uint32_t>& jointMapping,
+			DynamicArray<ui32>& indices,
+			HashTable<StringId, ui32>& jointMapping,
 			HashTable<StringId, glm::mat4>& jointOffsetMapping)
 		{
-			for (uint32_t i = 0; i < aimesh->mNumVertices; i++)
+			for (ui32 i = 0; i < aimesh->mNumVertices; i++)
 			{
 				// process vertex positions, normals and texture coordinates
 				glm::vec3 position = glm::vec3(0.0f);
@@ -105,7 +105,7 @@ namespace BaldLion
 				}
 
 				glm::vec3 color = glm::vec3(0.0f);
-				if (aimesh->HasVertexColors((uint32_t)i))
+				if (aimesh->HasVertexColors((ui32)i))
 				{
 					color.x = aimesh->mColors[i]->r;
 					color.y = aimesh->mColors[i]->g;
@@ -140,7 +140,7 @@ namespace BaldLion
 					indices.PushBack(face.mIndices[j]);
 			}	
 
-			for (uint32_t i = 0; i < aimesh->mNumBones; ++i)
+			for (ui32 i = 0; i < aimesh->mNumBones; ++i)
 			{				
 				jointMapping.Insert(STRING_TO_ID(aimesh->mBones[i]->mName.data), std::move(i));
 				jointOffsetMapping.Insert(STRING_TO_ID(aimesh->mBones[i]->mName.data), SkinnedMesh::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
@@ -255,10 +255,10 @@ namespace BaldLion
 			}
 		}
 
-		void AnimatedModel::FillJointData(HashTable<StringId, uint32_t>& jointMapping,
+		void AnimatedModel::FillJointData(HashTable<StringId, ui32>& jointMapping,
 			DynamicArray<Animation::Joint>& jointsData,
 			const HashTable<StringId, glm::mat4>& jointOffsetMapping,
-			uint32_t& currentID,
+			ui32& currentID,
 			const int32_t parentID,
 			const aiNode* node)
 		{
@@ -275,24 +275,24 @@ namespace BaldLion
 				++currentID;
 			}
 						
-			for (uint32_t i = 0; i < node->mNumChildren; ++i)
+			for (ui32 i = 0; i < node->mNumChildren; ++i)
 			{
 				FillJointData(jointMapping, jointsData, jointOffsetMapping, currentID, jointMapping.Contains(jointName) ? jointMapping.Get(jointName) : parentID, node->mChildren[i]);
 			}			
 		}
 
 		void AnimatedModel::FillVertexWeightData(const aiMesh* aimesh,
-			const HashTable<StringId, uint32_t>& jointMapping,
+			const HashTable<StringId, ui32>& jointMapping,
 			DynamicArray<VertexBoneData>& vertices)
 		{
-			uint32_t* jointsAssigned = new uint32_t[aimesh->mNumVertices]{ 0 };
+			ui32* jointsAssigned = new ui32[aimesh->mNumVertices]{ 0 };
 
 			//Fill jointIDs and weights
-			for (uint32_t i = 0; i < aimesh->mNumBones; ++i)
+			for (ui32 i = 0; i < aimesh->mNumBones; ++i)
 			{
-				for (uint32_t j = 0; j < aimesh->mBones[i]->mNumWeights; ++j)
+				for (ui32 j = 0; j < aimesh->mBones[i]->mNumWeights; ++j)
 				{
-					uint32_t vertexID = aimesh->mBones[i]->mWeights[j].mVertexId;
+					ui32 vertexID = aimesh->mBones[i]->mWeights[j].mVertexId;
 
 					const StringId jointName = STRING_TO_ID(aimesh->mBones[i]->mName.data);
 
@@ -326,13 +326,13 @@ namespace BaldLion
 		{		
 			DynamicArray<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
 			DynamicArray<VertexBoneData> verticesBoneData(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
-			DynamicArray<uint32_t> indices (AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
+			DynamicArray<ui32> indices (AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
 			DynamicArray<Animation::Joint> jointsData(AllocationType::FreeList_Renderer, aimesh->mNumBones);
 
 			verticesBoneData.Fill();
 			jointsData.Fill();
 
-			HashTable<StringId, uint32_t> jointMapping (AllocationType::Stack_Scope_Temp, aimesh->mNumBones * 2);
+			HashTable<StringId, ui32> jointMapping (AllocationType::Stack_Scope_Temp, aimesh->mNumBones * 2);
 			HashTable<StringId, glm::mat4> jointOffsetMapping (AllocationType::Stack_Scope_Temp, aimesh->mNumBones * 2);;
 
 			aiColor3D ambientColor;
@@ -350,7 +350,7 @@ namespace BaldLion
 
 			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);			
 
-			uint32_t firstID = 0;
+			ui32 firstID = 0;
 			FillJointData(jointMapping, jointsData, jointOffsetMapping, firstID, -1, aiscene->mRootNode);
 
 			FillVertexWeightData(aimesh, jointMapping, verticesBoneData);

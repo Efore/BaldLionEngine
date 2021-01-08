@@ -31,7 +31,7 @@ namespace BaldLion
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
-		void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
+		void OpenGLFramebuffer::Resize(ui32 width, ui32 height)
 		{
 			m_framebufferSpecification.Width = width;
 			m_framebufferSpecification.Height = height;

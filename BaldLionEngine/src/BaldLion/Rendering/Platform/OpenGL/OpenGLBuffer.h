@@ -9,7 +9,7 @@ namespace BaldLion
 		class OpenGLVertexBuffer : public VertexBuffer
 		{
 		public:
-			OpenGLVertexBuffer(const void* vertices, uint32_t size);
+			OpenGLVertexBuffer(const void* vertices, ui32 size);
 			virtual ~OpenGLVertexBuffer();
 
 			virtual void Bind() const override;
@@ -19,24 +19,24 @@ namespace BaldLion
 			virtual void SetLayout(const BufferLayout& layout) override { m_layout = layout; }
 
 		private:
-			uint32_t m_rendererID;
+			ui32 m_rendererID;
 			BufferLayout m_layout;
 		};
 
 		class OpenGLIndexBuffer : public IndexBuffer
 		{
 		public:
-			OpenGLIndexBuffer(const uint32_t* indices, uint32_t count);
+			OpenGLIndexBuffer(const ui32* indices, ui32 count);
 			virtual ~OpenGLIndexBuffer();
 
 			virtual void Bind() const override;
 			virtual void Unbind() const override;
 
-			inline virtual uint32_t GetCount() const override { return m_count; }
+			inline virtual ui32 GetCount() const override { return m_count; }
 
 		private:
-			uint32_t m_rendererID;
-			uint32_t m_count;
+			ui32 m_rendererID;
+			ui32 m_count;
 		};
 	}
 }

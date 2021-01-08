@@ -82,6 +82,8 @@ namespace BaldLion
 		template <class T>
 		void MemoryManager::DeleteNoDestructor(T* element)
 		{
+			const std::lock_guard<std::mutex> lock(s_mutex);
+
 			BL_ASSERT(element != nullptr, "element cannot be null");
 
 			if (s_allocationMap.find(element) == s_allocationMap.end())

@@ -12,8 +12,8 @@ namespace BaldLion
 
 		struct Joint
 		{
-			uint32_t jointID;
-			int32_t parentID;			
+			ui32 jointID;
+			i32 parentID;			
 			
 			glm::mat4 jointBindTransform;
 			glm::mat4 jointModelSpaceTransform;

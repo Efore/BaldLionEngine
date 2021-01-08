@@ -18,7 +18,7 @@ namespace BaldLion
 			SkinnedMesh(const DynamicArray<Animation::Joint>& joints, Material* material);
 			~SkinnedMesh();
 
-			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<VertexBoneData>& verticesBoneData, const DynamicArray<uint32_t>& indices);
+			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<VertexBoneData>& verticesBoneData, const DynamicArray<ui32>& indices);
 			void Draw(const glm::mat4& worldTransform) const;
 
 			inline DynamicArray<Animation::Joint>& GetJoints() { return m_joints; }

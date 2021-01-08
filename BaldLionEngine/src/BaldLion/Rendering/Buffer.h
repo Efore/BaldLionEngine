@@ -11,8 +11,8 @@ namespace BaldLion
 		{
 			ShaderDataType Type;
 			StringId Name;
-			uint32_t Size;
-			uint32_t Offset;
+			ui32 Size;
+			ui32 Offset;
 			bool Normalized;
 
 			BufferElement() { }
@@ -22,7 +22,7 @@ namespace BaldLion
 			{
 			}
 
-			uint32_t GetComponentCount() const
+			ui32 GetComponentCount() const
 			{
 				switch (Type)
 				{
@@ -51,7 +51,7 @@ namespace BaldLion
 
 			BufferLayout(const std::initializer_list<BufferElement>& elements)				
 			{
-				m_elements = DynamicArray<BufferElement>(AllocationType::FreeList_Renderer, elements.size());
+				m_elements = DynamicArray<BufferElement>(AllocationType::FreeList_Renderer, (ui32)elements.size());
 
 				for (auto& element : elements)
 				{
@@ -66,7 +66,7 @@ namespace BaldLion
 
 			}
 
-			inline const uint32_t& GetStride() const { return m_stride; }
+			inline const ui32& GetStride() const { return m_stride; }
 			inline const DynamicArray<BufferElement>& GetElements() const { return m_elements; }
 
 
@@ -74,9 +74,9 @@ namespace BaldLion
 
 			void CalculateOffsetsAndStride()
 			{
-				uint32_t offset = 0;
+				ui32 offset = 0;
 				m_stride = 0;
-				for (uint32_t i = 0; i < m_elements.Size(); ++i)
+				for (ui32 i = 0; i < m_elements.Size(); ++i)
 				{
 					m_elements[i].Offset = offset;
 					offset += m_elements[i].Size;
@@ -85,7 +85,7 @@ namespace BaldLion
 			}
 
 			DynamicArray<BufferElement> m_elements;
-			uint32_t m_stride = 0;
+			ui32 m_stride = 0;
 		};
 
 		class VertexBuffer
@@ -100,7 +100,7 @@ namespace BaldLion
 			virtual const BufferLayout& GetLayout() const = 0;
 			virtual void SetLayout(const BufferLayout& layout) = 0;
 
-			static VertexBuffer* Create(const void* vertices, uint32_t size);
+			static VertexBuffer* Create(const void* vertices, ui32 size);
 		};
 
 		class IndexBuffer
@@ -112,8 +112,8 @@ namespace BaldLion
 			virtual void Bind() const = 0;
 			virtual void Unbind() const = 0;
 
-			virtual uint32_t GetCount() const = 0;
-			static IndexBuffer* Create(const uint32_t* indices, uint32_t count);
+			virtual ui32 GetCount() const = 0;
+			static IndexBuffer* Create(const ui32* indices, ui32 count);
 		};
 	}
 }

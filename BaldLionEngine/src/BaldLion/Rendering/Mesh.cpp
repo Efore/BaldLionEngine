@@ -18,15 +18,15 @@ namespace BaldLion
 			Material::Destroy(m_material);
 		}
 
-		void Mesh::SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<uint32_t>& indices)
+		void Mesh::SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices)
 		{
 			BL_PROFILE_FUNCTION();
 
 			m_vertexArray = VertexArray::Create();
 
-			IndexBuffer* indexBuffer = IndexBuffer::Create(&indices[0], (uint32_t)indices.Size());
+			IndexBuffer* indexBuffer = IndexBuffer::Create(&indices[0], (ui32)indices.Size());
 
-			VertexBuffer* vertexBuffer = VertexBuffer::Create(vertices[0].GetFirstElement(), (uint32_t)(vertices.Size() * sizeof(Vertex)));
+			VertexBuffer* vertexBuffer = VertexBuffer::Create(vertices[0].GetFirstElement(), (ui32)(vertices.Size() * sizeof(Vertex)));
 
 			vertexBuffer->SetLayout({
 				{ ShaderDataType::Float3, "vertex_position"},

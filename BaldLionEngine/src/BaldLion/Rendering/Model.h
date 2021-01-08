@@ -25,7 +25,7 @@ namespace BaldLion
 			void ProcessNode(const aiNode *node, const aiScene *scene);
 			Mesh* ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
 
-			void FillVertexArrayData(const aiMesh *aimesh, DynamicArray<Vertex>& vertices, DynamicArray<uint32_t>& indices);
+			void FillVertexArrayData(const aiMesh *aimesh, DynamicArray<Vertex>& vertices, DynamicArray<ui32>& indices);
 			void FillTextureData(const aiMesh *aimesh,
 				const aiScene *aiscene,
 				aiColor3D& ambientColor,

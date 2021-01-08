@@ -19,6 +19,9 @@
     <Filter Include="src\BaldLion\Core\Memory">
       <UniqueIdentifier>{E1E6F51D-CD0B-459E-F656-2A2EE2DA43BC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\BaldLion\Core\Threading">
+      <UniqueIdentifier>{1E5FEE30-8A6C-1C17-1353-18027F5FE8CD}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\BaldLion\Events">
       <UniqueIdentifier>{657105EC-D1D2-E2F9-5A40-29ACC6A019B9}</UniqueIdentifier>
     </Filter>
@@ -140,6 +143,12 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h">
       <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\StringId.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Threading\ThreadPool.h">
+      <Filter>src\BaldLion\Core\Threading</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\TimeStep.h">
       <Filter>src\BaldLion\Core</Filter>
@@ -1353,10 +1362,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\StringId.h">
-      <Filter>src\BaldLion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\Threading\ThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1391,6 +1396,12 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp">
       <Filter>src\BaldLion\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\StringId.cpp">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Threading\ThreadPool.cpp">
+      <Filter>src\BaldLion\Core\Threading</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Window.cpp">
       <Filter>src\BaldLion\Core</Filter>
@@ -1488,9 +1499,5 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\StringId.cpp">
-      <Filter>src\BaldLion\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\Threading\ThreadPool.cpp" />
   </ItemGroup>
 </Project>

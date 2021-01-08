@@ -23,8 +23,8 @@ namespace BaldLion
 			virtual const IndexBuffer* GetIndexBuffer() const { return m_indexBuffer; }
 
 		private:
-			uint32_t m_rendererID;
-			uint32_t m_currentLayoutIndex;
+			ui32 m_rendererID;
+			ui32 m_currentLayoutIndex;
 
 			DynamicArray<VertexBuffer*> m_vertexBuffers;
 			IndexBuffer* m_indexBuffer;

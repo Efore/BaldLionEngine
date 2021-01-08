@@ -111,7 +111,7 @@ namespace BaldLion
 			glDeleteTextures(1, &m_rendererID);
 		}
 
-		void OpenGLTexture2D::Bind(uint32_t slot) const
+		void OpenGLTexture2D::Bind(ui32 slot) const
 		{
 			BL_PROFILE_FUNCTION();
 

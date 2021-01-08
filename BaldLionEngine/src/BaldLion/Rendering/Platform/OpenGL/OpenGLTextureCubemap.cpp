@@ -18,7 +18,7 @@ namespace BaldLion
 			glGenTextures(1, &m_rendererID);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, m_rendererID);
 
-			for (uint32_t i = 0; i < 6; ++i)
+			for (ui32 i = 0; i < 6; ++i)
 			{
 				int width, height, channels;
 				stbi_uc* data = nullptr;
@@ -69,7 +69,7 @@ namespace BaldLion
 			glDeleteTextures(1, &m_rendererID);
 		}
 
-		void OpenGLTextureCubemap::Bind(uint32_t slot) const
+		void OpenGLTextureCubemap::Bind(ui32 slot) const
 		{
 			BL_PROFILE_FUNCTION();	
 

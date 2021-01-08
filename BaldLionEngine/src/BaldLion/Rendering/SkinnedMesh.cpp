@@ -19,18 +19,18 @@ namespace BaldLion
 			Material::Destroy(m_material);
 		}
 
-		void SkinnedMesh::SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<VertexBoneData>& verticesBoneData, const DynamicArray<uint32_t>& indices)
+		void SkinnedMesh::SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<VertexBoneData>& verticesBoneData, const DynamicArray<ui32>& indices)
 		{
 			BL_PROFILE_FUNCTION();
 
 			m_vertexArray = VertexArray::Create();
 
 			//Setting index buffer
-			IndexBuffer* indexBuffer = (IndexBuffer::Create(&indices[0], (uint32_t)indices.Size()));
+			IndexBuffer* indexBuffer = (IndexBuffer::Create(&indices[0], (ui32)indices.Size()));
 			m_vertexArray->AddIndexBuffer(indexBuffer);
 
 			//Setting vertex buffer
-			VertexBuffer* vertexBuffer = VertexBuffer::Create(vertices[0].GetFirstElement(), (uint32_t)(vertices.Size() * sizeof(Vertex)));
+			VertexBuffer* vertexBuffer = VertexBuffer::Create(vertices[0].GetFirstElement(), (ui32)(vertices.Size() * sizeof(Vertex)));
 
 			vertexBuffer->SetLayout({
 				{ ShaderDataType::Float3,	"vertex_position"},
@@ -44,7 +44,7 @@ namespace BaldLion
 			m_vertexArray->AddVertexBuffer(vertexBuffer);
 
 			//Setting bone data vertex buffer
-			VertexBuffer* boneDataVertexBuffer = VertexBuffer::Create(verticesBoneData[0].GetFirstElement(), (uint32_t)(verticesBoneData.Size() * sizeof(VertexBoneData)));
+			VertexBuffer* boneDataVertexBuffer = VertexBuffer::Create(verticesBoneData[0].GetFirstElement(), (ui32)(verticesBoneData.Size() * sizeof(VertexBoneData)));
 
 			boneDataVertexBuffer->SetLayout({
 				{ ShaderDataType::Int3,		"vertex_joint_ids" },
@@ -60,7 +60,7 @@ namespace BaldLion
 
 			m_material->GetShader()->Bind();
 
-			for (uint32_t i = 0; i < m_joints.Size(); ++i)
+			for (ui32 i = 0; i < m_joints.Size(); ++i)
 			{
 				m_material->GetShader()->SetUniform(STRING_TO_ID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &(m_joints[i].jointAnimationTransform));
 			}

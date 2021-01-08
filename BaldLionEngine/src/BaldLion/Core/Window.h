@@ -10,12 +10,12 @@ namespace BaldLion
 	struct WindowProps
 	{
 		StringId Title;
-		uint32_t Width;
-		uint32_t Height;
+		ui32 Width;
+		ui32 Height;
 
 		WindowProps(const std::string& title = "",
-			uint32_t width = 1366,
-			uint32_t height = 768)
+			ui32 width = 1366,
+			ui32 height = 768)
 			: Title(STRING_TO_ID(title)), Width(width), Height(height)
 		{
 
@@ -32,8 +32,8 @@ namespace BaldLion
 
 		virtual void OnUpdate() = 0;
 
-		virtual uint32_t GetWidth() const = 0;
-		virtual uint32_t GetHeight() const = 0;
+		virtual ui32 GetWidth() const = 0;
+		virtual ui32 GetHeight() const = 0;
 
 		//Windows attributes
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;

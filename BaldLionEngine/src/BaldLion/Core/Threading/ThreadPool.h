@@ -28,14 +28,14 @@ namespace BaldLion
 
 		struct Worker
 		{
-			uint32_t ID;
+			ui32 ID;
 			std::thread Thread;
 
 			Job* CurrentJob;
 			bool Alive;
 
 			Worker(){}
-			Worker(uint32_t iID) : ID(iID), CurrentJob(0), Alive(true) {}
+			Worker(ui32 iID) : ID(iID), CurrentJob(0), Alive(true) {}
 		};
 
 		class ThreadPool
@@ -43,7 +43,7 @@ namespace BaldLion
 
 		public:
 
-			static void Init(uint32_t workersCount = std::thread::hardware_concurrency());
+			static void Init(ui32 workersCount = std::thread::hardware_concurrency());
 			static void Stop();
 			static void QueueJob(const Job& job);
 
@@ -55,7 +55,7 @@ namespace BaldLion
 			static std::condition_variable s_jobsPending;
 			static std::condition_variable s_jobsCompleted;
 
-			static uint32_t s_workersActiveMask;
+			static ui32 s_workersActiveMask;
 		};
 	}
 

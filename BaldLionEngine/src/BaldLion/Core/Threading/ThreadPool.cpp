@@ -13,15 +13,15 @@ namespace BaldLion {
 		std::condition_variable ThreadPool::s_jobsPending;
 		std::condition_variable ThreadPool::s_jobsCompleted;
 
-		uint32_t ThreadPool::s_workersActiveMask = 0;
+		ui32 ThreadPool::s_workersActiveMask = 0;
 
 
-		void ThreadPool::Init(uint32_t workersCount /*= std::thread::hardware_concurrency()*/)
+		void ThreadPool::Init(ui32 workersCount /*= std::thread::hardware_concurrency()*/)
 		{
 			s_workers = std::vector<Worker>(workersCount);			
 			s_jobQueue = std::vector<Job>(workersCount);
 
-			for (uint32_t i = 0; i < workersCount; ++i)
+			for (ui32 i = 0; i < workersCount; ++i)
 			{
 				Worker worker(i);
 			}

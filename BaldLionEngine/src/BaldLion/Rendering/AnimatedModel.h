@@ -26,17 +26,17 @@ namespace BaldLion
 
 			SkinnedMesh* ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
 
-			void FillJointData(HashTable<StringId, uint32_t>& jointMapping,
+			void FillJointData(HashTable<StringId, ui32>& jointMapping,
 				DynamicArray<Animation::Joint>& jointData,
 				const HashTable<StringId, glm::mat4>& jointOffsetMapping,
-				uint32_t& currentID, 
+				ui32& currentID, 
 				const int32_t parentID, 
 				const aiNode* node);
 
 			void FillVertexArrayData(const aiMesh *aimesh, 
 				DynamicArray<Vertex>& vertices,
-				DynamicArray<uint32_t>& indices,
-				HashTable<StringId, uint32_t>& jointMap,
+				DynamicArray<ui32>& indices,
+				HashTable<StringId, ui32>& jointMap,
 				HashTable<StringId, glm::mat4>& jointOffsetMapping);
 
 			void FillTextureData(const aiMesh *aimesh,
@@ -52,7 +52,7 @@ namespace BaldLion
 				Texture*& normalTex);
 
 			void FillVertexWeightData(const aiMesh* aimesh, 
-				const HashTable<StringId, uint32_t>& jointMapping,
+				const HashTable<StringId, ui32>& jointMapping,
 				DynamicArray<VertexBoneData>& verticesBoneData);
 
 		protected:

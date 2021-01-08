@@ -33,7 +33,7 @@ namespace BaldLion
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
 
-			for (uint32_t i = 0; i < 1; ++i)
+			for (ui32 i = 0; i < 1; ++i)
 			{
 				auto model = MemoryManager::New<Rendering::AnimatedModel>(STRING_TO_ID("Animated Model"), AllocationType::FreeList_Renderer, "assets/creature/creature.fbx", initialTransform);
 				model->SetUpModel();
@@ -78,7 +78,7 @@ namespace BaldLion
 		{
 			m_pointLights.Clear();
 
-			for (uint32_t i = 0; i < m_models.Size(); ++i)
+			for (ui32 i = 0; i < m_models.Size(); ++i)
 			{
 				MemoryManager::DeleteNoDestructor(m_models[i]);
 			}
@@ -111,7 +111,7 @@ namespace BaldLion
 
 			{
 				BL_PROFILE_SCOPE("Renderer::Draw");
-				for (uint32_t i = 0; i < m_models.Size(); ++i)
+				for (ui32 i = 0; i < m_models.Size(); ++i)
 				{
 					m_models[i]->Draw();
 				}
@@ -134,7 +134,7 @@ namespace BaldLion
 			if (m_viewportSize != glm::vec2{ viewportPanelSize.x, viewportPanelSize.y })
 			{
 				m_viewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-				m_frameBuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
+				m_frameBuffer->Resize((ui32)viewportPanelSize.x, (ui32)viewportPanelSize.y);
 			}
 
 			ImGui::Image((void*)m_frameBuffer->GetColorAttachmentID(), ImVec2{ m_viewportSize.x , m_viewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
@@ -148,7 +148,7 @@ namespace BaldLion
 			ImGui::ColorEdit3("Light Diffuse Color", glm::value_ptr(m_directionalLight.diffuseColor));
 			ImGui::ColorEdit3("Light Specular Color", glm::value_ptr(m_directionalLight.specularColor));
 
-			for (uint32_t i = 0; i < m_pointLights.Size(); ++i)
+			for (ui32 i = 0; i < m_pointLights.Size(); ++i)
 			{
 				ImGui::Text(("Point Light " + std::to_string(i)).c_str());
 				ImGui::SliderFloat3(("Light Position " + std::to_string(i)).c_str(), glm::value_ptr(m_pointLights[i].position), -300.0f, 300.0f);
@@ -236,8 +236,8 @@ namespace BaldLion
 
 		bool BaldLionEditorLayer::OnWindowResizeEvent(WindowResizeEvent& e)
 		{
-			uint32_t width = e.GetWidth();
-			uint32_t height = e.GetHeight();
+			ui32 width = e.GetWidth();
+			ui32 height = e.GetHeight();
 
 			ProjectionCameraManager::GetCamera()->SetWidth((float)width);
 			ProjectionCameraManager::GetCamera()->SetHeight((float)height);

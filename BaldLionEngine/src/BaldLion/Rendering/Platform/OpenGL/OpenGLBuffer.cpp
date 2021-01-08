@@ -10,7 +10,7 @@ namespace BaldLion
 		//-------------------------------------------------
 		//Vertex buffer
 		//-------------------------------------------------
-		OpenGLVertexBuffer::OpenGLVertexBuffer(const void* vertices, uint32_t size)
+		OpenGLVertexBuffer::OpenGLVertexBuffer(const void* vertices, ui32 size)
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -45,13 +45,13 @@ namespace BaldLion
 		//-------------------------------------------------
 		//Index buffer
 		//-------------------------------------------------
-		OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t * indices, uint32_t count) : m_count(count)
+		OpenGLIndexBuffer::OpenGLIndexBuffer(const ui32 * indices, ui32 count) : m_count(count)
 		{
 			BL_PROFILE_FUNCTION();
 
 			glCreateBuffers(1, &m_rendererID);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_rendererID);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(ui32), indices, GL_STATIC_DRAW);
 		}
 
 		OpenGLIndexBuffer::~OpenGLIndexBuffer()

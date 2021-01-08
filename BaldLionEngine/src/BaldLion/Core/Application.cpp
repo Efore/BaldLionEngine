@@ -89,7 +89,7 @@ namespace BaldLion
 				{
 					BL_PROFILE_SCOPE("LayerStack OnUpdates");
 
-					for (int i = 0; i < m_layerStack.Size(); ++i)
+					for (ui32 i = 0; i < m_layerStack.Size(); ++i)
 						m_layerStack[i]->OnUpdate(timeStep);
 				}
 
@@ -97,7 +97,7 @@ namespace BaldLion
 
 				{
 					BL_PROFILE_SCOPE("LayerStack OnImGuiRender");
-					for (int i = 0; i < m_layerStack.Size(); ++i)
+					for (ui32 i = 0; i < m_layerStack.Size(); ++i)
 						m_layerStack[i]->OnImGuiRender();
 				}
 
@@ -116,7 +116,7 @@ namespace BaldLion
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowMinimizeEvent>(BIND_EVENT_FN(OnWindowMinimized));
 
-		for (int i = 0; i < m_layerStack.Size(); ++i)
+		for (ui32 i = 0; i < m_layerStack.Size(); ++i)
 		{
 			m_layerStack[i]->OnEvent(e);
 			if (e.IsHandled())

@@ -13,7 +13,7 @@ namespace BaldLion
 		//-------------------------------------------------
 		//Vertex buffer
 		//-------------------------------------------------
-		VertexBuffer* VertexBuffer::Create(const void * vertices, uint32_t size)
+		VertexBuffer* VertexBuffer::Create(const void * vertices, ui32 size)
 		{
 			switch (RendererPlatformInterface::GetAPI())
 			{
@@ -28,7 +28,7 @@ namespace BaldLion
 		//-------------------------------------------------
 		//Index buffer
 		//-------------------------------------------------
-		IndexBuffer* IndexBuffer::Create(const uint32_t * indices, uint32_t count)
+		IndexBuffer* IndexBuffer::Create(const ui32 * indices, ui32 count)
 		{
 			switch (RendererPlatformInterface::GetAPI())
 			{

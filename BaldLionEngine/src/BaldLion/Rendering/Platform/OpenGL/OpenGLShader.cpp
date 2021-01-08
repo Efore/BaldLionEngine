@@ -199,7 +199,7 @@ namespace BaldLion
 				return;
 
 			case ShaderDataType::Int:
-				glUniform1i(uniformID, *(uint32_t*)uniformIndex);
+				glUniform1i(uniformID, *(ui32*)uniformIndex);
 				return;
 
 			case ShaderDataType::Int2:

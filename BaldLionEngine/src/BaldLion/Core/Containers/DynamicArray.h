@@ -8,15 +8,15 @@ namespace BaldLion
 	{
 	public:		
 		DynamicArray();
-		DynamicArray(Memory::AllocationType allocationType, size_t capacity);
+		DynamicArray(Memory::AllocationType allocationType, ui32 capacity);
 		DynamicArray(Memory::AllocationType allocationType, const DynamicArray<T, Allocator>& other);
 		DynamicArray(const DynamicArray<T, Allocator>& other);
 		DynamicArray(DynamicArray<T, Allocator>&& other) noexcept;
 
 		~DynamicArray();
 
-		size_t Size() const { return m_size; }
-		size_t Capacity() const { return m_capacity; }
+		ui32 Size() const { return m_size; }
+		ui32 Capacity() const { return m_capacity; }
 
 		void Clear();
 		void ClearNoDestructor();
@@ -27,16 +27,16 @@ namespace BaldLion
 		void PushBack(const T& element);
 		void PushBack(T&& element);
 
-		void PushAt(const T& element, size_t index);
-		void PushAt(T&& element, size_t index);
+		void PushAt(const T& element, ui32 index);
+		void PushAt(T&& element, ui32 index);
 
 		void PopBack();
 
 		void Remove(const T& element);
 		void RemoveFast(const T& element);
 
-		void RemoveAt(size_t index);
-		void RemoveAtFast(size_t index);
+		void RemoveAt(ui32 index);
+		void RemoveAtFast(ui32 index);
 
 		void Fill();		
 		void Fill(const T& value);
@@ -70,16 +70,16 @@ namespace BaldLion
 
 	private:
 
-		void Reserve(size_t capacity);	
-		void Reallocate(size_t newCapacity);
+		void Reserve(ui32 capacity);
+		void Reallocate(ui32 newCapacity);
 
 	private:
 
 		T* m_elements = nullptr;
 		Allocator* m_allocator = nullptr;
 
-		size_t m_size = 0;
-		size_t m_capacity = 0;
+		ui32 m_size = 0;
+		ui32 m_capacity = 0;
 	};
 	
 	template <typename T, typename Allocator>
@@ -88,7 +88,7 @@ namespace BaldLion
 	} 
 
 	template <typename T, typename Allocator>
-	BaldLion::DynamicArray<T, Allocator>::DynamicArray(Memory::AllocationType allocationType, size_t capacity)
+	BaldLion::DynamicArray<T, Allocator>::DynamicArray(Memory::AllocationType allocationType, ui32 capacity)
 		: m_allocator (Memory::MemoryManager::GetAllocator(allocationType)), m_size(0)
 	{
 		Reserve(capacity);
@@ -129,7 +129,7 @@ namespace BaldLion
 		m_size = other.m_size;
 		Reserve(other.Capacity());
 
-		for (size_t i = 0; i < other.Size(); ++i)
+		for (ui32 i = 0; i < other.Size(); ++i)
 		{
 			m_elements[i] = other[i];
 		}
@@ -159,7 +159,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::DynamicArray<T, Allocator>::Reserve(size_t capacity)
+	void BaldLion::DynamicArray<T, Allocator>::Reserve(ui32 capacity)
 	{
 		m_capacity = capacity;
 		m_elements = (T*)m_allocator->Allocate(capacity * sizeof(T), __alignof(T));
@@ -171,7 +171,7 @@ namespace BaldLion
 		if (m_elements == nullptr)
 			return;
 
-		for (size_t i = 0; i < m_size; ++i)
+		for (ui32 i = 0; i < m_size; ++i)
 		{
 			m_elements[m_size].~T();
 		}
@@ -199,7 +199,7 @@ namespace BaldLion
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
 		if (m_size == m_capacity)
-			Reallocate((size_t)(m_capacity * 1.5f));
+			Reallocate((ui32)(m_capacity * 1.5f));
 
 		new (&m_elements[m_size]) T(std::forward<Args>(args)...);
 
@@ -212,7 +212,7 @@ namespace BaldLion
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
 		if (m_size == m_capacity)
-			Reallocate((size_t)(m_capacity * 1.5f));
+			Reallocate((ui32)(m_capacity * 1.5f));
 
 		m_elements[m_size++] = element;
 	}
@@ -223,13 +223,13 @@ namespace BaldLion
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
 		if (m_size == m_capacity)
-			Reallocate((size_t)(m_capacity * 1.5f));
+			Reallocate((ui32)(m_capacity * 1.5f));
 
 		m_elements[m_size++] = std::move(element);
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::DynamicArray<T, Allocator>::PushAt(const T& element, size_t index)
+	void BaldLion::DynamicArray<T, Allocator>::PushAt(const T& element, ui32 index)
 	{
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
@@ -240,10 +240,10 @@ namespace BaldLion
 		else {
 
 			if (m_size == m_capacity)
-				Reallocate((size_t)(m_capacity * 1.5f));		
+				Reallocate((ui32)(m_capacity * 1.5f));
 
-			T* newLocation = (T*)m_allocator->Allocate((m_size == m_capacity ? (size_t)(m_capacity * 1.5f) : m_capacity) * sizeof(T), __alignof(T));
-			size_t newSize = m_size + 1;
+			T* newLocation = (T*)m_allocator->Allocate((m_size == m_capacity ? (ui32)(m_capacity * 1.5f) : m_capacity) * sizeof(T), __alignof(T));
+			const ui32 newSize = m_size + 1;
 
 			std::copy(m_elements, m_elements + index, newLocation);
 			newLocation[index] = element;
@@ -257,7 +257,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::DynamicArray<T, Allocator>::PushAt(T&& element, size_t index)
+	void BaldLion::DynamicArray<T, Allocator>::PushAt(T&& element, ui32 index)
 	{
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 		BL_ASSERT(index < m_size, "Index is bigger than size");
@@ -269,10 +269,10 @@ namespace BaldLion
 		else {
 
 			if (m_size == m_capacity)
-				Reallocate((size_t)(m_capacity * 1.5f));
+				Reallocate((ui32)(m_capacity * 1.5f));
 
-			T* newLocation = (T*)m_allocator->Allocate((m_size == m_capacity ? (size_t)(m_capacity * 1.5f) : m_capacity) * sizeof(T), __alignof(T));
-			size_t newSize = m_size + 1;
+			T* newLocation = (T*)m_allocator->Allocate((m_size == m_capacity ? (ui32)(m_capacity * 1.5f) : m_capacity) * sizeof(T), __alignof(T));
+			const ui32 newSize = m_size + 1;
 
 			std::copy(m_elements, m_elements + index, newLocation);
 			newLocation[index] = std::move(element);
@@ -301,7 +301,7 @@ namespace BaldLion
 		if (m_size == 0)
 			return;
 
-		size_t i = 0;
+		ui32 i = 0;
 		for (; i <= m_size && m_elements[i] != element; ++i);
 
 		if (i < m_size)
@@ -316,7 +316,7 @@ namespace BaldLion
 		if (m_size == 0)
 			return;
 
-		size_t i = 0;
+		ui32 i = 0;
 		for (; i <= m_size && m_elements[i] != element; ++i);
 
 		if (i < m_size)
@@ -326,7 +326,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::DynamicArray<T, Allocator>::RemoveAt(size_t index)
+	void BaldLion::DynamicArray<T, Allocator>::RemoveAt(ui32 index)
 	{
 		BL_ASSERT(index < m_size, "Index can't be bigger than or equal to m_size");			
 
@@ -337,7 +337,7 @@ namespace BaldLion
 		else
 		{
 			T* newLocation = (T*)m_allocator->Allocate(m_capacity * sizeof(T), __alignof(T));
-			size_t newSize = m_size - 1;
+			const ui32 newSize = m_size - 1;
 
 			std::copy(m_elements, m_elements + index, newLocation);
 			std::copy(m_elements + index + 1, m_elements + m_size, newLocation + index);
@@ -350,7 +350,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::DynamicArray<T, Allocator>::RemoveAtFast(size_t index)
+	void BaldLion::DynamicArray<T, Allocator>::RemoveAtFast(ui32 index)
 	{
 		BL_ASSERT(index < m_size, "Index can't be bigger than or equal to  m_size");
 
@@ -369,7 +369,7 @@ namespace BaldLion
 	template <typename T, typename Allocator>
 	int BaldLion::DynamicArray<T, Allocator>::FindIndex(const T& element)
 	{
-		for (int i = 0; i < m_size; ++i)
+		for (ui32 i = 0; i < m_size; ++i)
 		{
 			if (m_elements[i] == element)
 			{
@@ -386,13 +386,13 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	void BaldLion::DynamicArray<T, Allocator>::Reallocate(size_t newCapacity)
+	void BaldLion::DynamicArray<T, Allocator>::Reallocate(ui32 newCapacity)
 	{
 		T* newLocation = (T*)m_allocator->Allocate(newCapacity * sizeof(T), __alignof(T));
 
-		const size_t newSize = newCapacity < m_size ? newCapacity : m_size;
+		const ui32 newSize = newCapacity < m_size ? newCapacity : m_size;
 
-		for (size_t i = 0; i < newSize; ++i)
+		for (ui32 i = 0; i < newSize; ++i)
 		{
 			newLocation[i] = std::move(m_elements[i]);
 		}
@@ -409,7 +409,7 @@ namespace BaldLion
 	{
 		m_size = m_capacity;
 
-		for (size_t i = 0; i < m_size; ++i)
+		for (ui32 i = 0; i < m_size; ++i)
 		{
 			m_elements[i] = T();
 		}
@@ -420,8 +420,8 @@ namespace BaldLion
 	{
 		m_size = m_capacity;
 
-		for (size_t i = 0; i < m_size; ++i)
-		{
+		for (ui32 i = 0; i < m_size; ++i)
+		{ 
 			m_elements[i] = value;
 		}
 	}
@@ -431,7 +431,7 @@ namespace BaldLion
 	{
 		m_size = m_capacity;
 
-		for (size_t i = 0; i < m_size; ++i)
+		for (ui32 i = 0; i < m_size; ++i)
 		{
 			m_elements[i] = value;
 		}

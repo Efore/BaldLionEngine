@@ -12,11 +12,11 @@ namespace BaldLion
 			OpenGLTexture2D(const std::string& path, const unsigned char* textureData, int size);
 			virtual ~OpenGLTexture2D();
 
-			virtual uint32_t GetWidth() const override { return m_width; }
-			virtual uint32_t GetHeight() const override { return m_height; }
-			virtual uint32_t GetRendererID() const override { return m_rendererID; }
+			virtual ui32 GetWidth() const override { return m_width; }
+			virtual ui32 GetHeight() const override { return m_height; }
+			virtual ui32 GetRendererID() const override { return m_rendererID; }
 
-			virtual void Bind(uint32_t slot = 0) const override;
+			virtual void Bind(ui32 slot = 0) const override;
 
 			virtual StringId GetName() const override { return m_name; }
 
@@ -25,8 +25,8 @@ namespace BaldLion
 		private:
 			StringId m_name;
 
-			uint32_t m_width, m_height;
-			uint32_t m_rendererID;
+			ui32 m_width, m_height;
+			ui32 m_rendererID;
 		};
 	}
 }

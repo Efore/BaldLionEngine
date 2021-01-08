@@ -45,7 +45,7 @@ namespace BaldLion
 		{
 			glDeleteVertexArrays(1, &m_rendererID);
 			
-			for (uint32_t i = 0; i < m_vertexBuffers.Size(); ++i)
+			for (ui32 i = 0; i < m_vertexBuffers.Size(); ++i)
 			{
 				MemoryManager::DeleteNoDestructor(m_vertexBuffers[i]);
 			}
@@ -71,7 +71,7 @@ namespace BaldLion
 			glBindVertexArray(m_rendererID);
 
 			const auto& layout = vertexBuffer->GetLayout();
-			for (uint32_t i = 0; i < layout.GetElements().Size(); ++i)
+			for (ui32 i = 0; i < layout.GetElements().Size(); ++i)
 			{
 				glEnableVertexAttribArray(m_currentLayoutIndex);
 				glVertexAttribPointer(m_currentLayoutIndex,

@@ -22,7 +22,7 @@ namespace BaldLion
 			static void Init();
 			static void Stop();
 
-			static void OnWindowResize(uint32_t width, uint32_t height);
+			static void OnWindowResize(ui32 width, ui32 height);
 
 			static void BeginScene(const ProjectionCamera* camera, const DirectionalLight& directionalLight,const DynamicArray<PointLight>& pointLights);
 			static void EndScene();

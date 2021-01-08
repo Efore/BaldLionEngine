@@ -23,7 +23,7 @@ namespace BaldLion
 
 		Model::~Model()
 		{
-			for (uint32_t i = 0; i < m_subMeshes.Size(); ++i)
+			for (ui32 i = 0; i < m_subMeshes.Size(); ++i)
 			{
 				MemoryManager::DeleteNoDestructor(m_subMeshes[i]);
 			}
@@ -50,7 +50,7 @@ namespace BaldLion
 		void Model::Draw() const
 		{
 			BL_PROFILE_FUNCTION();
-			for (uint32_t i = 0; i < m_subMeshes.Size(); ++i)
+			for (ui32 i = 0; i < m_subMeshes.Size(); ++i)
 			{
 				m_subMeshes[i]->Draw();
 			}
@@ -59,19 +59,19 @@ namespace BaldLion
 		void Model::ProcessNode(const aiNode *node, const aiScene *scene)
 		{
 			// process all the node's meshes (if any)
-			for (uint32_t i = 0; i < node->mNumMeshes; i++)
+			for (ui32 i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 				m_subMeshes.PushBack(ProcessMesh(mesh, scene));
 			}
 			// then do the same for each of its children
-			for (uint32_t i = 0; i < node->mNumChildren; i++)
+			for (ui32 i = 0; i < node->mNumChildren; i++)
 			{
 				ProcessNode(node->mChildren[i], scene);
 			}
 		}
 
-		void Model::FillVertexArrayData(const aiMesh *aimesh, DynamicArray<Vertex>& vertices, DynamicArray<uint32_t>& indices)
+		void Model::FillVertexArrayData(const aiMesh *aimesh, DynamicArray<Vertex>& vertices, DynamicArray<ui32>& indices)
 		{
 			for (unsigned int i = 0; i < aimesh->mNumVertices; i++)
 			{
@@ -121,7 +121,7 @@ namespace BaldLion
 				vertices.PushBack(Vertex{ position, color, normal, texCoord, tangent, bitangent });
 			}
 
-			for (uint32_t i = 0; i < aimesh->mNumFaces; i++)
+			for (ui32 i = 0; i < aimesh->mNumFaces; i++)
 			{
 				aiFace face = aimesh->mFaces[i];
 				for (size_t j = 0; j < face.mNumIndices; j++)
@@ -240,7 +240,7 @@ namespace BaldLion
 		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{
 			DynamicArray<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
-			DynamicArray<uint32_t> indices(AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
+			DynamicArray<ui32> indices(AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
 
 			FillVertexArrayData(aimesh, vertices, indices);
 

@@ -13,7 +13,7 @@ using namespace BaldLion::Rendering;
 class RendererTestLayer : public BaldLion::Layer
 {
 public:
-	RendererTestLayer(uint32_t width, uint32_t height)		
+	RendererTestLayer(ui32 width, ui32 height)		
 	{
 		
 	}
@@ -35,7 +35,7 @@ public:
 
 		glm::mat4 initialTransform = glm::mat4(1.0f);
 
-		for (uint32_t i = 0; i < 1; ++i)
+		for (ui32 i = 0; i < 1; ++i)
 		{
 			auto model = MemoryManager::New<Rendering::AnimatedModel>("Animated Model", AllocationType::FreeList_Renderer, "assets/creature/creature.fbx", initialTransform);
 			model->SetUpModel();
@@ -100,7 +100,7 @@ public:
 
 		{
 			BL_PROFILE_SCOPE("Renderer::Draw");
-			for (uint32_t i = 0; i < m_models.Size(); ++i)
+			for (ui32 i = 0; i < m_models.Size(); ++i)
 			{
 				m_models[i]->Draw();
 			}
@@ -120,7 +120,7 @@ public:
 		ImGui::ColorEdit3("Light Diffuse Color", glm::value_ptr(m_directionalLight.diffuseColor));
 		ImGui::ColorEdit3("Light Specular Color", glm::value_ptr(m_directionalLight.specularColor));
 
-		for (uint32_t i = 0; i < m_pointLights.Size(); ++i)
+		for (ui32 i = 0; i < m_pointLights.Size(); ++i)
 		{
 			ImGui::Text(("Point Light " + std::to_string(i)).c_str());
 			ImGui::SliderFloat3(("Light Position " + std::to_string(i)).c_str(), glm::value_ptr(m_pointLights[i].position), -300.0f, 300.0f);
@@ -139,7 +139,7 @@ public:
 	{
 		m_pointLights.Clear();
 
-		for (uint32_t i = 0; i < m_models.Size(); ++i)
+		for (ui32 i = 0; i < m_models.Size(); ++i)
 		{
 			MemoryManager::DeleteNoDestructor(m_models[i]);
 		}
@@ -157,8 +157,8 @@ public:
 
 	bool OnWindowResize(BaldLion::WindowResizeEvent& e)
 	{
-		uint32_t width = e.GetWidth();
-		uint32_t height = e.GetHeight();
+		ui32 width = e.GetWidth();
+		ui32 height = e.GetHeight();
 
 		ProjectionCameraManager::GetCamera()->SetWidth((float)width);
 		ProjectionCameraManager::GetCamera()->SetHeight((float)height);

@@ -11,7 +11,7 @@ namespace BaldLion
 			: m_animatedMesh(animatedMesh)
 		{
 			m_animations = HashTable<StringId, AnimationData*>(AllocationType::FreeList_Renderer, animations.Size() * 2);
-			for (uint32_t i = 0; i < animations.Size(); ++i)
+			for (ui32 i = 0; i < animations.Size(); ++i)
 			{
 				if (!m_animations.Contains(animations[i].animationName))
 				{
@@ -35,7 +35,7 @@ namespace BaldLion
 			int prevFrameIndex = 0;
 			int nextFrameIndex = 0;
 
-			for (int i = 1; i < animation->frames.Size(); ++i)
+			for (ui32 i = 1; i < animation->frames.Size(); ++i)
 			{
 				if (m_animationTime > animation->frames[i].timeStamp)
 					continue;
@@ -50,7 +50,7 @@ namespace BaldLion
 
 			result = DynamicArray<JointTransform>(AllocationType::Stack_Scope_Temp, animation->frames[prevFrameIndex].jointTranforms);
 
-			for (uint32_t i = 0; i < result.Size(); ++i)
+			for (ui32 i = 0; i < result.Size(); ++i)
 			{
 				result[i].SetPosition(glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].GetDecompressedPosition(), animation->frames[nextFrameIndex].jointTranforms[i].GetDecompressedPosition(), interpolant));
 				result[i].SetRotation(glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].GetDecompressedRotation(), animation->frames[nextFrameIndex].jointTranforms[i].GetDecompressedRotation(), interpolant));				
@@ -64,7 +64,7 @@ namespace BaldLion
 			DynamicArray<JointTransform> transforms;
 			CalculateInterpolatedTransforms(m_currentAnimation, transforms); 
 			
-			for (int i = 0;  i < transforms.Size(); ++i)
+			for (ui32 i = 0;  i < transforms.Size(); ++i)
 			{
 				int parentID = m_animatedMesh->GetJoints()[i].parentID;
 

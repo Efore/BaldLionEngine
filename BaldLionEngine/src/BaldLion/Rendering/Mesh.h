@@ -14,7 +14,7 @@ namespace BaldLion
 			Mesh(Material* material);
 			~Mesh();
 
-			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<uint32_t>& indices);
+			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);
 			void Draw() const;
 
 			const Material* GetMaterial() const { return m_material; }

@@ -14,17 +14,17 @@ namespace BaldLion
 
 			virtual void Bind() override;
 			virtual void Unbind() override;
-			virtual void Resize(uint32_t width, uint32_t height) override;
+			virtual void Resize(ui32 width, ui32 height) override;
 
 			void Invalidate();
 
-			virtual uint32_t GetColorAttachmentID() const override { return m_colorAttachmentID; }
-			virtual uint32_t GetDepthAttachmentID() const override { return m_depthAttachmentID; }
+			virtual ui32 GetColorAttachmentID() const override { return m_colorAttachmentID; }
+			virtual ui32 GetDepthAttachmentID() const override { return m_depthAttachmentID; }
 			virtual const FramebufferSpecification& GetSpecification() const override { return m_framebufferSpecification; }
 
 		private:
-			uint32_t m_rendererID = 0;
-			uint32_t m_colorAttachmentID = 0, m_depthAttachmentID = 0;
+			ui32 m_rendererID = 0;
+			ui32 m_colorAttachmentID = 0, m_depthAttachmentID = 0;
 			FramebufferSpecification m_framebufferSpecification;
 		};
 	}

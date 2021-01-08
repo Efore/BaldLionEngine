@@ -20,7 +20,7 @@ namespace BaldLion
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
 
-		void OpenGLRenderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+		void OpenGLRenderer::SetViewport(ui32 x, ui32 y, ui32 width, ui32 height)
 		{
 			BL_PROFILE_FUNCTION();
 

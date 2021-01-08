@@ -38,7 +38,7 @@ namespace BaldLion
 			s_textureLibrary.Clear();
 		}
 
-		void Renderer::OnWindowResize(uint32_t width, uint32_t height)
+		void Renderer::OnWindowResize(ui32 width, ui32 height)
 		{
 			s_rendererPlatformInterface->SetViewport(0, 0, width, height);			
 		}
@@ -80,7 +80,7 @@ namespace BaldLion
 			size_t numPointLights = LightManager::GetScenePointLights().Size();
 			shader->SetUniform(STRING_TO_ID("u_numPointLights"), ShaderDataType::Int, &(numPointLights));
 
-			for (uint32_t i = 0; i < numPointLights; ++i)
+			for (ui32 i = 0; i < numPointLights; ++i)
 			{
 				shader->SetUniform(STRING_TO_ID(("u_pointLights[" + std::to_string(i) + "].position")), ShaderDataType::Float3, &(LightManager::GetScenePointLights()[i].position));
 				shader->SetUniform(STRING_TO_ID(("u_pointLights[" + std::to_string(i) + "].constant")), ShaderDataType::Float, &(LightManager::GetScenePointLights()[i].constant));

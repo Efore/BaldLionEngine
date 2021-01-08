@@ -17,11 +17,11 @@ namespace BaldLion
 
 			virtual ~Texture() = default;
 
-			virtual uint32_t GetWidth() const = 0;
-			virtual uint32_t GetHeight() const = 0;
-			virtual uint32_t GetRendererID() const = 0;
+			virtual ui32 GetWidth() const = 0;
+			virtual ui32 GetHeight() const = 0;
+			virtual ui32 GetRendererID() const = 0;
 
-			virtual void Bind(uint32_t slot = 0) const = 0;
+			virtual void Bind(ui32 slot = 0) const = 0;
 
 			virtual StringId GetName() const = 0;
 

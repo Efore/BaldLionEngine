@@ -1,5 +1,7 @@
 #include "blpch.h"
 #include "AnimationManager.h"
+#include <thread>
+#include <future>
 
 namespace BaldLion
 {
@@ -21,7 +23,7 @@ namespace BaldLion
 		void AnimationManager::Stop()
 		{	
 			s_initialized = false;
-			for (uint32_t i = 0; i < s_registeredAnimators.Size(); ++i)
+			for (ui32 i = 0; i < s_registeredAnimators.Size(); ++i)
 			{
 				MemoryManager::DeleteNoDestructor(s_registeredAnimators[i]);
 			}
@@ -30,18 +32,18 @@ namespace BaldLion
 
 		void AnimationManager::OnUpdate(float timeStep)
 		{
-			for (uint32_t i = 0; i < s_registeredAnimators.Size(); ++i)
+			for (ui32 i = 0; i < s_registeredAnimators.Size(); ++i)
 			{
 				s_registeredAnimators[i]->OnUpdate(timeStep);
 			}
 		}
 
-		void AnimationManager::GenerateAnimator(const aiScene *scene, const HashTable<StringId, uint32_t>& jointMapping, SkinnedMesh* animatedMesh)
+		void AnimationManager::GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping, SkinnedMesh* animatedMesh)
 		{
 			if (scene->HasAnimations())
 			{
 				DynamicArray<AnimationData> animations(AllocationType::FreeList_Renderer, scene->mNumAnimations);
-				for (uint32_t i = 0; i < scene->mNumAnimations; ++i)
+				for (ui32 i = 0; i < scene->mNumAnimations; ++i)
 				{
 					AnimationData animationData;
 

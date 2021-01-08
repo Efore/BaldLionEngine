@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include "BaldLion/Core/Core.h"
 
 namespace BaldLion {
 
@@ -18,45 +19,45 @@ namespace BaldLion {
 			uint16_t z;
 		};
 
-		static uint32_t CompressFloat01RL(float float01, uint32_t nBits) 
+		static ui32 CompressFloat01RL(float float01, ui32 nBits) 
 		{
 			//Determine the number of intervals based on the number of output bits we've been asked to produce
-			uint32_t nIntervals = 1u << nBits;
+			ui32 nIntervals = 1u << nBits;
 
 			//Scale the input value from the range [0, 1] into the range [0, nintervals - 1]. We substract one interval because we want the largest output value to fit into nBits bits
 			float scaled = float01 * (float)(nIntervals - 1u);
 
-			//Finally, round to the nearest interval center. We do this by adding 0.5f and then truncating to the next-lowest interval index (by casting to uint32_t)
-			uint32_t rounded = (uint32_t)(scaled + 0.5f);
+			//Finally, round to the nearest interval center. We do this by adding 0.5f and then truncating to the next-lowest interval index (by casting to i32)
+			ui32 rounded = (ui32)(scaled + 0.5f);
 
 			//Guard against invalid input values
-			if (rounded > nIntervals - 1u)
+			if (rounded > (nIntervals - 1u))
 				rounded = nIntervals - 1u;
 
 			return rounded;
 		}
 
-		static uint32_t CompressFloatRL(float value, float min, float max, uint32_t nBits)
+		static ui32 CompressFloatRL(float value, float min, float max, ui32 nBits)
 		{
 			float unitFloat = (value - min) / (max - min);
-			uint32_t quantized = CompressFloat01RL(unitFloat, nBits);
+			ui32 quantized = CompressFloat01RL(unitFloat, nBits);
 
 			return quantized;
 		}
 
-		static float DecompressFloat01RL(uint32_t quantized, uint32_t nBits)
+		static float DecompressFloat01RL(ui32 quantized, ui32 nBits)
 		{
 			//Determine the number of intervals based on the numb er of bits we used when encoded the value
-			uint32_t nIntervals = 1u << nBits;
+			ui32 nIntervals = 1u << nBits;
 
-			//Decode by simply converting the uint32_t to a float, and scaling by the interval size
+			//Decode by simply converting the i32 to a float, and scaling by the interval size
 			float intervalSize = 1.0f / (float)(nIntervals - 1u);
 			float approxFloat01 = (float)quantized * intervalSize;
 
 			return approxFloat01;
 		}
 
-		static float DecompressFloatRL(uint32_t quantized, float min, float max, uint32_t nBits)
+		static float DecompressFloatRL(ui32 quantized, float min, float max, ui32 nBits)
 		{
 			float float01 = DecompressFloat01RL(quantized, nBits);
 			float value = min + (float01 * (max - min));
@@ -76,9 +77,9 @@ namespace BaldLion {
 
 		static glm::quat DecompressCuaternion(const QuantizedQuaterion& quantizedQuaterion) {
 
-			float x = DecompressFloatRL((uint32_t)quantizedQuaterion.x, -1.0f, 1.0f, 16u);
-			float y = DecompressFloatRL((uint32_t)quantizedQuaterion.y, -1.0f, 1.0f, 16u);
-			float z = DecompressFloatRL((uint32_t)quantizedQuaterion.z, -1.0f, 1.0f, 16u);
+			float x = DecompressFloatRL((ui32)quantizedQuaterion.x, -1.0f, 1.0f, 16u);
+			float y = DecompressFloatRL((ui32)quantizedQuaterion.y, -1.0f, 1.0f, 16u);
+			float z = DecompressFloatRL((ui32)quantizedQuaterion.z, -1.0f, 1.0f, 16u);
 
 			float w = glm::sqrt(1.0f - (x*x + y*y + z*z));
 
@@ -102,9 +103,9 @@ namespace BaldLion {
 		static glm::vec3 DecompressVector3(const QuantizedVector3& vector3, float range)
 		{
 			return glm::vec3(
-				DecompressFloatRL((uint32_t)vector3.x, -range, range, 16u),
-				DecompressFloatRL((uint32_t)vector3.y, -range, range, 16u),
-				DecompressFloatRL((uint32_t)vector3.z, -range, range, 16u)
+				DecompressFloatRL((ui32)vector3.x, -range, range, 16u),
+				DecompressFloatRL((ui32)vector3.y, -range, range, 16u),
+				DecompressFloatRL((ui32)vector3.z, -range, range, 16u)
 			);
 		}
 	}
