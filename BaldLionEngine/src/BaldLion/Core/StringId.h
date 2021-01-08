@@ -1,6 +1,6 @@
 #pragma once
 
-typedef size_t StringId; 
+typedef ui32 StringId; 
 
 namespace std
 {

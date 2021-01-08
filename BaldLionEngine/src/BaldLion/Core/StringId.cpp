@@ -8,7 +8,7 @@ namespace BaldLion {
 
 	StringId StringToStringId(const char* str)
 	{
-		StringId sid = std::hash<const char*>()(str);
+		StringId sid = (ui32)std::hash<const char*>()(str);
 		std::unordered_map<StringId, const char*>::const_iterator it = s_stringIdTable.find(sid);
 
 		if (it == s_stringIdTable.end())
