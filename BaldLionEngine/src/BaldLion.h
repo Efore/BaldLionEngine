@@ -27,6 +27,11 @@
 
 #include "BaldLion/Core/Memory/MemoryManager.h"
 
-//---------------- Data Structures ------------------
+//---------------- Containers ------------------
 
+#include "BaldLion/Core/Containers/DynamicArray.h"
 #include "BaldLion/Core/Containers/HashTable.h"
+
+//---------------- Threading ------------------
+
+#include "BaldLion/Core/JobManagement/JobManager.h"

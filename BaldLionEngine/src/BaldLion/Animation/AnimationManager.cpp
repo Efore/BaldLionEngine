@@ -1,13 +1,13 @@
 #include "blpch.h"
 #include "AnimationManager.h"
-#include <thread>
-#include <future>
+#include "BaldLion/Core/JobManagement/JobManager.h"
 
 namespace BaldLion
 {
 	namespace Animation
 	{
 		DynamicArray<Animator*> AnimationManager::s_registeredAnimators;
+		std::mutex AnimationManager::s_animationManagerMutex;
 
 		bool AnimationManager::s_initialized = false;
 
@@ -38,6 +38,32 @@ namespace BaldLion
 			}
 		}
 
+		void AnimationManager::OnParallelUpdate(float timeStep, StringId& paralellJobID)
+		{
+			JobManagement::Job animationParallelUpdate("AnimationManagerParallelUpdate",0u, s_registeredAnimators.Size());			
+			paralellJobID = animationParallelUpdate.JobID;
+
+			animationParallelUpdate.Task = [paralellJobID, timeStep] {
+
+				for (ui32 i = 0; i < s_registeredAnimators.Size(); ++i)
+				{
+					Animator* animatorToUpdate = s_registeredAnimators[i];
+
+					const std::string animatorName = "Animator" + std::to_string(i);
+
+					JobManagement::Job animationJob(animatorName.c_str(), paralellJobID);
+					animationJob.Task = [animatorToUpdate, timeStep] { 
+						BL_PROFILE_SCOPE("AnimationManager::OnUpdateAnimation");
+						animatorToUpdate->OnUpdate(timeStep); 
+					};
+
+					JobManagement::JobManager::QueueJob(animationJob);
+				}
+			};
+
+			JobManagement::JobManager::QueueJob(animationParallelUpdate);
+		}
+
 		void AnimationManager::GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping, SkinnedMesh* animatedMesh)
 		{
 			if (scene->HasAnimations())
@@ -45,34 +71,32 @@ namespace BaldLion
 				DynamicArray<AnimationData> animations(AllocationType::FreeList_Renderer, scene->mNumAnimations);
 				for (ui32 i = 0; i < scene->mNumAnimations; ++i)
 				{
-					AnimationData animationData;
+					AnimationData animationData(
+						STRING_TO_ID(scene->mAnimations[i]->mName.data), 
+						DynamicArray<KeyFrame>(AllocationType::FreeList_Renderer, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys), 
+						(float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond)
+					);
 
-					animationData.animationName = STRING_TO_ID(scene->mAnimations[i]->mName.data);
-					animationData.animationLength = (float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond);
-					animationData.frames = DynamicArray<KeyFrame>(AllocationType::FreeList_Renderer, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys);	
-					
-
-					float timeStamp = (float)(1.0f / scene->mAnimations[i]->mTicksPerSecond);
+					float TimeStamp = (float)(1.0f / scene->mAnimations[i]->mTicksPerSecond);
 
 					for (size_t j = 0; j < (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys; ++j)
 					{
-						KeyFrame keyFrame;
-						keyFrame.timeStamp = glm::min(timeStamp * j, animationData.animationLength);
-						keyFrame.jointTranforms = DynamicArray<JointTransform>(AllocationType::FreeList_Renderer, glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.Size()));
-						keyFrame.jointTranforms.Fill();
+						KeyFrame keyFrame(DynamicArray<JointTransform>(AllocationType::FreeList_Renderer, glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.Size())), glm::min(TimeStamp * j, animationData.AnimationLength));
+						keyFrame.JointTranforms.Fill();
 
 						for (size_t k = 0; k < scene->mAnimations[i]->mNumChannels; ++k)
 						{
-							keyFrame.jointTranforms[jointMapping.Get(STRING_TO_ID(scene->mAnimations[i]->mChannels[k]->mNodeName.data))] = JointTransform(
+							const ui32 jointNodeIndex = jointMapping.Get(STRING_TO_ID(scene->mAnimations[i]->mChannels[k]->mNodeName.data));
+							keyFrame.JointTranforms[jointNodeIndex] = JointTransform(
 								glm::vec3(scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.z),
 								glm::quat(scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.w, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.z)
 							);
 						}
 
-						animationData.frames.PushBack(std::move(keyFrame));
+						animationData.AnimationFrames.EmplaceBack(std::move(keyFrame));
 					}
 
-					animations.PushBack(std::move(animationData));
+					animations.EmplaceBack(std::move(animationData));
 				}
 
 				glm::mat4 rootTransform = SkinnedMesh::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
@@ -84,6 +108,8 @@ namespace BaldLion
 
 		void AnimationManager::RegisterAnimator(Animator* animator)
 		{
+			std::lock_guard<std::mutex> lockGuard(s_animationManagerMutex);
+
 			if (!s_registeredAnimators.Exists(animator))
 			{
 				s_registeredAnimators.PushBack(animator);
@@ -92,6 +118,8 @@ namespace BaldLion
 
 		void AnimationManager::UnregisterAnimator(Animator* animator)
 		{			
+			std::lock_guard<std::mutex> lockGuard(s_animationManagerMutex);
+
 			if (s_registeredAnimators.Exists(animator))
 			{				
 				s_registeredAnimators.RemoveFast(animator);

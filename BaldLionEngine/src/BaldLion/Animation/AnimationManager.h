@@ -15,6 +15,7 @@ namespace BaldLion
 			static void Stop();
 
 			static void OnUpdate(float timeStep);
+			static void OnParallelUpdate(float timeStep, StringId& parallelJobID);
 
 			static void GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping, SkinnedMesh* animatedMesh);
 
@@ -24,6 +25,7 @@ namespace BaldLion
 		private:			
 			static bool s_initialized;
 			static DynamicArray<Animator*> s_registeredAnimators;			
+			static std::mutex s_animationManagerMutex;
 		};
 	}
 }

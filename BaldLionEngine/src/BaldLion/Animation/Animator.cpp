@@ -13,9 +13,9 @@ namespace BaldLion
 			m_animations = HashTable<StringId, AnimationData*>(AllocationType::FreeList_Renderer, animations.Size() * 2);
 			for (ui32 i = 0; i < animations.Size(); ++i)
 			{
-				if (!m_animations.Contains(animations[i].animationName))
+				if (!m_animations.Contains(animations[i].AnimationName))
 				{
-					m_animations.Insert(animations[i].animationName, &animations[i]);
+					m_animations.Insert(animations[i].AnimationName, &animations[i]);
 				}
 			}
 
@@ -35,9 +35,9 @@ namespace BaldLion
 			int prevFrameIndex = 0;
 			int nextFrameIndex = 0;
 
-			for (ui32 i = 1; i < animation->frames.Size(); ++i)
+			for (ui32 i = 1; i < animation->AnimationFrames.Size(); ++i)
 			{
-				if (m_animationTime > animation->frames[i].timeStamp)
+				if (m_animationTime > animation->AnimationFrames[i].TimeStamp)
 					continue;
 
 				prevFrameIndex = i - 1;
@@ -46,20 +46,20 @@ namespace BaldLion
 				break;
 			}
 
-			float interpolant = (m_animationTime - animation->frames[prevFrameIndex].timeStamp) / (animation->frames[nextFrameIndex].timeStamp - animation->frames[prevFrameIndex].timeStamp) ;
+			float interpolant = (m_animationTime - animation->AnimationFrames[prevFrameIndex].TimeStamp) / (animation->AnimationFrames[nextFrameIndex].TimeStamp - animation->AnimationFrames[prevFrameIndex].TimeStamp) ;
 
-			result = DynamicArray<JointTransform>(AllocationType::Stack_Scope_Temp, animation->frames[prevFrameIndex].jointTranforms);
+			result = DynamicArray<JointTransform>(AllocationType::Stack_Scope_Temp, animation->AnimationFrames[prevFrameIndex].JointTranforms);
 
 			for (ui32 i = 0; i < result.Size(); ++i)
 			{
-				result[i].SetPosition(glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].GetDecompressedPosition(), animation->frames[nextFrameIndex].jointTranforms[i].GetDecompressedPosition(), interpolant));
-				result[i].SetRotation(glm::mix(animation->frames[prevFrameIndex].jointTranforms[i].GetDecompressedRotation(), animation->frames[nextFrameIndex].jointTranforms[i].GetDecompressedRotation(), interpolant));				
+				result[i].SetPosition(glm::mix(animation->AnimationFrames[prevFrameIndex].JointTranforms[i].GetDecompressedPosition(), animation->AnimationFrames[nextFrameIndex].JointTranforms[i].GetDecompressedPosition(), interpolant));
+				result[i].SetRotation(glm::mix(animation->AnimationFrames[prevFrameIndex].JointTranforms[i].GetDecompressedRotation(), animation->AnimationFrames[nextFrameIndex].JointTranforms[i].GetDecompressedRotation(), interpolant));				
 			}			
 		}
 
 		void Animator::OnUpdate(BaldLion::TimeStep timeStep)
 		{
-			m_animationTime = glm::mod(m_animationTime + timeStep, m_currentAnimation->animationLength);
+			m_animationTime = glm::mod(m_animationTime + timeStep, m_currentAnimation->AnimationLength);
 
 			DynamicArray<JointTransform> transforms;
 			CalculateInterpolatedTransforms(m_currentAnimation, transforms); 
@@ -77,12 +77,12 @@ namespace BaldLion
 			transforms.Clear();
 		}
 
-		void Animator::SetCurrentAnimation(StringId animationName)
+		void Animator::SetCurrentAnimation(StringId AnimationName)
 		{
-			if(m_animations.Contains(animationName))
+			if(m_animations.Contains(AnimationName))
 			{
 				m_animationTime = 0;
-				m_currentAnimation = m_animations.Get(animationName);
+				m_currentAnimation = m_animations.Get(AnimationName);
 			}
 		}
 

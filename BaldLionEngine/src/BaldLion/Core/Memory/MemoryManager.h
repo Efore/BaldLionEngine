@@ -110,6 +110,8 @@ namespace BaldLion
 					s_mainFreeListAllocator->Deallocate(element);
 				break;
 			}
+
+			s_allocationMap.erase(element);
 		}
 		
 		template <class T>

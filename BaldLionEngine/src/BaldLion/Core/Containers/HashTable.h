@@ -28,10 +28,13 @@ namespace BaldLion
 
 			bool Contains(const K& key) const;			
 
-			void Insert(const K& key, V&& value);
+			void Insert(const K& key, V&& value) noexcept;
 
 			const V& Get(const K& key) const;
 			V& Get(const K& key);
+
+			void Set(const K& key, V&& value) noexcept;
+			void Set(const K& key, V value);
 
 			bool Remove(const K& key);
 
@@ -41,6 +44,9 @@ namespace BaldLion
 			const ui32 Size() const { return m_size; }
 			ui32 IndexOf(const K& key) const;
 
+			HashTable<K,V>& operator= (const HashTable<K, V>& other);
+			HashTable<K,V>& operator= (HashTable<K, V>&& other) noexcept;
+
 		private:						
 			void Reallocate(ui32 capacity);
 			bool CheckContains(hashV hashedKey) const;
@@ -49,9 +55,12 @@ namespace BaldLion
 
 			ui32 m_capacity = 0;
 			ui32 m_size = 0;
+
 			DynamicArray<HashNode<V>> m_table;
 			AllocationType m_allocationType;	
 	};
+
+	
 
 	template <typename K, typename V>
 	BaldLion::HashTable<K, V>::HashTable()
@@ -65,34 +74,6 @@ namespace BaldLion
 		m_table = DynamicArray<HashNode<V>>(m_allocationType, capacity);
 		m_table.Fill();
 	}
-
-	template <typename K, typename V>
-	void BaldLion::HashTable<K, V>::Reallocate(ui32 capacity)
-	{
-		DynamicArray<HashNode<V>> newTable = DynamicArray<HashNode<V>>(m_allocationType, capacity);
-		newTable.Fill();
-
-		for (ui32 i = 0; i < m_table.Size(); ++i)
-		{
-			if (m_table[i].used)
-			{
-				hashV newIndex = m_table[i].hashedKey % capacity;
-
-				while (newTable[newIndex].used)
-				{
-					newIndex = (newIndex + 1) % capacity;
-				}
-				
-				newTable[newIndex] = m_table[i];
-			}
-		}
-
-		m_table.Clear();
-		m_table = DynamicArray<HashNode<V>>(newTable);
-		m_capacity = capacity;
-
-		newTable.Clear(); 
-	}	
 
 	template <typename K, typename V>
 	bool BaldLion::HashTable<K, V>::Contains(const K& key) const
@@ -140,6 +121,7 @@ namespace BaldLion
 	V& BaldLion::HashTable<K, V>::Get(const K& key)
 	{
 		BL_ASSERT(Contains(key), "Key not contained");
+
 		const hashV hashedKey = std::hash<K>()(key);
 
 		hashV tableIndex = hashedKey % m_capacity;
@@ -156,6 +138,7 @@ namespace BaldLion
 	const V& BaldLion::HashTable<K, V>::Get(const K& key) const
 	{
 		BL_ASSERT(Contains(key), "Key not contained");
+		
 		const hashV hashedKey = std::hash<K>()(key);
 
 		hashV tableIndex = hashedKey % m_capacity;
@@ -167,9 +150,43 @@ namespace BaldLion
 
 		return m_table[tableIndex].value;
 	}
+	
+	template <typename K, typename V>
+	void BaldLion::HashTable<K, V>::Set(const K& key, V&& value) noexcept
+	{
+		BL_ASSERT(Contains(key), "Key not contained");
+
+		const hashV hashedKey = std::hash<K>()(key);
+
+		hashV tableIndex = hashedKey % m_capacity;
+
+		while (m_table[tableIndex].hashedKey != hashedKey)
+		{
+			tableIndex = (tableIndex + 1) % m_capacity;
+		}
+
+		m_table[tableIndex].value = std::move(value);
+	}
 
 	template <typename K, typename V>
-	void BaldLion::HashTable<K, V>::Insert(const K& key, V&& value)
+	void BaldLion::HashTable<K, V>::Set(const K& key, V value)
+	{
+		BL_ASSERT(Contains(key), "Key not contained");
+
+		const hashV hashedKey = std::hash<K>()(key);
+
+		hashV tableIndex = hashedKey % m_capacity;
+
+		while (m_table[tableIndex].hashedKey != hashedKey)
+		{
+			tableIndex = (tableIndex + 1) % m_capacity;
+		}
+
+		m_table[tableIndex].value = value;
+	}
+
+	template <typename K, typename V>
+	void BaldLion::HashTable<K, V>::Insert(const K& key, V&& value) noexcept
 	{
 		const float ratio = (float)(++m_size) / (float)(m_capacity);
 		if (ratio > 0.5f)
@@ -188,8 +205,7 @@ namespace BaldLion
 		m_table[tableIndex].used = true;
 		m_table[tableIndex].hashedKey = hashedKey;
 		m_table[tableIndex].value = std::move(value);
-
-	}	
+	}
 
 	template <typename K, typename V>
 	bool BaldLion::HashTable<K, V>::Remove(const K& key)
@@ -197,7 +213,7 @@ namespace BaldLion
 		if (!Contains(key))
 			return false;
 
-		const hashV hashedKey = = std::hash<K>()(key);
+		const hashV hashedKey = std::hash<K>()(key);
 		const hashV tableIndex = hashedKey % m_capacity;
 		
 		hashV index = tableIndex;
@@ -208,6 +224,7 @@ namespace BaldLion
 			{
 				m_table[tableIndex].used = false;
 				m_table[tableIndex].value.~V();
+				--m_size;
 				return true;
 			}
 			else
@@ -223,6 +240,7 @@ namespace BaldLion
 			{
 				m_table[tableIndex].used = false;
 				m_table[tableIndex].value.~V();
+				--m_size;
 				return true;
 			}
 			else
@@ -238,18 +256,23 @@ namespace BaldLion
 	void BaldLion::HashTable<K, V>::ClearNoDestructor()
 	{
 		m_table.ClearNoDestructor();
+		m_capacity = 0;
+		m_size = 0;
 	}
 
 	template <typename K, typename V>
 	void BaldLion::HashTable<K, V>::Clear()
 	{
 		m_table.Clear(); 
+		m_capacity = 0;
+		m_size = 0;
 	}
 
 	template <typename K, typename V>
 	ui32 BaldLion::HashTable<K, V>::IndexOf(const K& key) const
 	{
 		BL_ASSERT(Contains(key), "Key not contained");
+
 		const hashV hashedKey = std::hash<K>()(key);
 
 		ui32 currentIndex = 0;
@@ -263,4 +286,61 @@ namespace BaldLion
 		}
 	}
 
+	template <typename K, typename V>
+	BaldLion::HashTable<K, V>& BaldLion::HashTable<K, V>::operator=(HashTable<K, V>&& other) noexcept
+	{
+		if (&other == this)
+			return *this;
+
+		Clear();
+
+		m_allocationType = other.m_allocationType;
+		m_size = other.m_size;
+		m_capacity = other.m_capacity;
+		m_table = std::move(other.m_table);		
+
+		return *this;
+	}
+
+	template <typename K, typename V>
+	BaldLion::HashTable<K, V>& BaldLion::HashTable<K, V>::operator=(const HashTable<K, V>& other)
+	{
+		if (&other == this)
+			return *this;
+
+		m_allocationType = other.m_allocationType;
+		m_size = other.m_size;
+		m_capacity = other.m_capacity;
+		m_table = DynamicArray<HashNode<V>>(other.m_table);
+
+		return *this;
+	}
+
+	template <typename K, typename V>
+	void BaldLion::HashTable<K, V>::Reallocate(ui32 capacity)
+	{
+		DynamicArray<HashNode<V>> newTable = DynamicArray<HashNode<V>>(m_allocationType, capacity);
+		newTable.Fill();
+
+		for (ui32 i = 0; i < m_table.Size(); ++i)
+		{
+			if (m_table[i].used)
+			{
+				hashV newIndex = m_table[i].hashedKey % capacity;
+
+				while (newTable[newIndex].used)
+				{
+					newIndex = (newIndex + 1) % capacity;
+				}
+
+				newTable[newIndex] = m_table[i];
+			}
+		}
+
+		m_table.Clear();
+		m_table = DynamicArray<HashNode<V>>(newTable);
+		m_capacity = capacity;
+
+		newTable.Clear();
+	}
 }

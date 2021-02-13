@@ -69,6 +69,7 @@ namespace BaldLion
 
 		private:
 			HashTable<StringId, Texture*> m_textures;
+			std::mutex m_textureLibraryMutex;
 		};
 	}
 }

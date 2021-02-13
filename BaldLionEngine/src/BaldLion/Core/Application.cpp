@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "BaldLion/Rendering/Renderer.h"
 #include "BaldLion/Core/Memory/MemoryManager.h"
+#include "BaldLion/Core/JobManagement/JobManager.h"
 #include <GLFW/glfw3.h>
 
 
@@ -20,6 +21,7 @@ namespace BaldLion
 		s_instance = this;
 
 		Memory::MemoryManager::Init(0);
+		JobManagement::JobManager::Init();
 
 		m_window = Window::Create(WindowProps(applicationName));
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
@@ -40,6 +42,7 @@ namespace BaldLion
 		m_layerStack.Clear();
 		Window::Destroy(m_window);
 		Rendering::Renderer::Stop();
+		JobManagement::JobManager::Stop();
 		Memory::MemoryManager::Stop();
 	}
 

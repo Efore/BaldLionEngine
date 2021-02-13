@@ -91,6 +91,8 @@ namespace BaldLion
 
 		Texture* TextureLibrary::Load(StringId name, const std::string& filepath, int textureType)
 		{	
+			std::lock_guard<std::mutex> lockGuard(m_textureLibraryMutex);
+
 			if (Exists(name))
 				return m_textures.Get(name);
 
@@ -117,6 +119,8 @@ namespace BaldLion
 
 		Texture* TextureLibrary::Load(const std::string& filepath, const unsigned char* textureData, int size, int textureType)
 		{
+			std::lock_guard<std::mutex> lockGuard(m_textureLibraryMutex);
+
 			StringId name;
 			TextureLibrary::GetNameFromPath(filepath, name);
 
@@ -146,6 +150,7 @@ namespace BaldLion
 
 		void TextureLibrary::Clear()
 		{
+			std::lock_guard<std::mutex> lockGuard(m_textureLibraryMutex);
 			m_textures.Clear();
 		}
 

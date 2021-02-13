@@ -9,30 +9,34 @@ namespace BaldLion
 	{
 		struct KeyFrame {
 
-			DynamicArray<JointTransform> jointTranforms;
-			float timeStamp;
+			DynamicArray<JointTransform> JointTranforms;
+			float TimeStamp;
 
-			KeyFrame(){
-			}
+			KeyFrame(){}
+			
+			KeyFrame(const DynamicArray<JointTransform>& jointTransforms, const float timeStamp): 
+				JointTranforms(jointTransforms), 
+				TimeStamp(timeStamp)
+			{}
 
-			KeyFrame(KeyFrame &&other)
+			KeyFrame(KeyFrame &&other) : 
+				TimeStamp(other.TimeStamp), 
+				JointTranforms(std::move(other.JointTranforms))
 			{
-				timeStamp = other.timeStamp;
-				jointTranforms = std::move(other.jointTranforms);
 			}
 
 			KeyFrame& operator=(const KeyFrame& other)
 			{
-				jointTranforms = other.jointTranforms;
-				timeStamp = other.timeStamp;
+				JointTranforms = other.JointTranforms;
+				TimeStamp = other.TimeStamp;
 
 				return *this;
 			}
 
 			KeyFrame& operator=(KeyFrame &&other)
 			{
-				timeStamp = other.timeStamp;
-				jointTranforms = std::move(other.jointTranforms);
+				TimeStamp = other.TimeStamp;
+				JointTranforms = std::move(other.JointTranforms);				
 
 				return *this;
 			}
@@ -40,33 +44,39 @@ namespace BaldLion
 
 		struct AnimationData {
 
-			StringId animationName;
-			DynamicArray<KeyFrame> frames;
-			float animationLength;
+			StringId AnimationName;
+			DynamicArray<KeyFrame> AnimationFrames;
+			float AnimationLength;
 
 			AnimationData(){}
 
-			AnimationData(AnimationData&& other)
+			AnimationData(const StringId animationName, const DynamicArray<KeyFrame>& animationFrames, const float animationLenght) :
+				AnimationName(animationName), 
+				AnimationFrames(animationFrames), 
+				AnimationLength(animationLenght)
+			{}
+
+			AnimationData(AnimationData&& other) : 
+				AnimationName(other.AnimationName), 
+				AnimationLength(other.AnimationLength),
+				AnimationFrames(std::move(other.AnimationFrames))
 			{
-				animationName = other.animationName;				
-				animationLength = other.animationLength;
-				frames = std::move(other.frames);		 		
 			}
 
 			AnimationData& operator=(const AnimationData& other)
 			{
-				animationName = other.animationName;
-				animationLength = other.animationLength;
-				frames = other.frames;
+				AnimationName = other.AnimationName;
+				AnimationLength = other.AnimationLength;
+				AnimationFrames = other.AnimationFrames;
 
 				return *this;
 			}
 
 			AnimationData& operator=(AnimationData&& other)
 			{
-				animationName  = other.animationName;
-				animationLength = other.animationLength;
-				frames = std::move(other.frames);
+				AnimationName  = other.AnimationName;
+				AnimationLength = other.AnimationLength;
+				AnimationFrames = std::move(other.AnimationFrames);				
 
 				return *this;
 			}			

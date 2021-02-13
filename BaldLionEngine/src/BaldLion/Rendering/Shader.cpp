@@ -54,6 +54,8 @@ namespace BaldLion
 
 		BaldLion::Rendering::Shader* ShaderLibrary::Load(StringId name, const std::string& filepath)
 		{
+			std::lock_guard<std::mutex> lockGuard(m_shaderLibraryMutex);
+
 			if (Exists(name))
 				return m_shaders.Get(name);
 

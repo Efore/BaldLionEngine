@@ -69,6 +69,7 @@ namespace BaldLion
 
 		private:
 			HashTable<StringId, Shader*> m_shaders;
+			std::mutex m_shaderLibraryMutex;
 		};
 	}
 }

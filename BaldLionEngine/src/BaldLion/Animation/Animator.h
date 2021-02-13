@@ -19,7 +19,7 @@ namespace BaldLion
 			~Animator();
 
 			void OnUpdate(BaldLion::TimeStep timeStep);
-			inline void SetCurrentAnimation(StringId animationName);
+			inline void SetCurrentAnimation(StringId AnimationName);
 
 			void CalculateInterpolatedTransforms(const AnimationData* animation, DynamicArray<JointTransform>& result);
 

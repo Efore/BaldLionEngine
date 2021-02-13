@@ -20,7 +20,7 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			m_models = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);
+			m_models = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 3);
 			m_pointLights = DynamicArray<PointLight>(AllocationType::FreeList_Renderer, 3);
 
 			BaldLion::Rendering::FramebufferSpecification fbSpec;
@@ -33,7 +33,7 @@ namespace BaldLion
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
 
-			for (ui32 i = 0; i < 1; ++i)
+			for (ui32 i = 0; i < 3; ++i)
 			{
 				auto model = MemoryManager::New<Rendering::AnimatedModel>(STRING_TO_ID("Animated Model"), AllocationType::FreeList_Renderer, "assets/creature/creature.fbx", initialTransform);
 				model->SetUpModel();
@@ -99,16 +99,18 @@ namespace BaldLion
 			}
 
 			{
-				BL_PROFILE_SCOPE("AnimationManager::OnUpdate");
-				Animation::AnimationManager::OnUpdate(timeStep);
-			}
-
+				BL_PROFILE_SCOPE("AnimationManager::KickOnUpdate");
+				/*Animation::AnimationManager::OnUpdate(timeStep);*/
+				StringId animationUpdateTaskId = 0;
+				Animation::AnimationManager::OnParallelUpdate(timeStep, animationUpdateTaskId);		
+			}			
+			
+			JobManagement::JobManager::WaitForJobs();
 			{
 				BL_PROFILE_SCOPE("Renderer::BeginScene");
 				m_frameBuffer->Bind();
 				Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight, m_pointLights);
 			}
-
 			{
 				BL_PROFILE_SCOPE("Renderer::Draw");
 				for (ui32 i = 0; i < m_models.Size(); ++i)
