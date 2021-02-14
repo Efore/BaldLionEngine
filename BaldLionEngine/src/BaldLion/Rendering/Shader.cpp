@@ -35,13 +35,13 @@ namespace BaldLion
 		{
 			auto name = shader->GetName();
 			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
-			m_shaders.Insert(name , std::move(shader));
+			m_shaders.Emplace(name , std::move(shader));
 		}
 
 		void ShaderLibrary::Add(StringId name, Shader* shader)
 		{
 			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
-			m_shaders.Insert(name, std::move(shader));
+			m_shaders.Emplace(name, std::move(shader));
 		}
 
 		Shader* ShaderLibrary::Load(const std::string& filepath)

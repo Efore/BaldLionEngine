@@ -70,7 +70,7 @@ namespace BaldLion {
 				{
 					//Adding JobID and its number off children to the active Job map
 					s_activeJobsMutex.lock();					
-					s_activeJobs.Insert(job.JobID, std::move(job.ChildrenCount));					
+					s_activeJobs.Emplace(job.JobID, std::move(job.ChildrenCount));					
 					s_activeJobsMutex.unlock();
 
 					//IF this job depends on another to start, wait until the other job is no longer active
@@ -90,10 +90,13 @@ namespace BaldLion {
 						s_cvChildrenFinished.wait(checkChildrenLock, [job] { return s_activeJobs.Get(job.JobID) == 0; });
 					}					
 
+					//Closure of the job logic, making sure that only one thread closes its job at the same time
+					s_jobsFinishedMutex.lock();		
+
 					//Removing the job from the active jobs map
 					s_activeJobsMutex.lock();
-										
-					s_activeJobs.Remove(job.JobID);					
+
+					s_activeJobs.Remove(job.JobID);
 
 					//If this job has a parent, reduce its pending children in one
 					if (job.JobParentID > 0) {
@@ -105,21 +108,21 @@ namespace BaldLion {
 					s_activeJobsMutex.unlock();
 
 					s_queueMutex.lock();
-					bool jobQueueEmpty = s_jobQueue.Size() == 0;
+					bool jobQueueEmpty = s_jobQueue.IsEmpty();
 					s_queueMutex.unlock();
+
+					//Checking if all jobs are finished
+					s_jobsFinished = jobQueueEmpty && activeJobsEmpty;					
+
+					//Closure is finished
+					s_jobsFinishedMutex.unlock();
 
 					//Notifying dependency and children condition variables
 					s_cvDependencyFinished.notify_all();
 					s_cvChildrenFinished.notify_all();
 
-					//Checking if jobs are finished
-					s_jobsFinishedMutex.lock();
-					s_jobsFinished = jobQueueEmpty && activeJobsEmpty;							
-					s_jobsFinishedMutex.unlock();
-										
 					//Notifying job finished condition variable
 					s_cvJobsFinished.notify_all();
-
 				}
 			}
 		}
@@ -127,11 +130,11 @@ namespace BaldLion {
 		void ThreadPool::WaitForJobs()
 		{
 			s_jobsFinishedMutex.lock();
-			s_jobsFinished = false;
+			s_jobsFinished = false;			
 			s_jobsFinishedMutex.unlock();
-
+			
 			std::unique_lock<std::mutex> waitActiveJobsLock(s_jobsFinishedMutex);			
-			s_cvJobsFinished.wait(waitActiveJobsLock, [] { return s_jobsFinished; });		
+			s_cvJobsFinished.wait(waitActiveJobsLock, [] { return s_jobsFinished; });					
 		}
 	}
 }

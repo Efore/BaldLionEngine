@@ -72,13 +72,13 @@ namespace BaldLion
 		{
 			auto name = texture->GetName();
 			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
-			m_textures.Insert(name, std::move(texture));
+			m_textures.Emplace(name, std::move(texture));
 		}
 
 		void TextureLibrary::Add(StringId name, Texture* texture)
 		{
 			BL_CORE_ASSERT(!Exists(name), "Shader already exists!");
-			m_textures.Insert(name, std::move(texture));
+			m_textures.Emplace(name, std::move(texture));
 		}
 
 		Texture* TextureLibrary::Load(const std::string& filepath, int textureType)

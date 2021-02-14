@@ -15,7 +15,7 @@ namespace BaldLion
 			{
 				if (!m_animations.Contains(animations[i].AnimationName))
 				{
-					m_animations.Insert(animations[i].AnimationName, &animations[i]);
+					m_animations.Emplace(animations[i].AnimationName, &animations[i]);
 				}
 			}
 

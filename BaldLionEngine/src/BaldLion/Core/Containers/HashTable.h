@@ -28,7 +28,7 @@ namespace BaldLion
 
 			bool Contains(const K& key) const;			
 
-			void Insert(const K& key, V&& value) noexcept;
+			void Emplace(const K& key, V&& value) noexcept;
 
 			const V& Get(const K& key) const;
 			V& Get(const K& key);
@@ -186,7 +186,7 @@ namespace BaldLion
 	}
 
 	template <typename K, typename V>
-	void BaldLion::HashTable<K, V>::Insert(const K& key, V&& value) noexcept
+	void BaldLion::HashTable<K, V>::Emplace(const K& key, V&& value) noexcept
 	{
 		const float ratio = (float)(++m_size) / (float)(m_capacity);
 		if (ratio > 0.5f)

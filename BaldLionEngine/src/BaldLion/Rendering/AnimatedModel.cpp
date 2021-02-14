@@ -142,8 +142,8 @@ namespace BaldLion
 
 			for (ui32 i = 0; i < aimesh->mNumBones; ++i)
 			{				
-				jointMapping.Insert(STRING_TO_ID(aimesh->mBones[i]->mName.data), std::move(i));
-				jointOffsetMapping.Insert(STRING_TO_ID(aimesh->mBones[i]->mName.data), SkinnedMesh::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
+				jointMapping.Emplace(STRING_TO_ID(aimesh->mBones[i]->mName.data), std::move(i));
+				jointOffsetMapping.Emplace(STRING_TO_ID(aimesh->mBones[i]->mName.data), SkinnedMesh::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
 			}
 		}
 

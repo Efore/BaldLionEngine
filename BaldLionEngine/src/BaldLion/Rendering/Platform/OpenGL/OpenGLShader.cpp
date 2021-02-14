@@ -255,7 +255,7 @@ namespace BaldLion
 				return location;
 			}
 
-			m_uniformLocationCache.Insert(name,std::move(location));
+			m_uniformLocationCache.Emplace(name,std::move(location));
 
 			return location;
 		}
