@@ -183,8 +183,7 @@
     <ClInclude Include="src\BaldLion\Rendering\CameraManager.h" />
     <ClInclude Include="src\BaldLion\Rendering\Framebuffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h" />
-    <ClInclude Include="src\BaldLion\Rendering\LightClasses\DirectionalLight.h" />
-    <ClInclude Include="src\BaldLion\Rendering\LightClasses\PointLight.h" />
+    <ClInclude Include="src\BaldLion\Rendering\LightClasses\Light.h" />
     <ClInclude Include="src\BaldLion\Rendering\LightManager.h" />
     <ClInclude Include="src\BaldLion\Rendering\Material.h" />
     <ClInclude Include="src\BaldLion\Rendering\Mesh.h" />

@@ -43,7 +43,7 @@ namespace BaldLion
 			s_rendererPlatformInterface->SetViewport(0, 0, width, height);			
 		}
 
-		void Renderer::BeginScene(const ProjectionCamera*  camera, const DirectionalLight& directionalLight, const DynamicArray<PointLight>& pointLights)
+		void Renderer::BeginScene(const ProjectionCamera*  camera, const DirectionalLight& directionalLight)
 		{
 			BL_PROFILE_FUNCTION();
 			
@@ -53,7 +53,7 @@ namespace BaldLion
 			s_sceneData.viewProjectionMatrix = camera->GetViewProjectionMatrix();
 			s_sceneData.cameraPosition = camera->GetPosition();
 
-			LightManager::BeginScene(directionalLight, pointLights);
+			LightManager::BeginScene(directionalLight);
 		}
 
 		void Renderer::EndScene()
@@ -75,21 +75,6 @@ namespace BaldLion
 			shader->SetUniform(STRING_TO_ID("u_directionalLight.ambientColor"),ShaderDataType::Float3, &(LightManager::GetDirectionalLight().ambientColor));
 			shader->SetUniform(STRING_TO_ID("u_directionalLight.diffuseColor"), ShaderDataType::Float3, &(LightManager::GetDirectionalLight().diffuseColor));
 			shader->SetUniform(STRING_TO_ID("u_directionalLight.specularColor"), ShaderDataType::Float3, &(LightManager::GetDirectionalLight().specularColor));
-
-
-			size_t numPointLights = LightManager::GetScenePointLights().Size();
-			shader->SetUniform(STRING_TO_ID("u_numPointLights"), ShaderDataType::Int, &(numPointLights));
-
-			for (ui32 i = 0; i < numPointLights; ++i)
-			{
-				shader->SetUniform(STRING_TO_ID(("u_pointLights[" + std::to_string(i) + "].position")), ShaderDataType::Float3, &(LightManager::GetScenePointLights()[i].position));
-				shader->SetUniform(STRING_TO_ID(("u_pointLights[" + std::to_string(i) + "].constant")), ShaderDataType::Float, &(LightManager::GetScenePointLights()[i].constant));
-				shader->SetUniform(STRING_TO_ID(("u_pointLights[" + std::to_string(i) + "].linear")), ShaderDataType::Float, &(LightManager::GetScenePointLights()[i].linear));
-				shader->SetUniform(STRING_TO_ID(("u_pointLights[" + std::to_string(i) + "].quadratic")), ShaderDataType::Float, &(LightManager::GetScenePointLights()[i].quadratic));
-				shader->SetUniform(STRING_TO_ID(("u_pointLights[" + std::to_string(i) + "].ambientColor")), ShaderDataType::Float3, &(LightManager::GetScenePointLights()[i].ambientColor));
-				shader->SetUniform(STRING_TO_ID(("u_pointLights[" + std::to_string(i) + "].diffuseColor")), ShaderDataType::Float3, &(LightManager::GetScenePointLights()[i].diffuseColor));
-				shader->SetUniform(STRING_TO_ID(("u_pointLights[" + std::to_string(i) + "].specularColor")), ShaderDataType::Float3, &(LightManager::GetScenePointLights()[i].specularColor));
-			}
 
 			vertexArray->Bind();
 			s_rendererPlatformInterface->DrawIndexed(vertexArray);

@@ -1,29 +1,32 @@
 #pragma once
 
 #include "SkinnedMesh.h"
-#include <vector>
+#include "Model.h"
 
 namespace BaldLion
 {
 	namespace Rendering
 	{
-		class AnimatedModel{
+		class AnimatedModel : public Model {
 
 		public:
 
 			AnimatedModel(const std::string& filePath, const glm::mat4& initialWorldTransform);
 			~AnimatedModel();
 
-			void SetUpModel();
-			void Draw() const;
+			virtual void Draw() const override;
+
+			using Model::GetSubMeshes;
 
 			inline const DynamicArray<SkinnedMesh*>& GetSubMeshes() const { return m_subMeshes; }
 			inline DynamicArray<SkinnedMesh*>& GetSubMeshes() { return m_subMeshes; }
 
 		private:			
 
-			void ProcessNode(const aiNode *node, const aiScene *scene);
+			using Model::ProcessMesh;
+			using Model::FillVertexArrayData;
 
+			virtual void ProcessNode(const aiNode *node, const aiScene *scene) override;
 			SkinnedMesh* ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
 
 			void FillJointData(HashTable<StringId, ui32>& jointMapping,
@@ -39,27 +42,13 @@ namespace BaldLion
 				HashTable<StringId, ui32>& jointMap,
 				HashTable<StringId, glm::mat4>& jointOffsetMapping);
 
-			void FillTextureData(const aiMesh *aimesh,
-				const aiScene *aiscene,
-				aiColor3D& ambientColor,
-				aiColor3D& diffuseColor,
-				aiColor3D& specularColor,
-				aiColor3D& emissiveColor,
-				Texture*& ambientTex,
-				Texture*& diffuseTex,
-				Texture*& specularTex,
-				Texture*& emissiveTex,
-				Texture*& normalTex);
-
 			void FillVertexWeightData(const aiMesh* aimesh, 
 				const HashTable<StringId, ui32>& jointMapping,
 				DynamicArray<VertexBoneData>& verticesBoneData);
 
-		protected:
-			StringId m_modelPath;
-			StringId m_modelFolderPath;
+		private:
 			DynamicArray<SkinnedMesh*> m_subMeshes;
-			glm::mat4 m_worldTransform;
+			
 		};
 	}
 }

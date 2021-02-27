@@ -12,17 +12,18 @@ namespace BaldLion
 
 		public:
 
-			Model(const std::string& filePath);
+			Model(const std::string& filePath, const glm::mat4& initialWorldTransform);
 			~Model();
 
 			void SetUpModel();
-			void Draw() const;
+			virtual void Draw() const;
 
-			const DynamicArray<Mesh*>& GetSubMeshes() const { return m_subMeshes; }
+			inline const DynamicArray<Mesh*>& GetSubMeshes() const { return m_subMeshes; }
+			inline DynamicArray<Mesh*>& GetSubMeshes() { return m_subMeshes; }
 
-		private:
+		protected:
 
-			void ProcessNode(const aiNode *node, const aiScene *scene);
+			virtual void ProcessNode(const aiNode *node, const aiScene *scene);
 			Mesh* ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
 
 			void FillVertexArrayData(const aiMesh *aimesh, DynamicArray<Vertex>& vertices, DynamicArray<ui32>& indices);
@@ -41,6 +42,10 @@ namespace BaldLion
 		protected:
 			StringId m_modelPath;
 			StringId m_modelFolderPath;
+			glm::mat4 m_worldTransform;
+			int m_importFlags;
+
+		private:
 			DynamicArray<Mesh*> m_subMeshes;
 		};
 	}

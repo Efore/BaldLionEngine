@@ -9,9 +9,10 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Model::Model(const std::string& filePath)
+		Model::Model(const std::string& filePath, const glm::mat4& initialWorldTransform): 
+			m_worldTransform(initialWorldTransform)
 		{
-			BL_PROFILE_FUNCTION();
+			BL_PROFILE_FUNCTION(); 
 
 			// Extracting folder path from filePath
 
@@ -19,6 +20,7 @@ namespace BaldLion
 			auto lastSlash = filePath.find_last_of("/\\");		
 			m_modelFolderPath = STRING_TO_ID(filePath.substr(0, lastSlash + 1));
 			m_subMeshes = DynamicArray<Mesh*>(AllocationType::FreeList_Renderer, 5);
+			m_importFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace;
 		}
 
 		Model::~Model()
@@ -36,7 +38,7 @@ namespace BaldLion
 
 			Assimp::Importer import;			
 
-			const aiScene *scene = import.ReadFile(ID_TO_STRING(m_modelPath), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+			const aiScene *scene = import.ReadFile(ID_TO_STRING(m_modelPath), m_importFlags);
 
 			if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 			{
@@ -52,7 +54,7 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 			for (ui32 i = 0; i < m_subMeshes.Size(); ++i)
 			{
-				m_subMeshes[i]->Draw();
+				m_subMeshes[i]->Draw(m_worldTransform);
 			}
 		}
 
@@ -146,13 +148,13 @@ namespace BaldLion
 			aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, ambientColor);
 			aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
 			aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, specularColor);
-			aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);	
+			aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);
 
 			aiString relativeTexPath;
 			std::string completeTexPath;
 
 			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
-			{				
+			{
 				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &relativeTexPath);
 				completeTexPath = ID_TO_STRING(m_modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
@@ -217,10 +219,10 @@ namespace BaldLion
 				{
 					emissiveTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
 				}
-			}			
-			
+			}
+
 			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
-			{				 
+			{
 				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &relativeTexPath);
 				completeTexPath = ID_TO_STRING(m_modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
@@ -234,7 +236,7 @@ namespace BaldLion
 				{
 					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
 				}
-			} 
+			}
 		}
 
 		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
@@ -279,7 +281,6 @@ namespace BaldLion
 
 			return mesh;
 		}
-
 
 	}
 

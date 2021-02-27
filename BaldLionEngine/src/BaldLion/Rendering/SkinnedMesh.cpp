@@ -7,8 +7,8 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		SkinnedMesh::SkinnedMesh(const DynamicArray<Animation::Joint>& joints, Material* material)
-			: m_material(material), m_joints(std::move(joints))
+		SkinnedMesh::SkinnedMesh(const DynamicArray<Animation::Joint>& joints, Material* material) 
+			: Mesh(material), m_joints(std::move(joints))
 		{
 			
 		}

@@ -35,8 +35,13 @@ namespace BaldLion
 
 			static Allocator* GetAllocator(AllocationType allocationType);
 
+			static size_t GetAllocatorSize(AllocationType allocationType);
+			static size_t GetAllocatorUsedMemory(AllocationType allocationType);
+
 			template <class T>
 			static AllocationType GetAllocatorType(const T* element);
+
+			static size_t GetMemorySize();
 
 		private:
 
@@ -48,6 +53,7 @@ namespace BaldLion
 			static std::unordered_map<void*, AllocationType> s_allocationMap;
 			static std::unordered_map<void*, StringId> s_allocationDescriptions;
 			static std::mutex s_mutex;
+			static size_t s_memorySize;
 		};
 
 		template <class T, class... Args >

@@ -32,7 +32,6 @@ namespace BaldLion
 			bool m_viewPortFocused;
 
 			DirectionalLight m_directionalLight;
-			DynamicArray<PointLight> m_pointLights;
 		};
 	}
 }

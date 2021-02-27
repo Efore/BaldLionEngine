@@ -41,11 +41,10 @@ namespace BaldLion
 			m_vertexArray->AddVertexBuffer(vertexBuffer);
 		}
 
-		void Mesh::Draw() const
+		void Mesh::Draw(const glm::mat4& worldTransform) const
 		{
 			m_material->Bind();
-
-			Renderer::Submit(m_vertexArray, m_material->GetShader());
+			Renderer::Submit(m_vertexArray, m_material->GetShader(), worldTransform);
 		}
 	}
 }

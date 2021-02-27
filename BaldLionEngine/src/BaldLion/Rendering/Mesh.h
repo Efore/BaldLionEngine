@@ -15,7 +15,7 @@ namespace BaldLion
 			~Mesh();
 
 			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);
-			void Draw() const;
+			virtual void Draw(const glm::mat4& worldTransform) const;
 
 			const Material* GetMaterial() const { return m_material; }
 

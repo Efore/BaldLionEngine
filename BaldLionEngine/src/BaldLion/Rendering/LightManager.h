@@ -1,6 +1,5 @@
 #pragma once
-#include "LightClasses/PointLight.h"
-#include "LightClasses/DirectionalLight.h"
+#include "LightClasses/Light.h"
 #include "BaldLion/Core/Containers/DynamicArray.h"
 
 namespace BaldLion
@@ -11,15 +10,13 @@ namespace BaldLion
 		{
 		public:
 			static void Init();
-			static void BeginScene(const DirectionalLight& directionalLight, const DynamicArray<PointLight>& PointLights);
+			static void BeginScene(const DirectionalLight& directionalLight);
 			static void EndScene();
 
-			static inline const DynamicArray<PointLight>& GetScenePointLights() { return s_scenePointLights; }
 			static inline const DirectionalLight& GetDirectionalLight() { return s_directionalLight; }
 
 		private:
-			static bool s_initialized;
-			static DynamicArray<PointLight> s_scenePointLights;
+			static bool s_initialized;			
 			static DirectionalLight s_directionalLight;
 		};
 	}

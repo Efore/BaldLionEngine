@@ -4,7 +4,6 @@ namespace BaldLion
 {
 	namespace Memory
 	{
-
 		FreeListAllocator* MemoryManager::s_mainFreeListAllocator;
 		FreeListAllocator* MemoryManager::s_rendererFreeListAllocator;
 		LinearAllocator* MemoryManager::s_frameLinearAllocator;
@@ -16,10 +15,12 @@ namespace BaldLion
 		void* MemoryManager::s_memory;
 		std::mutex MemoryManager::s_mutex;
 
+		size_t MemoryManager::s_memorySize;
+
 		void MemoryManager::Init(size_t memoryAllocationSize)
 		{
-			size_t memory_size = 1024ULL * 1024 * 1024 * 2; //2GB
-			s_memory = malloc(memory_size);
+			s_memorySize = 1024ULL * 1024 * 1024 * 2; //2GB
+			s_memory = malloc(s_memorySize);
 
 			if (s_memory == nullptr)
 			{
@@ -27,7 +28,7 @@ namespace BaldLion
 				return;
 			}
 
-			s_mainFreeListAllocator = new (s_memory) FreeListAllocator(memory_size - sizeof(FreeListAllocator), AddPointerOffset(s_memory, sizeof(FreeListAllocator)));
+			s_mainFreeListAllocator = new (s_memory) FreeListAllocator(s_memorySize - sizeof(FreeListAllocator), AddPointerOffset(s_memory, sizeof(FreeListAllocator)));
 
 			size_t frameAllocatorSize = 4 * 1024 * 1024; //4MB
 			void* frameAllocatorStart = s_mainFreeListAllocator->Allocate(frameAllocatorSize, __alignof(LinearAllocator));
@@ -115,6 +116,57 @@ namespace BaldLion
 			}
 
 			return nullptr;
+		}
+
+		size_t MemoryManager::GetAllocatorSize(AllocationType allocationType)
+		{
+			switch (allocationType)
+			{
+			case BaldLion::Memory::AllocationType::FreeList_Main:
+				return s_mainFreeListAllocator->Size();
+
+			case BaldLion::Memory::AllocationType::Linear_Frame:
+				return s_frameLinearAllocator->Size();
+
+			case BaldLion::Memory::AllocationType::Stack_Scope_Temp:
+				return s_tempStackAllocator->Size();
+
+			case BaldLion::Memory::AllocationType::FreeList_Renderer:
+				return s_rendererFreeListAllocator->Size();
+
+			default:
+				break;
+			}
+
+			return 0;
+		}
+
+		size_t MemoryManager::GetAllocatorUsedMemory(AllocationType allocationType)
+		{
+			switch (allocationType)
+			{
+			case BaldLion::Memory::AllocationType::FreeList_Main:
+				return s_mainFreeListAllocator->GetUsedMemory();
+
+			case BaldLion::Memory::AllocationType::Linear_Frame:
+				return s_frameLinearAllocator->GetUsedMemory();
+
+			case BaldLion::Memory::AllocationType::Stack_Scope_Temp:
+				return s_tempStackAllocator->GetUsedMemory();
+
+			case BaldLion::Memory::AllocationType::FreeList_Renderer:
+				return s_rendererFreeListAllocator->GetUsedMemory();
+
+			default:
+				break;
+			}
+
+			return 0;
+		}
+
+		size_t MemoryManager::GetMemorySize()
+		{
+			return s_memorySize;
 		}
 
 	}

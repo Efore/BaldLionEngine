@@ -189,12 +189,6 @@
     <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\LightClasses\DirectionalLight.h">
-      <Filter>src\BaldLion\Rendering\LightClasses</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\LightClasses\PointLight.h">
-      <Filter>src\BaldLion\Rendering\LightClasses</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\LightManager.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
@@ -1364,6 +1358,7 @@
       <Filter>src\BaldLion\Core\Threading</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Containers\Queue.h" />
+    <ClInclude Include="src\BaldLion\Rendering\LightClasses\Light.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">

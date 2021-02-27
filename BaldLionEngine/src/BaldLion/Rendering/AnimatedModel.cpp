@@ -14,17 +14,10 @@ namespace BaldLion
 	{
 
 		AnimatedModel::AnimatedModel(const std::string& filePath, const glm::mat4& initialWorldTransform) : 
-			m_worldTransform (initialWorldTransform)
-		{
-			BL_PROFILE_FUNCTION();
-
-			// Extracting folder path from filePath
-
+			Model(filePath, initialWorldTransform)
+		{		
+			m_importFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights;
 			m_subMeshes = DynamicArray<SkinnedMesh*>(AllocationType::FreeList_Renderer, 1);
-
-			m_modelPath = STRING_TO_ID(filePath);
-			auto lastSlash = filePath.find_last_of("/\\");
-			m_modelFolderPath = STRING_TO_ID(filePath.substr(0, lastSlash + 1));
 		}
 
 		AnimatedModel::~AnimatedModel()
@@ -36,24 +29,6 @@ namespace BaldLion
 			m_subMeshes.Clear();
 		}
 
-		void AnimatedModel::SetUpModel()
-		{
-			BL_PROFILE_FUNCTION();
-
-			Assimp::Importer import;
-			import.SetPropertyInteger(AI_CONFIG_PP_LBW_MAX_WEIGHTS, BL_JOINT_WEIGHTS_PER_VERTEX);
-
-			const aiScene *scene = import.ReadFile(ID_TO_STRING(m_modelPath), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights);
-
-			if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
-			{
-				std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
-				return;
-			}
-
-			ProcessNode(scene->mRootNode, scene);
-		}
-
 		void AnimatedModel::Draw() const
 		{
 			BL_PROFILE_FUNCTION();
@@ -62,22 +37,6 @@ namespace BaldLion
 				m_subMeshes[i]->Draw(m_worldTransform);
 			}
 		}
-
-		void AnimatedModel::ProcessNode(const aiNode *node, const aiScene *scene)
-		{
-			// process all the node's meshes (if any)
-			for (ui32 i = 0; i < node->mNumMeshes; i++)
-			{
-				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-				m_subMeshes.PushBack(ProcessMesh(mesh, scene));
-			}
-			// then do the same for each of its children
-			for (ui32 i = 0; i < node->mNumChildren; i++)
-			{
-				ProcessNode(node->mChildren[i], scene);
-			}
-		}
-
 		
 		void AnimatedModel::FillVertexArrayData(const aiMesh *aimesh, 
 			DynamicArray<Vertex>& vertices,
@@ -145,115 +104,7 @@ namespace BaldLion
 				jointMapping.Emplace(STRING_TO_ID(aimesh->mBones[i]->mName.data), std::move(i));
 				jointOffsetMapping.Emplace(STRING_TO_ID(aimesh->mBones[i]->mName.data), SkinnedMesh::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
 			}
-		}
-
-		void AnimatedModel::FillTextureData(const aiMesh *aimesh,
-			const aiScene *aiscene,
-			aiColor3D& ambientColor,
-			aiColor3D& diffuseColor,
-			aiColor3D& specularColor,
-			aiColor3D& emissiveColor,
-			Texture*& ambientTex,
-			Texture*& diffuseTex,
-			Texture*& specularTex,
-			Texture*& emissiveTex,
-			Texture*& normalTex)
-		{
-			const aiMaterial* aimaterial = aiscene->mMaterials[aimesh->mMaterialIndex];
-
-			aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, ambientColor);
-			aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
-			aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, specularColor);
-			aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);
-
-			aiString relativeTexPath;
-			std::string completeTexPath;
-
-			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
-			{
-				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(m_modelFolderPath);
-				completeTexPath.append(relativeTexPath.C_Str());
-
-				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
-				{
-					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
-					ambientTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
-				}
-				else
-				{
-					ambientTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
-				}
-			}
-
-			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
-			{
-				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(m_modelFolderPath);
-				completeTexPath.append(relativeTexPath.C_Str());
-
-				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
-				{
-					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
-					diffuseTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
-				}
-				else
-				{
-					diffuseTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
-				}
-			}
-
-			if (aimaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
-			{
-				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(m_modelFolderPath);
-				completeTexPath.append(relativeTexPath.C_Str());
-
-				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
-				{
-					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
-					specularTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
-				}
-				else
-				{
-					specularTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
-				}
-			}
-
-			if (aimaterial->GetTextureCount(aiTextureType_EMISSIVE) > 0)
-			{
-				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(m_modelFolderPath);
-				completeTexPath.append(relativeTexPath.C_Str());
-
-				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
-				{
-					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
-					emissiveTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
-				}
-				else
-				{
-					emissiveTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
-				}
-			}
-
-			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
-			{
-				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(m_modelFolderPath);
-				completeTexPath.append(relativeTexPath.C_Str());
-
-				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
-				{
-					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
-					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
-				}				
-				else			
-				{				
-					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
-				}
-			}
-		}
+		}	
 
 		void AnimatedModel::FillJointData(HashTable<StringId, ui32>& jointMapping,
 			DynamicArray<Animation::Joint>& jointsData,
@@ -321,6 +172,21 @@ namespace BaldLion
 
 			delete jointsAssigned;
 		}		
+
+		void AnimatedModel::ProcessNode(const aiNode *node, const aiScene *scene)
+		{
+			// process all the node's meshes (if any)
+			for (ui32 i = 0; i < node->mNumMeshes; i++)
+			{
+				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+				m_subMeshes.PushBack(ProcessMesh(mesh, scene));
+			}
+			// then do the same for each of its children
+			for (ui32 i = 0; i < node->mNumChildren; i++)
+			{
+				ProcessNode(node->mChildren[i], scene);
+			}
+		}
 
 		SkinnedMesh* AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{		

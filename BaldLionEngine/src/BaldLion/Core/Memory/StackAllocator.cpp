@@ -23,7 +23,8 @@ namespace BaldLion
 			uint8_t adjustment = AlignForwardAdjustmentWithHeader<AllocationHeader>(m_current_position, alignment);
 			size_t totalSize = adjustment + size;
 
-			if (m_used_memory + totalSize > m_size) return nullptr;
+			if (m_used_memory + totalSize > m_size) 
+				return nullptr;
 
 			void* aligned_address = AddPointerOffset(m_current_position, adjustment);
 

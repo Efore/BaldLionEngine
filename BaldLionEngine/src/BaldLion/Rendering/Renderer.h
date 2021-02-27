@@ -24,7 +24,7 @@ namespace BaldLion
 
 			static void OnWindowResize(ui32 width, ui32 height);
 
-			static void BeginScene(const ProjectionCamera* camera, const DirectionalLight& directionalLight,const DynamicArray<PointLight>& pointLights);
+			static void BeginScene(const ProjectionCamera* camera, const DirectionalLight& directionalLight);
 			static void EndScene();
 
 			static ShaderLibrary& GetShaderLibrary() { return s_shaderLibrary; }
