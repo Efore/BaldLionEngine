@@ -241,8 +241,8 @@ namespace BaldLion
 
 		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{
-			DynamicArray<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
-			DynamicArray<ui32> indices(AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
+			DynamicArray<Vertex> vertices(AllocationType::Linear_Frame, aimesh->mNumVertices);
+			DynamicArray<ui32> indices(AllocationType::Linear_Frame, aimesh->mNumVertices * 3);
 
 			FillVertexArrayData(aimesh, vertices, indices);
 
@@ -275,9 +275,6 @@ namespace BaldLion
 
 			Mesh* mesh = MemoryManager::New<Mesh>(STRING_TO_ID("Mesh"), AllocationType::FreeList_Renderer,  meshMaterial);
 			mesh->SetUpMesh(vertices, indices);
-
-			vertices.Clear();
-			indices.Clear();
 
 			return mesh;
 		}

@@ -7,10 +7,10 @@ namespace BaldLion
 		FreeListAllocator* MemoryManager::s_mainFreeListAllocator;
 		FreeListAllocator* MemoryManager::s_rendererFreeListAllocator;
 		LinearAllocator* MemoryManager::s_frameLinearAllocator;
-		StackAllocator* MemoryManager::s_tempStackAllocator;
+		StackAllocator* MemoryManager::s_stackAllocator;
 		
 		std::unordered_map<void*, AllocationType> MemoryManager::s_allocationMap;
-		std::unordered_map<void*, StringId> MemoryManager::s_allocationDescriptions;
+		std::unordered_map<void*, std::pair<StringId, size_t>> MemoryManager::s_allocationDescriptions;
 
 		void* MemoryManager::s_memory;
 		std::mutex MemoryManager::s_mutex;
@@ -28,23 +28,23 @@ namespace BaldLion
 				return;
 			}
 
-			s_mainFreeListAllocator = new (s_memory) FreeListAllocator(s_memorySize - sizeof(FreeListAllocator), AddPointerOffset(s_memory, sizeof(FreeListAllocator)));
+			s_mainFreeListAllocator = new (s_memory) FreeListAllocator("Main FreeList Allocator", s_memorySize - sizeof(FreeListAllocator), AddPointerOffset(s_memory, sizeof(FreeListAllocator)));
 
-			size_t frameAllocatorSize = 4 * 1024 * 1024; //4MB
+			size_t frameAllocatorSize = 400 * 1024 * 1024; //400MB
 			void* frameAllocatorStart = s_mainFreeListAllocator->Allocate(frameAllocatorSize, __alignof(LinearAllocator));
-			s_frameLinearAllocator = new (frameAllocatorStart) LinearAllocator(frameAllocatorSize - sizeof(LinearAllocator), AddPointerOffset(frameAllocatorStart, sizeof(LinearAllocator)));
+			s_frameLinearAllocator = new (frameAllocatorStart) LinearAllocator("Linear Frame Allocator", frameAllocatorSize - sizeof(LinearAllocator), AddPointerOffset(frameAllocatorStart, sizeof(LinearAllocator)));
 
-			size_t stackAllocatorSize = 4 * 1024 * 1024; //4MB
+			size_t stackAllocatorSize = 400 * 1024 * 1024; //400MB
 			void* stackAllocatorStart = s_mainFreeListAllocator->Allocate(stackAllocatorSize, __alignof(StackAllocator));
-			s_tempStackAllocator = new (stackAllocatorStart) StackAllocator(stackAllocatorSize - sizeof(StackAllocator), AddPointerOffset(stackAllocatorStart, sizeof(StackAllocator)));
+			s_stackAllocator = new (stackAllocatorStart) StackAllocator("Stack Allocator", stackAllocatorSize - sizeof(StackAllocator), AddPointerOffset(stackAllocatorStart, sizeof(StackAllocator)));
 
 			size_t rendererSize = 1024ULL * 1024 * 1024; //1GB
 			void *rendererAllocatorStart = s_mainFreeListAllocator->Allocate(rendererSize, __alignof(FreeListAllocator));
-			s_rendererFreeListAllocator = new (rendererAllocatorStart) FreeListAllocator(rendererSize - sizeof(FreeListAllocator), AddPointerOffset(rendererAllocatorStart, sizeof(FreeListAllocator)));
+			s_rendererFreeListAllocator = new (rendererAllocatorStart) FreeListAllocator("Renderer FreeList Allocator", rendererSize - sizeof(FreeListAllocator), AddPointerOffset(rendererAllocatorStart, sizeof(FreeListAllocator)));
 			
 		}
 
-		void MemoryManager::Stop(AllocationType allocationType)
+		void MemoryManager::Clear(AllocationType allocationType)
 		{
 			switch (allocationType)
 			{
@@ -56,9 +56,9 @@ namespace BaldLion
 					s_frameLinearAllocator->Clear();
 				break;
 
-			case BaldLion::Memory::AllocationType::Stack_Scope_Temp:
-				if (s_tempStackAllocator != nullptr)
-					s_tempStackAllocator->Clear();
+			case BaldLion::Memory::AllocationType::Stack:
+				if (s_stackAllocator != nullptr)
+					s_stackAllocator->Clear();
 				break;
 
 			case BaldLion::Memory::AllocationType::FreeList_Renderer:
@@ -77,10 +77,10 @@ namespace BaldLion
 				Delete(s_frameLinearAllocator);
 			}
 
-			if (s_tempStackAllocator != nullptr)
+			if (s_stackAllocator != nullptr)
 			{		
-				s_tempStackAllocator->Clear();
-				Delete(s_tempStackAllocator);
+				s_stackAllocator->Clear();
+				Delete(s_stackAllocator);
 			}
 
 			if (s_rendererFreeListAllocator != nullptr)
@@ -105,8 +105,8 @@ namespace BaldLion
 			case BaldLion::Memory::AllocationType::Linear_Frame:
 				return s_frameLinearAllocator;
 
-			case BaldLion::Memory::AllocationType::Stack_Scope_Temp:
-				return s_tempStackAllocator;
+			case BaldLion::Memory::AllocationType::Stack:
+				return s_stackAllocator;
 
 			case BaldLion::Memory::AllocationType::FreeList_Renderer:
 				return s_rendererFreeListAllocator;
@@ -128,8 +128,8 @@ namespace BaldLion
 			case BaldLion::Memory::AllocationType::Linear_Frame:
 				return s_frameLinearAllocator->Size();
 
-			case BaldLion::Memory::AllocationType::Stack_Scope_Temp:
-				return s_tempStackAllocator->Size();
+			case BaldLion::Memory::AllocationType::Stack:
+				return s_stackAllocator->Size();
 
 			case BaldLion::Memory::AllocationType::FreeList_Renderer:
 				return s_rendererFreeListAllocator->Size();
@@ -151,8 +151,8 @@ namespace BaldLion
 			case BaldLion::Memory::AllocationType::Linear_Frame:
 				return s_frameLinearAllocator->GetUsedMemory();
 
-			case BaldLion::Memory::AllocationType::Stack_Scope_Temp:
-				return s_tempStackAllocator->GetUsedMemory();
+			case BaldLion::Memory::AllocationType::Stack:
+				return s_stackAllocator->GetUsedMemory();
 
 			case BaldLion::Memory::AllocationType::FreeList_Renderer:
 				return s_rendererFreeListAllocator->GetUsedMemory();

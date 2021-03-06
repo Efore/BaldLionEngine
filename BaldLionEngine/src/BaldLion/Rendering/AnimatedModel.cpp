@@ -190,16 +190,16 @@ namespace BaldLion
 
 		SkinnedMesh* AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{		
-			DynamicArray<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
-			DynamicArray<VertexBoneData> verticesBoneData(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
-			DynamicArray<ui32> indices (AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
+			DynamicArray<Vertex> vertices(AllocationType::Linear_Frame, aimesh->mNumVertices);
+			DynamicArray<VertexBoneData> verticesBoneData(AllocationType::Linear_Frame, aimesh->mNumVertices);
+			DynamicArray<ui32> indices (AllocationType::Linear_Frame, aimesh->mNumVertices * 3);
 			DynamicArray<Animation::Joint> jointsData(AllocationType::FreeList_Renderer, aimesh->mNumBones);
+
+			HashTable<StringId, ui32> jointMapping (AllocationType::Linear_Frame, aimesh->mNumBones * 2);
+			HashTable<StringId, glm::mat4> jointOffsetMapping (AllocationType::Linear_Frame, aimesh->mNumBones * 2);
 
 			verticesBoneData.Fill();
 			jointsData.Fill();
-
-			HashTable<StringId, ui32> jointMapping (AllocationType::Stack_Scope_Temp, aimesh->mNumBones * 2);
-			HashTable<StringId, glm::mat4> jointOffsetMapping (AllocationType::Stack_Scope_Temp, aimesh->mNumBones * 2);;
 
 			aiColor3D ambientColor;
 			aiColor3D diffuseColor;
@@ -239,14 +239,7 @@ namespace BaldLion
 
 			animatedMesh->SetUpMesh(vertices, verticesBoneData, indices);
 
-			vertices.Clear();
-			verticesBoneData.Clear();
-			indices.Clear();
-
 			AnimationManager::GenerateAnimator(aiscene, jointMapping, animatedMesh);
-
-			jointOffsetMapping.Clear();
-			jointMapping.Clear();
 
 			return animatedMesh;
 		}

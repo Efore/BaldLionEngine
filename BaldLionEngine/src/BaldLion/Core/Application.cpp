@@ -108,8 +108,8 @@ namespace BaldLion
 			}
 
 			m_window->OnUpdate();
-
-			Memory::MemoryManager::Stop(Memory::AllocationType::Linear_Frame);
+			
+			MemoryManager::Clear(AllocationType::Linear_Frame);
 		}		
 	}
 

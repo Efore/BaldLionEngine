@@ -9,7 +9,7 @@ namespace BaldLion
 		class LinearAllocator : public Allocator {
 
 		public:
-			LinearAllocator(size_t size, void* start);
+			LinearAllocator(const char* allocatorName, size_t size, void* start);
 			~LinearAllocator();
 
 			virtual void* Allocate(size_t size, uint8_t alignment) override;

@@ -48,7 +48,7 @@ namespace BaldLion
 
 			float interpolant = (m_animationTime - animation->AnimationFrames[prevFrameIndex].TimeStamp) / (animation->AnimationFrames[nextFrameIndex].TimeStamp - animation->AnimationFrames[prevFrameIndex].TimeStamp) ;
 
-			result = DynamicArray<JointTransform>(AllocationType::Stack_Scope_Temp, animation->AnimationFrames[prevFrameIndex].JointTranforms);
+			result = DynamicArray<JointTransform>(AllocationType::Linear_Frame, animation->AnimationFrames[prevFrameIndex].JointTranforms);
 
 			for (ui32 i = 0; i < result.Size(); ++i)
 			{
@@ -74,7 +74,6 @@ namespace BaldLion
 				m_animatedMesh->GetJoints()[i].UpdateJointTransforms(m_rootInverseTransform, parentTransform, animationTransform);
 			}		
 
-			transforms.Clear();
 		}
 
 		void Animator::SetCurrentAnimation(StringId AnimationName)

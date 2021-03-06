@@ -149,10 +149,7 @@ namespace BaldLion
 			m_elements[m_size].~T();
 		}
 
-		m_size = 0;
-		m_frontIndex = 0;		
-		m_allocator->Deallocate(m_elements);
-		m_elements = nullptr;
+		ClearNoDestructor();
 	}
 
 	template <typename T, typename Allocator>

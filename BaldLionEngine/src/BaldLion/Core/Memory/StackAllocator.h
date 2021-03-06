@@ -9,7 +9,7 @@ namespace BaldLion
 		class StackAllocator : public Allocator
 		{
 		public:
-			StackAllocator(size_t size, void* start);
+			StackAllocator(const char* allocatorName, size_t size, void* start);
 			~StackAllocator();
 
 			virtual void* Allocate(size_t size, uint8_t alignment = 8) override;
@@ -28,7 +28,7 @@ namespace BaldLion
 			StackAllocator& operator= (const StackAllocator&);
 
 			void* m_prev_position;
-			void* m_current_position;
+			void* m_current_position;			
 		};
 	}
 }

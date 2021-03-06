@@ -125,6 +125,17 @@ namespace BaldLion
 			ImGui::ColorEdit3("Light Specular Color", glm::value_ptr(m_directionalLight.specularColor));
 
 			ImGui::End();
+
+			ImGui::Begin("Memory");
+
+			ImGui::Text("Total Memory: %zu", MemoryManager::GetMemorySize());
+			ImGui::Text("Free List Main Allocator): %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::FreeList_Main), MemoryManager::GetAllocatorSize(AllocationType::FreeList_Main));
+			ImGui::Text("Free List Renderer Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::FreeList_Renderer), MemoryManager::GetAllocatorSize(AllocationType::FreeList_Renderer));
+			ImGui::Text("Linear Frame Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::Linear_Frame), MemoryManager::GetAllocatorSize(AllocationType::Linear_Frame));
+			ImGui::Text("Stack Scope Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::Stack), MemoryManager::GetAllocatorSize(AllocationType::Stack));
+
+			ImGui::End();
+			
 		}
 
 		void BaldLionEditorLayer::OnEvent(Event& e)

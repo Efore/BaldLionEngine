@@ -16,11 +16,11 @@
     <Filter Include="src\BaldLion\Core\Containers">
       <UniqueIdentifier>{7E066D0B-6AC1-5CB7-1379-D501FF12A747}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\BaldLion\Core\JobManagement">
+      <UniqueIdentifier>{809CD2F9-EC7F-E139-F582-0F7661E5A78A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\BaldLion\Core\Memory">
       <UniqueIdentifier>{E1E6F51D-CD0B-459E-F656-2A2EE2DA43BC}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\BaldLion\Core\Threading">
-      <UniqueIdentifier>{1E5FEE30-8A6C-1C17-1353-18027F5FE8CD}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\BaldLion\Events">
       <UniqueIdentifier>{657105EC-D1D2-E2F9-5A40-29ACC6A019B9}</UniqueIdentifier>
@@ -102,6 +102,9 @@
     <ClInclude Include="src\BaldLion\Core\Containers\HashTable.h">
       <Filter>src\BaldLion\Core\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Containers\Queue.h">
+      <Filter>src\BaldLion\Core\Containers</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Core.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
@@ -110,6 +113,12 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Input.h">
       <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\JobManagement\JobManager.h">
+      <Filter>src\BaldLion\Core\JobManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\JobManagement\ThreadPool.h">
+      <Filter>src\BaldLion\Core\JobManagement</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\KeyCodes.h">
       <Filter>src\BaldLion\Core</Filter>
@@ -188,6 +197,9 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h">
       <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\LightClasses\Light.h">
+      <Filter>src\BaldLion\Rendering\LightClasses</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\LightManager.h">
       <Filter>src\BaldLion\Rendering</Filter>
@@ -1353,12 +1365,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\JobManagement\JobManager.h" />
-    <ClInclude Include="src\BaldLion\Core\JobManagement\ThreadPool.h">
-      <Filter>src\BaldLion\Core\Threading</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\Containers\Queue.h" />
-    <ClInclude Include="src\BaldLion\Rendering\LightClasses\Light.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1369,6 +1375,12 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Application.cpp">
       <Filter>src\BaldLion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\JobManagement\JobManager.cpp">
+      <Filter>src\BaldLion\Core\JobManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\JobManagement\ThreadPool.cpp">
+      <Filter>src\BaldLion\Core\JobManagement</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Layer.cpp">
       <Filter>src\BaldLion\Core</Filter>
@@ -1492,10 +1504,6 @@
     </ClCompile>
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\JobManagement\JobManager.cpp" />
-    <ClCompile Include="src\BaldLion\Core\JobManagement\ThreadPool.cpp">
-      <Filter>src\BaldLion\Core\Threading</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

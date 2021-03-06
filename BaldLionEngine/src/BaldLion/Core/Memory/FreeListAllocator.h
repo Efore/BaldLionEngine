@@ -8,7 +8,7 @@ namespace BaldLion
 		class FreeListAllocator : public Allocator {
 
 		public:
-			FreeListAllocator(size_t size, void* start);
+			FreeListAllocator(const char* allocatorName, size_t size, void* start);
 			~FreeListAllocator();
 
 			virtual void* Allocate(size_t size, uint8_t alignment) override;

@@ -23,8 +23,7 @@ public:
 	{
 		BL_PROFILE_FUNCTION();
 
-		m_models = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);
-		m_pointLights = DynamicArray<PointLight>(AllocationType::FreeList_Renderer, 3);
+		m_models = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);		
 
 		BaldLion::Rendering::FramebufferSpecification fbSpec;
 		fbSpec.Width = Application::GetInstance().GetWindow().GetWidth();
@@ -52,29 +51,6 @@ public:
 			glm::vec3(1.0f, 1.0f, 1.0f)
 		};
 
-		m_pointLights.EmplaceBack(PointLight
-		({
-			glm::vec3(0.7f,  0.2f,  2.0f),
-			1.0f,
-			0.009f,
-			0.032f,
-			glm::vec3(1.0f, 1.0f, 1.0f),
-			glm::vec3(0.8f, 0.8f, 0.8f),
-			glm::vec3(1.0f, 1.0f, 1.0f)
-			})
-		);
-
-		m_pointLights.EmplaceBack(PointLight
-		({
-			glm::vec3(0.7f,  0.2f,  2.0f),
-			1.0f,
-			0.009f,
-			0.032f,
-			glm::vec3(1.0f, 1.0f, 1.0f),
-			glm::vec3(0.8f, 0.8f, 0.8f),
-			glm::vec3(1.0f, 1.0f, 1.0f)
-			})
-		);
 	}
 
 	virtual void OnUpdate(BaldLion::TimeStep timeStep) override
@@ -96,13 +72,11 @@ public:
 			JobManager::SetJobDependency(animationUpdateTaskId);			
 		}
 
-		//todo: create render task
-
-		Job beginSceneJob("BeginSceneJob");
+		JobManagement::JobManager::WaitForJobs();
 		{
 			BL_PROFILE_SCOPE("Renderer::BeginScene");
 			m_frameBuffer->Bind();
-			Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight, m_pointLights);
+			Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight);
 		}
 
 		{

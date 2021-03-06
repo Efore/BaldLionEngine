@@ -156,6 +156,7 @@
     <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
     <ClInclude Include="src\BaldLion\Core\Input.h" />
     <ClInclude Include="src\BaldLion\Core\JobManagement\JobManager.h" />
+    <ClInclude Include="src\BaldLion\Core\JobManagement\ThreadPool.h" />
     <ClInclude Include="src\BaldLion\Core\KeyCodes.h" />
     <ClInclude Include="src\BaldLion\Core\Layer.h" />
     <ClInclude Include="src\BaldLion\Core\LayerStack.h" />
@@ -168,7 +169,6 @@
     <ClInclude Include="src\BaldLion\Core\Memory\StackAllocator.h" />
     <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h" />
     <ClInclude Include="src\BaldLion\Core\StringId.h" />
-    <ClInclude Include="src\BaldLion\Core\JobManagement\ThreadPool.h" />
     <ClInclude Include="src\BaldLion\Core\TimeStep.h" />
     <ClInclude Include="src\BaldLion\Core\Window.h" />
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h" />
@@ -578,6 +578,7 @@
     <ClCompile Include="src\BaldLion\Animation\Animator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Application.cpp" />
     <ClCompile Include="src\BaldLion\Core\JobManagement\JobManager.cpp" />
+    <ClCompile Include="src\BaldLion\Core\JobManagement\ThreadPool.cpp" />
     <ClCompile Include="src\BaldLion\Core\Layer.cpp" />
     <ClCompile Include="src\BaldLion\Core\LayerStack.cpp" />
     <ClCompile Include="src\BaldLion\Core\Log.cpp" />
@@ -587,7 +588,6 @@
     <ClCompile Include="src\BaldLion\Core\Memory\MemoryManager.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\StringId.cpp" />
-    <ClCompile Include="src\BaldLion\Core\JobManagement\ThreadPool.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\AnimatedModel.cpp" />

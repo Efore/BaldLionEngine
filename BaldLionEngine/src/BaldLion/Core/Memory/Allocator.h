@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <mutex>
+#include "BaldLion/Core/StringId.h"
 
 namespace BaldLion
 {
@@ -9,7 +11,7 @@ namespace BaldLion
 		class Allocator
 		{
 		public:
-			Allocator(size_t size, void* start);
+			Allocator(const char* allocatorName, size_t size, void* start);
 
 			virtual ~Allocator();
 
@@ -31,8 +33,10 @@ namespace BaldLion
 			size_t m_used_memory;
 			size_t m_num_allocations;
 
-
+			std::mutex m_mutex;
 			void* m_start;
+
+			StringId m_allocatorName;
 		};
 	}
 }

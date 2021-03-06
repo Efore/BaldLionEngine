@@ -14,7 +14,7 @@ namespace BaldLion
 		enum class AllocationType {
 			FreeList_Main,
 			Linear_Frame,
-			Stack_Scope_Temp,
+			Stack,
 			FreeList_Renderer,
 		};
 
@@ -22,7 +22,7 @@ namespace BaldLion
 
 		public:
 			static void Init(size_t memoryAllocationSize); 
-			static void Stop(AllocationType allocationType);
+			static void Clear(AllocationType allocationType);
 			static void Stop();			
 
 			template <class T, class... Args >
@@ -48,10 +48,13 @@ namespace BaldLion
 			static FreeListAllocator* s_mainFreeListAllocator;
 			static FreeListAllocator* s_rendererFreeListAllocator;
 			static LinearAllocator* s_frameLinearAllocator;
-			static StackAllocator* s_tempStackAllocator;
+			static StackAllocator* s_stackAllocator;
+
 			static void* s_memory;
+
 			static std::unordered_map<void*, AllocationType> s_allocationMap;
-			static std::unordered_map<void*, StringId> s_allocationDescriptions;
+			static std::unordered_map<void*, std::pair<StringId, size_t>> s_allocationDescriptions;
+
 			static std::mutex s_mutex;
 			static size_t s_memorySize;
 		};
@@ -71,8 +74,8 @@ namespace BaldLion
 			case AllocationType::Linear_Frame:
 				result = new (s_frameLinearAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
 				break;
-			case AllocationType::Stack_Scope_Temp:
-				result = new (s_tempStackAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
+			case AllocationType::Stack:
+				result = new (s_stackAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
 				break;
 			case AllocationType::FreeList_Renderer:
 				result = new (s_rendererFreeListAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
@@ -80,7 +83,7 @@ namespace BaldLion
 			}		
 
 			s_allocationMap.emplace((void*)result, allocationType);
-			s_allocationDescriptions.emplace((void*)result, allocationName);
+			s_allocationDescriptions.emplace((void*)result, std::pair<StringId, size_t>(allocationName, sizeof(T)));
 
 			return result;
 		}
@@ -107,7 +110,7 @@ namespace BaldLion
 				if (s_mainFreeListAllocator != nullptr)
 					s_mainFreeListAllocator->Deallocate(element);
 				break;
-			case AllocationType::Stack_Scope_Temp:
+			case AllocationType::Stack:
 				if (s_mainFreeListAllocator != nullptr)
 					s_mainFreeListAllocator->Deallocate(element);
 				break;
@@ -118,6 +121,7 @@ namespace BaldLion
 			}
 
 			s_allocationMap.erase(element);
+			s_allocationDescriptions.erase(element);
 		}
 		
 		template <class T>
