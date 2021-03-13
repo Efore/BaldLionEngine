@@ -20,7 +20,8 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			m_models = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 3);
+			m_animatedModels = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 3);
+			m_staticModels = DynamicArray<Rendering::Model*>(AllocationType::FreeList_Renderer, 3);
 
 			BaldLion::Rendering::FramebufferSpecification fbSpec;
 			fbSpec.Width = Application::GetInstance().GetWindow().GetWidth();
@@ -34,11 +35,24 @@ namespace BaldLion
 
 			for (ui32 i = 0; i < 3; ++i)
 			{
-				auto model = MemoryManager::New<Rendering::AnimatedModel>(STRING_TO_ID("Animated Model"), AllocationType::FreeList_Renderer, "assets/creature/creature.fbx", initialTransform);
+				auto model = MemoryManager::New<Rendering::AnimatedModel>(STRING_TO_ID("Animated Model " + i), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", initialTransform);
 				model->SetUpModel();
-				m_models.PushBack(model);
+				m_animatedModels.PushBack(model);
 
 				initialTransform = glm::translate(initialTransform, glm::vec3(150, 0, 0));
+			}
+
+			initialTransform = glm::mat4(1.0f);
+			initialTransform = glm::translate(initialTransform, glm::vec3(0, 0, -150));
+			initialTransform = glm::scale(initialTransform, glm::vec3(100.0f));
+
+			for (ui32 i = 0; i < 3; ++i)
+			{
+				auto model = MemoryManager::New<Rendering::Model>(STRING_TO_ID("Static Model " + i), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj", initialTransform);
+				model->SetUpModel();
+				m_staticModels.PushBack(model);
+
+				initialTransform = glm::translate(initialTransform, glm::vec3(15.0f, 0, 0));				
 			}
 
 			m_directionalLight = {
@@ -52,11 +66,11 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnDetach()
 		{
-			for (ui32 i = 0; i < m_models.Size(); ++i)
+			for (ui32 i = 0; i < m_animatedModels.Size(); ++i)
 			{
-				MemoryManager::DeleteNoDestructor(m_models[i]);
+				MemoryManager::DeleteNoDestructor(m_animatedModels[i]);
 			}
-			m_models.Clear();
+			m_animatedModels.Clear();
 
 			MemoryManager::Delete(m_frameBuffer);
 		}
@@ -86,11 +100,18 @@ namespace BaldLion
 				Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight);
 			}
 			{
-				BL_PROFILE_SCOPE("Renderer::Draw");
-				for (ui32 i = 0; i < m_models.Size(); ++i)
+
+				BL_PROFILE_SCOPE("Renderer::Draw static models");
+				for (ui32 i = 0; i < m_staticModels.Size(); ++i)
 				{
-					m_models[i]->Draw();
+					m_staticModels[i]->Draw();
 				}
+				BL_PROFILE_SCOPE("Renderer::Draw animated modesl");
+				for (ui32 i = 0; i < m_animatedModels.Size(); ++i)
+				{
+					m_animatedModels[i]->Draw();
+				}
+
 				Renderer::EndScene();
 				m_frameBuffer->Unbind();
 			}

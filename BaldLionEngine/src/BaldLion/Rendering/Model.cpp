@@ -137,7 +137,7 @@ namespace BaldLion
 			aiColor3D& diffuseColor, 
 			aiColor3D& specularColor, 
 			aiColor3D& emissiveColor, 
-			Texture*&  ambientTex,
+			Texture*& ambientTex,
 			Texture*& diffuseTex,
 			Texture*& specularTex,
 			Texture*& emissiveTex,
@@ -271,7 +271,7 @@ namespace BaldLion
 				emissiveTex,
 				normalTex);
 
-			meshMaterial->AssignShader("assets/shaders/nanosuit.glsl");
+			meshMaterial->AssignShader("assets/shaders/BaseLit.glsl");
 
 			Mesh* mesh = MemoryManager::New<Mesh>(STRING_TO_ID("Mesh"), AllocationType::FreeList_Renderer,  meshMaterial);
 			mesh->SetUpMesh(vertices, indices);

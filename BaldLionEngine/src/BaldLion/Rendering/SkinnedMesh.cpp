@@ -56,9 +56,7 @@ namespace BaldLion
 
 		void SkinnedMesh::Draw(const glm::mat4& worldTransform) const
 		{
-			m_material->Bind();
-
-			m_material->GetShader()->Bind();
+			m_material->Bind();		
 
 			for (ui32 i = 0; i < m_joints.Size(); ++i)
 			{

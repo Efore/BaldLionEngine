@@ -65,8 +65,6 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			shader->Bind();
-
 			shader->SetUniform(STRING_TO_ID("u_worldTransformMatrix"), ShaderDataType::Mat4, &(transform[0][0]));
 			shader->SetUniform(STRING_TO_ID("u_viewProjectionMatrix"), ShaderDataType::Mat4, &(s_sceneData.viewProjectionMatrix));
 			shader->SetUniform(STRING_TO_ID("u_cameraPos"), ShaderDataType::Float3, &(s_sceneData.cameraPosition));
@@ -78,7 +76,7 @@ namespace BaldLion
 
 			vertexArray->Bind();
 			s_rendererPlatformInterface->DrawIndexed(vertexArray);
-			vertexArray->Unbind();
+			vertexArray->Unbind();			
 		}
 	}
 }

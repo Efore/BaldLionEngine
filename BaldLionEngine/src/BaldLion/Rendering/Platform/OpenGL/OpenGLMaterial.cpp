@@ -35,38 +35,37 @@ namespace BaldLion
 			if (ambientTex != nullptr)
 			{
 				m_ambientTexSlot = slotIndex++;
-				m_ambientTex = (OpenGLTexture2D*)ambientTex;
-				m_ambientTex->Bind(m_ambientTexSlot);
+				m_ambientTex = (OpenGLTexture2D*)ambientTex;			
+				m_useAmbientTex = 1;
 			}
 
 			if (diffuseTex != nullptr)
 			{
 				m_diffuseTexSlot = slotIndex++;
-				m_diffuseTex = (OpenGLTexture2D*)(diffuseTex);
-				m_diffuseTex->Bind(m_diffuseTexSlot);
+				m_diffuseTex = (OpenGLTexture2D*)(diffuseTex);	
+				m_useDiffuseTex = 1;
 			}
 
 			if (emissiveTex != nullptr)
 			{
 				m_emissiveTexSlot = slotIndex++;
-				m_emissiveTex = (OpenGLTexture2D*)(emissiveTex);
-				m_emissiveTex->Bind(m_emissiveTexSlot);
+				m_emissiveTex = (OpenGLTexture2D*)(emissiveTex);	
+				m_useEmissiveTex = 1;
 			}
 
 			if (specularTex != nullptr)
 			{
 				m_specularTexSlot = slotIndex++;
-				m_specularTex = (OpenGLTexture2D*)(specularTex);
-				m_specularTex->Bind(m_specularTexSlot);
+				m_specularTex = (OpenGLTexture2D*)(specularTex);	
+				m_useSpecularTex = 1;
 			}
 
 			if (normalTex)
 			{
 				m_normalTexSlot = slotIndex++;
-				m_normalTex = (OpenGLTexture2D*)(normalTex);
-				m_normalTex->Bind(m_normalTexSlot);
+				m_normalTex = (OpenGLTexture2D*)(normalTex);	
+				m_useNormalTex = 1;
 			}
-
 		}
 
 		void OpenGLMaterial::AssignShader(const std::string& shaderPath)
@@ -81,19 +80,39 @@ namespace BaldLion
 			m_shader->SetUniform(MATKEY_SHININESS, ShaderDataType::Float, &m_shininess);
 
 			if (m_ambientTex != nullptr)
+			{
 				m_shader->SetUniform(MATKEY_AMBIENT_TEX, ShaderDataType::Int, &m_ambientTexSlot);
+				m_useAmbientTex = 1;
+			}
+			m_shader->SetUniform(MATKEY_USE_AMBIENT_TEX, ShaderDataType::Int, &m_useAmbientTex);
 
 			if (m_diffuseTex != nullptr)
+			{
 				m_shader->SetUniform(MATKEY_DIFFUSE_TEX, ShaderDataType::Int, &m_diffuseTexSlot);
+				m_useDiffuseTex = 1;
+			}
+			m_shader->SetUniform(MATKEY_USE_DIFFUSE_TEX, ShaderDataType::Int, &m_useDiffuseTex);
 
 			if (m_emissiveTex != nullptr)
+			{
 				m_shader->SetUniform(MATKEY_EMISSIVE_TEX, ShaderDataType::Int, &m_emissiveTexSlot);
+				m_useEmissiveTex = 1;
+			}
+			m_shader->SetUniform(MATKEY_USE_EMISSIVE_TEX, ShaderDataType::Int, &m_useEmissiveTex);
 
 			if (m_specularTex != nullptr)
+			{
 				m_shader->SetUniform(MATKEY_SPECULAR_TEX, ShaderDataType::Int, &m_specularTexSlot);
+				m_useSpecularTex = 1;
+			}
+			m_shader->SetUniform(MATKEY_USE_SPECULAR_TEX, ShaderDataType::Int, &m_useSpecularTex);
 
 			if (m_normalTex != nullptr)
+			{
 				m_shader->SetUniform(MATKEY_NORMAL_TEX, ShaderDataType::Int, &m_normalTexSlot);
+				m_useNormalTex = 1;
+			}
+			m_shader->SetUniform(MATKEY_USE_NORMAL_TEX, ShaderDataType::Int, &m_useNormalTex);
 		}
 
 		void OpenGLMaterial::SetAmbientColor(const glm::vec3 & ambient)
@@ -136,11 +155,12 @@ namespace BaldLion
 		void OpenGLMaterial::Bind() const
 		{
 			BL_PROFILE_FUNCTION();
+			m_shader->Bind();
 
 			if (m_ambientTex != nullptr)
 				m_ambientTex->Bind(m_ambientTexSlot);
 
-			if(m_diffuseTex != nullptr)
+			if (m_diffuseTex != nullptr)
 				m_diffuseTex->Bind(m_diffuseTexSlot);
 
 			if (m_emissiveTex != nullptr)
@@ -150,7 +170,13 @@ namespace BaldLion
 				m_specularTex->Bind(m_specularTexSlot);
 
 			if (m_normalTex != nullptr)
-				m_normalTex->Bind(m_normalTexSlot);			
+				m_normalTex->Bind(m_normalTexSlot);
 		}
+
+		void OpenGLMaterial::Unbind() const
+		{
+			m_shader->Unbind();
+		}
+
 	}
 }

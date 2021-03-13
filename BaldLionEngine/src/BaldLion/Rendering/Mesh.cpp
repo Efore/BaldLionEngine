@@ -42,9 +42,10 @@ namespace BaldLion
 		}
 
 		void Mesh::Draw(const glm::mat4& worldTransform) const
-		{
+		{	
 			m_material->Bind();
 			Renderer::Submit(m_vertexArray, m_material->GetShader(), worldTransform);
+			m_material->Unbind();
 		}
 	}
 }

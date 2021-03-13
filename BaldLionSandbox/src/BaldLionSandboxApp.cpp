@@ -23,7 +23,7 @@ public:
 	{
 		BL_PROFILE_FUNCTION();
 
-		m_models = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);		
+		m_animatedModels = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);		
 
 		BaldLion::Rendering::FramebufferSpecification fbSpec;
 		fbSpec.Width = Application::GetInstance().GetWindow().GetWidth();
@@ -39,7 +39,7 @@ public:
 		{
 			auto model = MemoryManager::New<Rendering::AnimatedModel>(STRING_TO_ID("Animated Model"), AllocationType::FreeList_Renderer, "assets/creature/creature.fbx", initialTransform);
 			model->SetUpModel();
-			m_models.PushBack(model);
+			m_animatedModels.PushBack(model);
 
 			initialTransform = glm::translate(initialTransform, glm::vec3(150, 0, 0));
 		}
@@ -81,9 +81,9 @@ public:
 
 		{
 			BL_PROFILE_SCOPE("Renderer::Draw");
-			for (ui32 i = 0; i < m_models.Size(); ++i)
+			for (ui32 i = 0; i < m_animatedModels.Size(); ++i)
 			{
-				m_models[i]->Draw();
+				m_animatedModels[i]->Draw();
 			}
 			Renderer::EndScene();
 			m_frameBuffer->Unbind();
@@ -120,11 +120,11 @@ public:
 	{
 		m_pointLights.Clear();
 
-		for (ui32 i = 0; i < m_models.Size(); ++i)
+		for (ui32 i = 0; i < m_animatedModels.Size(); ++i)
 		{
-			MemoryManager::DeleteNoDestructor(m_models[i]);
+			MemoryManager::DeleteNoDestructor(m_animatedModels[i]);
 		}
-		m_models.Clear();
+		m_animatedModels.Clear();
 
 		MemoryManager::Delete(m_frameBuffer);
 	}
@@ -151,7 +151,7 @@ public:
 
 private:
 
-	DynamicArray<Rendering::AnimatedModel*> m_models;
+	DynamicArray<Rendering::AnimatedModel*> m_animatedModels;
 	Rendering::Framebuffer* m_frameBuffer;
 
 	glm::vec2 m_viewportSize;

@@ -25,7 +25,9 @@ namespace BaldLion
 
 		private:
 
-			DynamicArray<Rendering::AnimatedModel*> m_models;
+			DynamicArray<Rendering::AnimatedModel*> m_animatedModels;
+			DynamicArray<Rendering::Model*> m_staticModels;
+
 			Rendering::Framebuffer* m_frameBuffer;
 
 			glm::vec2 m_viewportSize;

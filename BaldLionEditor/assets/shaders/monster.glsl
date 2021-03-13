@@ -83,10 +83,15 @@ struct Material
 	vec3 diffuseColor;
 	vec3 emissiveColor;
 	vec3 specularColor;
+	int useAmbientTex;
 	sampler2D ambientTex;
+	int useDiffuseTex;
 	sampler2D diffuseTex;
+	int useEmissiveTex;
 	sampler2D emissiveTex;
+	int useSpecularTex;
 	sampler2D specularTex;
+	int useNormalTex;
 	sampler2D normalTex;
 	float shininess;
 };
@@ -114,10 +119,25 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
     vec3 reflectDir = reflect(-lightDir, normal);	
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_material.shininess);
 
+	vec3 ambientTexResult = vec3(texture(u_material.ambientTex, fs_in.vs_texcoord));
+	ambientTexResult.x = clamp(ambientTexResult.x + (1 - u_material.useAmbientTex), 0.0, 1.0);
+	ambientTexResult.y = clamp(ambientTexResult.y + (1 - u_material.useAmbientTex), 0.0, 1.0);
+	ambientTexResult.z = clamp(ambientTexResult.z + (1 - u_material.useAmbientTex), 0.0, 1.0);
+
+	vec3 diffuseTexResult = vec3(texture(u_material.diffuseTex, fs_in.vs_texcoord));
+	diffuseTexResult.x = clamp(diffuseTexResult.x + (1 - u_material.useDiffuseTex), 0.0, 1.0);
+	diffuseTexResult.y = clamp(diffuseTexResult.y + (1 - u_material.useDiffuseTex), 0.0, 1.0);
+	diffuseTexResult.z = clamp(diffuseTexResult.z + (1 - u_material.useDiffuseTex), 0.0, 1.0);
+
+	vec3 specularTexResult = vec3(texture(u_material.specularTex, fs_in.vs_texcoord));
+	specularTexResult.x = clamp(specularTexResult.x + (1 - u_material.useSpecularTex), 0.0, 1.0);
+	specularTexResult.y = clamp(specularTexResult.y + (1 - u_material.useSpecularTex), 0.0, 1.0);
+	specularTexResult.z = clamp(specularTexResult.z + (1 - u_material.useSpecularTex), 0.0, 1.0);
+
 	// combine results
-    vec3 ambient  = light.ambientColor * u_material.ambientColor * vec3(texture(u_material.ambientTex, fs_in.vs_texcoord));
-    vec3 diffuse  = light.diffuseColor  * diff * u_material.diffuseColor * vec3(texture(u_material.diffuseTex, fs_in.vs_texcoord));
-    vec3 specular = light.specularColor * spec * u_material.specularColor * vec3(texture(u_material.specularTex, fs_in.vs_texcoord));
+    vec3 ambient  = light.ambientColor * u_material.ambientColor * ambientTexResult;
+    vec3 diffuse  = light.diffuseColor  * diff * u_material.diffuseColor * diffuseTexResult;
+    vec3 specular = light.specularColor * spec * u_material.specularColor * specularTexResult;
     
 	return (ambient + diffuse + specular);	
 }  
@@ -138,11 +158,26 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
   			     light.quadratic * (distance * distance));    
 
-    // combine results
-    vec3 ambient  = light.ambientColor  * u_material.ambientColor * vec3(texture(u_material.ambientTex, fs_in.vs_texcoord));
-    vec3 diffuse  = light.diffuseColor  * diff * u_material.diffuseColor * vec3(texture(u_material.diffuseTex, fs_in.vs_texcoord));
-    vec3 specular = light.specularColor * spec * u_material.specularColor * vec3(texture(u_material.specularTex, fs_in.vs_texcoord));
+	vec3 ambientTexResult = vec3(texture(u_material.ambientTex, fs_in.vs_texcoord));
+	ambientTexResult.x = clamp(ambientTexResult.x + (1 - u_material.useAmbientTex), 0.0, 1.0);
+	ambientTexResult.y = clamp(ambientTexResult.y + (1 - u_material.useAmbientTex), 0.0, 1.0);
+	ambientTexResult.z = clamp(ambientTexResult.z + (1 - u_material.useAmbientTex), 0.0, 1.0);
 
+	vec3 diffuseTexResult = vec3(texture(u_material.diffuseTex, fs_in.vs_texcoord));
+	diffuseTexResult.x = clamp(diffuseTexResult.x + (1 - u_material.useDiffuseTex), 0.0, 1.0);
+	diffuseTexResult.y = clamp(diffuseTexResult.y + (1 - u_material.useDiffuseTex), 0.0, 1.0);
+	diffuseTexResult.z = clamp(diffuseTexResult.z + (1 - u_material.useDiffuseTex), 0.0, 1.0);
+
+	vec3 specularTexResult = vec3(texture(u_material.specularTex, fs_in.vs_texcoord));
+	specularTexResult.x = clamp(specularTexResult.x + (1 - u_material.useSpecularTex), 0.0, 1.0);
+	specularTexResult.y = clamp(specularTexResult.y + (1 - u_material.useSpecularTex), 0.0, 1.0);
+	specularTexResult.z = clamp(specularTexResult.z + (1 - u_material.useSpecularTex), 0.0, 1.0);
+
+	// combine results
+    vec3 ambient  = light.ambientColor * u_material.ambientColor * ambientTexResult;
+    vec3 diffuse  = light.diffuseColor  * diff * u_material.diffuseColor * diffuseTexResult;
+    vec3 specular = light.specularColor * spec * u_material.specularColor * specularTexResult;
+    
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;
@@ -152,7 +187,11 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
 
 void main()
 {	
-	vec3 norm = (texture(u_material.normalTex, fs_in.vs_texcoord).rgb);
+	vec3 norm = vec3(texture(u_material.normalTex, fs_in.vs_texcoord));
+	norm.x = clamp(norm.x + (1 - u_material.useNormalTex), 0.0, 1.0);
+	norm.y = clamp(norm.y + (1 - u_material.useNormalTex), 0.0, 1.0);
+	norm.z = clamp(norm.z + (1 - u_material.useNormalTex), 0.0, 1.0);
+
 	norm = norm * 2.0 - 1.0;   
 	norm = normalize(fs_in.TBN * norm); 
 

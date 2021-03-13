@@ -5,27 +5,48 @@ layout (location = 0) in vec3 vertex_position;
 layout (location = 1) in vec3 vertex_color;
 layout (location = 2) in vec3 vertex_normal;	
 layout (location = 3) in vec2 vertex_texcoord;
+layout (location = 4) in vec3 vertex_tangent;
+layout (location = 5) in vec3 vertex_bitangent;
 
-uniform mat4 u_viewProjection;  
-uniform mat4 u_transform;
+uniform mat4 u_viewProjectionMatrix;  
+uniform mat4 u_worldTransformMatrix;
 		
-out vec3 vs_position;
-out vec3 vs_color;
-out vec2 vs_texcoord;
-out vec3 vs_normal;						
+const int MAX_JOINTS = 100;
+uniform mat4 u_joints[MAX_JOINTS];
+
+out VS_OUT
+{
+	vec3 vs_position;
+	vec3 vs_color;
+	vec2 vs_texcoord;
+	mat3 TBN;
+} vs_out;			
 
 void main()
 {
-	vs_position = vec3(u_transform * vec4(vertex_position, 1.f)).xyz;
-	vs_color = vertex_color;
-	vs_texcoord = vec2(vertex_texcoord.x,-vertex_texcoord.y);
-	vs_normal = mat3(transpose(inverse(u_transform))) * vertex_normal;
+	vs_out.vs_position = vec3(u_worldTransformMatrix * vec4(vertex_position, 1.f)).xyz;
+	vs_out.vs_color = vertex_color;
+	vs_out.vs_texcoord = vec2(vertex_texcoord.x,-vertex_texcoord.y);
 
-	gl_Position = u_viewProjection * u_transform * vec4(vertex_position, 1.f);
+	vec3 T = normalize(u_worldTransformMatrix * vec4(vertex_tangent,1.f)).xyz;
+	vec3 N = normalize(u_worldTransformMatrix * vec4(vertex_normal,1.f)).xyz;
+	vec3 B = normalize(u_worldTransformMatrix * vec4(vertex_bitangent,1.f)).xyz;;
+
+	vs_out.TBN = mat3(T,B,N);	
+
+	gl_Position = (u_viewProjectionMatrix * u_worldTransformMatrix) * vec4(vertex_position, 1.f);
 }
 
 #type fragment
 #version 330 core
+
+in VS_OUT
+{
+	vec3 vs_position;
+	vec3 vs_color;
+	vec2 vs_texcoord;
+	mat3 TBN;
+} fs_in;	
 
 struct DirectionalLight 
 {
@@ -56,18 +77,18 @@ struct Material
 	vec3 diffuseColor;
 	vec3 emissiveColor;
 	vec3 specularColor;
+	int useAmbientTex;
 	sampler2D ambientTex;
+	int useDiffuseTex;
 	sampler2D diffuseTex;
+	int useEmissiveTex;
 	sampler2D emissiveTex;
+	int useSpecularTex;
 	sampler2D specularTex;
+	int useNormalTex;
 	sampler2D normalTex;
 	float shininess;
 };
-
-in vec3 vs_position;
-in vec3 vs_color;
-in vec2 vs_texcoord;
-in vec3 vs_normal;
 
 out vec4 fs_color;
 
@@ -92,10 +113,25 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
     vec3 reflectDir = reflect(-lightDir, normal);	
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_material.shininess);
 
+	vec3 ambientTexResult = vec3(texture(u_material.ambientTex, fs_in.vs_texcoord));
+	ambientTexResult.x = clamp(ambientTexResult.x + (1 - u_material.useAmbientTex), 0.0, 1.0);
+	ambientTexResult.y = clamp(ambientTexResult.y + (1 - u_material.useAmbientTex), 0.0, 1.0);
+	ambientTexResult.z = clamp(ambientTexResult.z + (1 - u_material.useAmbientTex), 0.0, 1.0);
+
+	vec3 diffuseTexResult = vec3(texture(u_material.diffuseTex, fs_in.vs_texcoord));
+	diffuseTexResult.x = clamp(diffuseTexResult.x + (1 - u_material.useDiffuseTex), 0.0, 1.0);
+	diffuseTexResult.y = clamp(diffuseTexResult.y + (1 - u_material.useDiffuseTex), 0.0, 1.0);
+	diffuseTexResult.z = clamp(diffuseTexResult.z + (1 - u_material.useDiffuseTex), 0.0, 1.0);
+
+	vec3 specularTexResult = vec3(texture(u_material.specularTex, fs_in.vs_texcoord));
+	specularTexResult.x = clamp(specularTexResult.x + (1 - u_material.useSpecularTex), 0.0, 1.0);
+	specularTexResult.y = clamp(specularTexResult.y + (1 - u_material.useSpecularTex), 0.0, 1.0);
+	specularTexResult.z = clamp(specularTexResult.z + (1 - u_material.useSpecularTex), 0.0, 1.0);
+
 	// combine results
-    vec3 ambient  = light.ambientColor * u_material.ambientColor * vec3(texture(u_material.ambientTex, vs_texcoord));
-    vec3 diffuse  = light.diffuseColor  * diff * u_material.diffuseColor * vec3(texture(u_material.diffuseTex, vs_texcoord));
-    vec3 specular = light.specularColor * spec * u_material.specularColor * vec3(texture(u_material.specularTex, vs_texcoord));
+    vec3 ambient  = light.ambientColor * u_material.ambientColor * ambientTexResult;
+    vec3 diffuse  = light.diffuseColor  * diff * u_material.diffuseColor * diffuseTexResult;
+    vec3 specular = light.specularColor * spec * u_material.specularColor * specularTexResult;
     
 	return (ambient + diffuse + specular);	
 }  
@@ -103,7 +139,7 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
 {
-    vec3 lightDir = normalize(light.position - vs_position);
+    vec3 lightDir = normalize(light.position - fs_in.vs_position);
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
@@ -112,15 +148,30 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_material.shininess);
 
     // attenuation
-    float distance = length(light.position - vs_position);
+    float distance = length(light.position - fs_in.vs_position);
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
   			     light.quadratic * (distance * distance));    
+				 
+	vec3 ambientTexResult = vec3(texture(u_material.ambientTex, fs_in.vs_texcoord));
+	ambientTexResult.x = clamp(ambientTexResult.x + (1 - u_material.useAmbientTex), 0.0, 1.0);
+	ambientTexResult.y = clamp(ambientTexResult.y + (1 - u_material.useAmbientTex), 0.0, 1.0);
+	ambientTexResult.z = clamp(ambientTexResult.z + (1 - u_material.useAmbientTex), 0.0, 1.0);
 
-    // combine results
-    vec3 ambient  = light.ambientColor  * u_material.ambientColor * vec3(texture(u_material.ambientTex, vs_texcoord));
-    vec3 diffuse  = light.diffuseColor  * diff * u_material.diffuseColor * vec3(texture(u_material.diffuseTex, vs_texcoord));
-    vec3 specular = light.specularColor * spec * u_material.specularColor * vec3(texture(u_material.specularTex, vs_texcoord));
+	vec3 diffuseTexResult = vec3(texture(u_material.diffuseTex, fs_in.vs_texcoord));
+	diffuseTexResult.x = clamp(diffuseTexResult.x + (1 - u_material.useDiffuseTex), 0.0, 1.0);
+	diffuseTexResult.y = clamp(diffuseTexResult.y + (1 - u_material.useDiffuseTex), 0.0, 1.0);
+	diffuseTexResult.z = clamp(diffuseTexResult.z + (1 - u_material.useDiffuseTex), 0.0, 1.0);
 
+	vec3 specularTexResult = vec3(texture(u_material.specularTex, fs_in.vs_texcoord));
+	specularTexResult.x = clamp(specularTexResult.x + (1 - u_material.useSpecularTex), 0.0, 1.0);
+	specularTexResult.y = clamp(specularTexResult.y + (1 - u_material.useSpecularTex), 0.0, 1.0);
+	specularTexResult.z = clamp(specularTexResult.z + (1 - u_material.useSpecularTex), 0.0, 1.0);
+
+	// combine results
+    vec3 ambient  = light.ambientColor * u_material.ambientColor * ambientTexResult;
+    vec3 diffuse  = light.diffuseColor  * diff * u_material.diffuseColor * diffuseTexResult;
+    vec3 specular = light.specularColor * spec * u_material.specularColor * specularTexResult;
+    
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;
@@ -130,8 +181,15 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
 
 void main()
 {	
-	vec3 norm = normalize(vs_normal);
-	vec3 posToViewDir = normalize(u_cameraPos - vs_position);
+	vec3 norm = vec3(texture(u_material.normalTex, fs_in.vs_texcoord));
+	norm.x = clamp(norm.x + (1 - u_material.useNormalTex), 0.0, 1.0);
+	norm.y = clamp(norm.y + (1 - u_material.useNormalTex), 0.0, 1.0);
+	norm.z = clamp(norm.z + (1 - u_material.useNormalTex), 0.0, 1.0);
+
+	norm = norm * 2.0 - 1.0;   
+	norm = normalize(fs_in.TBN * norm); 
+
+	vec3 posToViewDir = normalize(u_cameraPos - fs_in.vs_position);
 
 	//Directional Lighting
 	vec3 result = CalcDirLight(u_directionalLight, norm, posToViewDir);

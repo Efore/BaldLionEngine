@@ -10,11 +10,16 @@
 #define MATKEY_SPECULAR_COLOR	STRING_TO_ID("u_material.specularColor")
 #define MATKEY_SHININESS		STRING_TO_ID("u_material.shininess")
 
-#define MATKEY_AMBIENT_TEX		STRING_TO_ID("u_material.ambientTex" )
-#define MATKEY_DIFFUSE_TEX		STRING_TO_ID("u_material.diffuseTex")
-#define MATKEY_EMISSIVE_TEX		STRING_TO_ID("u_material.emissiveTex")
-#define MATKEY_SPECULAR_TEX		STRING_TO_ID("u_material.specularTex")
-#define MATKEY_NORMAL_TEX		STRING_TO_ID("u_material.normalTex")
+#define MATKEY_USE_AMBIENT_TEX		STRING_TO_ID("u_material.useAmbientTex" )
+#define MATKEY_AMBIENT_TEX			STRING_TO_ID("u_material.ambientTex" )
+#define MATKEY_USE_DIFFUSE_TEX		STRING_TO_ID("u_material.useDiffuseTex" )
+#define MATKEY_DIFFUSE_TEX			STRING_TO_ID("u_material.diffuseTex")
+#define MATKEY_USE_EMISSIVE_TEX		STRING_TO_ID("u_material.useEmissiveTex" )
+#define MATKEY_EMISSIVE_TEX			STRING_TO_ID("u_material.emissiveTex")
+#define MATKEY_USE_SPECULAR_TEX		STRING_TO_ID("u_material.useSpecularTex" )
+#define MATKEY_SPECULAR_TEX			STRING_TO_ID("u_material.specularTex")
+#define MATKEY_USE_NORMAL_TEX		STRING_TO_ID("u_material.useNormalTex" )
+#define MATKEY_NORMAL_TEX			STRING_TO_ID("u_material.normalTex")
 
 namespace BaldLion
 {
@@ -52,6 +57,7 @@ namespace BaldLion
 			virtual ~Material() = default;
 
 			virtual void Bind() const = 0;
+			virtual void Unbind() const = 0;
 			
 		protected:
 
