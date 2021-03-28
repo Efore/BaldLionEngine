@@ -38,12 +38,12 @@ namespace BaldLion
 		void RemoveAt(ui32 index);
 		void RemoveAtFast(ui32 index);
 
-		void Fill();		
-		void Fill(const T& value);
-		void Fill(T&& value);
+		void Populate();		
+		void Populate(const T& value);
+		void Populate(T&& value);
 
 		int FindIndex(const T& element);
-		bool Exists(const T& element);
+		bool Contains(const T& element);
 
 		bool IsEmpty() const { return m_size == 0; }
 
@@ -396,13 +396,13 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator>
-	bool BaldLion::DynamicArray<T, Allocator>::Exists(const T& element)
+	bool BaldLion::DynamicArray<T, Allocator>::Contains(const T& element)
 	{
 		return FindIndex(element) != -1;
 	}
 	   	
 	template <typename T, typename Allocator >
-	void BaldLion::DynamicArray<T, Allocator>::Fill()
+	void BaldLion::DynamicArray<T, Allocator>::Populate()
 	{
 		m_size = m_capacity;
 
@@ -413,7 +413,7 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator >
-	void BaldLion::DynamicArray<T, Allocator>::Fill(const T& value)
+	void BaldLion::DynamicArray<T, Allocator>::Populate(const T& value)
 	{	
 		m_size = m_capacity;
 
@@ -424,13 +424,13 @@ namespace BaldLion
 	}
 
 	template <typename T, typename Allocator >
-	void BaldLion::DynamicArray<T, Allocator>::Fill(T&& value)
+	void BaldLion::DynamicArray<T, Allocator>::Populate(T&& value)
 	{
 		m_size = m_capacity;
 
 		for (ui32 i = 0; i < m_size; ++i)
 		{
-			m_elements[i] = value;
+			m_elements[i] = std::move(value);
 		}
 	}
 

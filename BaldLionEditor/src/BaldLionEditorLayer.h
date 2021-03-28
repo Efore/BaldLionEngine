@@ -16,7 +16,7 @@ namespace BaldLion
 			virtual void OnDetach() override;
 
 			virtual void OnUpdate(TimeStep timeStep) override;
-			virtual void OnImGuiRender() override;
+			virtual void OnImGuiRender(TimeStep timeStep) override;
 			virtual void OnEvent(Event& e) override;
 
 		private:
@@ -24,10 +24,6 @@ namespace BaldLion
 			bool OnWindowResizeEvent(WindowResizeEvent& e);
 
 		private:
-
-			DynamicArray<Rendering::AnimatedModel*> m_animatedModels;
-			DynamicArray<Rendering::Model*> m_staticModels;
-
 			Rendering::Framebuffer* m_frameBuffer;
 
 			glm::vec2 m_viewportSize;

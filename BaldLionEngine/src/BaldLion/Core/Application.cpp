@@ -101,14 +101,13 @@ namespace BaldLion
 				{
 					BL_PROFILE_SCOPE("LayerStack OnImGuiRender");
 					for (ui32 i = 0; i < m_layerStack.Size(); ++i)
-						m_layerStack[i]->OnImGuiRender();
+						m_layerStack[i]->OnImGuiRender(timeStep);
 				}
 
 				m_imGuiLayer->End();
 			}
 
-			m_window->OnUpdate();
-			
+			m_window->OnUpdate();			
 			MemoryManager::Clear(AllocationType::Linear_Frame);
 		}		
 	}

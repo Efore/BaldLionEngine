@@ -1,6 +1,7 @@
 #include "blpch.h"
 #include "AnimationManager.h"
 #include "BaldLion/Core/JobManagement/JobManager.h"
+#include "BaldLion/Utils/MathUtils.h"
 
 namespace BaldLion
 {
@@ -40,6 +41,9 @@ namespace BaldLion
 
 		void AnimationManager::OnParallelUpdate(float timeStep, StringId& paralellJobID)
 		{
+			if (s_registeredAnimators.Size() == 0)
+				return;
+
 			JobManagement::Job animationParallelUpdate("AnimationManagerParallelUpdate",0u, s_registeredAnimators.Size());			
 			paralellJobID = animationParallelUpdate.JobID;
 
@@ -82,7 +86,7 @@ namespace BaldLion
 					for (size_t j = 0; j < (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys; ++j)
 					{
 						KeyFrame keyFrame(DynamicArray<JointTransform>(AllocationType::FreeList_Renderer, glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.Size())), glm::min(TimeStamp * j, animationData.AnimationLength));
-						keyFrame.JointTranforms.Fill();
+						keyFrame.JointTranforms.Populate();
 
 						for (size_t k = 0; k < scene->mAnimations[i]->mNumChannels; ++k)
 						{
@@ -99,7 +103,7 @@ namespace BaldLion
 					animations.EmplaceBack(std::move(animationData));
 				}
 
-				glm::mat4 rootTransform = SkinnedMesh::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
+				glm::mat4 rootTransform = MathUtils::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
 
 				Animator* animator = MemoryManager::New<Animator>(STRING_TO_ID("Animator"), AllocationType::FreeList_Renderer, animatedMesh, animations, rootTransform);
 				RegisterAnimator(animator);
@@ -110,7 +114,7 @@ namespace BaldLion
 		{
 			std::lock_guard<std::mutex> lockGuard(s_animationManagerMutex);
 
-			if (!s_registeredAnimators.Exists(animator))
+			if (!s_registeredAnimators.Contains(animator))
 			{
 				s_registeredAnimators.PushBack(animator);
 			}
@@ -120,7 +124,7 @@ namespace BaldLion
 		{			
 			std::lock_guard<std::mutex> lockGuard(s_animationManagerMutex);
 
-			if (s_registeredAnimators.Exists(animator))
+			if (s_registeredAnimators.Contains(animator))
 			{				
 				s_registeredAnimators.RemoveFast(animator);
 			}

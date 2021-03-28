@@ -20,6 +20,7 @@ namespace BaldLion
 
 			inline const DynamicArray<Mesh*>& GetSubMeshes() const { return m_subMeshes; }
 			inline DynamicArray<Mesh*>& GetSubMeshes() { return m_subMeshes; }
+			inline const glm::mat4& GetWorldTransform() const { return m_worldTransform; }
 
 		protected:
 
@@ -44,8 +45,6 @@ namespace BaldLion
 			StringId m_modelFolderPath;
 			glm::mat4 m_worldTransform;
 			int m_importFlags;
-
-		private:
 			DynamicArray<Mesh*> m_subMeshes;
 		};
 	}

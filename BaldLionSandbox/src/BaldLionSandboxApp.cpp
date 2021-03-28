@@ -90,7 +90,7 @@ public:
 		}
 	}
 
-	virtual void OnImGuiRender() override
+	virtual void OnImGuiRender(TimeStep timeStep) override
 	{
 		BL_PROFILE_FUNCTION();
 		ImGui::Begin("Settings");

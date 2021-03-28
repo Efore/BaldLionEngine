@@ -8,11 +8,13 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
+		Renderer::RendererStats Renderer::s_renderStats;
 		Renderer::SceneData Renderer::s_sceneData;
 		ShaderLibrary Renderer::s_shaderLibrary;
 		TextureLibrary Renderer::s_textureLibrary;
 		RendererPlatformInterface* Renderer::s_rendererPlatformInterface;
 		SkyboxPlatformInterface* Renderer::s_skyboxPlatformInterface;
+		DynamicArray<Model*> Renderer::s_modelsToRender; 
 
 		void Renderer::Init()
 		{
@@ -27,6 +29,8 @@ namespace BaldLion
 			s_skyboxPlatformInterface = MemoryManager::New<OpenGLSkybox>(STRING_TO_ID("Skybox Platform interface"), AllocationType::FreeList_Renderer);
 			s_skyboxPlatformInterface->Init("assets/textures/skybox/skybox.jpg");
 
+			s_modelsToRender = DynamicArray<Model*>(AllocationType::FreeList_Renderer, 500);			
+
 			LightManager::Init();
 		}
 
@@ -36,6 +40,7 @@ namespace BaldLion
 			MemoryManager::Delete(s_skyboxPlatformInterface);
 			s_shaderLibrary.Clear();
 			s_textureLibrary.Clear();
+			s_modelsToRender.Clear();
 		}
 
 		void Renderer::OnWindowResize(ui32 width, ui32 height)
@@ -43,7 +48,7 @@ namespace BaldLion
 			s_rendererPlatformInterface->SetViewport(0, 0, width, height);			
 		}
 
-		void Renderer::BeginScene(const ProjectionCamera*  camera, const DirectionalLight& directionalLight)
+		void Renderer::BeginScene(const Camera*  camera, const DirectionalLight& directionalLight)
 		{
 			BL_PROFILE_FUNCTION();
 			
@@ -52,8 +57,22 @@ namespace BaldLion
 
 			s_sceneData.viewProjectionMatrix = camera->GetViewProjectionMatrix();
 			s_sceneData.cameraPosition = camera->GetPosition();
-
+			
 			LightManager::BeginScene(directionalLight);
+		}
+
+		void Renderer::DrawScene(const Camera* camera)
+		{
+			for (ui32 i = 0; i < s_modelsToRender.Size(); ++i)
+			{
+				for (ui32 j = 0; j < s_modelsToRender[i]->GetSubMeshes().Size(); ++j)
+				{
+					if (camera->IsAABBVisible(s_modelsToRender[i]->GetSubMeshes()[j]->GetAABB(), s_modelsToRender[i]->GetWorldTransform()))
+					{
+						s_modelsToRender[i]->GetSubMeshes()[j]->Draw(s_modelsToRender[i]->GetWorldTransform());
+					}
+				}
+			}
 		}
 
 		void Renderer::EndScene()
@@ -77,6 +96,26 @@ namespace BaldLion
 			vertexArray->Bind();
 			s_rendererPlatformInterface->DrawIndexed(vertexArray);
 			vertexArray->Unbind();			
+
+			s_renderStats.drawCalls++;
+			s_renderStats.vertices += vertexArray->GetIndexBuffer()->GetCount();
 		}
+
+		void Renderer::SubscribeModel(Model* model)
+		{
+			if (!s_modelsToRender.Contains(model))
+			{
+				s_modelsToRender.PushBack(model);
+			}
+		}
+
+		void Renderer::UnsubscribeModel(Model* model)
+		{
+			if (s_modelsToRender.Contains(model))
+			{
+				s_modelsToRender.RemoveFast(model);
+			}
+		}
+
 	}
 }

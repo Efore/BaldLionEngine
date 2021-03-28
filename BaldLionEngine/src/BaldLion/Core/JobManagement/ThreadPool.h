@@ -85,7 +85,6 @@ namespace BaldLion
 			static bool s_jobsFinished;
 
 			static std::mutex s_queueMutex;
-			static std::mutex s_activeJobsMutex;	
 			static std::mutex s_jobsFinishedMutex;
 
 			static std::condition_variable s_cvDependencyFinished;

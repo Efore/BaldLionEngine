@@ -7,8 +7,8 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Mesh::Mesh(Material* material) :
-			m_material(material)
+		Mesh::Mesh(Material* material, GeometryUtils::AABB aabb) :
+			m_material(material), m_aabb(aabb)
 		{			
 		}
 

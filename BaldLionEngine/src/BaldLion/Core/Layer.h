@@ -14,7 +14,7 @@ namespace BaldLion
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
 		virtual void OnUpdate(TimeStep timeStep) {}
-		virtual void OnImGuiRender() {}
+		virtual void OnImGuiRender(TimeStep timeStep) {}
 		virtual void OnEvent(Event& e) {}
 	};
 }

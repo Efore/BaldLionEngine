@@ -5,18 +5,18 @@
 
 namespace BaldLion {
 
-	namespace Quantization {
+	namespace Compression {
 
 		struct QuantizedVector3 {
-			uint16_t x;
-			uint16_t y;
-			uint16_t z;
+			ui16 x;
+			ui16 y;
+			ui16 z;
 		};
 
 		struct QuantizedQuaterion {
-			uint16_t x;
-			uint16_t y;
-			uint16_t z;
+			ui16 x;
+			ui16 y;
+			ui16 z;
 		};
 
 		static ui32 CompressFloat01RL(float float01, ui32 nBits) 
@@ -69,9 +69,9 @@ namespace BaldLion {
 		{
 			return QuantizedQuaterion
 			{
-				(uint16_t)CompressFloatRL(quaternion.x, -1.0f, 1.0f, 16u),
-				(uint16_t)CompressFloatRL(quaternion.y, -1.0f, 1.0f, 16u),
-				(uint16_t)CompressFloatRL(quaternion.z, -1.0f, 1.0f, 16u)
+				(ui16)CompressFloatRL(quaternion.x, -1.0f, 1.0f, 16u),
+				(ui16)CompressFloatRL(quaternion.y, -1.0f, 1.0f, 16u),
+				(ui16)CompressFloatRL(quaternion.z, -1.0f, 1.0f, 16u)
 			};
 		}
 
@@ -94,9 +94,9 @@ namespace BaldLion {
 
 			return QuantizedVector3
 			{
-				(uint16_t)CompressFloatRL(x, -range, range, 16u),
-				(uint16_t)CompressFloatRL(y, -range, range, 16u),
-				(uint16_t)CompressFloatRL(z, -range, range, 16u)
+				(ui16)CompressFloatRL(x, -range, range, 16u),
+				(ui16)CompressFloatRL(y, -range, range, 16u),
+				(ui16)CompressFloatRL(z, -range, range, 16u)
 			};
 		}
 

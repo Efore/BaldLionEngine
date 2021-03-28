@@ -12,7 +12,7 @@ namespace BaldLion
 
 		public:
 
-			SkinnedMesh(const DynamicArray<Animation::Joint>& joints, Material* material);
+			SkinnedMesh(Material* material, GeometryUtils::AABB aabb, const DynamicArray<Animation::Joint>& joint);
 			~SkinnedMesh();
 
 			using Mesh::SetUpMesh;
@@ -21,9 +21,7 @@ namespace BaldLion
 			virtual void Draw(const glm::mat4& worldTransform) const override;
 
 			inline DynamicArray<Animation::Joint>& GetJoints() { return m_joints; }
-			inline const DynamicArray<Animation::Joint>& GetJoints() const { return m_joints; }
-
-			static glm::mat4 AiMat4ToGlmMat4(const aiMatrix4x4& aiMat4);
+			inline const DynamicArray<Animation::Joint>& GetJoints() const { return m_joints; }			
 
 		private:
 			

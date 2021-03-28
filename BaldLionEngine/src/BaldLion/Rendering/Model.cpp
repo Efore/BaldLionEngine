@@ -1,9 +1,10 @@
 #include "blpch.h"
 #include "Model.h"
 #include "Renderer.h"
-
+#include "BaldLion/Utils/GeometryUtils.h"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+
 
 namespace BaldLion
 {
@@ -20,7 +21,8 @@ namespace BaldLion
 			auto lastSlash = filePath.find_last_of("/\\");		
 			m_modelFolderPath = STRING_TO_ID(filePath.substr(0, lastSlash + 1));
 			m_subMeshes = DynamicArray<Mesh*>(AllocationType::FreeList_Renderer, 5);
-			m_importFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace;
+			m_importFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes;
+			
 		}
 
 		Model::~Model()
@@ -64,6 +66,7 @@ namespace BaldLion
 			for (ui32 i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+				
 				m_subMeshes.PushBack(ProcessMesh(mesh, scene));
 			}
 			// then do the same for each of its children
@@ -273,7 +276,7 @@ namespace BaldLion
 
 			meshMaterial->AssignShader("assets/shaders/BaseLit.glsl");
 
-			Mesh* mesh = MemoryManager::New<Mesh>(STRING_TO_ID("Mesh"), AllocationType::FreeList_Renderer,  meshMaterial);
+			Mesh* mesh = MemoryManager::New<Mesh>(STRING_TO_ID("Mesh"), AllocationType::FreeList_Renderer,  meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB));
 			mesh->SetUpMesh(vertices, indices);
 
 			return mesh;

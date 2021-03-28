@@ -14,12 +14,7 @@ namespace BaldLion
 			AnimatedModel(const std::string& filePath, const glm::mat4& initialWorldTransform);
 			~AnimatedModel();
 
-			virtual void Draw() const override;
-
-			using Model::GetSubMeshes;
-
-			inline const DynamicArray<SkinnedMesh*>& GetSubMeshes() const { return m_subMeshes; }
-			inline DynamicArray<SkinnedMesh*>& GetSubMeshes() { return m_subMeshes; }
+			virtual void Draw() const override;		
 
 		private:			
 
@@ -44,11 +39,7 @@ namespace BaldLion
 
 			void FillVertexWeightData(const aiMesh* aimesh, 
 				const HashTable<StringId, ui32>& jointMapping,
-				DynamicArray<VertexBoneData>& verticesBoneData);
-
-		private:
-			DynamicArray<SkinnedMesh*> m_subMeshes;
-			
+				DynamicArray<VertexBoneData>& verticesBoneData);			
 		};
 	}
 }

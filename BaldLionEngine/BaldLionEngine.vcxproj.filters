@@ -267,7 +267,13 @@
     <ClInclude Include="src\BaldLion\Rendering\VertexArray.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Utils\Quantization.h">
+    <ClInclude Include="src\BaldLion\Utils\Compression.h">
+      <Filter>src\BaldLion\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Utils\GeometryUtils.h">
+      <Filter>src\BaldLion\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Utils\MathUtils.h">
       <Filter>src\BaldLion\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">

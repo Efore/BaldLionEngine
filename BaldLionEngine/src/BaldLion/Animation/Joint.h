@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/gtc/matrix_transform.hpp>
-#include "BaldLion/Utils/Quantization.h"
+#include "BaldLion/Utils/Compression.h"
 
 namespace BaldLion
 {
@@ -30,8 +30,8 @@ namespace BaldLion
 
 		struct JointTransform {	
 
-			Quantization::QuantizedVector3 position;
-			Quantization::QuantizedQuaterion rotation;		
+			Compression::QuantizedVector3 position;
+			Compression::QuantizedQuaterion rotation;		
 
 			JointTransform()
 			{
@@ -39,28 +39,28 @@ namespace BaldLion
 
 			JointTransform(const glm::vec3& decompressedPosition, const glm::quat& decompressedRotation)
 			{
-				position = Quantization::CompressVector3(decompressedPosition, BL_JOINT_POSITION_RANGE);
-				rotation = Quantization::CompressQuaternion(decompressedRotation);
+				position = Compression::CompressVector3(decompressedPosition, BL_JOINT_POSITION_RANGE);
+				rotation = Compression::CompressQuaternion(decompressedRotation);
 			}
 			
 			const glm::vec3 GetDecompressedPosition() const
 			{
-				return Quantization::DecompressVector3(position, BL_JOINT_POSITION_RANGE);
+				return Compression::DecompressVector3(position, BL_JOINT_POSITION_RANGE);
 			}
 
 			void SetPosition(const glm::vec3& decompressedPosition)
 			{
-				position = Quantization::CompressVector3(decompressedPosition, BL_JOINT_POSITION_RANGE);
+				position = Compression::CompressVector3(decompressedPosition, BL_JOINT_POSITION_RANGE);
 			}
 
 			const glm::quat GetDecompressedRotation() const
 			{
-				return Quantization::DecompressCuaternion(rotation);
+				return Compression::DecompressCuaternion(rotation);
 			}
 
 			void SetRotation(const glm::quat& decompressedRotation)
 			{
-				rotation = Quantization::CompressQuaternion(decompressedRotation);
+				rotation = Compression::CompressQuaternion(decompressedRotation);
 			}
 		};
 	}

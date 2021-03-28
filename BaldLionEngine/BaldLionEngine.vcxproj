@@ -206,7 +206,9 @@
     <ClInclude Include="src\BaldLion\Rendering\Texture.h" />
     <ClInclude Include="src\BaldLion\Rendering\Vertex.h" />
     <ClInclude Include="src\BaldLion\Rendering\VertexArray.h" />
-    <ClInclude Include="src\BaldLion\Utils\Quantization.h" />
+    <ClInclude Include="src\BaldLion\Utils\Compression.h" />
+    <ClInclude Include="src\BaldLion\Utils\GeometryUtils.h" />
+    <ClInclude Include="src\BaldLion\Utils\MathUtils.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\blpch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />

@@ -72,7 +72,7 @@ namespace BaldLion
 	BaldLion::HashTable<K, V>::HashTable(Memory::AllocationType allocationType, ui32 capacity) : m_size(0), m_capacity(capacity), m_allocationType(allocationType)
 	{
 		m_table = DynamicArray<HashNode<V>>(m_allocationType, capacity);
-		m_table.Fill();
+		m_table.Populate();
 	}
 
 	template <typename K, typename V>
@@ -320,7 +320,7 @@ namespace BaldLion
 	void BaldLion::HashTable<K, V>::Reallocate(ui32 capacity)
 	{
 		DynamicArray<HashNode<V>> newTable = DynamicArray<HashNode<V>>(m_allocationType, capacity);
-		newTable.Fill();
+		newTable.Populate();
 
 		for (ui32 i = 0; i < m_table.Size(); ++i)
 		{

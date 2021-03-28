@@ -52,15 +52,15 @@ namespace BaldLion
 			return Load(name, filepath);
 		}
 
-		BaldLion::Rendering::Shader* ShaderLibrary::Load(StringId name, const std::string& filepath)
+		Shader* ShaderLibrary::Load(StringId name, const std::string& filepath)
 		{
 			std::lock_guard<std::mutex> lockGuard(m_shaderLibraryMutex);
 
-			if (Exists(name))
-				return m_shaders.Get(name);
+			//if (Exists(name))
+			//	return m_shaders.Get(name);
 
 			auto shader = Shader::Create(filepath);
-			Add(shader);
+			//Add(shader);
 			return shader;
 		}
 

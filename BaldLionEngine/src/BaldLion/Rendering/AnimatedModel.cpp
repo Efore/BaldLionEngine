@@ -2,7 +2,7 @@
 #include "AnimatedModel.h"
 #include "Renderer.h"
 #include "BaldLion/Animation/AnimationManager.h"
-
+#include "BaldLion/Utils/MathUtils.h"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -16,8 +16,8 @@ namespace BaldLion
 		AnimatedModel::AnimatedModel(const std::string& filePath, const glm::mat4& initialWorldTransform) : 
 			Model(filePath, initialWorldTransform)
 		{		
-			m_importFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights;
-			m_subMeshes = DynamicArray<SkinnedMesh*>(AllocationType::FreeList_Renderer, 1);
+			m_importFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights | aiProcess_GenBoundingBoxes;
+			m_subMeshes = DynamicArray<Mesh*>(AllocationType::FreeList_Renderer, 1);
 		}
 
 		AnimatedModel::~AnimatedModel()
@@ -102,7 +102,7 @@ namespace BaldLion
 			for (ui32 i = 0; i < aimesh->mNumBones; ++i)
 			{				
 				jointMapping.Emplace(STRING_TO_ID(aimesh->mBones[i]->mName.data), std::move(i));
-				jointOffsetMapping.Emplace(STRING_TO_ID(aimesh->mBones[i]->mName.data), SkinnedMesh::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
+				jointOffsetMapping.Emplace(STRING_TO_ID(aimesh->mBones[i]->mName.data), MathUtils::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
 			}
 		}	
 
@@ -198,8 +198,8 @@ namespace BaldLion
 			HashTable<StringId, ui32> jointMapping (AllocationType::Linear_Frame, aimesh->mNumBones * 2);
 			HashTable<StringId, glm::mat4> jointOffsetMapping (AllocationType::Linear_Frame, aimesh->mNumBones * 2);
 
-			verticesBoneData.Fill();
-			jointsData.Fill();
+			verticesBoneData.Populate();
+			jointsData.Populate();
 
 			aiColor3D ambientColor;
 			aiColor3D diffuseColor;
@@ -235,7 +235,7 @@ namespace BaldLion
 
 			meshMaterial->AssignShader("assets/shaders/monster.glsl");
 
-			SkinnedMesh* animatedMesh = MemoryManager::New<SkinnedMesh>(STRING_TO_ID("Skinned Mesh"), AllocationType::FreeList_Renderer, jointsData, meshMaterial);
+			SkinnedMesh* animatedMesh = MemoryManager::New<SkinnedMesh>(STRING_TO_ID("Skinned Mesh"), AllocationType::FreeList_Renderer, meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), jointsData);
 
 			animatedMesh->SetUpMesh(vertices, verticesBoneData, indices);
 

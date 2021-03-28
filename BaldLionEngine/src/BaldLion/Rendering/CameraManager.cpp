@@ -46,7 +46,8 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			HandleCameraMovement(timeStep);
+			HandleCameraMovement(timeStep);	
+			s_cameraData.camera->RecalculateViewMatrix();
 		}
 		
 		void ProjectionCameraManager::HandleCameraMovement(float deltaTime)

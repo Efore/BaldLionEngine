@@ -20,39 +20,41 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			m_animatedModels = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 3);
-			m_staticModels = DynamicArray<Rendering::Model*>(AllocationType::FreeList_Renderer, 3);
-
 			BaldLion::Rendering::FramebufferSpecification fbSpec;
 			fbSpec.Width = Application::GetInstance().GetWindow().GetWidth();
 			fbSpec.Height = Application::GetInstance().GetWindow().GetHeight();
 
 			m_frameBuffer = BaldLion::Rendering::Framebuffer::Create(fbSpec);
 
-			ProjectionCameraManager::Init(glm::vec3(0, 0, 250), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 100.0f);			
+			ProjectionCameraManager::Init(glm::vec3(0, 0, 0), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 500.0f);			
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
 
-			for (ui32 i = 0; i < 3; ++i)
-			{
-				auto model = MemoryManager::New<Rendering::AnimatedModel>(STRING_TO_ID("Animated Model " + i), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", initialTransform);
-				model->SetUpModel();
-				m_animatedModels.PushBack(model);
-
-				initialTransform = glm::translate(initialTransform, glm::vec3(150, 0, 0));
-			}
+			//for (ui32 i = 0; i < 3; ++i)
+			//{
+			//	auto model = MemoryManager::New<Rendering::AnimatedModel>(STRING_TO_ID("Animated Model " + i), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", initialTransform);
+			//	model->SetUpModel();
+			//	Renderer::SubscribeModel(model);
+			//	initialTransform = glm::translate(initialTransform, glm::vec3(150, 0, 0));
+			//}
 
 			initialTransform = glm::mat4(1.0f);
-			initialTransform = glm::translate(initialTransform, glm::vec3(0, 0, -150));
-			initialTransform = glm::scale(initialTransform, glm::vec3(100.0f));
+			initialTransform = glm::scale(initialTransform, glm::vec3(50.0f));
+			initialTransform = glm::translate(initialTransform, glm::vec3(0, 0, 0));
 
-			for (ui32 i = 0; i < 3; ++i)
+			for (ui32 i = 0; i < 300; ++i)
 			{
 				auto model = MemoryManager::New<Rendering::Model>(STRING_TO_ID("Static Model " + i), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj", initialTransform);
 				model->SetUpModel();
-				m_staticModels.PushBack(model);
-
-				initialTransform = glm::translate(initialTransform, glm::vec3(15.0f, 0, 0));				
+				Renderer::SubscribeModel(model);
+				if (i > 0 && i % 60 == 0)
+				{
+					initialTransform = glm::translate(initialTransform, glm::vec3(-15.0f * 60, 0, 15.0f * (i / 60)));
+				}
+				else
+				{
+					initialTransform = glm::translate(initialTransform, glm::vec3(15.0f, 0, 0.0f));
+				}				
 			}
 
 			m_directionalLight = {
@@ -66,12 +68,6 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnDetach()
 		{
-			for (ui32 i = 0; i < m_animatedModels.Size(); ++i)
-			{
-				MemoryManager::DeleteNoDestructor(m_animatedModels[i]);
-			}
-			m_animatedModels.Clear();
-
 			MemoryManager::Delete(m_frameBuffer);
 		}
 
@@ -102,22 +98,13 @@ namespace BaldLion
 			{
 
 				BL_PROFILE_SCOPE("Renderer::Draw static models");
-				for (ui32 i = 0; i < m_staticModels.Size(); ++i)
-				{
-					m_staticModels[i]->Draw();
-				}
-				BL_PROFILE_SCOPE("Renderer::Draw animated modesl");
-				for (ui32 i = 0; i < m_animatedModels.Size(); ++i)
-				{
-					m_animatedModels[i]->Draw();
-				}
-
+				Renderer::DrawScene(ProjectionCameraManager::GetCamera());
 				Renderer::EndScene();
 				m_frameBuffer->Unbind();
 			}
 		}
 
-		void BaldLionEditorLayer::OnImGuiRender()
+		void BaldLionEditorLayer::OnImGuiRender(TimeStep timeStep)
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -150,13 +137,21 @@ namespace BaldLion
 			ImGui::Begin("Memory");
 
 			ImGui::Text("Total Memory: %zu", MemoryManager::GetMemorySize());
-			ImGui::Text("Free List Main Allocator): %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::FreeList_Main), MemoryManager::GetAllocatorSize(AllocationType::FreeList_Main));
+			ImGui::Text("Free List Main Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::FreeList_Main), MemoryManager::GetAllocatorSize(AllocationType::FreeList_Main));
 			ImGui::Text("Free List Renderer Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::FreeList_Renderer), MemoryManager::GetAllocatorSize(AllocationType::FreeList_Renderer));
 			ImGui::Text("Linear Frame Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::Linear_Frame), MemoryManager::GetAllocatorSize(AllocationType::Linear_Frame));
 			ImGui::Text("Stack Scope Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::Stack), MemoryManager::GetAllocatorSize(AllocationType::Stack));
 
 			ImGui::End();
-			
+
+			ImGui::Begin("Rendering");
+			ImGui::Text("Performance: %f", 1.0f / timeStep.GetSeconds());
+			ImGui::Text("Draw calls: %zu", Renderer::GetRenderStats().drawCalls);
+			ImGui::Text("Vertices: %zu", Renderer::GetRenderStats().vertices);
+			ImGui::End();
+
+			Renderer::GetRenderStats().drawCalls = 0;
+			Renderer::GetRenderStats().vertices = 0;
 		}
 
 		void BaldLionEditorLayer::OnEvent(Event& e)
