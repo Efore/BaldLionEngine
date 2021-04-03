@@ -25,18 +25,18 @@ namespace BaldLion
 			fbSpec.Height = Application::GetInstance().GetWindow().GetHeight();
 
 			m_frameBuffer = BaldLion::Rendering::Framebuffer::Create(fbSpec);
-
+			
 			ProjectionCameraManager::Init(glm::vec3(0, 0, 0), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 500.0f);			
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
 
-			//for (ui32 i = 0; i < 3; ++i)
-			//{
-			//	auto model = MemoryManager::New<Rendering::AnimatedModel>(STRING_TO_ID("Animated Model " + i), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", initialTransform);
-			//	model->SetUpModel();
-			//	Renderer::SubscribeModel(model);
-			//	initialTransform = glm::translate(initialTransform, glm::vec3(150, 0, 0));
-			//}
+			for (ui32 i = 0; i < 3; ++i)
+			{
+				auto model = MemoryManager::New<Rendering::AnimatedModel>(STRING_TO_ID("Animated Model " + i), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", initialTransform);
+				model->SetUpModel();
+				Renderer::SubscribeModel(model);
+				initialTransform = glm::translate(initialTransform, glm::vec3(150, 0, 0));
+			}
 
 			initialTransform = glm::mat4(1.0f);
 			initialTransform = glm::scale(initialTransform, glm::vec3(50.0f));

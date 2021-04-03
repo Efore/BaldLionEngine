@@ -20,7 +20,55 @@ namespace BaldLion
 
 	template <typename K, typename V>
 	class HashTable
-	{
+	{ 
+		public:
+
+		struct Iterator
+		{
+
+		public:
+
+			Iterator(){}
+
+			Iterator(HashTable<K,V>* hashTable, ui32 tableIndex ) : m_tableToIterate(&(hashTable->m_table)), m_tableIndex(tableIndex){}
+
+			Iterator& operator++() {
+				
+				for (ui32 i = m_tableIndex + 1; i < m_tableToIterate->Size(); ++i)
+				{					
+					if ((*m_tableToIterate)[i].used)
+					{
+						m_tableIndex = i;
+						return *this;
+					}
+				}
+
+				m_tableIndex = m_tableToIterate->Capacity();
+				return *this;
+			}
+
+			friend bool operator == (const Iterator& a, const Iterator& b) { return a.m_tableToIterate == b.m_tableToIterate && a.m_tableIndex == b.m_tableIndex; }
+			friend bool operator != (const Iterator& a, const Iterator& b) { return a.m_tableToIterate != b.m_tableToIterate || a.m_tableIndex != b.m_tableIndex; }
+
+			Iterator& operator= (const Iterator& other)
+			{
+				if (&other == this)
+					return *this;
+
+				m_tableIndex = other.m_tableIndex;
+				m_tableToIterate = other.m_tableToIterate;
+
+				return *this;
+			}
+			
+			const V& GetValue() const { return (*m_tableToIterate)[m_tableIndex].value; }
+
+		private:
+
+			ui32 m_tableIndex = 0;
+			DynamicArray<HashNode<V>>* m_tableToIterate = nullptr;
+		};
+
 		public:
 
 			HashTable();
@@ -47,20 +95,26 @@ namespace BaldLion
 			HashTable<K,V>& operator= (const HashTable<K, V>& other);
 			HashTable<K,V>& operator= (HashTable<K, V>&& other) noexcept;
 
+			Iterator Begin();
+
+			Iterator End();
+
 		private:						
 			void Reallocate(ui32 capacity);
 			bool CheckContains(hashV hashedKey) const;
+			ui32 FindFirstElementIndex();
 
 		private:
 
 			ui32 m_capacity = 0;
 			ui32 m_size = 0;
 
+			ui32 m_firstElementIndex = 0;
+			ui32 m_lastElementIndex = 0;
+
 			DynamicArray<HashNode<V>> m_table;
 			AllocationType m_allocationType;	
 	};
-
-	
 
 	template <typename K, typename V>
 	BaldLion::HashTable<K, V>::HashTable()
@@ -73,6 +127,9 @@ namespace BaldLion
 	{
 		m_table = DynamicArray<HashNode<V>>(m_allocationType, capacity);
 		m_table.Populate();
+
+		m_firstElementIndex = capacity;
+		m_lastElementIndex = capacity;
 	}
 
 	template <typename K, typename V>
@@ -205,6 +262,11 @@ namespace BaldLion
 		m_table[tableIndex].used = true;
 		m_table[tableIndex].hashedKey = hashedKey;
 		m_table[tableIndex].value = std::move(value);
+
+		if (tableIndex < m_firstElementIndex)
+			m_firstElementIndex = (ui32)tableIndex;
+
+		m_lastElementIndex = m_table.Capacity();
 	}
 
 	template <typename K, typename V>
@@ -225,6 +287,15 @@ namespace BaldLion
 				m_table[tableIndex].used = false;
 				m_table[tableIndex].value.~V();
 				--m_size;
+
+				if (tableIndex == m_firstElementIndex)
+				{
+					m_firstElementIndex = FindFirstElementIndex();
+				}
+
+				
+				m_lastElementIndex = m_table.Capacity();				
+
 				return true;
 			}
 			else
@@ -241,6 +312,14 @@ namespace BaldLion
 				m_table[tableIndex].used = false;
 				m_table[tableIndex].value.~V();
 				--m_size;
+
+				if (tableIndex == m_firstElementIndex)
+				{
+					m_firstElementIndex = FindFirstElementIndex();
+				}
+				
+				m_lastElementIndex = m_table.Capacity();
+
 				return true;
 			}
 			else
@@ -317,6 +396,19 @@ namespace BaldLion
 	}
 
 	template <typename K, typename V>
+	typename BaldLion::HashTable<K, V>::Iterator BaldLion::HashTable<K, V>::Begin()
+	{
+		return HashTable<K, V>::Iterator(this, m_firstElementIndex);
+	}
+
+
+	template <typename K, typename V>
+	typename BaldLion::HashTable<K, V> ::Iterator BaldLion::HashTable<K, V>::End()
+	{
+		return HashTable<K,V>::Iterator(this, m_lastElementIndex);
+	}
+
+	template <typename K, typename V>
 	void BaldLion::HashTable<K, V>::Reallocate(ui32 capacity)
 	{
 		DynamicArray<HashNode<V>> newTable = DynamicArray<HashNode<V>>(m_allocationType, capacity);
@@ -342,5 +434,19 @@ namespace BaldLion
 		m_capacity = capacity;
 
 		newTable.Clear();
+	}
+
+	template <typename K, typename V>
+	ui32 BaldLion::HashTable<K, V>::FindFirstElementIndex()
+	{
+		for (ui32 i = 0; i < m_table.Size(); ++i)
+		{
+			if (m_table[i].used)
+			{
+				return i;
+			}
+		}
+
+		return m_capacity;
 	}
 }
