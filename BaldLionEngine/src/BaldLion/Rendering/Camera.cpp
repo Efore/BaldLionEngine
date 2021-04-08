@@ -13,13 +13,11 @@ namespace BaldLion
 		//	CAMERA
 		//-----------------------------------------------------------------------------------------------
 
-		const bool Camera::IsAABBVisible(const GeometryUtils::AABB& aabb, const glm::mat4& worldTransform) const
+		const bool Camera::IsAABBVisible(const GeometryUtils::AABB& aabb) const
 		{
-			const float scale = worldTransform[0].x;
-			const glm::vec3 position = worldTransform[3];
 
-			const glm::vec3 minPointInWorldSpace = (aabb.minPoint * scale) + position;
-			const glm::vec3 maxPointInWorldSpace = (aabb.maxPoint * scale) + position;
+			const glm::vec3 minPointInWorldSpace = aabb.minPoint;
+			const glm::vec3 maxPointInWorldSpace = aabb.maxPoint;
 
 			glm::vec3 axisVert;
 

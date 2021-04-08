@@ -7,8 +7,8 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		SkinnedMesh::SkinnedMesh(Material* material, GeometryUtils::AABB aabb, const DynamicArray<Animation::Joint>& joints)
-			: Mesh(material,aabb), m_joints(std::move(joints))
+		SkinnedMesh::SkinnedMesh(Material* material, GeometryUtils::AABB aabb, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices, const glm::mat4& worldTransform, const DynamicArray<Animation::Joint>& joints)
+			: Mesh(material,aabb, vertices, indices, worldTransform), m_joints(std::move(joints))
 		{
 			
 		}
@@ -16,21 +16,21 @@ namespace BaldLion
 		SkinnedMesh::~SkinnedMesh()
 		{
 			VertexArray::Destroy(m_vertexArray);
-			Material::Destroy(m_material);
 		}
 
-		void SkinnedMesh::SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<VertexBoneData>& verticesBoneData, const DynamicArray<ui32>& indices)
+		void SkinnedMesh::SetUpMesh(const DynamicArray<VertexBoneData>& verticesBoneData)
 		{
 			BL_PROFILE_FUNCTION();
 
+			m_aabb = RecalculateAABB();
 			m_vertexArray = VertexArray::Create();
 
 			//Setting index buffer
-			IndexBuffer* indexBuffer = (IndexBuffer::Create(&indices[0], (ui32)indices.Size()));
+			IndexBuffer* indexBuffer = (IndexBuffer::Create(&m_indices[0], (ui32)m_indices.Size()));
 			m_vertexArray->AddIndexBuffer(indexBuffer);
 
 			//Setting vertex buffer
-			VertexBuffer* vertexBuffer = VertexBuffer::Create(vertices[0].GetFirstElement(), (ui32)(vertices.Size() * sizeof(Vertex)));
+			VertexBuffer* vertexBuffer = VertexBuffer::Create(m_vertices[0].GetFirstElement(), (ui32)(m_vertices.Size() * sizeof(Vertex)));
 
 			vertexBuffer->SetLayout({
 				{ ShaderDataType::Float3,	"vertex_position"},
@@ -54,7 +54,7 @@ namespace BaldLion
 			m_vertexArray->AddVertexBuffer(boneDataVertexBuffer);
 		}
 
-		void SkinnedMesh::Draw(const glm::mat4& worldTransform) const
+		void SkinnedMesh::Draw() const
 		{
 			m_material->Bind();		
 
@@ -63,7 +63,7 @@ namespace BaldLion
 				m_material->GetShader()->SetUniform(STRING_TO_ID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &(m_joints[i].jointAnimationTransform));
 			}
 
-			Renderer::Submit(m_vertexArray, m_material->GetShader(), worldTransform);		
+			Renderer::Draw(m_vertexArray, m_material->GetShader(), m_worldTransform);		
 		}
 
 	}

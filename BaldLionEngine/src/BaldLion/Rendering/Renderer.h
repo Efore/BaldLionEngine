@@ -41,7 +41,7 @@ namespace BaldLion
 			static SceneData& GetSceneData() { return s_sceneData; }
 			static RendererStats& GetRenderStats() { return s_renderStats; }
 
-			static void Submit(const VertexArray* vertexArray, Shader* shader, const glm::mat4& transform = glm::mat4(1.0f));
+			static void Draw(const VertexArray* vertexArray, Shader* shader, const glm::mat4& transform = glm::mat4(1.0f));
 
 			static void SubscribeModel(Model* model);
 			static void UnsubscribeModel(Model* model);

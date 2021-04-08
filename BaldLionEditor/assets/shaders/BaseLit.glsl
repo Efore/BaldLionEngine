@@ -24,13 +24,15 @@ out VS_OUT
 
 void main()
 {
-	vs_out.vs_position = vec3(u_worldTransformMatrix * vec4(vertex_position, 1.f)).xyz;
+	vs_out.vs_position = vertex_position;
 	vs_out.vs_color = vertex_color;
 	vs_out.vs_texcoord = vec2(vertex_texcoord.x,-vertex_texcoord.y);
 
-	vec3 T = normalize(u_worldTransformMatrix * vec4(vertex_tangent,1.f)).xyz;
-	vec3 N = normalize(u_worldTransformMatrix * vec4(vertex_normal,1.f)).xyz;
-	vec3 B = normalize(u_worldTransformMatrix * vec4(vertex_bitangent,1.f)).xyz;;
+	vec3 T = normalize(u_worldTransformMatrix * vec4(vertex_tangent,0.f)).xyz;
+	vec3 N = normalize(u_worldTransformMatrix * vec4(vertex_normal,0.f)).xyz;
+
+	T = normalize(T - dot(T, N) * N);
+	vec3 B = cross(N, T);
 
 	vs_out.TBN = mat3(T,B,N);	
 

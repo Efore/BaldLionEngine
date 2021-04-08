@@ -20,6 +20,7 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
+			MaterialLibrary::Init();
 			s_textureLibrary.Init();
 			s_shaderLibrary.Init();
 
@@ -38,6 +39,8 @@ namespace BaldLion
 		{
 			MemoryManager::Delete(s_rendererPlatformInterface);
 			MemoryManager::Delete(s_skyboxPlatformInterface);
+
+			MaterialLibrary::Clear();
 			s_shaderLibrary.Clear();
 			s_textureLibrary.Clear();
 			s_modelsToRender.Clear();
@@ -67,9 +70,9 @@ namespace BaldLion
 			{
 				for (ui32 j = 0; j < s_modelsToRender[i]->GetSubMeshes().Size(); ++j)
 				{
-					if (camera->IsAABBVisible(s_modelsToRender[i]->GetSubMeshes()[j]->GetAABB(), s_modelsToRender[i]->GetWorldTransform()))
+					if (camera->IsAABBVisible(s_modelsToRender[i]->GetSubMeshes()[j]->GetAABB()))
 					{
-						s_modelsToRender[i]->GetSubMeshes()[j]->Draw(s_modelsToRender[i]->GetWorldTransform());
+						s_modelsToRender[i]->GetSubMeshes()[j]->Draw();
 					}
 				}
 			}
@@ -80,7 +83,7 @@ namespace BaldLion
 			s_skyboxPlatformInterface->Draw();
 		}
 
-		void Renderer::Submit(const VertexArray* vertexArray, Shader* shader, const glm::mat4& transform)
+		void Renderer::Draw(const VertexArray* vertexArray, Shader* shader, const glm::mat4& transform)
 		{
 			BL_PROFILE_FUNCTION();
 

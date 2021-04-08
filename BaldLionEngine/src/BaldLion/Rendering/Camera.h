@@ -24,7 +24,7 @@ namespace BaldLion
 			void SetNearPlane(float nearPlane) { m_nearPlane = nearPlane; }
 			inline float GetNearPlane() const { return m_nearPlane; }
 
-			const bool IsAABBVisible(const GeometryUtils::AABB& aabb, const glm::mat4& worldTransform) const;
+			const bool IsAABBVisible(const GeometryUtils::AABB& aabb) const;
 
 			glm::vec3 GetForwardDirection();
 			glm::vec3 GetRightDirection();

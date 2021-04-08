@@ -17,6 +17,25 @@ namespace BaldLion
 			const void * GetFirstElement() const{
 				return &position.x;
 			}
+
+			Vertex& operator= (const Vertex& other)
+			{
+				position = other.position;
+				color = other.color;
+				normal = other.normal;
+				textCoord = other.textCoord;
+				tangent = other.tangent;
+				bitangent = other.bitangent;
+
+				return *this;
+			}
+
+			friend Vertex operator* (const Vertex& vertex, const glm::mat4 transform)
+			{
+				Vertex result = vertex;
+				result.position = glm::vec4(vertex.position,1.0f) * transform;
+				return result;
+			}
 		};	
 
 		struct VertexBoneData{

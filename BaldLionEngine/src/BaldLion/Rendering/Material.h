@@ -25,24 +25,30 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
+
 		class Material {
 
 		public:
-			static Material* Create(
-				const glm::vec3& ambientColor, 
-				const glm::vec3& diffuseColor, 
-				const glm::vec3& emissiveColor, 
-				const glm::vec3& specularColor, 
-				float shininess,
-				Texture* ambientTex, 
-				Texture* diffuseTex,
-				Texture* emissiveTex,
-				Texture* specularTex,
-				Texture* normalTex);
 
-			static void Destroy(Material* material);
+			struct MaterialProperties {
 
-			virtual void AssignShader(const std::string& shaderPath) = 0;
+				StringId shaderPath;
+				glm::vec3 ambientColor;
+				glm::vec3 diffuseColor;
+				glm::vec3 emissiveColor;
+				glm::vec3 specularColor;
+				float shininess;
+				Texture* ambientTex;
+				Texture* diffuseTex;
+				Texture* emissiveTex;
+				Texture* specularTex;
+				Texture* normalTex;
+			};
+
+		public:
+			static Material* Create(const std::string& shaderPath, const MaterialProperties& materialProperties);
+
+			virtual void AssignShader() = 0;
 
 			virtual void SetAmbientColor(const glm::vec3& ambient) = 0;
 			virtual void SetEmissiveColor(const glm::vec3& emissive) = 0;
@@ -53,6 +59,9 @@ namespace BaldLion
 			virtual void SetUniform(StringId uniformName, ShaderDataType dataType, const void* uniformIndex) = 0;
 
 			virtual Shader* GetShader() const = 0;
+			
+			StringId GetShaderPath() { return m_shaderPath; }
+			StringId GetMaterialName() { return m_materialName; }
 
 			virtual ~Material() = default;
 
@@ -62,8 +71,22 @@ namespace BaldLion
 		protected:
 
 			StringId m_shaderPath;
+			StringId m_materialName;
 		};
 
+		class MaterialLibrary
+		{
+		public:
+			
+			static void Init();
+			static void Add(Material* shader);
+			static Material* Load(const std::string& name, const Material::MaterialProperties& materialProperties);
+			static void Clear();
+
+		private:
+			static HashTable<StringId, Material*> s_materials;
+			static std::mutex s_materialLibraryMutex;
+		};
 		
 	}
 }

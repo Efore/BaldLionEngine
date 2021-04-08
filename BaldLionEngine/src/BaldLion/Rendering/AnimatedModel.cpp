@@ -34,7 +34,7 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 			for (ui32 i = 0; i < m_subMeshes.Size(); ++i)
 			{
-				m_subMeshes[i]->Draw(m_worldTransform);
+				m_subMeshes[i]->Draw();
 			}
 		}
 		
@@ -221,7 +221,9 @@ namespace BaldLion
 
 			FillVertexWeightData(aimesh, jointMapping, verticesBoneData);
 
-			Material* meshMaterial = Material::Create(
+			Material* meshMaterial = MaterialLibrary::Load(
+				aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data,
+				{ STRING_TO_ID("assets/shaders/monster.glsl"),
 				glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 				glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
 				glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
@@ -231,13 +233,13 @@ namespace BaldLion
 				diffuseTex,
 				specularTex,
 				emissiveTex,
-				normalTex);
+				normalTex });
 
-			meshMaterial->AssignShader("assets/shaders/monster.glsl");
+			meshMaterial->AssignShader();
 
-			SkinnedMesh* animatedMesh = MemoryManager::New<SkinnedMesh>(STRING_TO_ID("Skinned Mesh"), AllocationType::FreeList_Renderer, meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), jointsData);
+			SkinnedMesh* animatedMesh = MemoryManager::New<SkinnedMesh>(STRING_TO_ID("Skinned Mesh"), AllocationType::FreeList_Renderer, meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), vertices, indices,  m_worldTransform, jointsData);
 
-			animatedMesh->SetUpMesh(vertices, verticesBoneData, indices);
+			animatedMesh->SetUpMesh(verticesBoneData);
 
 			AnimationManager::GenerateAnimator(aiscene, jointMapping, animatedMesh);
 

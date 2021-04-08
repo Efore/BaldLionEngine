@@ -21,6 +21,7 @@ namespace BaldLion
 			inline const DynamicArray<Mesh*>& GetSubMeshes() const { return m_subMeshes; }
 			inline DynamicArray<Mesh*>& GetSubMeshes() { return m_subMeshes; }
 			inline const glm::mat4& GetWorldTransform() const { return m_worldTransform; }
+			inline glm::mat4 GetWorldTransform() { return m_worldTransform; }
 
 		protected:
 

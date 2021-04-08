@@ -41,7 +41,6 @@ namespace BaldLion
 
 		void LinearAllocator::Deallocate(void* p)
 		{
-			BL_ASSERT(false, "Use Clear() instead");
 		}
 
 		void LinearAllocator::Clear()

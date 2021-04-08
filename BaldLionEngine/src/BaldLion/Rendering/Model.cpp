@@ -56,7 +56,7 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 			for (ui32 i = 0; i < m_subMeshes.Size(); ++i)
 			{
-				m_subMeshes[i]->Draw(m_worldTransform);
+				m_subMeshes[i]->Draw();
 			}
 		}
 
@@ -244,8 +244,8 @@ namespace BaldLion
 
 		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
 		{
-			DynamicArray<Vertex> vertices(AllocationType::Linear_Frame, aimesh->mNumVertices);
-			DynamicArray<ui32> indices(AllocationType::Linear_Frame, aimesh->mNumVertices * 3);
+			DynamicArray<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
+			DynamicArray<ui32> indices(AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
 
 			FillVertexArrayData(aimesh, vertices, indices);
 
@@ -262,7 +262,9 @@ namespace BaldLion
 
 			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
 
-			Material* meshMaterial = Material::Create(
+			Material* meshMaterial = MaterialLibrary::Load(
+				aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data,
+				{	STRING_TO_ID("assets/shaders/BaseLit.glsl"),
 				glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 				glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
 				glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
@@ -272,12 +274,12 @@ namespace BaldLion
 				diffuseTex,
 				specularTex,
 				emissiveTex,
-				normalTex);
+				normalTex	});
 
-			meshMaterial->AssignShader("assets/shaders/BaseLit.glsl");
+			meshMaterial->AssignShader();
 
-			Mesh* mesh = MemoryManager::New<Mesh>(STRING_TO_ID("Mesh"), AllocationType::FreeList_Renderer,  meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB));
-			mesh->SetUpMesh(vertices, indices);
+			Mesh* mesh = MemoryManager::New<Mesh>(STRING_TO_ID("Mesh"), AllocationType::FreeList_Renderer,  meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), vertices, indices, m_worldTransform);			
+			mesh->SetUpMesh();
 
 			return mesh;
 		}

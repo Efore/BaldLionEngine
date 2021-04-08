@@ -6,71 +6,59 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		OpenGLMaterial::OpenGLMaterial(const glm::vec3& ambientColor, 
-			const glm::vec3& diffuseColor, 
-			const glm::vec3& emissiveColor, 
-			const glm::vec3& specularColor, 
-			float shininess,
-			Texture* ambientTex,
-			Texture* diffuseTex,
-			Texture* emissiveTex,
-			Texture* specularTex,
-			Texture* normalTex) :
-			m_ambientColor(ambientColor),
-			m_diffuseColor(diffuseColor),
-			m_emissiveColor(emissiveColor),
-			m_specularColor(specularColor),
-			m_shininess(shininess)
+		OpenGLMaterial::OpenGLMaterial(const std::string& matName, const MaterialProperties& materialProperties) :
+			m_ambientColor(materialProperties.ambientColor),
+			m_diffuseColor(materialProperties.diffuseColor),
+			m_emissiveColor(materialProperties.emissiveColor),
+			m_specularColor(materialProperties.specularColor),
+			m_shininess(materialProperties.shininess)
 		{
 			BL_PROFILE_FUNCTION();		
 
-			m_ambientColor = ambientColor;
-			m_diffuseColor = diffuseColor;
-			m_emissiveColor = emissiveColor;
-			m_specularColor = specularColor;
-			m_shininess = shininess;
+			m_shaderPath = materialProperties.shaderPath;
+			m_materialName = STRING_TO_ID(matName);
 
 			short slotIndex = 0;
 
-			if (ambientTex != nullptr)
+			if (materialProperties.ambientTex != nullptr)
 			{
 				m_ambientTexSlot = slotIndex++;
-				m_ambientTex = (OpenGLTexture2D*)ambientTex;			
+				m_ambientTex = (OpenGLTexture2D*)materialProperties.ambientTex;
 				m_useAmbientTex = 1;
 			}
 
-			if (diffuseTex != nullptr)
+			if (materialProperties.diffuseTex != nullptr)
 			{
 				m_diffuseTexSlot = slotIndex++;
-				m_diffuseTex = (OpenGLTexture2D*)(diffuseTex);	
+				m_diffuseTex = (OpenGLTexture2D*)(materialProperties.diffuseTex);
 				m_useDiffuseTex = 1;
 			}
 
-			if (emissiveTex != nullptr)
+			if (materialProperties.emissiveTex != nullptr)
 			{
 				m_emissiveTexSlot = slotIndex++;
-				m_emissiveTex = (OpenGLTexture2D*)(emissiveTex);	
+				m_emissiveTex = (OpenGLTexture2D*)(materialProperties.emissiveTex);
 				m_useEmissiveTex = 1;
 			}
 
-			if (specularTex != nullptr)
+			if (materialProperties.specularTex != nullptr)
 			{
 				m_specularTexSlot = slotIndex++;
-				m_specularTex = (OpenGLTexture2D*)(specularTex);	
+				m_specularTex = (OpenGLTexture2D*)(materialProperties.specularTex);
 				m_useSpecularTex = 1;
 			}
 
-			if (normalTex)
+			if (materialProperties.normalTex)
 			{
 				m_normalTexSlot = slotIndex++;
-				m_normalTex = (OpenGLTexture2D*)(normalTex);	
+				m_normalTex = (OpenGLTexture2D*)(materialProperties.normalTex);
 				m_useNormalTex = 1;
 			}
 		}
 
-		void OpenGLMaterial::AssignShader(const std::string& shaderPath)
+		void OpenGLMaterial::AssignShader()
 		{
-			m_shader = (OpenGLShader*)(Renderer::GetShaderLibrary().Load(shaderPath));
+			m_shader = (OpenGLShader*)(Shader::Create(ID_TO_STRING(m_shaderPath)));
 			m_shader->Bind();
 
 			m_shader->SetUniform(MATKEY_AMBIENT_COLOR, ShaderDataType::Float3, &m_ambientColor);

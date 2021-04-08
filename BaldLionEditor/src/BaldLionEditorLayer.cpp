@@ -3,6 +3,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/random.hpp>
 
 #include "BaldLion/Rendering/Platform/OpenGL/OpenGLShader.h"
 #include "ImGui/imgui.h"
@@ -40,13 +41,15 @@ namespace BaldLion
 
 			initialTransform = glm::mat4(1.0f);
 			initialTransform = glm::scale(initialTransform, glm::vec3(50.0f));
-			initialTransform = glm::translate(initialTransform, glm::vec3(0, 0, 0));
 
 			for (ui32 i = 0; i < 300; ++i)
 			{
-				auto model = MemoryManager::New<Rendering::Model>(STRING_TO_ID("Static Model " + i), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj", initialTransform);
+				auto model = MemoryManager::New<Rendering::Model>(STRING_TO_ID("Static Model " + i), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj", glm::rotate(initialTransform, glm::linearRand(0.0f, 359.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 				model->SetUpModel();
 				Renderer::SubscribeModel(model);
+
+				//initialTransform = glm::rotate(initialTransform, glm::linearRand(0.0f, 359.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
 				if (i > 0 && i % 60 == 0)
 				{
 					initialTransform = glm::translate(initialTransform, glm::vec3(-15.0f * 60, 0, 15.0f * (i / 60)));

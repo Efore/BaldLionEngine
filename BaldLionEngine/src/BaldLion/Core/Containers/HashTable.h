@@ -10,12 +10,15 @@ namespace BaldLion
 	struct HashNode {
 
 		bool used = false;
-		hashV hashedKey;
-		V value; 
+		hashType hashedKey;
+		V nodeValue; 		
+
+		HashNode(): nodeValue(V()) { }
 
 		HashNode::~HashNode() {
-			value.~V();
-		}
+
+			nodeValue.~V();
+		}		
 	};
 
 	template <typename K, typename V>
@@ -61,7 +64,8 @@ namespace BaldLion
 				return *this;
 			}
 			
-			const V& GetValue() const { return (*m_tableToIterate)[m_tableIndex].value; }
+			const V& GetValue() const { return (*m_tableToIterate)[m_tableIndex].nodeValue; }
+			V& GetValue() { return (*m_tableToIterate)[m_tableIndex].nodeValue; }
 
 		private:
 
@@ -101,7 +105,7 @@ namespace BaldLion
 
 		private:						
 			void Reallocate(ui32 capacity);
-			bool CheckContains(hashV hashedKey) const;
+			bool CheckContains(hashType hashedKey) const;
 			ui32 FindFirstElementIndex();
 
 		private:
@@ -135,16 +139,16 @@ namespace BaldLion
 	template <typename K, typename V>
 	bool BaldLion::HashTable<K, V>::Contains(const K& key) const
 	{
-		const hashV hashedKey = std::hash<K>()(key);
+		const hashType hashedKey = std::hash<K>()(key);
 		return CheckContains(hashedKey);
 	}
 
 	template <typename K, typename V>	
-	bool BaldLion::HashTable<K, V>::CheckContains(hashV hashedKey) const
+	bool BaldLion::HashTable<K, V>::CheckContains(hashType hashedKey) const
 	{
-		const hashV tableIndex = hashedKey % m_capacity;
+		const hashType tableIndex = hashedKey % m_capacity;
 
-		hashV index = tableIndex;
+		hashType index = tableIndex;
 
 		while (index < m_capacity)
 		{
@@ -179,16 +183,16 @@ namespace BaldLion
 	{
 		BL_ASSERT(Contains(key), "Key not contained");
 
-		const hashV hashedKey = std::hash<K>()(key);
+		const hashType hashedKey = std::hash<K>()(key);
 
-		hashV tableIndex = hashedKey % m_capacity;
+		hashType tableIndex = hashedKey % m_capacity;
 
 		while (m_table[tableIndex].hashedKey != hashedKey)
 		{
 			tableIndex = (tableIndex + 1) % m_capacity;
 		}
 
-		return m_table[tableIndex].value;
+		return m_table[tableIndex].nodeValue;
 	}
 
 	template <typename K, typename V>
@@ -196,16 +200,16 @@ namespace BaldLion
 	{
 		BL_ASSERT(Contains(key), "Key not contained");
 		
-		const hashV hashedKey = std::hash<K>()(key);
+		const hashType hashedKey = std::hash<K>()(key);
 
-		hashV tableIndex = hashedKey % m_capacity;
+		hashType tableIndex = hashedKey % m_capacity;
 
 		while (m_table[tableIndex].hashedKey != hashedKey)
 		{
 			tableIndex = (tableIndex + 1) % m_capacity;
 		}
 
-		return m_table[tableIndex].value;
+		return m_table[tableIndex].nodeValue;
 	}
 	
 	template <typename K, typename V>
@@ -213,16 +217,16 @@ namespace BaldLion
 	{
 		BL_ASSERT(Contains(key), "Key not contained");
 
-		const hashV hashedKey = std::hash<K>()(key);
+		const hashType hashedKey = std::hash<K>()(key);
 
-		hashV tableIndex = hashedKey % m_capacity;
+		hashType tableIndex = hashedKey % m_capacity;
 
 		while (m_table[tableIndex].hashedKey != hashedKey)
 		{
 			tableIndex = (tableIndex + 1) % m_capacity;
 		}
 
-		m_table[tableIndex].value = std::move(value);
+		m_table[tableIndex].nodeValue = std::move(value);
 	}
 
 	template <typename K, typename V>
@@ -230,16 +234,16 @@ namespace BaldLion
 	{
 		BL_ASSERT(Contains(key), "Key not contained");
 
-		const hashV hashedKey = std::hash<K>()(key);
+		const hashType hashedKey = std::hash<K>()(key);
 
-		hashV tableIndex = hashedKey % m_capacity;
+		hashType tableIndex = hashedKey % m_capacity;
 
 		while (m_table[tableIndex].hashedKey != hashedKey)
 		{
 			tableIndex = (tableIndex + 1) % m_capacity;
 		}
 
-		m_table[tableIndex].value = value;
+		m_table[tableIndex].nodeValue = value;
 	}
 
 	template <typename K, typename V>
@@ -251,8 +255,8 @@ namespace BaldLion
 			Reallocate((ui32)(m_capacity * 1.5f));
 		}
 
-		const hashV hashedKey = std::hash<K>()(key);
-		hashV tableIndex = hashedKey % m_capacity;
+		const hashType hashedKey = std::hash<K>()(key);
+		hashType tableIndex = hashedKey % m_capacity;
 
 		while (m_table[tableIndex].used)
 		{
@@ -261,10 +265,10 @@ namespace BaldLion
 
 		m_table[tableIndex].used = true;
 		m_table[tableIndex].hashedKey = hashedKey;
-		m_table[tableIndex].value = std::move(value);
+		m_table[tableIndex].nodeValue = std::move(value);
 
-		if (tableIndex < m_firstElementIndex)
-			m_firstElementIndex = (ui32)tableIndex;
+		if (m_firstElementIndex == -1 || tableIndex < m_firstElementIndex)
+			m_firstElementIndex = (i32)tableIndex;
 
 		m_lastElementIndex = m_table.Capacity();
 	}
@@ -275,17 +279,17 @@ namespace BaldLion
 		if (!Contains(key))
 			return false;
 
-		const hashV hashedKey = std::hash<K>()(key);
-		const hashV tableIndex = hashedKey % m_capacity;
+		const hashType hashedKey = std::hash<K>()(key);
+		const hashType tableIndex = hashedKey % m_capacity;
 		
-		hashV index = tableIndex;
+		hashType index = tableIndex;
 
 		while (index < m_capacity )
 		{
 			if (m_table[index].hashedKey == hashedKey)
 			{
 				m_table[tableIndex].used = false;
-				m_table[tableIndex].value.~V();
+				m_table[tableIndex].nodeValue.~V();
 				--m_size;
 
 				if (tableIndex == m_firstElementIndex)
@@ -310,7 +314,7 @@ namespace BaldLion
 			if (m_table[index].hashedKey == hashedKey)
 			{
 				m_table[tableIndex].used = false;
-				m_table[tableIndex].value.~V();
+				m_table[tableIndex].nodeValue.~V();
 				--m_size;
 
 				if (tableIndex == m_firstElementIndex)
@@ -352,7 +356,7 @@ namespace BaldLion
 	{
 		BL_ASSERT(Contains(key), "Key not contained");
 
-		const hashV hashedKey = std::hash<K>()(key);
+		const hashType hashedKey = std::hash<K>()(key);
 
 		ui32 currentIndex = 0;
 		for (ui32 i = 0; i < m_table.Size(); ++i)
@@ -377,6 +381,8 @@ namespace BaldLion
 		m_size = other.m_size;
 		m_capacity = other.m_capacity;
 		m_table = std::move(other.m_table);		
+		m_firstElementIndex = other.m_firstElementIndex;
+		m_lastElementIndex = other.m_lastElementIndex;
 
 		return *this;
 	}
@@ -391,6 +397,8 @@ namespace BaldLion
 		m_size = other.m_size;
 		m_capacity = other.m_capacity;
 		m_table = DynamicArray<HashNode<V>>(other.m_table);
+		m_firstElementIndex = other.m_firstElementIndex;
+		m_lastElementIndex = other.m_lastElementIndex;
 
 		return *this;
 	}
@@ -418,7 +426,7 @@ namespace BaldLion
 		{
 			if (m_table[i].used)
 			{
-				hashV newIndex = m_table[i].hashedKey % capacity;
+				hashType newIndex = m_table[i].hashedKey % capacity;
 
 				while (newTable[newIndex].used)
 				{
