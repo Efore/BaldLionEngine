@@ -13,7 +13,7 @@ namespace BaldLion
 		Model::Model(const std::string& filePath, const glm::mat4& initialWorldTransform): 
 			m_worldTransform(initialWorldTransform)
 		{
-			OPTICK_EVENT(); 
+			BL_PROFILE_FUNCTION(); 
 
 			// Extracting folder path from filePath
 
@@ -36,7 +36,7 @@ namespace BaldLion
 
 		void Model::SetUpModel()
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			Assimp::Importer import;			
 
@@ -53,7 +53,7 @@ namespace BaldLion
 
 		void Model::Draw() const
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 			for (ui32 i = 0; i < m_subMeshes.Size(); ++i)
 			{
 				m_subMeshes[i]->Draw();

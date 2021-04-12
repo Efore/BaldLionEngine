@@ -23,7 +23,7 @@ namespace BaldLion
 
 		void Mesh::SetUpMesh()
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			m_aabb = RecalculateAABB();
 			m_vertexArray = VertexArray::Create();

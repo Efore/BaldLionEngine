@@ -14,7 +14,7 @@ namespace BaldLion
 
 	Application::Application(const std::string& applicationName)
 	{
-		OPTICK_EVENT();
+		BL_PROFILE_FUNCTION();
 
 		BL_CORE_ASSERT(!s_instance, "Application already exists");
 
@@ -48,14 +48,14 @@ namespace BaldLion
 
 	void Application::PushLayer(Layer * layer)
 	{
-		OPTICK_EVENT();
+		BL_PROFILE_FUNCTION();
 
 		m_layerStack.PushLayer(layer);		
 	}
 
 	void Application::PushOverlay(Layer * overlay)
 	{
-		OPTICK_EVENT();
+		BL_PROFILE_FUNCTION();
 
 		m_layerStack.PushOverlay(overlay);		
 	}
@@ -78,7 +78,7 @@ namespace BaldLion
 
 		while (m_running)
 		{	
-			OPTICK_FRAME("Main thread");			
+			BL_PROFILE_FRAME();
 
 			float time = (float)glfwGetTime(); // Platform::GetTime
 
@@ -89,7 +89,7 @@ namespace BaldLion
 			if (!m_minimized)
 			{
 				{
-					OPTICK_CATEGORY("LayerStack OnUpdates", Optick::Category::GameLogic);
+					BL_PROFILE_SCOPE("LayerStack OnUpdates", Optick::Category::GameLogic);
 
 					for (ui32 i = 0; i < m_layerStack.Size(); ++i)
 						m_layerStack[i]->OnUpdate(timeStep);
@@ -98,7 +98,7 @@ namespace BaldLion
 				m_imGuiLayer->Begin();
 
 				{
-					OPTICK_CATEGORY("LayerStack OnUpdates", Optick::Category::Type::GameLogic);
+					BL_PROFILE_SCOPE("LayerStack OnUpdates", Optick::Category::Type::GameLogic);
 					for (ui32 i = 0; i < m_layerStack.Size(); ++i)
 						m_layerStack[i]->OnImGuiRender(timeStep);
 				}

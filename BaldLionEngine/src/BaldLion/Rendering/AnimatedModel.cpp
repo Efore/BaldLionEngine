@@ -31,7 +31,7 @@ namespace BaldLion
 
 		void AnimatedModel::Draw() const
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 			for (ui32 i = 0; i < m_subMeshes.Size(); ++i)
 			{
 				m_subMeshes[i]->Draw();

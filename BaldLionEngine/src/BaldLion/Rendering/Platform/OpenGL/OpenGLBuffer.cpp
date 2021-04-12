@@ -12,7 +12,7 @@ namespace BaldLion
 		//-------------------------------------------------
 		OpenGLVertexBuffer::OpenGLVertexBuffer(const void* vertices, ui32 size)
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glCreateBuffers(1, &m_rendererID);
 			glBindBuffer(GL_ARRAY_BUFFER, m_rendererID);
@@ -21,7 +21,7 @@ namespace BaldLion
 
 		OpenGLVertexBuffer::~OpenGLVertexBuffer()
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glDeleteBuffers(1, &m_rendererID);
 		}
@@ -29,14 +29,14 @@ namespace BaldLion
 
 		void OpenGLVertexBuffer::Bind() const
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glBindBuffer(GL_ARRAY_BUFFER, m_rendererID);
 		}
 
 		void OpenGLVertexBuffer::Unbind() const
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
@@ -47,7 +47,7 @@ namespace BaldLion
 		//-------------------------------------------------
 		OpenGLIndexBuffer::OpenGLIndexBuffer(const ui32 * indices, ui32 count) : m_count(count)
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glCreateBuffers(1, &m_rendererID);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_rendererID);
@@ -56,21 +56,21 @@ namespace BaldLion
 
 		OpenGLIndexBuffer::~OpenGLIndexBuffer()
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glDeleteBuffers(1, &m_rendererID);
 		}
 
 		void OpenGLIndexBuffer::Bind() const
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_rendererID);
 		}
 
 		void OpenGLIndexBuffer::Unbind() const
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}

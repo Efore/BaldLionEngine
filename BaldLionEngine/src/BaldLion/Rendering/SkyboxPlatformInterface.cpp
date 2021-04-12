@@ -10,7 +10,7 @@ namespace BaldLion
 
 		void SkyboxPlatformInterface::Init(const std::string& path)
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			m_vertexArray = VertexArray::Create();
 

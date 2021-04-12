@@ -27,7 +27,7 @@ namespace BaldLion
 
 	void ImGuiLayer::OnAttach()
 	{
-		OPTICK_EVENT();
+		BL_PROFILE_FUNCTION();
 
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
@@ -59,7 +59,7 @@ namespace BaldLion
 
 	void ImGuiLayer::OnDetach()
 	{
-		OPTICK_EVENT();
+		BL_PROFILE_FUNCTION();
 
 		// Cleanup
 		ImGui_ImplOpenGL3_Shutdown();
@@ -69,7 +69,7 @@ namespace BaldLion
 
 	void ImGuiLayer::Begin()
 	{
-		OPTICK_EVENT();
+		BL_PROFILE_FUNCTION();
 
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
@@ -85,7 +85,7 @@ namespace BaldLion
 
 	void ImGuiLayer::End()
 	{
-		OPTICK_EVENT();
+		BL_PROFILE_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::GetInstance();

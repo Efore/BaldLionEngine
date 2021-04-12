@@ -18,7 +18,7 @@ namespace BaldLion
 
 		void Renderer::Init()
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			MaterialLibrary::Init();
 			s_textureLibrary.Init();
@@ -53,7 +53,7 @@ namespace BaldLion
 
 		void Renderer::BeginScene(const Camera*  camera, const DirectionalLight& directionalLight)
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 			
 			s_rendererPlatformInterface->SetClearColor({ 0.3f, 0.3f, 0.8f, 1.0f });
 			s_rendererPlatformInterface->Clear();
@@ -85,7 +85,7 @@ namespace BaldLion
 
 		void Renderer::Draw(const VertexArray* vertexArray, Shader* shader, const glm::mat4& transform)
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			shader->SetUniform(STRING_TO_ID("u_worldTransformMatrix"), ShaderDataType::Mat4, &(transform[0][0]));
 			shader->SetUniform(STRING_TO_ID("u_viewProjectionMatrix"), ShaderDataType::Mat4, &(s_sceneData.viewProjectionMatrix));

@@ -13,14 +13,14 @@ namespace BaldLion
 		{
 			TextureLibrary::GetNameFromPath(path, m_name);
 
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			int width, height, channels;
 			stbi_uc* data = nullptr;
 			stbi_set_flip_vertically_on_load(1);
 
 			{
-				OPTICK_CATEGORY("stbi_load - OpenGLTexture2D::OpenGLTexture2D", Optick::Category::Rendering);
+				BL_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D", Optick::Category::Rendering);
 				data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 			}
 
@@ -61,14 +61,14 @@ namespace BaldLion
 		{
 			TextureLibrary::GetNameFromPath(path, m_name);
 
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			int width, height, channels;
 			stbi_uc* data = nullptr;
 			stbi_set_flip_vertically_on_load(1);
 
 			{
-				OPTICK_CATEGORY("stbi_load - OpenGLTexture2D::OpenGLTexture2D", Optick::Category::Rendering);				
+				BL_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D", Optick::Category::Rendering);				
 				data = stbi_load_from_memory(textureData, size, &width, &height, &channels, 0);
 			}
 
@@ -106,14 +106,14 @@ namespace BaldLion
 
 		OpenGLTexture2D::~OpenGLTexture2D()
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glDeleteTextures(1, &m_rendererID);
 		}
 
 		void OpenGLTexture2D::Bind(ui32 slot) const
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glActiveTexture(GL_TEXTURE0 + slot);
 			glBindTextureUnit(slot, m_rendererID);

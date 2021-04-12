@@ -57,7 +57,7 @@ namespace BaldLion
 
 					JobManagement::Job animationJob(animatorName.c_str(), paralellJobID);
 					animationJob.Task = [animatorToUpdate, timeStep] { 
-						OPTICK_CATEGORY("AnimationManager::OnUpdateAnimation", Optick::Category::Animation);
+						BL_PROFILE_SCOPE("AnimationManager::OnUpdateAnimation", Optick::Category::Animation);
 						animatorToUpdate->OnUpdate(timeStep); 
 					};
 

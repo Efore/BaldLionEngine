@@ -55,7 +55,7 @@ namespace BaldLion {
 		{	
 			while(true)
 			{
-				OPTICK_THREAD("Worker");
+				BL_PROFILE_THREAD("Worker");
 				Job job;
 				std::function<void()> task = nullptr;
 

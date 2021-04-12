@@ -15,7 +15,7 @@ namespace BaldLion
 
 		void OpenGLContext::Init()
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glfwMakeContextCurrent(m_windowHandle);
 			int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -29,7 +29,7 @@ namespace BaldLion
 
 		void OpenGLContext::SwapBuffers()
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			BL_CORE_ASSERT(m_windowHandle, "Window handle is null!");
 			glfwSwapBuffers(m_windowHandle);

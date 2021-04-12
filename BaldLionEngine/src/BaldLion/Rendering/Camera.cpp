@@ -88,7 +88,7 @@ namespace BaldLion
 
 		void ProjectionCamera::RecalculateViewMatrix()
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			m_cameraTransform = glm::translate(glm::mat4(1.0f), m_position) *
 				glm::rotate(glm::mat4(1.0f), glm::radians(m_yaw), glm::vec3(0, 1, 0)) *
@@ -114,7 +114,7 @@ namespace BaldLion
 
 		void OrthographicCamera::RecalculateViewMatrix()
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_position);
 			m_viewMatrix = glm::inverse(transform);

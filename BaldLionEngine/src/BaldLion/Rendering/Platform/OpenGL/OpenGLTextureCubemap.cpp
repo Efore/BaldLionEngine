@@ -13,7 +13,7 @@ namespace BaldLion
 		{
 			TextureLibrary::GetNameFromPath(path, m_name);
 
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glGenTextures(1, &m_rendererID);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, m_rendererID);
@@ -24,7 +24,7 @@ namespace BaldLion
 				stbi_uc* data = nullptr;
 
 				{
-					OPTICK_CATEGORY("stbi_load - OpenGLTexture2D::OpenGLTexture2D", Optick::Category::Rendering);
+					BL_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D", Optick::Category::Rendering);
 
 					const std::string texturePath = TextureCubeMap::GetSkyboxTexturePath(path, i);
 					data = stbi_load(texturePath.c_str(), &width, &height, &channels, 0);
@@ -64,14 +64,14 @@ namespace BaldLion
 
 		OpenGLTextureCubemap::~OpenGLTextureCubemap()
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glDeleteTextures(1, &m_rendererID);
 		}
 
 		void OpenGLTextureCubemap::Bind(ui32 slot) const
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, m_rendererID);

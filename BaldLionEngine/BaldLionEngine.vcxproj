@@ -168,6 +168,7 @@
     <ClInclude Include="src\BaldLion\Core\Memory\MemoryUtils.h" />
     <ClInclude Include="src\BaldLion\Core\Memory\StackAllocator.h" />
     <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h" />
+    <ClInclude Include="src\BaldLion\Core\Profiling.h" />
     <ClInclude Include="src\BaldLion\Core\StringId.h" />
     <ClInclude Include="src\BaldLion\Core\TimeStep.h" />
     <ClInclude Include="src\BaldLion\Core\Window.h" />

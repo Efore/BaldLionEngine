@@ -19,7 +19,7 @@ namespace BaldLion
 
 	WindowsWindow::WindowsWindow(const WindowProps & props)
 	{
-		OPTICK_EVENT();
+		BL_PROFILE_FUNCTION();
 		Init(props);
 	}
 
@@ -30,7 +30,7 @@ namespace BaldLion
 
 	void WindowsWindow::Init(const WindowProps & props)
 	{
-		OPTICK_EVENT();
+		BL_PROFILE_FUNCTION();
 
 		m_data.Title = props.Title;
 		m_data.Width = props.Width;
@@ -159,14 +159,14 @@ namespace BaldLion
 
 	void WindowsWindow::Shutdown()
 	{
-		OPTICK_EVENT();
+		BL_PROFILE_FUNCTION();
 
 		glfwDestroyWindow(m_window);
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
-		OPTICK_EVENT();
+		BL_PROFILE_FUNCTION();
 
 		glfwPollEvents();
 		m_context->SwapBuffers();		

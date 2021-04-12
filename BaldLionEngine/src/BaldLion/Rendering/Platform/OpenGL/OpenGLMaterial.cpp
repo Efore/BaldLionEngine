@@ -10,7 +10,7 @@ namespace BaldLion
 	{
 		OpenGLMaterial::OpenGLMaterial(const std::string& matName, const MaterialProperties& materialProperties) : Material(materialProperties)			
 		{
-			OPTICK_EVENT();		
+			BL_PROFILE_FUNCTION();		
 
 			m_materialName = STRING_TO_ID(matName);
 
@@ -126,14 +126,14 @@ namespace BaldLion
 
 		void OpenGLMaterial::SetUniform(StringId uniformName, ShaderDataType dataType, const void* uniformIndex)
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			m_shader->SetUniform(uniformName, dataType, uniformIndex);
 		}
 
 		void OpenGLMaterial::Bind() const
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			switch (m_materialProperties.blendMode)
 			{

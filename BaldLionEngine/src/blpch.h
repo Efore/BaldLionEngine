@@ -14,7 +14,7 @@
 
 #include "BaldLion/Core/Log.h"
 #include "BaldLion/Core/Core.h"
-#include "optick.h"
+#include "BaldLion/Core/Profiling.h"
 #include "BaldLion/Core/Memory/MemoryManager.h"
 #include "BaldLion/Core/StringId.h"
 
