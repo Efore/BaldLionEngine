@@ -31,7 +31,7 @@ namespace BaldLion
 
 		void AnimatedModel::Draw() const
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 			for (ui32 i = 0; i < m_subMeshes.Size(); ++i)
 			{
 				m_subMeshes[i]->Draw();
@@ -223,17 +223,23 @@ namespace BaldLion
 
 			Material* meshMaterial = MaterialLibrary::Load(
 				aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data,
-				{ STRING_TO_ID("assets/shaders/monster.glsl"),
-				glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
-				glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
-				glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
-				glm::vec3(specularColor.r, specularColor.g, specularColor.b),
-				32.0f,
-				ambientTex,
-				diffuseTex,
-				specularTex,
-				emissiveTex,
-				normalTex });
+				{ 
+					STRING_TO_ID("assets/shaders/monster.glsl"),
+					glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
+					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
+					glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
+					glm::vec3(specularColor.r, specularColor.g, specularColor.b),
+					32.0f,
+					ambientTex,
+					diffuseTex,
+					specularTex,
+					emissiveTex,
+					normalTex,
+					Material::BlendMode::None,
+					Material::DepthBufferMode::TestAndWrite,
+					Material::CullingMode::Back
+				}
+			);
 
 			meshMaterial->AssignShader();
 

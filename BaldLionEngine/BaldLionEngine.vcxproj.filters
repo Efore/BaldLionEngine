@@ -28,9 +28,6 @@
     <Filter Include="src\BaldLion\ImGui">
       <UniqueIdentifier>{8B0E0574-77F2-C5C9-E052-C01CCC55B04B}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\BaldLion\Profiling">
-      <UniqueIdentifier>{5ABEB8A6-46B8-E1F8-2F25-78091BBE4765}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\BaldLion\Rendering">
       <UniqueIdentifier>{2E2B703E-1A25-9990-0392-2FA1EF2AFFFC}</UniqueIdentifier>
     </Filter>
@@ -176,9 +173,6 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h">
       <Filter>src\BaldLion\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Profiling\Instrumentor.h">
-      <Filter>src\BaldLion\Profiling</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\AnimatedModel.h">
       <Filter>src\BaldLion\Rendering</Filter>

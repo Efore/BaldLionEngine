@@ -28,7 +28,7 @@ namespace BaldLion {
 			//Starting threads
 			for (ui32 i = 0; i < workersCount; ++i)
 			{
-				s_threads.EmplaceBack(std::thread(ThreadUsage));
+				s_threads.EmplaceBack(std::thread(ThreadUsage,i));
 			}		
 		}
 
@@ -51,10 +51,11 @@ namespace BaldLion {
 			s_queueMutex.unlock();
 		}	
 
-		void* ThreadPool::ThreadUsage()
+		void* ThreadPool::ThreadUsage(ui32 threadIndex)
 		{	
 			while(true)
 			{
+				OPTICK_THREAD("Worker");
 				Job job;
 				std::function<void()> task = nullptr;
 

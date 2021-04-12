@@ -76,7 +76,7 @@ namespace BaldLion
 			static void QueueJob(const Job& job);
 			static void WaitForJobs();
 
-			static void *ThreadUsage();
+			static void *ThreadUsage(ui32 threadIndex);
 						
 			static Queue<Job> s_jobQueue;
 			static DynamicArray<std::thread> s_threads;

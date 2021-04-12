@@ -13,15 +13,15 @@ namespace BaldLion
 		{
 			TextureLibrary::GetNameFromPath(path, m_name);
 
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			int width, height, channels;
 			stbi_uc* data = nullptr;
 			stbi_set_flip_vertically_on_load(1);
 
 			{
-				BL_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D")
-				 data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+				OPTICK_CATEGORY("stbi_load - OpenGLTexture2D::OpenGLTexture2D", Optick::Category::Rendering);
+				data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 			}
 
 			BL_CORE_ASSERT(data, "Failed to load image!");
@@ -61,15 +61,15 @@ namespace BaldLion
 		{
 			TextureLibrary::GetNameFromPath(path, m_name);
 
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			int width, height, channels;
 			stbi_uc* data = nullptr;
 			stbi_set_flip_vertically_on_load(1);
 
 			{
-				BL_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D")
-					data = stbi_load_from_memory(textureData, size, &width, &height, &channels, 0);
+				OPTICK_CATEGORY("stbi_load - OpenGLTexture2D::OpenGLTexture2D", Optick::Category::Rendering);				
+				data = stbi_load_from_memory(textureData, size, &width, &height, &channels, 0);
 			}
 
 			BL_CORE_ASSERT(data, "Failed to load image!");
@@ -106,14 +106,14 @@ namespace BaldLion
 
 		OpenGLTexture2D::~OpenGLTexture2D()
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			glDeleteTextures(1, &m_rendererID);
 		}
 
 		void OpenGLTexture2D::Bind(ui32 slot) const
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			glActiveTexture(GL_TEXTURE0 + slot);
 			glBindTextureUnit(slot, m_rendererID);

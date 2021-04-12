@@ -44,7 +44,7 @@ namespace BaldLion
 
 		void ProjectionCameraManager::OnUpdate(BaldLion::TimeStep timeStep)
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			HandleCameraMovement(timeStep);	
 			s_cameraData.camera->RecalculateViewMatrix();

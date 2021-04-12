@@ -17,6 +17,7 @@ IncludeDir["ImGui"] = "BaldLionEngine/vendor/imgui"
 IncludeDir["glm"] = "BaldLionEngine/vendor/glm/"
 IncludeDir["stb_image"] = "BaldLionEngine/vendor/stb_image/"
 IncludeDir["assimp"] = "BaldLionEngine/vendor/assimp/include"
+IncludeDir["optick"] = "BaldLionEngine/vendor/optick/include"
 
 group "Dependencies"
 	include "BaldLionEngine/vendor/GLFW"
@@ -62,12 +63,14 @@ project "BaldLionEngine"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.assimp}"		
+		"%{IncludeDir.assimp}",
+		"%{IncludeDir.optick}"		
 	}	
 	
 	libdirs 
 	{ 
-		"BaldLionEngine/vendor/assimp/lib" 
+		"BaldLionEngine/vendor/assimp/lib",
+		"BaldLionEngine/vendor/optick/lib/x64/%{cfg.shortname}",
 	}
 	
 	links
@@ -75,7 +78,8 @@ project "BaldLionEngine"
 		"GLFW",
 		"Glad",
 		"ImGui",
-		"assimp-vc141-mtd.lib"
+		"assimp-vc141-mtd.lib",
+		"OptickCore.lib"
 	}
 
 	filter "system:windows"		
@@ -128,7 +132,8 @@ project "BaldLionEditor"
 		"BaldLionEngine/src",
 		"BaldLionEngine/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.assimp}"
+		"%{IncludeDir.assimp}",
+		"%{IncludeDir.optick}"
 	}
 
 	links
@@ -185,7 +190,8 @@ project "BaldLionSandbox"
 		"BaldLionEngine/src",
 		"BaldLionEngine/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.assimp}"
+		"%{IncludeDir.assimp}",
+		"%{IncludeDir.optick}"
 	}
 
 	links

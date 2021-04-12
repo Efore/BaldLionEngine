@@ -31,30 +31,19 @@ namespace BaldLion
 
 		private:
 			OpenGLShader* m_shader;
-
-			glm::vec3 m_ambientColor;
-			glm::vec3 m_emissiveColor;
-			glm::vec3 m_diffuseColor;
-			glm::vec3 m_specularColor;
-			float m_shininess;
-
-			OpenGLTexture2D* m_ambientTex = nullptr;
+			
 			int m_ambientTexSlot = 0;
 			int m_useAmbientTex = 0;
-
-			OpenGLTexture2D* m_diffuseTex = nullptr;
+			
 			int m_diffuseTexSlot = 0;
 			int m_useDiffuseTex = 0;
-
-			OpenGLTexture2D* m_emissiveTex = nullptr;
+			
 			int m_emissiveTexSlot = 0;
 			int m_useEmissiveTex = 0;
-
-			OpenGLTexture2D* m_specularTex = nullptr;
+			
 			int m_specularTexSlot = 0;
 			int m_useSpecularTex = 0;
-
-			OpenGLTexture2D* m_normalTex = nullptr;
+			
 			int m_normalTexSlot = 0;
 			int m_useNormalTex = 0;
 		};

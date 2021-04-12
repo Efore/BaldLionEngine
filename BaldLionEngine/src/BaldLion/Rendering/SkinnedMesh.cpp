@@ -20,7 +20,7 @@ namespace BaldLion
 
 		void SkinnedMesh::SetUpMesh(const DynamicArray<VertexBoneData>& verticesBoneData)
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			m_aabb = RecalculateAABB();
 			m_vertexArray = VertexArray::Create();

@@ -28,7 +28,25 @@ namespace BaldLion
 
 		class Material {
 
-		public:
+		public:			
+
+			enum class BlendMode {
+				None,
+				Alpha,
+				Aditive
+			};
+
+			enum class DepthBufferMode {
+				NoDepth,
+				TestOnly,
+				TestAndWrite
+			};
+
+			enum class CullingMode {
+				Back,
+				Front,
+				None
+			};
 
 			struct MaterialProperties {
 
@@ -43,6 +61,59 @@ namespace BaldLion
 				Texture* emissiveTex;
 				Texture* specularTex;
 				Texture* normalTex;
+
+				BlendMode blendMode;
+				DepthBufferMode depthBufferMode;
+				CullingMode cullingMode;
+
+				MaterialProperties() {}
+
+				MaterialProperties(StringId sPath,
+					const glm::vec3& aColor,
+					const glm::vec3& dColor,
+					const glm::vec3& eColor,
+					const glm::vec3& sColor,
+					float shn,
+					Texture* aTex,
+					Texture* dTex,
+					Texture* eTex,
+					Texture* sTex,
+					Texture* nTex,
+					BlendMode bMode,
+					DepthBufferMode dbMode,
+					CullingMode cMode) :
+					shaderPath(sPath),
+					ambientColor(aColor),
+					diffuseColor(dColor),
+					emissiveColor(eColor),
+					specularColor(sColor),
+					shininess(shn),
+					ambientTex(aTex),
+					diffuseTex(dTex),
+					emissiveTex(eTex),
+					specularTex(sTex),
+					normalTex(nTex),
+					blendMode(bMode),
+					depthBufferMode(dbMode),
+					cullingMode(cMode)
+				{}
+
+				MaterialProperties(const MaterialProperties& other) : 
+					shaderPath(other.shaderPath),
+					ambientColor(other.ambientColor),
+					diffuseColor(other.diffuseColor),
+					emissiveColor(other.emissiveColor),
+					specularColor(other.specularColor),
+					shininess(other.shininess),
+					ambientTex(other.ambientTex),
+					diffuseTex(other.diffuseTex),
+					emissiveTex(other.emissiveTex),
+					specularTex(other.specularTex),
+					normalTex(other.normalTex),
+					blendMode(other.blendMode),
+					depthBufferMode(other.depthBufferMode),
+					cullingMode(other.cullingMode)
+				{}
 			};
 
 		public:
@@ -60,7 +131,7 @@ namespace BaldLion
 
 			virtual Shader* GetShader() const = 0;
 			
-			StringId GetShaderPath() { return m_shaderPath; }
+			StringId GetShaderPath() { return m_materialProperties.shaderPath; }
 			StringId GetMaterialName() { return m_materialName; }
 
 			virtual ~Material() = default;
@@ -70,8 +141,11 @@ namespace BaldLion
 			
 		protected:
 
-			StringId m_shaderPath;
+			Material(){}
+			Material::Material(const MaterialProperties& materialProperties) : m_materialProperties(materialProperties){}
+
 			StringId m_materialName;
+			MaterialProperties m_materialProperties;
 		};
 
 		class MaterialLibrary

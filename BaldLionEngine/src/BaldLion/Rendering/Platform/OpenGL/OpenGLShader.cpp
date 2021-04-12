@@ -22,7 +22,7 @@ namespace BaldLion
 
 		OpenGLShader::OpenGLShader(const std::string & filepath)
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			std::string source = ReadFile(filepath);
 			auto shaderSources = PreProcess(source);
@@ -34,7 +34,7 @@ namespace BaldLion
 
 		OpenGLShader::~OpenGLShader()
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			glDeleteProgram(m_rendererID);
 			m_uniformLocationCache.Clear();
@@ -42,7 +42,7 @@ namespace BaldLion
 
 		std::string OpenGLShader::ReadFile(const std::string& filepath)
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			std::ifstream in(filepath, std::ios::in | std::ios::binary);
 			std::string result;
@@ -65,7 +65,7 @@ namespace BaldLion
 
 		std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string & source)
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			std::unordered_map<GLenum, std::string> shaderSources;
 
@@ -92,7 +92,7 @@ namespace BaldLion
 
 		void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			GLuint program = glCreateProgram();
 			BL_CORE_ASSERT(shaderSources.size() <= 2, "Only 2 shaders supported");
@@ -175,21 +175,21 @@ namespace BaldLion
 
 		void OpenGLShader::Bind() const
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			glUseProgram(m_rendererID);
 		}
 
 		void OpenGLShader::Unbind() const
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			glUseProgram(0);
 		}
 
 		void OpenGLShader::SetUniform(StringId uniformName, ShaderDataType dataType, const void* uniformIndex)
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			int uniformID = GetUniformLocation(uniformName);
 			switch (dataType)
@@ -242,7 +242,7 @@ namespace BaldLion
 
 		int OpenGLShader::GetUniformLocation(StringId name) const
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			if (m_uniformLocationCache.Contains(name))
 				return m_uniformLocationCache.Get(name);

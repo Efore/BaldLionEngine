@@ -21,7 +21,7 @@ public:
 
 	void OnAttach()
 	{
-		BL_PROFILE_FUNCTION();
+		OPTICK_EVENT();
 
 		m_animatedModels = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);		
 
@@ -55,17 +55,17 @@ public:
 
 	virtual void OnUpdate(BaldLion::TimeStep timeStep) override
 	{
-		BL_PROFILE_FUNCTION();
+		OPTICK_EVENT();
 
 		{
-			BL_PROFILE_SCOPE("CameraController::OnUpdate");
+			OPTICK_CATEGORY("CameraController::OnUpdate", Optick::Category::Camera);
 
 			if (m_viewPortFocused)
 				ProjectionCameraManager::OnUpdate(timeStep);
 		}
 
 		{
-			BL_PROFILE_SCOPE("AnimationManager::KickOnUpdate");
+			OPTICK_CATEGORY("AnimationManager::KickOnUpdate", Optick::Category::Animation);
 			/*Animation::AnimationManager::OnUpdate(timeStep);*/
 			StringId animationUpdateTaskId = 0;
 			Animation::AnimationManager::OnParallelUpdate(timeStep, animationUpdateTaskId);
@@ -74,13 +74,13 @@ public:
 
 		JobManagement::JobManager::WaitForJobs();
 		{
-			BL_PROFILE_SCOPE("Renderer::BeginScene");
+			OPTICK_CATEGORY("Renderer::BeginScene", Optick::Category::Rendering);
 			m_frameBuffer->Bind();
 			Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight);
 		}
 
 		{
-			BL_PROFILE_SCOPE("Renderer::Draw");
+			OPTICK_CATEGORY("Renderer::Draw", Optick::Category::Rendering);
 			for (ui32 i = 0; i < m_animatedModels.Size(); ++i)
 			{
 				m_animatedModels[i]->Draw();
@@ -92,7 +92,7 @@ public:
 
 	virtual void OnImGuiRender(TimeStep timeStep) override
 	{
-		BL_PROFILE_FUNCTION();
+		OPTICK_EVENT();
 		ImGui::Begin("Settings");
 
 		ImGui::Text("Directional Light");

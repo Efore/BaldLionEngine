@@ -19,7 +19,7 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnAttach()
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			BaldLion::Rendering::FramebufferSpecification fbSpec;
 			fbSpec.Width = Application::GetInstance().GetWindow().GetWidth();
@@ -76,17 +76,17 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnUpdate(TimeStep timeStep)
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			{
-				BL_PROFILE_SCOPE("CameraController::OnUpdate");
+				OPTICK_CATEGORY("CameraController::OnUpdate",Optick::Category::Camera);
 				
 				if (m_viewPortFocused)
 					ProjectionCameraManager::OnUpdate(timeStep);
 			}
 
 			{
-				BL_PROFILE_SCOPE("AnimationManager::KickOnUpdate");
+				OPTICK_CATEGORY("CameraController::OnUpdate", Optick::Category::Animation);
 				/*Animation::AnimationManager::OnUpdate(timeStep);*/
 				StringId animationUpdateTaskId = 0;
 				Animation::AnimationManager::OnParallelUpdate(timeStep, animationUpdateTaskId);		
@@ -94,13 +94,13 @@ namespace BaldLion
 			
 			JobManagement::JobManager::WaitForJobs();
 			{
-				BL_PROFILE_SCOPE("Renderer::BeginScene");
+				OPTICK_CATEGORY("Renderer::BeginScene", Optick::Category::Rendering);
 				m_frameBuffer->Bind();
 				Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight);
 			}
 			{
 
-				BL_PROFILE_SCOPE("Renderer::Draw static models");
+				OPTICK_CATEGORY("Renderer::Draw static models", Optick::Category::Rendering);
 				Renderer::DrawScene(ProjectionCameraManager::GetCamera());
 				Renderer::EndScene();
 				m_frameBuffer->Unbind();
@@ -109,7 +109,7 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnImGuiRender(TimeStep timeStep)
 		{
-			BL_PROFILE_FUNCTION();
+			OPTICK_EVENT();
 
 			RenderDockSpace();
 
