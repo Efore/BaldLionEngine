@@ -27,28 +27,26 @@ namespace BaldLion
 
 			m_frameBuffer = BaldLion::Rendering::Framebuffer::Create(fbSpec);
 			
-			ProjectionCameraManager::Init(glm::vec3(0, 0, 0), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 500.0f);			
+			ProjectionCameraManager::Init(glm::vec3(0, 50, 150), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 500.0f);			
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
 
 			for (ui32 i = 0; i < 3; ++i)
 			{
-				auto model = MemoryManager::New<Rendering::AnimatedModel>(STRING_TO_ID("Animated Model " + i), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", initialTransform);
+				auto model = MemoryManager::New<Rendering::AnimatedModel>(std::string("Animated Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", initialTransform);
 				model->SetUpModel();
-				Renderer::SubscribeModel(model);
+				Renderer::RegisterModel(model);
 				initialTransform = glm::translate(initialTransform, glm::vec3(150, 0, 0));
 			}
 
 			initialTransform = glm::mat4(1.0f);
 			initialTransform = glm::scale(initialTransform, glm::vec3(50.0f));
 
-			for (ui32 i = 0; i < 300; ++i)
+			for (ui32 i = 0; i < 10; ++i)
 			{
-				auto model = MemoryManager::New<Rendering::Model>(STRING_TO_ID("Static Model " + i), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj", glm::rotate(initialTransform, glm::linearRand(0.0f, 359.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+				auto model = MemoryManager::New<Rendering::Model>(std::string("Static Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj", glm::rotate(initialTransform, glm::linearRand(0.0f, 359.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 				model->SetUpModel();
-				Renderer::SubscribeModel(model);
-
-				//initialTransform = glm::rotate(initialTransform, glm::linearRand(0.0f, 359.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+				Renderer::RegisterModel(model);
 
 				if (i > 0 && i % 60 == 0)
 				{
@@ -93,18 +91,12 @@ namespace BaldLion
 			}			
 			
 			JobManagement::JobManager::WaitForJobs();
-			{
-				OPTICK_CATEGORY("Renderer::BeginScene", Optick::Category::Rendering);
-				m_frameBuffer->Bind();
-				Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight);
-			}
-			{
-
-				OPTICK_CATEGORY("Renderer::Draw static models", Optick::Category::Rendering);
-				Renderer::DrawScene(ProjectionCameraManager::GetCamera());
-				Renderer::EndScene();
-				m_frameBuffer->Unbind();
-			}
+				
+			m_frameBuffer->Bind();
+			Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight);
+			Renderer::DrawScene(ProjectionCameraManager::GetCamera());
+			Renderer::EndScene();
+			m_frameBuffer->Unbind();			
 		}
 
 		void BaldLionEditorLayer::OnImGuiRender(TimeStep timeStep)
@@ -152,9 +144,6 @@ namespace BaldLion
 			ImGui::Text("Draw calls: %zu", Renderer::GetRenderStats().drawCalls);
 			ImGui::Text("Vertices: %zu", Renderer::GetRenderStats().vertices);
 			ImGui::End();
-
-			Renderer::GetRenderStats().drawCalls = 0;
-			Renderer::GetRenderStats().vertices = 0;
 		}
 
 		void BaldLionEditorLayer::OnEvent(Event& e)

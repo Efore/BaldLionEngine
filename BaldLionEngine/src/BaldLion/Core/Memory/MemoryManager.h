@@ -4,6 +4,7 @@
 #include "StackAllocator.h"
 #include "FreeListAllocator.h"
 #include "BaldLion/Core/StringId.h"
+#include "BaldLion/Core/Profiling.h"
 #include <unordered_map>
 #include <mutex>
 
@@ -36,10 +37,10 @@ namespace BaldLion
 			static void Stop();			
 
 			template <class T, class... Args >
-			static T* New(StringId allocationName, AllocationType allocationType, Args&&... args);
+			static T* New(const char* allocationName, AllocationType allocationType, Args&&... args);
 
 			template <class T>
-			static T* NewArray(StringId allocationName, AllocationType allocationType, ui32 size);
+			static T* NewArray(const char* allocationName, AllocationType allocationType, ui32 size);
 
 			template <class T>
 			static void DeleteNoDestructor(T* element, bool isArray = false);
@@ -74,7 +75,7 @@ namespace BaldLion
 		};
 
 		template <class T, class... Args >
-		T* MemoryManager::New(StringId allocationName, AllocationType allocationType, Args&&... args)
+		T* MemoryManager::New(const char* allocationName, AllocationType allocationType, Args&&... args)
 		{
 			const std::lock_guard<std::mutex> lock(s_mutex);
 
@@ -98,14 +99,16 @@ namespace BaldLion
 				break;
 			}		
 
-			s_allocationMap.emplace((void*)result, AllocationInfo(allocationName, allocationType, sizeof(T)));
+			s_allocationMap.emplace((void*)result, AllocationInfo(STRING_TO_ID(allocationName), allocationType, sizeof(T)));
 			
 			return result;
 		}
 
 		template <class T>
-		T* MemoryManager::NewArray(StringId allocationName, AllocationType allocationType, ui32 size)
+		T* MemoryManager::NewArray(const char*  allocationName, AllocationType allocationType, ui32 size)
 		{
+			BL_DEEP_PROFILE_FUNCTION();
+
 			const std::lock_guard<std::mutex> lock(s_arrayMutex);
 
 			if (s_memorySize == 0) Init(0);
@@ -128,7 +131,7 @@ namespace BaldLion
 				break;
 			}
 
-			s_allocationMap.emplace((void*)result, AllocationInfo(allocationName, allocationType, size * sizeof(T)));
+			s_allocationMap.emplace((void*)result, AllocationInfo(STRING_TO_ID(allocationName), allocationType, size * sizeof(T)));
 
 			return result;
 		}
@@ -152,16 +155,16 @@ namespace BaldLion
 					s_freeListMainAllocator->Deallocate(element);
 				break;
 			case AllocationType::Linear_Frame:
-				if (s_freeListMainAllocator != nullptr)
-					s_freeListMainAllocator->Deallocate(element);
+				if (s_linearFrameAllocator != nullptr)
+					s_linearFrameAllocator->Deallocate(element);
 				break;
 			case AllocationType::Stack:
-				if (s_freeListMainAllocator != nullptr)
-					s_freeListMainAllocator->Deallocate(element);
+				if (s_stackAllocator != nullptr)
+					s_stackAllocator->Deallocate(element);
 				break;
 			case AllocationType::FreeList_Renderer:
-				if (s_freeListMainAllocator != nullptr)
-					s_freeListMainAllocator->Deallocate(element);
+				if (s_freeListRendererAllocator != nullptr)
+					s_freeListRendererAllocator->Deallocate(element);
 				break;
 			}
 

@@ -14,7 +14,7 @@ namespace BaldLion
 			switch (RendererPlatformInterface::GetAPI())
 			{
 			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererPlatformInterface::RendererPlatform::OpenGL:	return MemoryManager::New<OpenGLShader>(STRING_TO_ID(filepath),AllocationType::FreeList_Renderer, filepath);
+			case RendererPlatformInterface::RendererPlatform::OpenGL:	return MemoryManager::New<OpenGLShader>(filepath.c_str(), AllocationType::FreeList_Renderer, filepath);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown renderereAPI!");

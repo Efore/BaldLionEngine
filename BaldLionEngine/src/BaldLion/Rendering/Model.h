@@ -26,11 +26,12 @@ namespace BaldLion
 		protected:
 
 			virtual void ProcessNode(const aiNode *node, const aiScene *scene);
-			Mesh* ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
+			static Mesh* ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene, const StringId modelFolderPath, const glm::mat4& worldTransform);
 
-			void FillVertexArrayData(const aiMesh *aimesh, DynamicArray<Vertex>& vertices, DynamicArray<ui32>& indices);
-			void FillTextureData(const aiMesh *aimesh,
+			static void FillVertexArrayData(const aiMesh *aimesh, DynamicArray<Vertex>& vertices, DynamicArray<ui32>& indices);
+			static void FillTextureData(const aiMesh *aimesh,
 				const aiScene *aiscene,
+				const StringId modelFolderPath,
 				aiColor3D& ambientColor,
 				aiColor3D& diffuseColor,
 				aiColor3D& specularColor,
@@ -46,7 +47,7 @@ namespace BaldLion
 			StringId m_modelFolderPath;
 			glm::mat4 m_worldTransform;
 			int m_importFlags;
-			DynamicArray<Mesh*> m_subMeshes;
+			DynamicArray<Mesh*> m_subMeshes;			
 		};
 	}
 }

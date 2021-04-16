@@ -60,10 +60,10 @@ namespace BaldLion
 
 				CalculateOffsetsAndStride();
 			}
-
+			
 			~BufferLayout()
 			{
-
+				m_elements.Clear();				
 			}
 
 			inline const ui32& GetStride() const { return m_stride; }

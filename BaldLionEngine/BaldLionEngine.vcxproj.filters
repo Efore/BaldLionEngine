@@ -1366,6 +1366,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Profiling.h" />
+    <ClInclude Include="src\BaldLion\Rendering\GeometryData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">

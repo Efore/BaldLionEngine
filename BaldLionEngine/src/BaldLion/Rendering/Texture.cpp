@@ -14,7 +14,7 @@ namespace BaldLion
 			switch (RendererPlatformInterface::GetAPI())
 			{
 			case RendererPlatformInterface::RendererPlatform::None:			BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererPlatformInterface::RendererPlatform::OpenGL:		return MemoryManager::New<OpenGLTexture2D>(STRING_TO_ID(path), AllocationType::FreeList_Renderer, path);
+			case RendererPlatformInterface::RendererPlatform::OpenGL:		return MemoryManager::New<OpenGLTexture2D>(path.c_str(), AllocationType::FreeList_Renderer, path);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
@@ -26,7 +26,7 @@ namespace BaldLion
 			switch (RendererPlatformInterface::GetAPI())
 			{
 				case RendererPlatformInterface::RendererPlatform::None:			BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-				case RendererPlatformInterface::RendererPlatform::OpenGL:		return  MemoryManager::New<OpenGLTexture2D>(STRING_TO_ID(path), AllocationType::FreeList_Renderer, path, textureData, size);
+				case RendererPlatformInterface::RendererPlatform::OpenGL:		return  MemoryManager::New<OpenGLTexture2D>(path.c_str(), AllocationType::FreeList_Renderer, path, textureData, size);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
@@ -38,7 +38,7 @@ namespace BaldLion
 			switch (RendererPlatformInterface::GetAPI())
 			{
 			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererPlatformInterface::RendererPlatform::OpenGL:	return MemoryManager::New<OpenGLTextureCubemap>(STRING_TO_ID(path), AllocationType::FreeList_Renderer, path);
+			case RendererPlatformInterface::RendererPlatform::OpenGL:	return MemoryManager::New<OpenGLTextureCubemap>(path.c_str(), AllocationType::FreeList_Renderer, path);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");

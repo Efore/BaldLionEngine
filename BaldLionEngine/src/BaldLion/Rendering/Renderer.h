@@ -5,12 +5,23 @@
 #include "LightManager.h"
 #include "SkyboxPlatformInterface.h"
 #include "RendererPlatformInterface.h"
-#include "Model.h"
+#include "AnimatedModel.h"
 
 namespace BaldLion
 {
 	namespace Rendering
 	{
+		enum class RenderingGroup
+		{
+			StaticMesh,
+			DynamicMesh,
+			SkinnedMesh,
+			UI,
+			Particles,
+
+			Count
+		};
+
 		class Renderer
 		{
 		public:
@@ -43,10 +54,15 @@ namespace BaldLion
 
 			static void Draw(const VertexArray* vertexArray, Shader* shader, const glm::mat4& transform = glm::mat4(1.0f));
 
-			static void SubscribeModel(Model* model);
-			static void UnsubscribeModel(Model* model);
+			static void RegisterModel(Model* model);
+			static void UnregisterModel(Model* model);
 
 			inline static RendererPlatformInterface::RendererPlatform GetAPI() { return RendererPlatformInterface::GetAPI(); }
+
+		private:
+
+			static void AddToBatch( Mesh* mesh);
+			static void ProcessFrustrumCulling(const Camera* camera);
 
 		private:
 
@@ -56,7 +72,12 @@ namespace BaldLion
 			static TextureLibrary s_textureLibrary;
 			static RendererPlatformInterface* s_rendererPlatformInterface;
 			static SkyboxPlatformInterface* s_skyboxPlatformInterface;
-			static DynamicArray<Model*> s_modelsToRender;
+
+			static DynamicArray<Model*> s_registeredModels;
+			static DynamicArray<Mesh*> s_meshesToRender;	
+
+			static HashTable<Material*, GeometryData*> s_geometryToBatch;
+			static DynamicArray<VertexArray*> s_batchedVertexArrays;
 		};
 	}
 }

@@ -241,7 +241,7 @@ namespace BaldLion
 	template <typename T, typename AllocationType>
 	void BaldLion::Queue<T, AllocationType>::Reallocate(ui32 newCapacity)
 	{
-		T* newLocation = MemoryManager::NewArray<T>(STRING_TO_ID("Queue"), m_allocationType, newCapacity);
+		T* newLocation = MemoryManager::NewArray<T>("Queue", m_allocationType, newCapacity);
 
 		const ui32 newSize = newCapacity < m_size ? newCapacity : m_size;
 
@@ -261,7 +261,7 @@ namespace BaldLion
 	void BaldLion::Queue<T, AllocationType>::Reserve(ui32 capacity)
 	{
 		m_capacity = capacity;
-		m_elements = MemoryManager::NewArray<T>(STRING_TO_ID("Queue"), m_allocationType, capacity);
+		m_elements = MemoryManager::NewArray<T>("Queue", m_allocationType, capacity);
 	}
 
 }

@@ -21,8 +21,7 @@ namespace BaldLion
 
 		OpenGLVertexBuffer::~OpenGLVertexBuffer()
 		{
-			BL_PROFILE_FUNCTION();
-
+			BL_PROFILE_FUNCTION();			
 			glDeleteBuffers(1, &m_rendererID);
 		}
 

@@ -37,7 +37,7 @@ namespace BaldLion
 			glCreateVertexArrays(1, &m_rendererID);
 			glBindVertexArray(m_rendererID);
 			m_currentLayoutIndex = 0;
-
+			m_indexBuffer = nullptr;
 			m_vertexBuffers = DynamicArray<VertexBuffer*>(AllocationType::FreeList_Renderer, 2);
 		}
 
@@ -45,13 +45,14 @@ namespace BaldLion
 		{
 			glDeleteVertexArrays(1, &m_rendererID);
 			
+			if(m_indexBuffer) MemoryManager::Delete(m_indexBuffer);
+			
 			for (ui32 i = 0; i < m_vertexBuffers.Size(); ++i)
 			{
-				MemoryManager::DeleteNoDestructor(m_vertexBuffers[i]);
+				MemoryManager::Delete(m_vertexBuffers[i]);
 			}
 
-			MemoryManager::Delete(m_indexBuffer);
-			m_vertexBuffers.Clear();
+			m_vertexBuffers.ClearNoDestructor();
 		}
 
 		void OpenGLVertexArray::Bind() const

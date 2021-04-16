@@ -63,7 +63,7 @@ namespace BaldLion
 			glTextureStorage2D(m_depthAttachmentID, 1, GL_DEPTH24_STENCIL8, m_framebufferSpecification.Width, m_framebufferSpecification.Height);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthAttachmentID, 0);
 
-			BL_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
+			//BL_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}

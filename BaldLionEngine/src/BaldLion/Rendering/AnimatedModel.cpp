@@ -89,7 +89,7 @@ namespace BaldLion
 					bitangent.y = aimesh->mBitangents[i].y;
 				}
 
-				vertices.PushBack(Vertex({ position, color, normal, texCoord, tangent, bitangent}));
+				vertices.EmplaceBack(position, color, normal, texCoord, tangent, bitangent);
 			}
 			
 			for (unsigned int i = 0; i < aimesh->mNumFaces; i++)
@@ -179,7 +179,7 @@ namespace BaldLion
 			for (ui32 i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-				m_subMeshes.PushBack(ProcessMesh(mesh, scene));
+				m_subMeshes.PushBack(AnimatedModel::ProcessSkinnedMesh(mesh, scene, m_modelPath, m_worldTransform));
 			}
 			// then do the same for each of its children
 			for (ui32 i = 0; i < node->mNumChildren; i++)
@@ -188,15 +188,15 @@ namespace BaldLion
 			}
 		}
 
-		SkinnedMesh* AnimatedModel::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
+		SkinnedMesh* AnimatedModel::ProcessSkinnedMesh(const aiMesh *aimesh, const aiScene *aiscene, const StringId modelFolderPath, const glm::mat4& worldTransform)
 		{		
-			DynamicArray<Vertex> vertices(AllocationType::Linear_Frame, aimesh->mNumVertices);
-			DynamicArray<VertexBoneData> verticesBoneData(AllocationType::Linear_Frame, aimesh->mNumVertices);
-			DynamicArray<ui32> indices (AllocationType::Linear_Frame, aimesh->mNumVertices * 3);
-			DynamicArray<Animation::Joint> jointsData(AllocationType::FreeList_Renderer, aimesh->mNumBones);
+			DynamicArray<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
+			DynamicArray<VertexBoneData> verticesBoneData (AllocationType::Linear_Frame, aimesh->mNumVertices);
+			DynamicArray<ui32> indices (AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
+			DynamicArray<Animation::Joint> jointsData (AllocationType::FreeList_Renderer, aimesh->mNumBones);
 
-			HashTable<StringId, ui32> jointMapping (AllocationType::Linear_Frame, aimesh->mNumBones * 2);
-			HashTable<StringId, glm::mat4> jointOffsetMapping (AllocationType::Linear_Frame, aimesh->mNumBones * 2);
+			HashTable<StringId, ui32> jointMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);
+			HashTable<StringId, glm::mat4> jointOffsetMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);
 
 			verticesBoneData.Populate();
 			jointsData.Populate();
@@ -214,7 +214,7 @@ namespace BaldLion
 
 			FillVertexArrayData(aimesh, vertices, indices, jointMapping, jointOffsetMapping);
 
-			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);			
+			FillTextureData(aimesh, aiscene, modelFolderPath, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
 
 			ui32 firstID = 0;
 			FillJointData(jointMapping, jointsData, jointOffsetMapping, firstID, -1, aiscene->mRootNode);
@@ -243,9 +243,9 @@ namespace BaldLion
 
 			meshMaterial->AssignShader();
 
-			SkinnedMesh* animatedMesh = MemoryManager::New<SkinnedMesh>(STRING_TO_ID("Skinned Mesh"), AllocationType::FreeList_Renderer, meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), vertices, indices,  m_worldTransform, jointsData);
+			SkinnedMesh* animatedMesh = MemoryManager::New<SkinnedMesh>("Skinned Mesh", AllocationType::FreeList_Renderer, meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), worldTransform, jointsData);
 
-			animatedMesh->SetUpMesh(verticesBoneData);
+			animatedMesh->SetUpMesh(verticesBoneData, vertices, indices);
 
 			AnimationManager::GenerateAnimator(aiscene, jointMapping, animatedMesh);
 

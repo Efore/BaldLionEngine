@@ -182,6 +182,7 @@
     <ClInclude Include="src\BaldLion\Rendering\Camera.h" />
     <ClInclude Include="src\BaldLion\Rendering\CameraManager.h" />
     <ClInclude Include="src\BaldLion\Rendering\Framebuffer.h" />
+    <ClInclude Include="src\BaldLion\Rendering\GeometryData.h" />
     <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\BaldLion\Rendering\LightClasses\Light.h" />
     <ClInclude Include="src\BaldLion\Rendering\LightManager.h" />

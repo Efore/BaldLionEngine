@@ -3,6 +3,7 @@
 #include "VertexArray.h"
 #include "Material.h"
 #include "BaldLion/Utils/GeometryUtils.h"
+#include "GeometryData.h"
 #include <vector>
 
 namespace BaldLion
@@ -14,18 +15,24 @@ namespace BaldLion
 		class Mesh {
 
 		public:
-			Mesh(Material* material, AABB aabb, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices, const glm::mat4& worldTransform);
+			Mesh(Material* material, AABB aabb, const glm::mat4& worldTransform, bool isStatic);
 			~Mesh();
 
-			void SetUpMesh();
+			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);
 			virtual void Draw() const;
 
 			inline const Material* GetMaterial() const { return m_material; }
 			inline Material* GetMaterial() { return m_material; }
 			inline const AABB& GetAABB() const { return m_aabb; }
 
-			inline const DynamicArray<Vertex>& GetVertices() const { return m_vertices; }
-			inline const DynamicArray<ui32>& GetIndices() const { return m_indices; }
+			inline const DynamicArray<Vertex>& GetVertices() const { return m_geometryData->vertices; }
+			inline const DynamicArray<ui32>& GetIndices() const { return m_geometryData->indices; }
+
+			inline DynamicArray<Vertex>& GetVertices() { return m_geometryData->vertices; }
+			inline DynamicArray<ui32>& GetIndices() { return m_geometryData->indices; }
+
+			inline const bool GetIsStatic() const { return m_isStatic; }
+			inline const glm::mat4& GetWorldTransform() const { return m_worldTransform; }
 
 		protected:
 
@@ -33,12 +40,14 @@ namespace BaldLion
 
 		protected:
 
-			DynamicArray<Vertex> m_vertices;
-			DynamicArray<ui32> m_indices;
+			GeometryData* m_geometryData;			
 			VertexArray* m_vertexArray;
 			Material* m_material;
+
 			glm::mat4 m_worldTransform;
 			AABB m_aabb;
+
+			bool m_isStatic;
 		};
 	}
 }

@@ -37,7 +37,7 @@ public:
 
 		for (ui32 i = 0; i < 1; ++i)
 		{
-			auto model = MemoryManager::New<Rendering::AnimatedModel>(STRING_TO_ID("Animated Model"), AllocationType::FreeList_Renderer, "assets/creature/creature.fbx", initialTransform);
+			auto model = MemoryManager::New<Rendering::AnimatedModel>("Animated Model", AllocationType::FreeList_Renderer, "assets/creature/creature.fbx", initialTransform);
 			model->SetUpModel();
 			m_animatedModels.PushBack(model);
 

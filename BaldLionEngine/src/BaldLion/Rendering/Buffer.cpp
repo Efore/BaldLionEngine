@@ -18,7 +18,7 @@ namespace BaldLion
 			switch (RendererPlatformInterface::GetAPI())
 			{
 			case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererPlatformInterface::RendererPlatform::OpenGL:	return MemoryManager::New<OpenGLVertexBuffer>(STRING_TO_ID("Vertex buffer"), AllocationType::FreeList_Renderer, vertices, size);
+			case RendererPlatformInterface::RendererPlatform::OpenGL:	return MemoryManager::New<OpenGLVertexBuffer>("Vertex buffer", AllocationType::FreeList_Renderer, vertices, size);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
@@ -33,7 +33,7 @@ namespace BaldLion
 			switch (RendererPlatformInterface::GetAPI())
 			{
 				case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-				case RendererPlatformInterface::RendererPlatform::OpenGL:	return  MemoryManager::New<OpenGLIndexBuffer>(STRING_TO_ID("index buffer"), AllocationType::FreeList_Renderer, indices, count);
+				case RendererPlatformInterface::RendererPlatform::OpenGL:	return  MemoryManager::New<OpenGLIndexBuffer>("Index buffer", AllocationType::FreeList_Renderer, indices, count);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");

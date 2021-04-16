@@ -8,6 +8,7 @@ namespace BaldLion
 	{
 		class OpenGLRenderer : public RendererPlatformInterface
 		{
+		public:
 			virtual void Init() override;
 			virtual void SetViewport(ui32 x, ui32 y, ui32 width, ui32 height) override;
 
@@ -15,6 +16,9 @@ namespace BaldLion
 			virtual void Clear() override;
 
 			virtual void DrawIndexed(const VertexArray* vertexArray) override;
+
+		
+
 		};
 	}
 }

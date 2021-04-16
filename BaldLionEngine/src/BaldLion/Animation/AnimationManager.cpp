@@ -105,7 +105,7 @@ namespace BaldLion
 
 				glm::mat4 rootTransform = MathUtils::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
 
-				Animator* animator = MemoryManager::New<Animator>(STRING_TO_ID("Animator"), AllocationType::FreeList_Renderer, animatedMesh, animations, rootTransform);
+				Animator* animator = MemoryManager::New<Animator>("Animator", AllocationType::FreeList_Renderer, animatedMesh, animations, rootTransform);
 				RegisterAnimator(animator);
 			}
 		}

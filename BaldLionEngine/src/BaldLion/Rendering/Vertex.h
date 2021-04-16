@@ -18,6 +18,28 @@ namespace BaldLion
 				return &position.x;
 			}
 
+			Vertex(){}
+
+			Vertex(const glm::vec3& pos, const glm::vec3& col, const glm::vec3& nor, const glm::vec2& tCoords, const glm::vec3& tan, const glm::vec3& bitan) :
+				position(pos),
+				color(col),
+				normal(nor),
+				textCoord(tCoords),
+				tangent(tan),
+				bitangent(bitan)
+			{
+			}
+
+			Vertex(const Vertex& other) : 
+				position(other.position),
+				color(other.color),
+				normal(other.normal),
+				textCoord(other.textCoord),
+				tangent(other.tangent),
+				bitangent(other.bitangent)
+			{
+			}
+
 			Vertex& operator= (const Vertex& other)
 			{
 				position = other.position;
@@ -28,12 +50,18 @@ namespace BaldLion
 				bitangent = other.bitangent;
 
 				return *this;
+			}			
+
+			Vertex& operator* (const glm::mat4& transform)
+			{
+				position = glm::vec3(transform * glm::vec4(position, 1.0f));
+				return *this;
 			}
 
-			friend Vertex operator* (const Vertex& vertex, const glm::mat4 transform)
+			friend Vertex operator* (const Vertex& vertex, const glm::mat4& transform)
 			{
 				Vertex result = vertex;
-				result.position = glm::vec4(vertex.position,1.0f) * transform;
+				result.position = glm::vec3(transform * glm::vec4(vertex.position, 1.0f));
 				return result;
 			}
 		};	

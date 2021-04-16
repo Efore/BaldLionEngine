@@ -13,7 +13,7 @@ namespace BaldLion
 			{
 				case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
 				case RendererPlatformInterface::RendererPlatform::OpenGL:	
-					return MemoryManager::New<OpenGLMaterial>(STRING_TO_ID("Material " + matName),AllocationType::FreeList_Renderer, matName, materialProperties);
+					return MemoryManager::New<OpenGLMaterial>(std::string("Material " + matName).c_str(),AllocationType::FreeList_Renderer, matName, materialProperties);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");

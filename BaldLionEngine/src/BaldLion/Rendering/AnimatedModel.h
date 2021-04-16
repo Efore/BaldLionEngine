@@ -16,28 +16,28 @@ namespace BaldLion
 
 			virtual void Draw() const override;		
 
-		private:			
+		protected:			
 
 			using Model::ProcessMesh;
 			using Model::FillVertexArrayData;
 
 			virtual void ProcessNode(const aiNode *node, const aiScene *scene) override;
-			SkinnedMesh* ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene);
+			static SkinnedMesh* ProcessSkinnedMesh(const aiMesh *aimesh, const aiScene *aiscene, const StringId modelFolderPath, const glm::mat4& worldTransform);
 
-			void FillJointData(HashTable<StringId, ui32>& jointMapping,
+			static void FillJointData(HashTable<StringId, ui32>& jointMapping,
 				DynamicArray<Animation::Joint>& jointData,
 				const HashTable<StringId, glm::mat4>& jointOffsetMapping,
 				ui32& currentID, 
 				const int32_t parentID, 
 				const aiNode* node);
 
-			void FillVertexArrayData(const aiMesh *aimesh, 
+			static void FillVertexArrayData(const aiMesh *aimesh,
 				DynamicArray<Vertex>& vertices,
 				DynamicArray<ui32>& indices,
 				HashTable<StringId, ui32>& jointMap,
 				HashTable<StringId, glm::mat4>& jointOffsetMapping);
 
-			void FillVertexWeightData(const aiMesh* aimesh, 
+			static void FillVertexWeightData(const aiMesh* aimesh,
 				const HashTable<StringId, ui32>& jointMapping,
 				DynamicArray<VertexBoneData>& verticesBoneData);			
 		};

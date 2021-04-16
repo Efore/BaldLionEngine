@@ -7,8 +7,8 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		SkinnedMesh::SkinnedMesh(Material* material, GeometryUtils::AABB aabb, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices, const glm::mat4& worldTransform, const DynamicArray<Animation::Joint>& joints)
-			: Mesh(material,aabb, vertices, indices, worldTransform), m_joints(std::move(joints))
+		SkinnedMesh::SkinnedMesh(Material* material, GeometryUtils::AABB aabb, const glm::mat4& worldTransform, const DynamicArray<Animation::Joint>& joints)
+			: Mesh(material,aabb, worldTransform, false), m_joints(std::move(joints))
 		{
 			
 		}
@@ -18,19 +18,21 @@ namespace BaldLion
 			VertexArray::Destroy(m_vertexArray);
 		}
 
-		void SkinnedMesh::SetUpMesh(const DynamicArray<VertexBoneData>& verticesBoneData)
+		void SkinnedMesh::SetUpMesh(const DynamicArray<VertexBoneData>& verticesBoneData, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices)
 		{
 			BL_PROFILE_FUNCTION();
+
+			m_geometryData = MemoryManager::New<GeometryData>("Geometry data", AllocationType::FreeList_Renderer, vertices, indices, m_worldTransform);
 
 			m_aabb = RecalculateAABB();
 			m_vertexArray = VertexArray::Create();
 
 			//Setting index buffer
-			IndexBuffer* indexBuffer = (IndexBuffer::Create(&m_indices[0], (ui32)m_indices.Size()));
+			IndexBuffer* indexBuffer = (IndexBuffer::Create(&m_geometryData->indices[0], (ui32)m_geometryData->indices.Size()));
 			m_vertexArray->AddIndexBuffer(indexBuffer);
 
 			//Setting vertex buffer
-			VertexBuffer* vertexBuffer = VertexBuffer::Create(m_vertices[0].GetFirstElement(), (ui32)(m_vertices.Size() * sizeof(Vertex)));
+			VertexBuffer* vertexBuffer = VertexBuffer::Create(m_geometryData->vertices[0].GetFirstElement(), (ui32)(m_geometryData->vertices.Size() * sizeof(Vertex)));
 
 			vertexBuffer->SetLayout({
 				{ ShaderDataType::Float3,	"vertex_position"},

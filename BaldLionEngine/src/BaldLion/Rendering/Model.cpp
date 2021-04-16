@@ -67,7 +67,7 @@ namespace BaldLion
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 				
-				m_subMeshes.PushBack(ProcessMesh(mesh, scene));
+				m_subMeshes.PushBack(Model::ProcessMesh(mesh, scene, m_modelPath, m_worldTransform));
 			}
 			// then do the same for each of its children
 			for (ui32 i = 0; i < node->mNumChildren; i++)
@@ -123,7 +123,7 @@ namespace BaldLion
 					bitangent.y = aimesh->mBitangents[i].y;
 				}
 
-				vertices.PushBack(Vertex{ position, color, normal, texCoord, tangent, bitangent });
+				vertices.EmplaceBack(position, color, normal, texCoord, tangent, bitangent);
 			}
 
 			for (ui32 i = 0; i < aimesh->mNumFaces; i++)
@@ -136,6 +136,7 @@ namespace BaldLion
 
 		void Model::FillTextureData(const aiMesh *aimesh, 
 			const aiScene *aiscene, 
+			const StringId modelFolderPath,
 			aiColor3D& ambientColor, 
 			aiColor3D& diffuseColor, 
 			aiColor3D& specularColor, 
@@ -159,7 +160,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(m_modelFolderPath);
+				completeTexPath = ID_TO_STRING(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -176,7 +177,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(m_modelFolderPath);
+				completeTexPath = ID_TO_STRING(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -193,7 +194,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(m_modelFolderPath);
+				completeTexPath = ID_TO_STRING(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -210,7 +211,8 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_EMISSIVE) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(m_modelFolderPath);
+				
+				completeTexPath = ID_TO_STRING(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -227,7 +229,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(m_modelFolderPath);
+				completeTexPath = ID_TO_STRING(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -242,7 +244,7 @@ namespace BaldLion
 			}
 		}
 
-		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene)
+		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene, const StringId modelFolderPath, const glm::mat4& worldTransform )
 		{
 			DynamicArray<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
 			DynamicArray<ui32> indices(AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
@@ -260,7 +262,7 @@ namespace BaldLion
 			Texture* emissiveTex = nullptr;
 			Texture* normalTex = nullptr;
 
-			FillTextureData(aimesh, aiscene, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
+			FillTextureData(aimesh, aiscene, modelFolderPath, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
 
 			Material* meshMaterial = MaterialLibrary::Load(
 				aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data,
@@ -284,8 +286,8 @@ namespace BaldLion
 
 			meshMaterial->AssignShader();
 
-			Mesh* mesh = MemoryManager::New<Mesh>(STRING_TO_ID("Mesh"), AllocationType::FreeList_Renderer,  meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), vertices, indices, m_worldTransform);			
-			mesh->SetUpMesh();
+			Mesh* mesh = MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer,  meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), worldTransform, true);
+			mesh->SetUpMesh(vertices, indices);
 
 			return mesh;
 		}

@@ -31,8 +31,10 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
+			glDepthMask(GL_TRUE);
 			glClearDepth(1.0f);
 			glClearColor(color.r, color.g, color.b, color.a);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 
 		void OpenGLRenderer::Clear()

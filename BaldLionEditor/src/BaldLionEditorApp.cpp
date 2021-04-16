@@ -29,7 +29,7 @@ namespace BaldLion
 			BaldLionEditorApp(const std::string& applicationName) : Application(applicationName)
 			{
 				Animation::AnimationManager::Init();
-				m_baldLionEditorLayer = MemoryManager::New< BaldLionEditorLayer>(STRING_TO_ID("BaldLionEditorLayer"), AllocationType::FreeList_Main);
+				m_baldLionEditorLayer = MemoryManager::New<BaldLionEditorLayer>("BaldLionEditorLayer", AllocationType::FreeList_Main);
 				PushLayer(m_baldLionEditorLayer);
 			}
 

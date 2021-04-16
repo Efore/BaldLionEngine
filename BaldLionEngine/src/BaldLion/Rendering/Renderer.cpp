@@ -14,7 +14,12 @@ namespace BaldLion
 		TextureLibrary Renderer::s_textureLibrary;
 		RendererPlatformInterface* Renderer::s_rendererPlatformInterface;
 		SkyboxPlatformInterface* Renderer::s_skyboxPlatformInterface;
-		DynamicArray<Model*> Renderer::s_modelsToRender; 
+
+		DynamicArray<Model*> Renderer::s_registeredModels; 
+		DynamicArray<Mesh*> Renderer::s_meshesToRender;
+
+		HashTable<Material*, GeometryData*> Renderer::s_geometryToBatch;		
+		DynamicArray<VertexArray*> Renderer::s_batchedVertexArrays;
 
 		void Renderer::Init()
 		{
@@ -24,13 +29,13 @@ namespace BaldLion
 			s_textureLibrary.Init();
 			s_shaderLibrary.Init();
 
-			s_rendererPlatformInterface = MemoryManager::New<OpenGLRenderer>(STRING_TO_ID("Renderer Platform interface"), AllocationType::FreeList_Renderer);
+			s_rendererPlatformInterface = MemoryManager::New<OpenGLRenderer>("Renderer Platform interface", AllocationType::FreeList_Renderer);
 			s_rendererPlatformInterface->Init();
 
-			s_skyboxPlatformInterface = MemoryManager::New<OpenGLSkybox>(STRING_TO_ID("Skybox Platform interface"), AllocationType::FreeList_Renderer);
+			s_skyboxPlatformInterface = MemoryManager::New<OpenGLSkybox>("Skybox Platform interface", AllocationType::FreeList_Renderer);
 			s_skyboxPlatformInterface->Init("assets/textures/skybox/skybox.jpg");
 
-			s_modelsToRender = DynamicArray<Model*>(AllocationType::FreeList_Renderer, 500);			
+			s_registeredModels = DynamicArray<Model*>(AllocationType::FreeList_Renderer, 500);				
 
 			LightManager::Init();
 		}
@@ -43,7 +48,7 @@ namespace BaldLion
 			MaterialLibrary::Clear();
 			s_shaderLibrary.Clear();
 			s_textureLibrary.Clear();
-			s_modelsToRender.Clear();
+			s_registeredModels.Clear();
 		}
 
 		void Renderer::OnWindowResize(ui32 width, ui32 height)
@@ -62,24 +67,65 @@ namespace BaldLion
 			s_sceneData.cameraPosition = camera->GetPosition();
 			
 			LightManager::BeginScene(directionalLight);
+
+			s_renderStats.drawCalls = 0;
+			s_renderStats.vertices = 0;
+
+			ProcessFrustrumCulling(camera);
 		}
 
 		void Renderer::DrawScene(const Camera* camera)
 		{
-			for (ui32 i = 0; i < s_modelsToRender.Size(); ++i)
+			BL_PROFILE_FUNCTION();
+
+			if (s_geometryToBatch.Size() > 0)
 			{
-				for (ui32 j = 0; j < s_modelsToRender[i]->GetSubMeshes().Size(); ++j)
-				{
-					if (camera->IsAABBVisible(s_modelsToRender[i]->GetSubMeshes()[j]->GetAABB()))
-					{
-						s_modelsToRender[i]->GetSubMeshes()[j]->Draw();
-					}
+				s_batchedVertexArrays = DynamicArray<VertexArray*>(AllocationType::FreeList_Renderer, s_geometryToBatch.Size());
+
+				//Draw batches
+				for (HashTable<Material*, GeometryData*>::Iterator iterator = s_geometryToBatch.Begin(); iterator != s_geometryToBatch.End(); ++iterator)
+				{  
+					VertexArray* vertexArray = VertexArray::Create();
+
+					IndexBuffer* indexBuffer = IndexBuffer::Create(&iterator.GetValue()->indices[0], (ui32)iterator.GetValue()->indices.Size());
+					VertexBuffer* vertexBuffer = VertexBuffer::Create(iterator.GetValue()->vertices[0].GetFirstElement(), (ui32)(iterator.GetValue()->vertices.Size() * sizeof(Vertex)));
+
+					vertexBuffer->SetLayout({
+						{ ShaderDataType::Float3, "vertex_position"},
+						{ ShaderDataType::Float3, "vertex_color"},
+						{ ShaderDataType::Float3, "vertex_normal"},
+						{ ShaderDataType::Float2, "vertex_texcoord"},
+						{ ShaderDataType::Float3, "vertex_tangent"},
+						{ ShaderDataType::Float3, "vertex_bitangent"}
+					});
+
+					vertexArray->AddIndexBuffer(indexBuffer);
+					vertexArray->AddVertexBuffer(vertexBuffer);
+
+					const Material* mat = iterator.GetKey();	
+
+					mat->Bind();
+					Draw(vertexArray, mat->GetShader());
+					mat->Unbind();
+
+					s_batchedVertexArrays.PushBack(vertexArray);
 				}
+			}
+
+			for (ui32 i = 0; i < s_meshesToRender.Size(); ++i)
+			{
+				s_meshesToRender[i]->Draw();
 			}
 		}
 
 		void Renderer::EndScene()
-		{
+		{	
+			for (ui32 i = 0; i < s_batchedVertexArrays.Size(); ++i)
+			{
+				VertexArray::Destroy(s_batchedVertexArrays[i]);
+			}
+			s_batchedVertexArrays.ClearNoDestructor();
+
 			s_skyboxPlatformInterface->Draw();
 		}
 
@@ -104,21 +150,77 @@ namespace BaldLion
 			s_renderStats.vertices += vertexArray->GetIndexBuffer()->GetCount();
 		}
 
-		void Renderer::SubscribeModel(Model* model)
+		void Renderer::ProcessFrustrumCulling(const Camera* camera)
 		{
-			if (!s_modelsToRender.Contains(model))
+			BL_PROFILE_FUNCTION();
+
+			s_meshesToRender = DynamicArray<Mesh*>(AllocationType::Linear_Frame, s_registeredModels.Size());
+			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::Linear_Frame, s_registeredModels.Size());
+
+			for (ui32 i = 0; i < s_registeredModels.Size(); ++i)
 			{
-				s_modelsToRender.PushBack(model);
+				for (ui32 j = 0; j < s_registeredModels[i]->GetSubMeshes().Size(); ++j)
+				{
+					if (camera->IsAABBVisible(s_registeredModels[i]->GetSubMeshes()[j]->GetAABB()))
+					{
+						if (s_registeredModels[i]->GetSubMeshes()[j]->GetIsStatic())
+							AddToBatch(s_registeredModels[i]->GetSubMeshes()[j]);
+						else
+							s_meshesToRender.PushBack(s_registeredModels[i]->GetSubMeshes()[j]);
+					}
+				}
 			}
 		}
 
-		void Renderer::UnsubscribeModel(Model* model)
+		void Renderer::AddToBatch(Mesh* mesh)
 		{
-			if (s_modelsToRender.Contains(model))
+			BL_PROFILE_FUNCTION();
+
+			GeometryData* batch = nullptr;
+			
+			if (!s_geometryToBatch.Contains(mesh->GetMaterial()))
 			{
-				s_modelsToRender.RemoveFast(model);
+				BL_PROFILE_SCOPE("Emplace material for batch", Optick::Category::Rendering);
+				batch = MemoryManager::New<GeometryData>("Batch", AllocationType::Linear_Frame, AllocationType::Linear_Frame, mesh->GetVertices().Size() * 100, mesh->GetIndices().Size() * 100, mesh->GetWorldTransform());
+				s_geometryToBatch.Emplace(mesh->GetMaterial(), std::move(batch));				
+			}
+			else
+			{	
+				batch = s_geometryToBatch.Get(mesh->GetMaterial());
+			}
+
+			{
+				BL_PROFILE_SCOPE("Add vertices and indices", Optick::Category::Rendering);
+				ui32 verticesInBatch = batch->vertices.Size();
+
+				for (ui32 i = 0; i < mesh->GetVertices().Size(); ++i)
+				{
+					Vertex batchedVertex = mesh->GetVertices()[i];
+					batchedVertex.position = glm::vec3(mesh->GetWorldTransform() * glm::vec4(batchedVertex.position,1.0f));
+					batch->vertices.PushBack(batchedVertex);
+				}
+				
+				for (ui32 i = 0; i < mesh->GetIndices().Size(); ++i)
+				{
+					batch->indices.EmplaceBack(mesh->GetIndices()[i] + verticesInBatch);
+				}
 			}
 		}
 
+		void Renderer::RegisterModel(Model* model)
+		{
+			if (!s_registeredModels.Contains(model))
+			{
+				s_registeredModels.PushBack(model);
+			}
+		}
+
+		void Renderer::UnregisterModel(Model* model)
+		{
+			if (s_registeredModels.Contains(model))
+			{
+				s_registeredModels.RemoveFast(model);
+			}
+		}
 	}
 }

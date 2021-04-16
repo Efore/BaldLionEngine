@@ -12,10 +12,10 @@ namespace BaldLion
 
 		public:
 
-			SkinnedMesh(Material* material, GeometryUtils::AABB aabb, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices, const glm::mat4& worldTransform, const DynamicArray<Animation::Joint>& joint);
+			SkinnedMesh(Material* material, GeometryUtils::AABB aabb, const glm::mat4& worldTransform, const DynamicArray<Animation::Joint>& joint);
 			~SkinnedMesh();
 
-			void SetUpMesh(const DynamicArray<VertexBoneData>& verticesBoneData);			
+			void SetUpMesh(const DynamicArray<VertexBoneData>& verticesBoneData, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);
 
 			virtual void Draw() const override;
 
