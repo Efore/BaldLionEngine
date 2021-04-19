@@ -2,7 +2,7 @@
 
 #include "optick.h"
 
-#define PROFILE 1
+#define PROFILE 0
 
 #if PROFILE
 #define BL_PROFILE_FRAME() OPTICK_FRAME("Main thread")
@@ -16,7 +16,7 @@
 #define BL_PROFILE_SCOPE(Name, Category) 
 #endif
 
-#define DEEP_PROFILE 0
+#define DEEP_PROFILE 1
 
 #if DEEP_PROFILE
 	#define BL_DEEP_PROFILE_FUNCTION() BL_PROFILE_FUNCTION()

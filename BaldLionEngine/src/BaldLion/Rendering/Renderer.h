@@ -57,12 +57,13 @@ namespace BaldLion
 			static void RegisterModel(Model* model);
 			static void UnregisterModel(Model* model);
 
+			static void ProcessFrustrumCulling(const Camera* camera);
+
 			inline static RendererPlatformInterface::RendererPlatform GetAPI() { return RendererPlatformInterface::GetAPI(); }
 
 		private:
 
 			static void AddToBatch( Mesh* mesh);
-			static void ProcessFrustrumCulling(const Camera* camera);
 
 		private:
 
@@ -78,6 +79,9 @@ namespace BaldLion
 
 			static HashTable<Material*, GeometryData*> s_geometryToBatch;
 			static DynamicArray<VertexArray*> s_batchedVertexArrays;
+
+			static std::mutex s_geometryToBatchMutex;
+			static std::mutex s_meshesToRenderMutex;
 		};
 	}
 }

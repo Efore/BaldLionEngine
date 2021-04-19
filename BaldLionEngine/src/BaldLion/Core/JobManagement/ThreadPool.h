@@ -5,6 +5,7 @@
 #include <functional>
 #include <type_traits>
 #include <mutex>
+#include <unordered_map>
 
 #include "BaldLion/Core/Containers/DynamicArray.h"
 #include "BaldLion/Core/Containers/Queue.h"

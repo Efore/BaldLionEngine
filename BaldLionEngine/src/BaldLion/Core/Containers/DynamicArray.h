@@ -64,7 +64,7 @@ namespace BaldLion
 		const T& operator[](size_t index) const {
 			BL_ASSERT(index < m_size, "Index is bigger than size");
 			return index > (m_size - 1) ? Back() : m_elements[index];
-		}
+		}		
 
 		DynamicArray<T, AllocationType>& operator= (const DynamicArray<T, AllocationType>& other);
 		DynamicArray<T, AllocationType>& operator= (DynamicArray<T, AllocationType>&& other) noexcept;

@@ -3,6 +3,9 @@
 
 #include "Platform/OpenGL/OpenGLRenderer.h"
 #include "Platform/OpenGL/OpenGLSkybox.h"
+#include "BaldLion/Core/JobManagement/JobManager.h"
+
+const ui32 maxModelsToProcess = 5u;
 
 namespace BaldLion
 {
@@ -20,6 +23,9 @@ namespace BaldLion
 
 		HashTable<Material*, GeometryData*> Renderer::s_geometryToBatch;		
 		DynamicArray<VertexArray*> Renderer::s_batchedVertexArrays;
+
+		std::mutex Renderer::s_geometryToBatchMutex;
+		std::mutex Renderer::s_meshesToRenderMutex;
 
 		void Renderer::Init()
 		{
@@ -70,8 +76,6 @@ namespace BaldLion
 
 			s_renderStats.drawCalls = 0;
 			s_renderStats.vertices = 0;
-
-			ProcessFrustrumCulling(camera);
 		}
 
 		void Renderer::DrawScene(const Camera* camera)
@@ -150,6 +154,7 @@ namespace BaldLion
 			s_renderStats.vertices += vertexArray->GetIndexBuffer()->GetCount();
 		}
 
+
 		void Renderer::ProcessFrustrumCulling(const Camera* camera)
 		{
 			BL_PROFILE_FUNCTION();
@@ -157,31 +162,59 @@ namespace BaldLion
 			s_meshesToRender = DynamicArray<Mesh*>(AllocationType::Linear_Frame, s_registeredModels.Size());
 			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::Linear_Frame, s_registeredModels.Size());
 
-			for (ui32 i = 0; i < s_registeredModels.Size(); ++i)
+			const ui32 numOfTasks = glm::ceil(s_registeredModels.Size() / maxModelsToProcess);
+			ui32 currentModelIndex = 0;
+
+			for (ui32 iTask = 0; iTask < numOfTasks; ++iTask)
 			{
-				for (ui32 j = 0; j < s_registeredModels[i]->GetSubMeshes().Size(); ++j)
+				JobManagement::Job processFrustrumCulling(("ProcessFrustrumCulling" + std::to_string(iTask)).c_str());
+				const ui32 nextTaskIndex = ((currentModelIndex + maxModelsToProcess) > s_registeredModels.Size()) ? s_registeredModels.Size() : currentModelIndex + maxModelsToProcess;
+
+				processFrustrumCulling.Task = [currentModelIndex, nextTaskIndex, camera]
 				{
-					if (camera->IsAABBVisible(s_registeredModels[i]->GetSubMeshes()[j]->GetAABB()))
+					BL_PROFILE_SCOPE("ProcessFrustrumCulling", Optick::Category::Rendering);
+					for (ui32 i = currentModelIndex; i < nextTaskIndex; ++i)
 					{
-						if (s_registeredModels[i]->GetSubMeshes()[j]->GetIsStatic())
-							AddToBatch(s_registeredModels[i]->GetSubMeshes()[j]);
-						else
-							s_meshesToRender.PushBack(s_registeredModels[i]->GetSubMeshes()[j]);
+						for (ui32 j = 0; j < s_registeredModels[i]->GetSubMeshes().Size(); ++j)
+						{
+							if (camera->IsAABBVisible(s_registeredModels[i]->GetSubMeshes()[j]->GetAABB()))
+							{
+								if (s_registeredModels[i]->GetSubMeshes()[j]->GetIsStatic())
+								{
+									std::lock_guard<std::mutex> frustrumCullingGuard(s_geometryToBatchMutex);
+									AddToBatch(s_registeredModels[i]->GetSubMeshes()[j]);
+								}
+								else
+								{
+									std::lock_guard<std::mutex> frustrumCullingGuard(s_meshesToRenderMutex);
+									s_meshesToRender.PushBack(s_registeredModels[i]->GetSubMeshes()[j]);
+								}
+							}
+						}
 					}
-				}
+				};
+
+				currentModelIndex = nextTaskIndex;
+
+				JobManagement::JobManager::QueueJob(processFrustrumCulling);
 			}
+
 		}
 
 		void Renderer::AddToBatch(Mesh* mesh)
 		{
-			BL_PROFILE_FUNCTION();
+			BL_PROFILE_FUNCTION();		
 
 			GeometryData* batch = nullptr;
 			
 			if (!s_geometryToBatch.Contains(mesh->GetMaterial()))
 			{
 				BL_PROFILE_SCOPE("Emplace material for batch", Optick::Category::Rendering);
-				batch = MemoryManager::New<GeometryData>("Batch", AllocationType::Linear_Frame, AllocationType::Linear_Frame, mesh->GetVertices().Size() * 100, mesh->GetIndices().Size() * 100, mesh->GetWorldTransform());
+
+				batch = MemoryManager::New<GeometryData>("Batch", AllocationType::Linear_Frame);
+				batch->vertices = DynamicArray<Vertex>(AllocationType::Linear_Frame, mesh->GetVertices().Size() * 100);
+				batch->indices = DynamicArray<ui32>(AllocationType::Linear_Frame, batch->vertices.Capacity() * 2);
+
 				s_geometryToBatch.Emplace(mesh->GetMaterial(), std::move(batch));				
 			}
 			else
@@ -191,16 +224,19 @@ namespace BaldLion
 
 			{
 				BL_PROFILE_SCOPE("Add vertices and indices", Optick::Category::Rendering);
-				ui32 verticesInBatch = batch->vertices.Size();
 
-				for (ui32 i = 0; i < mesh->GetVertices().Size(); ++i)
+				const ui32 verticesInBatch = batch->vertices.Size();
+				const ui32 numVertices = mesh->GetVertices().Size(); 
+
+				for (ui32 i = 0; i < numVertices; ++i)
 				{
-					Vertex batchedVertex = mesh->GetVertices()[i];
-					batchedVertex.position = glm::vec3(mesh->GetWorldTransform() * glm::vec4(batchedVertex.position,1.0f));
-					batch->vertices.PushBack(batchedVertex);
+					Vertex batchedVertex = mesh->GetVertices()[i];						
+					batchedVertex.position = glm::vec3(mesh->GetWorldTransform() * glm::vec4(batchedVertex.position, 1.0f));					
+					batch->vertices.EmplaceBack(batchedVertex);
 				}
 				
-				for (ui32 i = 0; i < mesh->GetIndices().Size(); ++i)
+				const ui32 numIndices = mesh->GetIndices().Size();
+				for (ui32 i = 0; i < numIndices; ++i)
 				{
 					batch->indices.EmplaceBack(mesh->GetIndices()[i] + verticesInBatch);
 				}

@@ -109,7 +109,7 @@ namespace BaldLion
 
 		private:						
 			void Reallocate(ui32 capacity);
-			bool CheckContains(hashType hashedKey) const;
+			i32 FindIndex(hashType hashedKey) const;
 			ui32 FindFirstElementIndex();
 
 		private:
@@ -144,11 +144,11 @@ namespace BaldLion
 	bool BaldLion::HashTable<K, V>::Contains(const K& key) const
 	{
 		const hashType hashedKey = std::hash<K>()(key);
-		return CheckContains(hashedKey);
+		return FindIndex(hashedKey) != -1;
 	}
 
 	template <typename K, typename V>	
-	bool BaldLion::HashTable<K, V>::CheckContains(hashType hashedKey) const
+	i32 BaldLion::HashTable<K, V>::FindIndex(hashType hashedKey) const
 	{
 		const hashType tableIndex = hashedKey % m_capacity;
 
@@ -156,9 +156,9 @@ namespace BaldLion
 
 		while (index < m_capacity)
 		{
-			if (m_table[index].hashedKey == hashedKey)
+			if (m_table[index].hashedKey == hashedKey && m_table[index].used)
 			{
-				return true;
+				return (i32)index;
 			}
 			else
 			{
@@ -169,9 +169,9 @@ namespace BaldLion
 		index = 0;
 		while (index < tableIndex)
 		{
-			if (m_table[index].hashedKey == hashedKey)
+			if (m_table[index].hashedKey == hashedKey && m_table[index].used)
 			{
-				return true;
+				return (i32)index;
 			}
 			else
 			{
@@ -179,22 +179,16 @@ namespace BaldLion
 			}
 		}
 
-		return false;
+		return -1;
 	}
 
 	template <typename K, typename V>
 	V& BaldLion::HashTable<K, V>::Get(const K& key)
 	{
-		BL_ASSERT(Contains(key), "Key not contained");
-
 		const hashType hashedKey = std::hash<K>()(key);
+		const i32 tableIndex = FindIndex(hashedKey);
 
-		hashType tableIndex = hashedKey % m_capacity;
-
-		while (m_table[tableIndex].hashedKey != hashedKey)
-		{
-			tableIndex = (tableIndex + 1) % m_capacity;
-		}
+		BL_ASSERT(tableIndex >= 0, "Key not contained");
 
 		return m_table[tableIndex].nodeValue;
 	}
@@ -202,16 +196,10 @@ namespace BaldLion
 	template <typename K, typename V>
 	const V& BaldLion::HashTable<K, V>::Get(const K& key) const
 	{
-		BL_ASSERT(Contains(key), "Key not contained");
-		
 		const hashType hashedKey = std::hash<K>()(key);
+		const i32 tableIndex = FindIndex(hashedKey);
 
-		hashType tableIndex = hashedKey % m_capacity;
-
-		while (m_table[tableIndex].hashedKey != hashedKey)
-		{
-			tableIndex = (tableIndex + 1) % m_capacity;
-		}
+		BL_ASSERT(tableIndex >= 0, "Key not contained");
 
 		return m_table[tableIndex].nodeValue;
 	}
@@ -219,16 +207,10 @@ namespace BaldLion
 	template <typename K, typename V>
 	void BaldLion::HashTable<K, V>::Set(const K& key, V&& value) noexcept
 	{
-		BL_ASSERT(Contains(key), "Key not contained");
-
 		const hashType hashedKey = std::hash<K>()(key);
+		const i32 tableIndex = FindIndex(hashedKey);
 
-		hashType tableIndex = hashedKey % m_capacity;
-
-		while (m_table[tableIndex].hashedKey != hashedKey)
-		{
-			tableIndex = (tableIndex + 1) % m_capacity;
-		}
+		BL_ASSERT(tableIndex >= 0, "Key not contained");
 
 		m_table[tableIndex].nodeValue = std::move(value);
 	}
@@ -236,16 +218,10 @@ namespace BaldLion
 	template <typename K, typename V>
 	void BaldLion::HashTable<K, V>::Set(const K& key, V value)
 	{
-		BL_ASSERT(Contains(key), "Key not contained");
-
 		const hashType hashedKey = std::hash<K>()(key);
+		const i32 tableIndex = FindIndex(hashedKey);
 
-		hashType tableIndex = hashedKey % m_capacity;
-
-		while (m_table[tableIndex].hashedKey != hashedKey)
-		{
-			tableIndex = (tableIndex + 1) % m_capacity;
-		}
+		BL_ASSERT(tableIndex >= 0, "Key not contained");
 
 		m_table[tableIndex].nodeValue = value;
 	}
@@ -254,8 +230,10 @@ namespace BaldLion
 	void BaldLion::HashTable<K, V>::Emplace(const K& key, V&& value) noexcept
 	{
 		const float ratio = (float)(++m_size) / (float)(m_capacity);
+
 		if (ratio > 0.5f)
 		{
+			//BL_LOG_CORE_INFO("Need reallocation");
 			Reallocate((ui32)(m_capacity * 1.5f));
 			m_lastElementIndex = m_table.Capacity();
 		}
@@ -267,6 +245,8 @@ namespace BaldLion
 		{
 			tableIndex = (tableIndex + 1) % m_capacity;
 		}
+
+		//BL_LOG_CORE_INFO("found free node");
 
 		HashNode<K,V>& node = m_table[tableIndex];
 		node.used = true;
@@ -281,63 +261,24 @@ namespace BaldLion
 	template <typename K, typename V>
 	bool BaldLion::HashTable<K, V>::Remove(const K& key)
 	{
-		if (!Contains(key))
-			return false;
-
 		const hashType hashedKey = std::hash<K>()(key);
-		const hashType tableIndex = hashedKey % m_capacity;
+		const i32 tableIndex = FindIndex(hashedKey);
+
+		if (tableIndex < 0)
+			return false;
 		
-		hashType index = tableIndex;
+		m_table[tableIndex].used = false;
+		m_table[tableIndex].nodeValue.~V();
+		--m_size;
 
-		while (index < m_capacity )
+		if (tableIndex == m_firstElementIndex)
 		{
-			if (m_table[index].hashedKey == hashedKey)
-			{
-				m_table[tableIndex].used = false;
-				m_table[tableIndex].nodeValue.~V();
-				--m_size;
-
-				if (tableIndex == m_firstElementIndex)
-				{
-					m_firstElementIndex = FindFirstElementIndex();
-				}
-
-				
-				m_lastElementIndex = m_table.Capacity();				
-
-				return true;
-			}
-			else
-			{
-				++index;
-			}
+			m_firstElementIndex = FindFirstElementIndex();
 		}
 
-		index = 0;
-		while (index < tableIndex)
-		{
-			if (m_table[index].hashedKey == hashedKey)
-			{
-				m_table[tableIndex].used = false;
-				m_table[tableIndex].nodeValue.~V();
-				--m_size;
+		m_lastElementIndex = m_table.Capacity();
 
-				if (tableIndex == m_firstElementIndex)
-				{
-					m_firstElementIndex = FindFirstElementIndex();
-				}
-				
-				m_lastElementIndex = m_table.Capacity();
-
-				return true;
-			}
-			else
-			{
-				++index;
-			}
-		}
-
-		return false;
+		return true;
 	}
 
 	template <typename K, typename V>
@@ -359,19 +300,12 @@ namespace BaldLion
 	template <typename K, typename V>
 	ui32 BaldLion::HashTable<K, V>::IndexOf(const K& key) const
 	{
-		BL_ASSERT(Contains(key), "Key not contained");
-
 		const hashType hashedKey = std::hash<K>()(key);
+		const i32 tableIndex = FindIndex(hashedKey);
 
-		ui32 currentIndex = 0;
-		for (ui32 i = 0; i < m_table.Size(); ++i)
-		{
-			if (m_table[i].hashedKey == hashedKey)
-				return currentIndex;
+		BL_ASSERT(tableIndex >= 0, "Key not contained");
 
-			if (m_table[i].used)
-				++currentIndex;
-		}
+		return (ui32)tableIndex;
 	}
 
 	template <typename K, typename V>
