@@ -1,3 +1,10 @@
+/*****************************************************************//**
+ * \file   AnimationManager.h
+ * \brief  This Manager manages the animations for the registered animators
+ * 
+ * \author Iván León Santiago
+ * \date   April 2021
+ *********************************************************************/
 #pragma once
 #include "Animator.h"
 #include <vector>

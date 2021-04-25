@@ -1,3 +1,11 @@
+/*****************************************************************//**
+ * \file   AnimationManager.cpp
+ * \brief  Definition for AnimationManager's methods
+ * 
+ * \author Iván León Santiago
+ * \date   April 2021
+ *********************************************************************/
+
 #include "blpch.h"
 #include "AnimationManager.h"
 #include "BaldLion/Core/JobManagement/JobManager.h"
@@ -44,28 +52,21 @@ namespace BaldLion
 			if (s_registeredAnimators.Size() == 0)
 				return;
 
-			JobManagement::Job animationParallelUpdate("AnimationManagerParallelUpdate",0u, s_registeredAnimators.Size());			
-			paralellJobID = animationParallelUpdate.JobID;
+			for (ui32 i = 0; i < s_registeredAnimators.Size(); ++i)
+			{
+				Animator* animatorToUpdate = s_registeredAnimators[i];
 
-			animationParallelUpdate.Task = [paralellJobID, timeStep] {
+				const std::string animatorName = "Animator" + std::to_string(i);
 
-				for (ui32 i = 0; i < s_registeredAnimators.Size(); ++i)
-				{
-					Animator* animatorToUpdate = s_registeredAnimators[i];
+				JobManagement::Job animationJob(animatorName.c_str());
+				animationJob.Task = [animatorToUpdate, timeStep] {
+					BL_PROFILE_SCOPE("AnimationManager::OnUpdateAnimation", Optick::Category::Animation);
+					animatorToUpdate->OnUpdate(timeStep);
+				};
 
-					const std::string animatorName = "Animator" + std::to_string(i);
+				JobManagement::JobManager::QueueJob(animationJob);
+			}			
 
-					JobManagement::Job animationJob(animatorName.c_str(), paralellJobID);
-					animationJob.Task = [animatorToUpdate, timeStep] { 
-						BL_PROFILE_SCOPE("AnimationManager::OnUpdateAnimation", Optick::Category::Animation);
-						animatorToUpdate->OnUpdate(timeStep); 
-					};
-
-					JobManagement::JobManager::QueueJob(animationJob);
-				}
-			};
-
-			JobManagement::JobManager::QueueJob(animationParallelUpdate);
 		}
 
 		void AnimationManager::GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping, SkinnedMesh* animatedMesh)

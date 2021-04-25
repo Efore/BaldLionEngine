@@ -3,15 +3,15 @@
 
 namespace BaldLion
 {
-	template <typename T, typename AllocationType = Memory::AllocationType>
+	template <typename T>
 	class Queue
 	{
 	public:
 		Queue();
 		Queue(Memory::AllocationType allocationType, ui32 capacity);
-		Queue(Memory::AllocationType allocationType, const Queue<T, AllocationType>& other);
-		Queue(const Queue<T, AllocationType>& other);
-		Queue(Queue<T, AllocationType>&& other) noexcept;
+		Queue(Memory::AllocationType allocationType, const Queue<T>& other);
+		Queue(const Queue<T>& other);
+		Queue(Queue<T>&& other) noexcept;
 
 		~Queue();
 
@@ -36,8 +36,8 @@ namespace BaldLion
 
 		bool IsEmpty() const { return m_size - m_frontIndex == 0; }
 
-		Queue<T, AllocationType>& operator= (const Queue<T, AllocationType>& other);
-		Queue<T, AllocationType>& operator= (Queue<T, AllocationType>&& other) noexcept;
+		Queue<T>& operator= (const Queue<T>& other);
+		Queue<T>& operator= (Queue<T>&& other) noexcept;
 
 	private:
 
@@ -54,20 +54,20 @@ namespace BaldLion
 		ui32 m_capacity = 0;
 	};
 
-	template <typename T, typename AllocationType>
-	BaldLion::Queue<T, AllocationType>::Queue()
+	template <typename T>
+	BaldLion::Queue<T>::Queue()
 	{
 	}
 
-	template <typename T, typename AllocationType>
-	BaldLion::Queue<T, AllocationType>::Queue(Memory::AllocationType allocationType, ui32 capacity)
+	template <typename T>
+	BaldLion::Queue<T>::Queue(Memory::AllocationType allocationType, ui32 capacity)
 		: m_allocationType(allocationType), m_size(0)
 	{
 		Reserve(capacity);
 	}
 
-	template <typename T, typename AllocationType>
-	BaldLion::Queue<T, AllocationType>::Queue(Memory::AllocationType allocationType, const Queue<T, AllocationType>& other)
+	template <typename T>
+	BaldLion::Queue<T>::Queue(Memory::AllocationType allocationType, const Queue<T>& other)
 		: m_allocationType(allocationType), m_size(other.Size()), m_frontIndex(other.m_frontIndex)
 	{
 		Reserve(other.m_capacity);
@@ -75,16 +75,16 @@ namespace BaldLion
 		std::copy(other.m_elements, other.m_elements + m_size, m_elements);
 	}
 
-	template <typename T, typename AllocationType>
-	BaldLion::Queue<T, AllocationType>::Queue(const Queue<T, AllocationType>& other)
+	template <typename T>
+	BaldLion::Queue<T>::Queue(const Queue<T>& other)
 		: m_allocationType(other.m_allocationType), m_size(other.Size()), m_frontIndex(other.m_frontIndex)
 	{
 		Reserve(other.m_capacity);
 		std::copy(other.m_elements, other.m_elements + m_size, m_elements);
 	}
 
-	template <typename T, typename AllocationType>
-	BaldLion::Queue<T, AllocationType>::Queue(Queue<T, AllocationType>&& other) noexcept
+	template <typename T>
+	BaldLion::Queue<T>::Queue(Queue<T>&& other) noexcept
 		: m_allocationType(other.m_allocationType), m_size(other.Size()), m_capacity(other.m_capacity), m_frontIndex(other.m_frontIndex)
 	{
 		m_elements = other.m_elements;
@@ -94,8 +94,8 @@ namespace BaldLion
 		other.m_capacity = 0;
 	}
 
-	template <typename T, typename AllocationType>
-	Queue<T, AllocationType>& BaldLion::Queue<T, AllocationType>::operator=(const Queue<T, AllocationType>& other)
+	template <typename T>
+	Queue<T>& BaldLion::Queue<T>::operator=(const Queue<T>& other)
 	{		
 		if (&other == this)
 			return *this;
@@ -110,8 +110,8 @@ namespace BaldLion
 		return *this;
 	}
 
-	template <typename T, typename AllocationType>
-	Queue<T, AllocationType>& BaldLion::Queue<T, AllocationType>::operator=(Queue<T, AllocationType>&& other) noexcept
+	template <typename T>
+	Queue<T>& BaldLion::Queue<T>::operator=(Queue<T>&& other) noexcept
 	{
 		if (&other == this)
 			return *this;
@@ -130,14 +130,14 @@ namespace BaldLion
 		return *this;
 	}
 
-	template <typename T, typename AllocationType>
-	BaldLion::Queue<T, AllocationType>::~Queue()
+	template <typename T>
+	BaldLion::Queue<T>::~Queue()
 	{
 		
 	}
 	
-	template <typename T, typename AllocationType>
-	void BaldLion::Queue<T, AllocationType>::Clear()
+	template <typename T>
+	void BaldLion::Queue<T>::Clear()
 	{
 		if (m_elements == nullptr)
 		{
@@ -152,8 +152,8 @@ namespace BaldLion
 		ClearNoDestructor();
 	}
 
-	template <typename T, typename AllocationType>
-	void BaldLion::Queue<T, AllocationType>::ClearNoDestructor()
+	template <typename T>
+	void BaldLion::Queue<T>::ClearNoDestructor()
 	{
 		if (m_elements == nullptr)
 		{
@@ -166,9 +166,9 @@ namespace BaldLion
 		m_elements = nullptr;
 	}
 
-	template <typename T, typename AllocationType>
+	template <typename T>
 	template <typename... Args >
-	void BaldLion::Queue<T, AllocationType>::EmplaceBack(Args&&... args)
+	void BaldLion::Queue<T>::EmplaceBack(Args&&... args)
 	{
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
@@ -180,8 +180,8 @@ namespace BaldLion
 		new (&m_elements[m_size++]) T(std::forward<Args>(args)...);
 	}
 
-	template <typename T, typename AllocationType>
-	void BaldLion::Queue<T, AllocationType>::PushBack(const T& element)
+	template <typename T>
+	void BaldLion::Queue<T>::PushBack(const T& element)
 	{
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
@@ -193,8 +193,8 @@ namespace BaldLion
 		m_elements[m_size++] = element;
 	}
 
-	template <typename T, typename AllocationType>
-	void BaldLion::Queue<T, AllocationType>::PushBack(T&& element)
+	template <typename T>
+	void BaldLion::Queue<T>::PushBack(T&& element)
 	{
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
@@ -206,28 +206,28 @@ namespace BaldLion
 		m_elements[m_size++] = std::move(element);
 	}
 
-	template <typename T, typename AllocationType>
-	bool BaldLion::Queue<T, AllocationType>::Exists(const T& element)
+	template <typename T>
+	bool BaldLion::Queue<T>::Exists(const T& element)
 	{
 		return FindIndex(element) != -1;
 	}
 	
-	template <typename T, typename AllocationType >
-	T& BaldLion::Queue<T, AllocationType>::Front()
+	template <typename T>
+	T& BaldLion::Queue<T>::Front()
 	{
 		BL_ASSERT(m_size > 0, "Size is 0");		
 		return m_elements[m_frontIndex];
 	}
 
-	template <typename T, typename AllocationType >
-	const T& BaldLion::Queue<T, AllocationType>::Front() const
+	template <typename T>
+	const T& BaldLion::Queue<T>::Front() const
 	{
 		BL_ASSERT(m_size > 0, "Size is 0");
 		return m_elements[m_frontIndex];
 	}
 
-	template <typename T, typename AllocationType>
-	void BaldLion::Queue<T, AllocationType>::Pop()
+	template <typename T>
+	void BaldLion::Queue<T>::Pop()
 	{
 		BL_ASSERT(m_size > 0, "Size is 0");
 
@@ -238,8 +238,8 @@ namespace BaldLion
 		}
 	}
 
-	template <typename T, typename AllocationType>
-	void BaldLion::Queue<T, AllocationType>::Reallocate(ui32 newCapacity)
+	template <typename T>
+	void BaldLion::Queue<T>::Reallocate(ui32 newCapacity)
 	{
 		T* newLocation = MemoryManager::NewArray<T>("Queue", m_allocationType, newCapacity);
 
@@ -257,8 +257,8 @@ namespace BaldLion
 		m_size = newSize;
 	}
 
-	template <typename T, typename AllocationType>
-	void BaldLion::Queue<T, AllocationType>::Reserve(ui32 capacity)
+	template <typename T>
+	void BaldLion::Queue<T>::Reserve(ui32 capacity)
 	{
 		m_capacity = capacity;
 		m_elements = MemoryManager::NewArray<T>("Queue", m_allocationType, capacity);

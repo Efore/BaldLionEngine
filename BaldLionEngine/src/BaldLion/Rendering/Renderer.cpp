@@ -154,7 +154,6 @@ namespace BaldLion
 			s_renderStats.vertices += vertexArray->GetIndexBuffer()->GetCount();
 		}
 
-
 		void Renderer::ProcessFrustrumCulling(const Camera* camera)
 		{
 			BL_PROFILE_FUNCTION();
@@ -162,12 +161,13 @@ namespace BaldLion
 			s_meshesToRender = DynamicArray<Mesh*>(AllocationType::Linear_Frame, s_registeredModels.Size());
 			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::Linear_Frame, s_registeredModels.Size());
 
-			const ui32 numOfTasks = glm::ceil(s_registeredModels.Size() / maxModelsToProcess);
+			const ui32 numOfTasks = (ui32)(glm::ceil( (float)s_registeredModels.Size() / (float)maxModelsToProcess));
 			ui32 currentModelIndex = 0;
 
 			for (ui32 iTask = 0; iTask < numOfTasks; ++iTask)
 			{
 				JobManagement::Job processFrustrumCulling(("ProcessFrustrumCulling" + std::to_string(iTask)).c_str());
+
 				const ui32 nextTaskIndex = ((currentModelIndex + maxModelsToProcess) > s_registeredModels.Size()) ? s_registeredModels.Size() : currentModelIndex + maxModelsToProcess;
 
 				processFrustrumCulling.Task = [currentModelIndex, nextTaskIndex, camera]

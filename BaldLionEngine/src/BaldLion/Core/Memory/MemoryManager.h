@@ -394,4 +394,5 @@ namespace BaldLion
 		template<typename T1, typename T2>
 		bool operator!=(const STLStackAllocator<T1>&, const STLStackAllocator<T2>&) { return false; }
 	}
+
 }

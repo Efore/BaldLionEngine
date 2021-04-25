@@ -1,3 +1,11 @@
+/*****************************************************************
+ * \file   AnimationData.h
+ * \brief  This file contains the definition for the KeyFrames and the Animation Data itself
+ * 
+ * \author Iván León Santiago
+ * \date   April 2021
+ *********************************************************************/
+
 #pragma once
 
 #include "Joint.h"
@@ -12,18 +20,26 @@ namespace BaldLion
 			DynamicArray<JointTransform> JointTranforms;
 			float TimeStamp;
 
+			//---------------------------------------------------------------------------------------
+
 			KeyFrame(){}
+
+			//---------------------------------------------------------------------------------------
 			
 			KeyFrame(const DynamicArray<JointTransform>& jointTransforms, const float timeStamp): 
 				JointTranforms(jointTransforms), 
 				TimeStamp(timeStamp)
 			{}
 
+			//---------------------------------------------------------------------------------------
+
 			KeyFrame(KeyFrame &&other) : 
 				TimeStamp(other.TimeStamp), 
 				JointTranforms(std::move(other.JointTranforms))
 			{
 			}
+
+			//---------------------------------------------------------------------------------------
 
 			KeyFrame& operator=(const KeyFrame& other)
 			{
@@ -33,6 +49,8 @@ namespace BaldLion
 				return *this;
 			}
 
+			//---------------------------------------------------------------------------------------
+
 			KeyFrame& operator=(KeyFrame &&other)
 			{
 				TimeStamp = other.TimeStamp;
@@ -41,6 +59,8 @@ namespace BaldLion
 				return *this;
 			}
 		};
+		
+		//---------------------------------------------------------------------------------------
 
 		struct AnimationData {
 
@@ -48,7 +68,11 @@ namespace BaldLion
 			DynamicArray<KeyFrame> AnimationFrames;
 			float AnimationLength;
 
+			//---------------------------------------------------------------------------------------
+			
 			AnimationData(){}
+			
+			//---------------------------------------------------------------------------------------
 
 			AnimationData(const StringId animationName, const DynamicArray<KeyFrame>& animationFrames, const float animationLenght) :
 				AnimationName(animationName), 
@@ -56,12 +80,16 @@ namespace BaldLion
 				AnimationLength(animationLenght)
 			{}
 
+			//---------------------------------------------------------------------------------------
+
 			AnimationData(AnimationData&& other) : 
 				AnimationName(other.AnimationName), 
 				AnimationLength(other.AnimationLength),
 				AnimationFrames(std::move(other.AnimationFrames))
 			{
 			}
+
+			//---------------------------------------------------------------------------------------
 
 			AnimationData& operator=(const AnimationData& other)
 			{
@@ -71,6 +99,8 @@ namespace BaldLion
 
 				return *this;
 			}
+
+			//---------------------------------------------------------------------------------------
 
 			AnimationData& operator=(AnimationData&& other)
 			{

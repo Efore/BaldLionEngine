@@ -1,3 +1,11 @@
+/*****************************************************************//**
+ * \file   VertexArray.cpp
+ * \brief  
+ * 
+ * \author Iván León Santiago
+ * \date   April 2021
+ *********************************************************************/
+
 #include "blpch.h"
 #include "VertexArray.h"
 

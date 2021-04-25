@@ -31,7 +31,7 @@ namespace BaldLion
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
 
-			for (ui32 i = 0; i < 55; ++i)
+			for (ui32 i = 0; i < 3; ++i)
 			{
 				auto model = MemoryManager::New<Rendering::AnimatedModel>(std::string("Animated Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", initialTransform);
 				model->SetUpModel();
@@ -42,21 +42,21 @@ namespace BaldLion
 			initialTransform = glm::mat4(1.0f);
 			initialTransform = glm::scale(initialTransform, glm::vec3(50.0f));
 
-			//for (ui32 i = 0; i < 10; ++i)
-			//{
-			//	auto model = MemoryManager::New<Rendering::Model>(std::string("Static Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj", glm::rotate(initialTransform, glm::linearRand(0.0f, 359.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-			//	model->SetUpModel();
-			//	Renderer::RegisterModel(model);
+			for (ui32 i = 0; i < 0; ++i)
+			{
+				auto model = MemoryManager::New<Rendering::Model>(std::string("Static Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj", glm::rotate(initialTransform, glm::linearRand(0.0f, 359.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+				model->SetUpModel();
+				Renderer::RegisterModel(model);
 
-			//	if (i > 0 && i % 60 == 0)
-			//	{
-			//		initialTransform = glm::translate(initialTransform, glm::vec3(-15.0f * 60, 0, 15.0f * (i / 60)));
-			//	}
-			//	else
-			//	{
-			//		initialTransform = glm::translate(initialTransform, glm::vec3(15.0f, 0, 0.0f));
-			//	}				
-			//}
+				if (i > 0 && i % 60 == 0)
+				{
+					initialTransform = glm::translate(initialTransform, glm::vec3(-15.0f * 60, 0, 15.0f * (i / 60)));
+				}
+				else
+				{
+					initialTransform = glm::translate(initialTransform, glm::vec3(15.0f, 0, 0.0f));
+				}
+			}
 
 			m_directionalLight = {
 				glm::vec3(-0.2f, -1.0f, -0.3f),
@@ -87,25 +87,19 @@ namespace BaldLion
 				OPTICK_CATEGORY("CameraController::OnUpdate", Optick::Category::Animation);
 				/*Animation::AnimationManager::OnUpdate(timeStep);*/
 				StringId animationUpdateTaskId = 0;
-				BL_LOG_CORE_INFO("Main thread: begin animation ");
 				Animation::AnimationManager::OnParallelUpdate(timeStep, animationUpdateTaskId);		
 			}			
 			
 			//Waiting for animation jobs
-			BL_LOG_CORE_INFO("Main thread: wait for animations ");
 			JobManagement::JobManager::WaitForJobs();
-			BL_LOG_CORE_INFO("Main thread: animation finished ");
 				
 			m_frameBuffer->Bind();
 			Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight);
-
-			BL_LOG_CORE_INFO("Main thread: begin frustum culling ");
+			
 			Renderer::ProcessFrustrumCulling(ProjectionCameraManager::GetCamera());
 
 			//Waiting for frustrum culling jobs
-			BL_LOG_CORE_INFO("Main thread: wait for frustum culling ");
 			JobManagement::JobManager::WaitForJobs();
-			BL_LOG_CORE_INFO("Main thread: frustum culling finished ");
 
 			Renderer::DrawScene(ProjectionCameraManager::GetCamera());
 			Renderer::EndScene();
