@@ -82,11 +82,11 @@ namespace BaldLion
 						(float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond)
 					);
 
-					float TimeStamp = (float)(1.0f / scene->mAnimations[i]->mTicksPerSecond);
+					const float timeStamp = (float)(1.0f / scene->mAnimations[i]->mTicksPerSecond);
 
 					for (size_t j = 0; j < (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys; ++j)
 					{
-						KeyFrame keyFrame(DynamicArray<JointTransform>(AllocationType::FreeList_Renderer, glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.Size())), glm::min(TimeStamp * j, animationData.AnimationLength));
+						KeyFrame keyFrame(DynamicArray<JointTransform>(AllocationType::FreeList_Renderer, glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.Size())), glm::min(timeStamp * j, animationData.AnimationLength));
 						keyFrame.JointTranforms.Populate();
 
 						for (size_t k = 0; k < scene->mAnimations[i]->mNumChannels; ++k)

@@ -12,13 +12,13 @@ namespace BaldLion
 
 		struct Joint
 		{
-			ui32 jointID;
-			i32 parentID;			
-			
 			glm::mat4 jointBindTransform;
 			glm::mat4 jointModelSpaceTransform;
 			glm::mat4 jointAnimationTransform;
 
+			ui32 jointID;
+			i32 parentID;			
+			
 			Joint(){}
 
 			void UpdateJointTransforms(const glm::mat4& rootInverseTransform, const glm::mat4& parentTransform, const glm::mat4& localAnimationTransform)

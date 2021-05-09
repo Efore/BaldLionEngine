@@ -264,9 +264,8 @@ namespace BaldLion
 
 			FillTextureData(aimesh, aiscene, modelFolderPath, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
 
-			Material* meshMaterial = MaterialLibrary::Load(
-				aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data,
-				{	
+			Material::MaterialProperties materialProperties
+			{
 					STRING_TO_ID("assets/shaders/BaseLit.glsl"),
 					glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
@@ -281,8 +280,9 @@ namespace BaldLion
 					Material::BlendMode::None,
 					Material::DepthBufferMode::TestAndWrite,
 					Material::CullingMode::Back
-				}
-			);
+			};
+
+			Material* meshMaterial = MaterialLibrary::Load(aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data, &materialProperties);
 
 			meshMaterial->AssignShader();
 

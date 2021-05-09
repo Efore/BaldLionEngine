@@ -16,5 +16,10 @@ namespace BaldLion
 				aiMat4.a4, aiMat4.b4, aiMat4.c4, aiMat4.d4
 			);
 		}
+
+		static glm::vec3 Vector3UnitX	= glm::vec3(1.0f, 0.0f, 0.0f);
+		static glm::vec3 Vector3UnitY	= glm::vec3(0.0f, 1.0f, 0.0f);
+		static glm::vec3 Vector3UnitZ	= glm::vec3(0.0f, 0.0f, 1.0f);
+		static glm::vec3 Vector3Zero	= glm::vec3(0.0f);
 	}
 }

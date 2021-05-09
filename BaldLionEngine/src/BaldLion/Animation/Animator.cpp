@@ -46,7 +46,7 @@ namespace BaldLion
 				break;
 			}
 
-			float interpolant = (m_animationTime - animation->AnimationFrames[prevFrameIndex].TimeStamp) / (animation->AnimationFrames[nextFrameIndex].TimeStamp - animation->AnimationFrames[prevFrameIndex].TimeStamp) ;
+			const float interpolant = (m_animationTime - animation->AnimationFrames[prevFrameIndex].TimeStamp) / (animation->AnimationFrames[nextFrameIndex].TimeStamp - animation->AnimationFrames[prevFrameIndex].TimeStamp) ;
 
 			result = DynamicArray<JointTransform>(AllocationType::Linear_Frame, animation->AnimationFrames[prevFrameIndex].JointTranforms);
 
@@ -66,7 +66,7 @@ namespace BaldLion
 			
 			for (ui32 i = 0;  i < transforms.Size(); ++i)
 			{
-				int parentID = m_animatedMesh->GetJoints()[i].parentID;
+				const i32 parentID = m_animatedMesh->GetJoints()[i].parentID;
 
 				const glm::mat4& parentTransform = parentID == -1 ? glm::mat4(1.0f) : m_animatedMesh->GetJoints()[parentID].jointModelSpaceTransform;
 				const glm::mat4& animationTransform = glm::translate(glm::mat4(1.0f), transforms[i].GetDecompressedPosition()) * glm::mat4_cast(transforms[i].GetDecompressedRotation()) * glm::scale(glm::mat4(1.0f),glm::vec3(1.0f));

@@ -57,6 +57,9 @@ namespace BaldLion
 			static void RegisterModel(Model* model);
 			static void UnregisterModel(Model* model);
 
+			static void RegisterMesh(Mesh* mesh);
+			static void UnregisterMesh(Mesh* mesh);
+
 			static void ProcessFrustrumCulling(const Camera* camera);
 
 			inline static RendererPlatformInterface::RendererPlatform GetAPI() { return RendererPlatformInterface::GetAPI(); }
@@ -73,8 +76,8 @@ namespace BaldLion
 			static TextureLibrary s_textureLibrary;
 			static RendererPlatformInterface* s_rendererPlatformInterface;
 			static SkyboxPlatformInterface* s_skyboxPlatformInterface;
-
-			static DynamicArray<Model*> s_registeredModels;
+						
+			static DynamicArray<Mesh*> s_registeredMeshes;
 			static DynamicArray<Mesh*> s_meshesToRender;	
 
 			static HashTable<Material*, GeometryData*> s_geometryToBatch;

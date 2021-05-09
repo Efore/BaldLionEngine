@@ -15,10 +15,15 @@
 #include "BaldLion/ImGui/ImGuiLayer.h"
 
 // --------------- Renderer -----------------------
+
 #include "BaldLion/Rendering/Renderer.h"
 #include "BaldLion/Rendering/AnimatedModel.h"
 #include "BaldLion/Rendering/CameraManager.h"
 #include "BaldLion/Rendering/Framebuffer.h"
+#include "BaldLion/Rendering/Shapes/PlaneMesh.h"
+#include "BaldLion/Rendering/Shapes/CubeMesh.h"
+#include "BaldLion/Rendering/Shapes/SphereMesh.h"
+
 
 // --------------- Animation -----------------------
 #include "BaldLion/Animation/AnimationManager.h"

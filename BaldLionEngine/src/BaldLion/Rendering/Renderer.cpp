@@ -5,7 +5,7 @@
 #include "Platform/OpenGL/OpenGLSkybox.h"
 #include "BaldLion/Core/JobManagement/JobManager.h"
 
-const ui32 maxModelsToProcess = 5u;
+const ui32 maxMeshesToProcess = 5u;
 
 namespace BaldLion
 {
@@ -18,7 +18,7 @@ namespace BaldLion
 		RendererPlatformInterface* Renderer::s_rendererPlatformInterface;
 		SkyboxPlatformInterface* Renderer::s_skyboxPlatformInterface;
 
-		DynamicArray<Model*> Renderer::s_registeredModels; 
+		DynamicArray<Mesh*> Renderer::s_registeredMeshes;
 		DynamicArray<Mesh*> Renderer::s_meshesToRender;
 
 		HashTable<Material*, GeometryData*> Renderer::s_geometryToBatch;		
@@ -41,7 +41,7 @@ namespace BaldLion
 			s_skyboxPlatformInterface = MemoryManager::New<OpenGLSkybox>("Skybox Platform interface", AllocationType::FreeList_Renderer);
 			s_skyboxPlatformInterface->Init("assets/textures/skybox/skybox.jpg");
 
-			s_registeredModels = DynamicArray<Model*>(AllocationType::FreeList_Renderer, 500);				
+			s_registeredMeshes = DynamicArray<Mesh*>(AllocationType::FreeList_Renderer, 500);
 
 			LightManager::Init();
 		}
@@ -54,7 +54,7 @@ namespace BaldLion
 			MaterialLibrary::Clear();
 			s_shaderLibrary.Clear();
 			s_textureLibrary.Clear();
-			s_registeredModels.Clear();
+			s_registeredMeshes.Clear();
 		}
 
 		void Renderer::OnWindowResize(ui32 width, ui32 height)
@@ -158,43 +158,40 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			s_meshesToRender = DynamicArray<Mesh*>(AllocationType::Linear_Frame, s_registeredModels.Size());
-			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::Linear_Frame, s_registeredModels.Size());
+			s_meshesToRender = DynamicArray<Mesh*>(AllocationType::Linear_Frame, s_registeredMeshes.Size());
+			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::Linear_Frame, s_registeredMeshes.Size());
 
-			const ui32 numOfTasks = (ui32)(glm::ceil( (float)s_registeredModels.Size() / (float)maxModelsToProcess));
-			ui32 currentModelIndex = 0;
+			const ui32 numOfTasks = (ui32)(glm::ceil( (float)s_registeredMeshes.Size() / (float)maxMeshesToProcess));
+			ui32 currentMeshIndex = 0;
 
 			for (ui32 iTask = 0; iTask < numOfTasks; ++iTask)
 			{
 				JobManagement::Job processFrustrumCulling(("ProcessFrustrumCulling" + std::to_string(iTask)).c_str());
 
-				const ui32 nextTaskIndex = ((currentModelIndex + maxModelsToProcess) > s_registeredModels.Size()) ? s_registeredModels.Size() : currentModelIndex + maxModelsToProcess;
+				const ui32 nextTaskIndex = ((currentMeshIndex + maxMeshesToProcess) > s_registeredMeshes.Size()) ? s_registeredMeshes.Size() : currentMeshIndex + maxMeshesToProcess;
 
-				processFrustrumCulling.Task = [currentModelIndex, nextTaskIndex, camera]
+				processFrustrumCulling.Task = [currentMeshIndex, nextTaskIndex, camera]
 				{
 					BL_PROFILE_SCOPE("ProcessFrustrumCulling", Optick::Category::Rendering);
-					for (ui32 i = currentModelIndex; i < nextTaskIndex; ++i)
+					for (ui32 i = currentMeshIndex; i < nextTaskIndex; ++i)
 					{
-						for (ui32 j = 0; j < s_registeredModels[i]->GetSubMeshes().Size(); ++j)
+						if (camera->IsAABBVisible(s_registeredMeshes[i]->GetAABB()))
 						{
-							if (camera->IsAABBVisible(s_registeredModels[i]->GetSubMeshes()[j]->GetAABB()))
+							if (s_registeredMeshes[i]->GetIsStatic())
 							{
-								if (s_registeredModels[i]->GetSubMeshes()[j]->GetIsStatic())
-								{
-									std::lock_guard<std::mutex> frustrumCullingGuard(s_geometryToBatchMutex);
-									AddToBatch(s_registeredModels[i]->GetSubMeshes()[j]);
-								}
-								else
-								{
-									std::lock_guard<std::mutex> frustrumCullingGuard(s_meshesToRenderMutex);
-									s_meshesToRender.PushBack(s_registeredModels[i]->GetSubMeshes()[j]);
-								}
+								std::lock_guard<std::mutex> frustrumCullingGuard(s_geometryToBatchMutex);
+								AddToBatch(s_registeredMeshes[i]);
 							}
-						}
+							else
+							{
+								std::lock_guard<std::mutex> frustrumCullingGuard(s_meshesToRenderMutex);
+								s_meshesToRender.PushBack(s_registeredMeshes[i]);
+							}
+						}						
 					}
 				};
 
-				currentModelIndex = nextTaskIndex;
+				currentMeshIndex = nextTaskIndex;
 
 				JobManagement::JobManager::QueueJob(processFrustrumCulling);
 			}
@@ -245,18 +242,41 @@ namespace BaldLion
 
 		void Renderer::RegisterModel(Model* model)
 		{
-			if (!s_registeredModels.Contains(model))
+			for (ui32 i = 0; i < model->GetSubMeshes().Size(); ++i)
 			{
-				s_registeredModels.PushBack(model);
+				if (!s_registeredMeshes.Contains(model->GetSubMeshes()[i]))
+				{
+					s_registeredMeshes.PushBack(model->GetSubMeshes()[i]);
+				}
 			}
 		}
 
 		void Renderer::UnregisterModel(Model* model)
 		{
-			if (s_registeredModels.Contains(model))
+			for (ui32 i = 0; i < model->GetSubMeshes().Size(); ++i)
 			{
-				s_registeredModels.RemoveFast(model);
+				if (s_registeredMeshes.Contains(model->GetSubMeshes()[i]))
+				{
+					s_registeredMeshes.RemoveFast(model->GetSubMeshes()[i]);
+				}
+			}			
+		}
+
+		void Renderer::RegisterMesh(Mesh* mesh)
+		{
+			if (!s_registeredMeshes.Contains(mesh))
+			{
+				s_registeredMeshes.PushBack(mesh);
 			}
 		}
+
+		void Renderer::UnregisterMesh(Mesh* mesh)
+		{
+			if (s_registeredMeshes.Contains(mesh))
+			{
+				s_registeredMeshes.RemoveFast(mesh);
+			}
+		}
+
 	}
 }

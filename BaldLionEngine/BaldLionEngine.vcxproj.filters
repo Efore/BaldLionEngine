@@ -1367,6 +1367,9 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Profiling.h" />
     <ClInclude Include="src\BaldLion\Rendering\GeometryData.h" />
+    <ClInclude Include="src\BaldLion\Rendering\Shapes\PlaneMesh.h" />
+    <ClInclude Include="src\BaldLion\Rendering\Shapes\CubeMesh.h" />
+    <ClInclude Include="src\BaldLion\Rendering\Shapes\SphereMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1507,5 +1510,8 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Shapes\PlaneMesh.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\Shapes\CubeMesh.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\Shapes\SphereMesh.cpp" />
   </ItemGroup>
 </Project>

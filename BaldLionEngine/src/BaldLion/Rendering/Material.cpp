@@ -39,7 +39,7 @@ namespace BaldLion
 			s_materials.Emplace(name, std::move(material));
 		}
 
-		Material* MaterialLibrary::Load(const std::string& matName, const Material::MaterialProperties& materialProperties)
+		Material* MaterialLibrary::Load(const std::string& matName, Material::MaterialProperties* materialProperties)
 		{
 			std::lock_guard<std::mutex> lockGuard(s_materialLibraryMutex);
 
@@ -48,7 +48,7 @@ namespace BaldLion
 			if (s_materials.Contains(name))
 				return s_materials.Get(name);
 
-			Material* material = Material::Create(matName, materialProperties);
+			Material* material = Material::Create(matName, *materialProperties);
 			Add(material);
 			return material;
 		}

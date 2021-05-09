@@ -202,6 +202,9 @@
     <ClInclude Include="src\BaldLion\Rendering\Renderer.h" />
     <ClInclude Include="src\BaldLion\Rendering\RendererPlatformInterface.h" />
     <ClInclude Include="src\BaldLion\Rendering\Shader.h" />
+    <ClInclude Include="src\BaldLion\Rendering\Shapes\CubeMesh.h" />
+    <ClInclude Include="src\BaldLion\Rendering\Shapes\PlaneMesh.h" />
+    <ClInclude Include="src\BaldLion\Rendering\Shapes\SphereMesh.h" />
     <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h" />
     <ClInclude Include="src\BaldLion\Rendering\SkyboxPlatformInterface.h" />
     <ClInclude Include="src\BaldLion\Rendering\Texture.h" />
@@ -615,6 +618,9 @@
     <ClCompile Include="src\BaldLion\Rendering\Renderer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\RendererPlatformInterface.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Shader.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\Shapes\CubeMesh.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\Shapes\PlaneMesh.cpp" />
+    <ClCompile Include="src\BaldLion\Rendering\Shapes\SphereMesh.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\SkinnedMesh.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\SkyboxPlatformInterface.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Texture.cpp" />

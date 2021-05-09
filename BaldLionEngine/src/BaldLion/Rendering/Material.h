@@ -27,9 +27,7 @@ namespace BaldLion
 	{
 
 		class Material {
-
-		public:			
-
+		public:
 			enum class BlendMode {
 				None,
 				Alpha,
@@ -154,7 +152,7 @@ namespace BaldLion
 			
 			static void Init();
 			static void Add(Material* shader);
-			static Material* Load(const std::string& name, const Material::MaterialProperties& materialProperties);
+			static Material* Load(const std::string& name, Material::MaterialProperties* materialProperties);
 			static void Clear();
 
 		private:

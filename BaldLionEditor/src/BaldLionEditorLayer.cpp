@@ -27,11 +27,52 @@ namespace BaldLion
 
 			m_frameBuffer = BaldLion::Rendering::Framebuffer::Create(fbSpec);
 			
-			ProjectionCameraManager::Init(glm::vec3(0, 50, 150), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 500.0f);			
+			ProjectionCameraManager::Init(glm::vec3(0, 50, 150), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 500.0f);
+
+			Rendering::Material::MaterialProperties shapeMaterialProperties{
+					STRING_TO_ID("assets/shaders/BaseLit.glsl"),
+					glm::vec3(0.2f),
+					glm::vec3(0.2f),
+					glm::vec3(0.2f),
+					glm::vec3(0.2f),
+					32.0f,
+					nullptr,
+					nullptr,
+					nullptr,
+					nullptr,
+					nullptr,
+					Material::BlendMode::None,
+					Material::DepthBufferMode::TestAndWrite,
+					Material::CullingMode::Back
+			};
+
+			Rendering::Material* shapeMaterial = Rendering::MaterialLibrary::Load("PlaneMaterial", &shapeMaterialProperties);
+			shapeMaterial->AssignShader();
+
+			/*{
+				auto plane = MemoryManager::New<Rendering::PlaneMesh>("Plane", AllocationType::FreeList_Renderer, shapeMaterial, AABB{ glm::vec3(0.0f), glm::vec3(0.0f) }, glm::scale(glm::mat4(1.0f), glm::vec3(100.0f, 1.0f, 100.0f)), true, 100.0f);
+				plane->SetUpPlane();
+
+				Renderer::RegisterMesh(plane);
+			}*/
+			//{
+			//	glm::mat4 cubeTransform = glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 10.0f, 10.0f));				
+			//	auto cube = MemoryManager::New<Rendering::CubeMesh>("Cube", AllocationType::FreeList_Renderer, shapeMaterial, AABB{ glm::vec3(0.0f), glm::vec3(0.0f) }, cubeTransform, true, 10.0f);
+			//	cube->SetUpCube();
+
+			//	Renderer::RegisterMesh(cube);
+			//}
+			{
+				glm::mat4 sphereTransform = glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 10.0f, 10.0f));
+				auto sphere = MemoryManager::New<Rendering::SphereMesh>("Sphere", AllocationType::FreeList_Renderer, shapeMaterial, AABB{ glm::vec3(0.0f), glm::vec3(0.0f) }, glm::mat4(1.0f), true, 10.0f, 50, 50);
+				sphere->SetUpSphere();
+
+				Renderer::RegisterMesh(sphere);
+			}
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
 
-			for (ui32 i = 0; i < 3; ++i)
+			for (ui32 i = 0; i < 0; ++i)
 			{
 				auto model = MemoryManager::New<Rendering::AnimatedModel>(std::string("Animated Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", initialTransform);
 				model->SetUpModel();
