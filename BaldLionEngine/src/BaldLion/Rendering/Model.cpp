@@ -113,17 +113,13 @@ namespace BaldLion
 				}
 
 				glm::vec3 tangent = glm::vec3(0.0f);
-				glm::vec3 bitangent = glm::vec3(0.0f);
 				if (aimesh->HasTangentsAndBitangents())
 				{
 					tangent.x = aimesh->mTangents[i].x;
 					tangent.y = aimesh->mTangents[i].y;
-
-					bitangent.x = aimesh->mBitangents[i].x;
-					bitangent.y = aimesh->mBitangents[i].y;
 				}
 
-				vertices.EmplaceBack(position, color, normal, texCoord, tangent, bitangent);
+				vertices.EmplaceBack(position, color, normal, texCoord, tangent);
 			}
 
 			for (ui32 i = 0; i < aimesh->mNumFaces; i++)

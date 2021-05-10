@@ -4,9 +4,8 @@
 layout (location = 0) in vec3 vertex_position;
 layout (location = 1) in vec3 vertex_color;
 layout (location = 2) in vec3 vertex_normal;	
-layout (location = 3) in vec2 vertex_texcoord;
-layout (location = 4) in vec3 vertex_tangent;
-layout (location = 5) in vec3 vertex_bitangent;
+layout (location = 3) in vec3 vertex_tangent;
+layout (location = 4) in vec2 vertex_texcoord;
 
 uniform mat4 u_viewProjectionMatrix;  
 uniform mat4 u_worldTransformMatrix;

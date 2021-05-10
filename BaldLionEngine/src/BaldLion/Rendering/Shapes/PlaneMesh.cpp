@@ -14,8 +14,8 @@ namespace BaldLion
 
 		void PlaneMesh::SetUpPlane()
 		{
-			const ui32 rows = (m_size / m_gridSize) + 1;
-			const ui32 columns = (m_size / m_gridSize) + 1;
+			const ui32 rows = (ui32)(m_size / m_gridSize) + 1;
+			const ui32 columns = (ui32)(m_size / m_gridSize) + 1;
 			const ui32 numVertices = rows * columns;
 			const glm::vec3 initialPoint(-m_size * 0.5f, 0.0f, -m_size * 0.5f);
 
@@ -29,8 +29,7 @@ namespace BaldLion
 					glm::vec3(1.0f),
 					glm::vec3(0.0f, 1.0f, 0.0f),
 					glm::vec2((i % columns)/(columns - 1) , (i / columns)/(rows - 1)),
-					glm::vec3(0.0f, 0.0f, 1.0f),
-					glm::vec3(1.0f, 0.0f, 0.0f)
+					glm::vec3(0.0f, 0.0f, 1.0f)
 				);
 			}
 

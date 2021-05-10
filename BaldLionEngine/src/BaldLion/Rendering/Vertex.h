@@ -10,9 +10,8 @@ namespace BaldLion
 			glm::vec3 position;
 			glm::vec3 color;
 			glm::vec3 normal;
-			glm::vec2 textCoord;
 			glm::vec3 tangent;
-			glm::vec3 bitangent;
+			glm::vec2 textCoord;
 
 			const void * GetFirstElement() const{
 				return &position.x;
@@ -20,13 +19,12 @@ namespace BaldLion
 
 			Vertex(){}
 
-			Vertex(const glm::vec3& pos, const glm::vec3& col, const glm::vec3& nor, const glm::vec2& tCoords, const glm::vec3& tan, const glm::vec3& bitan) :
+			Vertex(const glm::vec3& pos, const glm::vec3& col, const glm::vec3& nor, const glm::vec2& tCoords, const glm::vec3& tan) :
 				position(pos),
 				color(col),
 				normal(nor),
 				textCoord(tCoords),
-				tangent(tan),
-				bitangent(bitan)
+				tangent(tan)
 			{
 			}
 
@@ -35,8 +33,7 @@ namespace BaldLion
 				color(other.color),
 				normal(other.normal),
 				textCoord(other.textCoord),
-				tangent(other.tangent),
-				bitangent(other.bitangent)
+				tangent(other.tangent)
 			{
 			}
 
@@ -47,8 +44,7 @@ namespace BaldLion
 				normal = other.normal;
 				textCoord = other.textCoord;
 				tangent = other.tangent;
-				bitangent = other.bitangent;
-
+				
 				return *this;
 			}			
 

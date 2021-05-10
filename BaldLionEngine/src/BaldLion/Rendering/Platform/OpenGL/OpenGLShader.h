@@ -33,8 +33,8 @@ namespace BaldLion
 		private:
 
 			ui32 m_rendererID;
-			mutable HashTable<StringId, int> m_uniformLocationCache;
 			StringId m_name;
+			mutable HashTable<StringId, int> m_uniformLocationCache;
 		};
 	}
 }

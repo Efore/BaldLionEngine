@@ -23,9 +23,9 @@ namespace BaldLion
 			virtual const FramebufferSpecification& GetSpecification() const override { return m_framebufferSpecification; }
 
 		private:
+			FramebufferSpecification m_framebufferSpecification;
 			ui32 m_rendererID = 0;
 			ui32 m_colorAttachmentID = 0, m_depthAttachmentID = 0;
-			FramebufferSpecification m_framebufferSpecification;
 		};
 	}
 }

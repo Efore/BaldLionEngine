@@ -40,12 +40,13 @@ namespace BaldLion
 
 		protected:
 
+			glm::mat4 m_worldTransform;
+			AABB m_aabb;
+
 			GeometryData* m_geometryData;			
 			VertexArray* m_vertexArray;
 			Material* m_material;
 
-			glm::mat4 m_worldTransform;
-			AABB m_aabb;
 
 			bool m_isStatic;
 		};

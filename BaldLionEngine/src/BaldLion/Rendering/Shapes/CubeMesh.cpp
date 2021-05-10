@@ -52,7 +52,7 @@ namespace BaldLion
 				const glm::vec3 baseForCrossProd = (i >= 4) ? MathUtils::Vector3UnitZ : MathUtils::Vector3UnitY;
 				const glm::vec3 side1Normal = glm::cross(faceNormal, baseForCrossProd);
 				const glm::vec3 side2Normal = glm::cross(faceNormal, side1Normal);				
-				const glm::vec3 bitangent = (i < 4) ? -side1Normal : i == 4 ? baseForCrossProd : -baseForCrossProd;
+				const glm::vec3 tangent = (i < 4) ? -side1Normal : i == 4 ? baseForCrossProd : -baseForCrossProd;
 
 				const glm::vec3 v0 = (faceNormal - side1Normal + side2Normal) * halfSize;
 				const glm::vec3 v1 = (faceNormal - side1Normal - side2Normal) * halfSize;
@@ -64,8 +64,7 @@ namespace BaldLion
 					glm::vec3(1.0f),
 					faceNormal,
 					textCoords[0],
-					bitangent,
-					glm::vec3(0.0f)
+					tangent
 				);
 
 				vertices.EmplaceBack(
@@ -73,8 +72,7 @@ namespace BaldLion
 					glm::vec3(1.0f),
 					faceNormal,
 					textCoords[1],
-					bitangent,
-					glm::vec3(0.0f)
+					tangent
 				);
 
 				vertices.EmplaceBack(
@@ -82,8 +80,7 @@ namespace BaldLion
 					glm::vec3(1.0f),
 					faceNormal,
 					textCoords[2],
-					bitangent,
-					glm::vec3(0.0f)
+					tangent
 				);
 
 				vertices.EmplaceBack(
@@ -91,8 +88,7 @@ namespace BaldLion
 					glm::vec3(1.0f),
 					faceNormal,
 					textCoords[3],
-					bitangent,
-					glm::vec3(0.0f)
+					tangent
 				);
 			}
 

@@ -36,8 +36,7 @@ namespace BaldLion
 						glm::vec3(1.0f),
 						vertexPos,
 						glm::vec2(i / m_rings, j / m_sectors),
-						glm::vec3(1.0f),
-						glm::vec3(0.0f)
+						glm::vec3(1.0f)
 					);
 				}
 			}
