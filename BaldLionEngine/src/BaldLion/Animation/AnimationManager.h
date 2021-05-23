@@ -22,7 +22,7 @@ namespace BaldLion
 			static void Stop();
 
 			static void OnUpdate(float timeStep);
-			static void OnParallelUpdate(float timeStep, StringId& parallelJobID);
+			static void OnParallelUpdate(float timeStep);
 
 			static void GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping, SkinnedMesh* animatedMesh);
 

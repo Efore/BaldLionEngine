@@ -22,7 +22,8 @@ namespace BaldLion
 			Joint(){}
 
 			void UpdateJointTransforms(const glm::mat4& rootInverseTransform, const glm::mat4& parentTransform, const glm::mat4& localAnimationTransform)
-			{				
+			{			
+				BL_PROFILE_FUNCTION();
 				jointModelSpaceTransform = parentTransform * localAnimationTransform;
 				jointAnimationTransform = rootInverseTransform * jointModelSpaceTransform * jointBindTransform;
 			}
@@ -45,6 +46,7 @@ namespace BaldLion
 			
 			const glm::vec3 GetDecompressedPosition() const
 			{
+				BL_PROFILE_FUNCTION();
 				return Compression::DecompressVector3(position, BL_JOINT_POSITION_RANGE);
 			}
 
@@ -55,6 +57,7 @@ namespace BaldLion
 
 			const glm::quat GetDecompressedRotation() const
 			{
+				BL_PROFILE_FUNCTION();
 				return Compression::DecompressCuaternion(rotation);
 			}
 

@@ -28,25 +28,23 @@ namespace BaldLion
 
 			m_aabb = RecalculateAABB();
 
-			if (!m_isStatic)
-			{
-				m_vertexArray = VertexArray::Create();
+			m_vertexArray = VertexArray::Create();
 
-				IndexBuffer* indexBuffer = IndexBuffer::Create(&m_geometryData->indices[0], (ui32)m_geometryData->indices.Size());
+			IndexBuffer* indexBuffer = IndexBuffer::Create(&m_geometryData->indices[0], (ui32)m_geometryData->indices.Size());
 
-				VertexBuffer* vertexBuffer = VertexBuffer::Create(m_geometryData->vertices[0].GetFirstElement(), (ui32)(m_geometryData->vertices.Size() * sizeof(Vertex)));
+			VertexBuffer* vertexBuffer = VertexBuffer::Create(m_geometryData->vertices[0].GetFirstElement(), (ui32)(m_geometryData->vertices.Size() * sizeof(Vertex)));
 
-				vertexBuffer->SetLayout({
-					{ ShaderDataType::Float3, "vertex_position"},
-					{ ShaderDataType::Float3, "vertex_color"},
-					{ ShaderDataType::Float3, "vertex_normal"},
-					{ ShaderDataType::Float3, "vertex_tangent"},
-					{ ShaderDataType::Float2, "vertex_texcoord"}
+			vertexBuffer->SetLayout({
+				{ ShaderDataType::Float3, "vertex_position"},
+				{ ShaderDataType::Float3, "vertex_color"},
+				{ ShaderDataType::Float3, "vertex_normal"},
+				{ ShaderDataType::Float3, "vertex_tangent"},
+				{ ShaderDataType::Float2, "vertex_texcoord"}
 				});
 
-				m_vertexArray->AddIndexBuffer(indexBuffer);
-				m_vertexArray->AddVertexBuffer(vertexBuffer);
-			}
+			m_vertexArray->AddIndexBuffer(indexBuffer);
+			m_vertexArray->AddVertexBuffer(vertexBuffer);
+			
 		}
 
 		void Mesh::Draw() const
@@ -54,7 +52,7 @@ namespace BaldLion
 			if (!m_isStatic) {
 
 				m_material->Bind();
-				Renderer::Draw(m_vertexArray, m_material->GetShader(), m_worldTransform);
+				Renderer::Draw(m_vertexArray, m_material->GetShader(), m_material->GetReceiveShadows(), m_worldTransform);
 				m_material->Unbind();
 			}
 		}

@@ -12,14 +12,21 @@ namespace BaldLion
 			virtual ~OpenGLTextureCubemap();
 
 			virtual ui32 GetWidth() const override { return m_width; }
-			virtual ui32 GetHeight() const override { return m_height; }
-			virtual ui32 GetRendererID() const { return m_rendererID; }
+			virtual void SetWidth(ui32 width) override { m_width = width; }
 
-			virtual void Bind(ui32 slot = 0) const override;
+			virtual ui32 GetHeight() const override { return m_height; }
+			virtual void SetHeight(ui32 height) override { m_height = height; }
+
+			virtual ui32 GetRendererID() const { return m_rendererID; }
+			virtual void SetRendererID(ui32 rendererID) override { m_rendererID = rendererID; }
+
+			virtual void Bind(ui32 slot) const override;
+			virtual void Bind() const override;
 
 			virtual StringId GetName() const override { return m_name; }
 
-			virtual int GetTextureType() const override { return BL_TEXTURE_TYPE_CUBEMAP; }
+			virtual int GetTextureType() const override { return TextureType::CubeMap; }	
+			virtual void SetWrapMode(WrapMode xCoord, WrapMode yCoord) const;
 
 
 		private:			

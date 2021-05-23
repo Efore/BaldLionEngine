@@ -6,6 +6,8 @@
 #include "SkyboxPlatformInterface.h"
 #include "RendererPlatformInterface.h"
 #include "AnimatedModel.h"
+#include "Framebuffer.h"
+#include "Framebuffer.h"
 
 namespace BaldLion
 {
@@ -38,7 +40,7 @@ namespace BaldLion
 				float avgFramesPerSecond;
 			};
 
-			static void Init();
+			static void Init(ui32 width, ui32 height);
 			static void Stop();
 
 			static void OnWindowResize(ui32 width, ui32 height);
@@ -51,8 +53,9 @@ namespace BaldLion
 			static TextureLibrary& GetTextureLibrary() { return s_textureLibrary; }
 			static SceneData& GetSceneData() { return s_sceneData; }
 			static RendererStats& GetRenderStats() { return s_renderStats; }
+			static Framebuffer* GetFrameBuffer() { return s_framebuffer; }
 
-			static void Draw(const VertexArray* vertexArray, Shader* shader, const glm::mat4& transform = glm::mat4(1.0f));
+			static void Draw(const VertexArray* vertexArray, Shader* shader, bool receiveShadows, const glm::mat4& transform = glm::mat4(1.0f));
 
 			static void RegisterModel(Model* model);
 			static void UnregisterModel(Model* model);
@@ -60,13 +63,20 @@ namespace BaldLion
 			static void RegisterMesh(Mesh* mesh);
 			static void UnregisterMesh(Mesh* mesh);
 
-			static void ProcessFrustrumCulling(const Camera* camera);
+			static void ProcessFrustrumCulling(const Camera* camera);			
 
 			inline static RendererPlatformInterface::RendererPlatform GetAPI() { return RendererPlatformInterface::GetAPI(); }
 
 		private:
 
 			static void AddToBatch( Mesh* mesh);
+			static void ProcessFrustrumCullingParallel(ui32 initialMeshIndex, ui32 finalMeshIndex, const Camera* camera);
+			
+			static void CreateShadowMap();
+
+
+			static void RenderStatictGeometry();
+			static void RenderDynamicGeometry();
 
 		private:
 
@@ -78,13 +88,24 @@ namespace BaldLion
 			static SkyboxPlatformInterface* s_skyboxPlatformInterface;
 						
 			static DynamicArray<Mesh*> s_registeredMeshes;
-			static DynamicArray<Mesh*> s_meshesToRender;	
+			static DynamicArray<Mesh*> s_dynamicMeshesToRender;	
+
+			static DynamicArray<Mesh*> s_castingShadowMeshes;
 
 			static HashTable<Material*, GeometryData*> s_geometryToBatch;
 			static DynamicArray<VertexArray*> s_batchedVertexArrays;
 
+			static Framebuffer* s_framebuffer;
+			static Framebuffer* s_shadowFramebuffer;
+
+			static Texture2D* s_shadowMapTex;
+			static Shader* s_depthMapShader;
+
+			static glm::mat4 s_lightViewProjection;
+
 			static std::mutex s_geometryToBatchMutex;
-			static std::mutex s_meshesToRenderMutex;
+			static std::mutex s_dynamicMeshesToRenderMutex;
+			static std::mutex s_castingShadowMeshesMutex;
 		};
 	}
 }

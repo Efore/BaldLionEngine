@@ -26,7 +26,7 @@ namespace BaldLion
 		m_window = Window::Create(WindowProps(applicationName));
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-		Rendering::Renderer::Init();
+		Rendering::Renderer::Init(m_window->GetWidth(), m_window->GetHeight());
 
 		m_layerStack.Init();
 

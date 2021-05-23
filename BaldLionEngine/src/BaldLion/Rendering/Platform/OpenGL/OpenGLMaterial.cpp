@@ -14,37 +14,11 @@ namespace BaldLion
 
 			m_materialName = STRING_TO_ID(matName);
 
-			short slotIndex = 0;
-
-			if (materialProperties.ambientTex != nullptr)
-			{
-				m_ambientTexSlot = slotIndex++;				
-				m_useAmbientTex = 1;
-			}
-
-			if (materialProperties.diffuseTex != nullptr)
-			{
-				m_diffuseTexSlot = slotIndex++;
-				m_useDiffuseTex = 1;
-			}
-
-			if (materialProperties.emissiveTex != nullptr)
-			{
-				m_emissiveTexSlot = slotIndex++;
-				m_useEmissiveTex = 1;
-			}
-
-			if (materialProperties.specularTex != nullptr)
-			{
-				m_specularTexSlot = slotIndex++;
-				m_useSpecularTex = 1;
-			}
-
-			if (materialProperties.normalTex)
-			{
-				m_normalTexSlot = slotIndex++;
-				m_useNormalTex = 1;
-			}
+			m_useAmbientTex = materialProperties.ambientTex != nullptr;
+			m_useDiffuseTex = materialProperties.diffuseTex != nullptr;
+			m_useEmissiveTex = materialProperties.emissiveTex != nullptr;			
+			m_useSpecularTex = materialProperties.specularTex != nullptr;			
+			m_useNormalTex = materialProperties.normalTex != nullptr;
 		}
 
 		void OpenGLMaterial::AssignShader()
@@ -52,82 +26,83 @@ namespace BaldLion
 			m_shader = (OpenGLShader*)(Shader::Create(ID_TO_STRING(m_materialProperties.shaderPath)));
 			m_shader->Bind();
 
-			m_shader->SetUniform(MATKEY_AMBIENT_COLOR, ShaderDataType::Float3, &m_materialProperties.ambientColor);
-			m_shader->SetUniform(MATKEY_DIFFUSE_COLOR, ShaderDataType::Float3, &m_materialProperties.diffuseColor);
-			m_shader->SetUniform(MATKEY_EMISSIVE_COLOR, ShaderDataType::Float3, &m_materialProperties.emissiveColor);
-			m_shader->SetUniform(MATKEY_SPECULAR_COLOR, ShaderDataType::Float3, &m_materialProperties.specularColor);
-			m_shader->SetUniform(MATKEY_SHININESS, ShaderDataType::Float, &m_materialProperties.shininess);
+			m_shader->SetUniform(UNIFORM_AMBIENT_COLOR, ShaderDataType::Float3, &m_materialProperties.ambientColor);
+			m_shader->SetUniform(UNIFORM_DIFFUSE_COLOR, ShaderDataType::Float3, &m_materialProperties.diffuseColor);
+			m_shader->SetUniform(UNIFORM_EMISSIVE_COLOR, ShaderDataType::Float3, &m_materialProperties.emissiveColor);
+			m_shader->SetUniform(UNIFORM_SPECULAR_COLOR, ShaderDataType::Float3, &m_materialProperties.specularColor);
+			m_shader->SetUniform(UNIFORM_SHININESS, ShaderDataType::Float, &m_materialProperties.shininess);
 
 			if (m_materialProperties.ambientTex != nullptr)
 			{
-				m_shader->SetUniform(MATKEY_AMBIENT_TEX, ShaderDataType::Int, &m_ambientTexSlot);
-				m_useAmbientTex = 1;
+				m_shader->SetUniform(UNIFORM_AMBIENT_TEX, ShaderDataType::Int, &m_ambientTexSlot);				
 			}
-			m_shader->SetUniform(MATKEY_USE_AMBIENT_TEX, ShaderDataType::Int, &m_useAmbientTex);
+			m_shader->SetUniform(UNIFORM_USE_AMBIENT_TEX, ShaderDataType::Int, &m_useAmbientTex);
 
 			if (m_materialProperties.diffuseTex != nullptr)
 			{
-				m_shader->SetUniform(MATKEY_DIFFUSE_TEX, ShaderDataType::Int, &m_diffuseTexSlot);
-				m_useDiffuseTex = 1;
+				m_shader->SetUniform(UNIFORM_DIFFUSE_TEX, ShaderDataType::Int, &m_diffuseTexSlot);				
 			}
-			m_shader->SetUniform(MATKEY_USE_DIFFUSE_TEX, ShaderDataType::Int, &m_useDiffuseTex);
+			m_shader->SetUniform(UNIFORM_USE_DIFFUSE_TEX, ShaderDataType::Int, &m_useDiffuseTex);
 
 			if (m_materialProperties.emissiveTex != nullptr)
 			{
-				m_shader->SetUniform(MATKEY_EMISSIVE_TEX, ShaderDataType::Int, &m_emissiveTexSlot);
-				m_useEmissiveTex = 1;
+				m_shader->SetUniform(UNIFORM_EMISSIVE_TEX, ShaderDataType::Int, &m_emissiveTexSlot);				
 			}
-			m_shader->SetUniform(MATKEY_USE_EMISSIVE_TEX, ShaderDataType::Int, &m_useEmissiveTex);
+			m_shader->SetUniform(UNIFORM_USE_EMISSIVE_TEX, ShaderDataType::Int, &m_useEmissiveTex);
 
 			if (m_materialProperties.specularTex != nullptr)
 			{
-				m_shader->SetUniform(MATKEY_SPECULAR_TEX, ShaderDataType::Int, &m_specularTexSlot);
+				m_shader->SetUniform(UNIFORM_SPECULAR_TEX, ShaderDataType::Int, &m_specularTexSlot);
 				m_useSpecularTex = 1;
 			}
-			m_shader->SetUniform(MATKEY_USE_SPECULAR_TEX, ShaderDataType::Int, &m_useSpecularTex);
+			m_shader->SetUniform(UNIFORM_USE_SPECULAR_TEX, ShaderDataType::Int, &m_useSpecularTex);
 
 			if (m_materialProperties.normalTex != nullptr)
 			{
-				m_shader->SetUniform(MATKEY_NORMAL_TEX, ShaderDataType::Int, &m_normalTexSlot);
-				m_useNormalTex = 1;
+				m_shader->SetUniform(UNIFORM_NORMAL_TEX, ShaderDataType::Int, &m_normalTexSlot);				
 			}
-			m_shader->SetUniform(MATKEY_USE_NORMAL_TEX, ShaderDataType::Int, &m_useNormalTex);
+			m_shader->SetUniform(UNIFORM_USE_NORMAL_TEX, ShaderDataType::Int, &m_useNormalTex);
 		}
 
 		void OpenGLMaterial::SetAmbientColor(const glm::vec3 & ambient)
 		{
 			m_materialProperties.emissiveColor = ambient;
-			m_shader->SetUniform(MATKEY_AMBIENT_COLOR, ShaderDataType::Float3, &m_materialProperties.ambientColor);
+			m_shader->Bind();
+			m_shader->SetUniform(UNIFORM_AMBIENT_COLOR, ShaderDataType::Float3, &m_materialProperties.ambientColor);
 		}
 
 		void OpenGLMaterial::SetEmissiveColor(const glm::vec3 & emissive)
 		{
 			m_materialProperties.emissiveColor = emissive;
-			m_shader->SetUniform(MATKEY_EMISSIVE_COLOR, ShaderDataType::Float3, &m_materialProperties.emissiveColor);
+			m_shader->Bind();
+			m_shader->SetUniform(UNIFORM_EMISSIVE_COLOR, ShaderDataType::Float3, &m_materialProperties.emissiveColor);
 		}
 
 		void OpenGLMaterial::SetDiffuseColor(const glm::vec3 & diffuse)
 		{
 			m_materialProperties.diffuseColor = diffuse;
-			m_shader->SetUniform(MATKEY_DIFFUSE_COLOR, ShaderDataType::Float3, &m_materialProperties.diffuseColor);
+			m_shader->Bind();
+			m_shader->SetUniform(UNIFORM_DIFFUSE_COLOR, ShaderDataType::Float3, &m_materialProperties.diffuseColor);
 		}
 
 		void OpenGLMaterial::SetSpecularColor(const glm::vec3 & specular)
 		{
 			m_materialProperties.specularColor = specular;
-			m_shader->SetUniform(MATKEY_SPECULAR_COLOR, ShaderDataType::Float3, &m_materialProperties.specularColor);
+			m_shader->Bind();
+			m_shader->SetUniform(UNIFORM_SPECULAR_COLOR, ShaderDataType::Float3, &m_materialProperties.specularColor);
 		}
 
 		void OpenGLMaterial::SetShininess(float value)
 		{
 			m_materialProperties.shininess = value;
-			m_shader->SetUniform(MATKEY_SHININESS, ShaderDataType::Float, &m_materialProperties.shininess);
+			m_shader->Bind();
+			m_shader->SetUniform(UNIFORM_SHININESS, ShaderDataType::Float, &m_materialProperties.shininess);
 		}
 
 		void OpenGLMaterial::SetUniform(StringId uniformName, ShaderDataType dataType, const void* uniformIndex)
 		{
 			BL_PROFILE_FUNCTION();
-
+			m_shader->Bind();
 			m_shader->SetUniform(uniformName, dataType, uniformIndex);
 		}
 
@@ -194,7 +169,6 @@ namespace BaldLion
 			default:
 				break;
 			}
-
 
 			m_shader->Bind();
 

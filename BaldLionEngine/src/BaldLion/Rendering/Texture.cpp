@@ -9,12 +9,12 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Texture2D* Texture2D::Create(const std::string & path)
+		Texture2D* Texture2D::Create(const std::string& path, bool emptyTexture)
 		{
 			switch (RendererPlatformInterface::GetAPI())
 			{
 			case RendererPlatformInterface::RendererPlatform::None:			BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
-			case RendererPlatformInterface::RendererPlatform::OpenGL:		return MemoryManager::New<OpenGLTexture2D>(path.c_str(), AllocationType::FreeList_Renderer, path);
+			case RendererPlatformInterface::RendererPlatform::OpenGL:		return MemoryManager::New<OpenGLTexture2D>(path.c_str(), AllocationType::FreeList_Renderer, path, emptyTexture);
 			}
 
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
@@ -81,7 +81,7 @@ namespace BaldLion
 			m_textures.Emplace(name, std::move(texture));
 		}
 
-		Texture* TextureLibrary::Load(const std::string& filepath, int textureType)
+		Texture* TextureLibrary::Load(const std::string& filepath, TextureType textureType)
 		{	
 			StringId name;
 			TextureLibrary::GetNameFromPath(filepath, name);
@@ -89,7 +89,7 @@ namespace BaldLion
 			return Load(name,filepath,textureType);
 		}
 
-		Texture* TextureLibrary::Load(StringId name, const std::string& filepath, int textureType)
+		Texture* TextureLibrary::Load(StringId name, const std::string& filepath, TextureType textureType)
 		{	
 			std::lock_guard<std::mutex> lockGuard(m_textureLibraryMutex);
 
@@ -100,11 +100,11 @@ namespace BaldLion
 
 			switch (textureType)
 			{
-				case BL_TEXTURE_TYPE_2D:
+				case TextureType::Texture2d:
 					texture = Texture2D::Create(filepath);
 					break;
 
-				case BL_TEXTURE_TYPE_CUBEMAP:
+				case TextureType::CubeMap:
 					texture = TextureCubeMap::Create(filepath);
 					break;
 
@@ -117,7 +117,7 @@ namespace BaldLion
 			return texture;
 		}
 
-		Texture* TextureLibrary::Load(const std::string& filepath, const unsigned char* textureData, int size, int textureType)
+		Texture* TextureLibrary::Load(const std::string& filepath, const unsigned char* textureData, int size, TextureType textureType)
 		{
 			std::lock_guard<std::mutex> lockGuard(m_textureLibraryMutex);
 
@@ -131,11 +131,11 @@ namespace BaldLion
 
 			switch (textureType)
 			{
-			case BL_TEXTURE_TYPE_2D:
+			case TextureType::Texture2d:
 				texture = Texture2D::Create(filepath, textureData, size);
 				break;
 
-			case BL_TEXTURE_TYPE_CUBEMAP:
+			case TextureType::CubeMap:
 				texture = TextureCubeMap::Create(filepath);
 				break;
 

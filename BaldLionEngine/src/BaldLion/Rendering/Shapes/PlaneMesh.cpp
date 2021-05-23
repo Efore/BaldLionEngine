@@ -6,8 +6,8 @@ namespace BaldLion
 	namespace Rendering
 	{
 
-		PlaneMesh::PlaneMesh(Material* material, AABB aabb, const glm::mat4& worldTransform, bool isStatic, float size) : 
-			Mesh(material, aabb, worldTransform, isStatic), 
+		PlaneMesh::PlaneMesh(Material* material, AABB aabb, const glm::mat4& worldTransform, bool isStatic, float size) :
+			Mesh(material, aabb, worldTransform, isStatic),
 			m_size(size)			
 		{
 		}		
@@ -28,7 +28,7 @@ namespace BaldLion
 					position,
 					glm::vec3(1.0f),
 					glm::vec3(0.0f, 1.0f, 0.0f),
-					glm::vec2((i % columns)/(columns - 1) , (i / columns)/(rows - 1)),
+					glm::vec2((float)(i % columns)/(float)(columns - 1) , (float)(i / columns)/(float)(rows - 1)),
 					glm::vec3(0.0f, 0.0f, 1.0f)
 				);
 			}

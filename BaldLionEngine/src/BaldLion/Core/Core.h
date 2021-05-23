@@ -13,11 +13,13 @@
 
 #define BIT(x) (1 << x)
 
-#define BL_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+#define BL_BIND_FUNCTION(fn) std::bind(&fn, this, std::placeholders::_1)
 
 using ui32 = uint32_t;
 using i32 = int32_t;
 using ui16 = uint16_t;
 using i16 = int16_t;
+using ui8 = uint8_t;
+using i8 = int8_t;
 using hashType = size_t; 
 

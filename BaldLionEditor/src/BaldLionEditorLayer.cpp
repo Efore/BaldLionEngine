@@ -20,30 +20,28 @@ namespace BaldLion
 		void BaldLionEditorLayer::OnAttach()
 		{
 			OPTICK_EVENT();
+						
+			ProjectionCameraManager::Init(glm::vec3(0, 50, 150), (float)Application::GetInstance().GetWindow().GetWidth(), (float)Application::GetInstance().GetWindow().GetHeight(), 0.1f, 50000.0f, 500.0f);
 
-			BaldLion::Rendering::FramebufferSpecification fbSpec;
-			fbSpec.Width = Application::GetInstance().GetWindow().GetWidth();
-			fbSpec.Height = Application::GetInstance().GetWindow().GetHeight();
-
-			m_frameBuffer = BaldLion::Rendering::Framebuffer::Create(fbSpec);
-			
-			ProjectionCameraManager::Init(glm::vec3(0, 50, 150), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 500.0f);
+			Texture* gridTexture = Renderer::GetTextureLibrary().Load("assets/textures/TextureGrid.png",TextureType::Texture2d);
+			gridTexture->SetWrapMode(WrapMode::Repeat, WrapMode::Repeat);
 
 			Rendering::Material::MaterialProperties shapeMaterialProperties{
 					STRING_TO_ID("assets/shaders/BaseLit.glsl"),
-					glm::vec3(0.2f),
-					glm::vec3(0.2f),
-					glm::vec3(0.2f),
-					glm::vec3(0.2f),
+					glm::vec3(1.0f),
+					glm::vec3(1.0f),
+					glm::vec3(1.0f),
+					glm::vec3(1.0f),
 					32.0f,
 					nullptr,
-					nullptr,
+					gridTexture,
 					nullptr,
 					nullptr,
 					nullptr,
 					Material::BlendMode::None,
 					Material::DepthBufferMode::TestAndWrite,
-					Material::CullingMode::Back
+					Material::CullingMode::Back,
+					(ui8)Material::ShadowsSettingsBitMask::ReceiveShadows
 			};
 
 			Rendering::Material* shapeMaterial = Rendering::MaterialLibrary::Load("PlaneMaterial", &shapeMaterialProperties);
@@ -58,7 +56,7 @@ namespace BaldLion
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
 
-			for (ui32 i = 0; i < 3; ++i)
+			for (ui32 i = 0; i < 0; ++i)
 			{
 				auto model = MemoryManager::New<Rendering::AnimatedModel>(std::string("Animated Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", initialTransform);
 				model->SetUpModel();
@@ -67,9 +65,9 @@ namespace BaldLion
 			}
 
 			initialTransform = glm::mat4(1.0f);
-			initialTransform = glm::scale(initialTransform, glm::vec3(50.0f));
+			initialTransform = glm::scale(initialTransform, glm::vec3(20.0f));
 
-			for (ui32 i = 0; i < 4; ++i)
+			for (ui32 i = 0; i < 3; ++i)
 			{
 				auto model = MemoryManager::New<Rendering::Model>(std::string("Static Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj", glm::rotate(initialTransform, glm::linearRand(0.0f, 359.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 				model->SetUpModel();
@@ -85,10 +83,11 @@ namespace BaldLion
 				}
 			}
 
-			m_directionalLight = {
-				glm::vec3(0.0f, 0.0f, 0.0f),
-				glm::vec3(1.0f, 1.0f, 1.0f),
-				glm::vec3(1.0f, 1.0f, 1.0f),
+			m_directionalLight = {				
+				glm::vec3(0.0f),
+				glm::vec3(1.0f),
+				glm::vec3(0.2f),
+				LightType::DirectionalLight,
 				glm::vec3(-1.0f, -1.0f, -1.0f)
 			};
 			
@@ -96,7 +95,6 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnDetach()
 		{
-			MemoryManager::Delete(m_frameBuffer);
 		}
 
 		void BaldLionEditorLayer::OnUpdate(TimeStep timeStep)
@@ -111,16 +109,13 @@ namespace BaldLion
 			}
 
 			{
-				OPTICK_CATEGORY("CameraController::OnUpdate", Optick::Category::Animation);
-				/*Animation::AnimationManager::OnUpdate(timeStep);*/
-				StringId animationUpdateTaskId = 0;
-				Animation::AnimationManager::OnParallelUpdate(timeStep, animationUpdateTaskId);		
+				OPTICK_CATEGORY("CameraController::OnUpdate", Optick::Category::Animation);		
+				Animation::AnimationManager::OnParallelUpdate(timeStep);		
 			}			
 			
 			//Waiting for animation jobs
 			JobManagement::JobManager::WaitForJobs();
 				
-			m_frameBuffer->Bind();
 			Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight);
 			
 			Renderer::ProcessFrustrumCulling(ProjectionCameraManager::GetCamera());
@@ -129,8 +124,7 @@ namespace BaldLion
 			JobManagement::JobManager::WaitForJobs();
 
 			Renderer::DrawScene(ProjectionCameraManager::GetCamera());
-			Renderer::EndScene();
-			m_frameBuffer->Unbind();			
+			Renderer::EndScene();		
 		}
 
 		void BaldLionEditorLayer::OnImGuiRender(TimeStep timeStep)
@@ -147,10 +141,10 @@ namespace BaldLion
 			if (m_viewportSize != glm::vec2{ viewportPanelSize.x, viewportPanelSize.y })
 			{
 				m_viewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-				m_frameBuffer->Resize((ui32)viewportPanelSize.x, (ui32)viewportPanelSize.y);
+				Renderer::GetFrameBuffer()->Resize((ui32)viewportPanelSize.x, (ui32)viewportPanelSize.y);
 			}
 
-			ImGui::Image((void*)m_frameBuffer->GetColorAttachmentID(), ImVec2{ m_viewportSize.x , m_viewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			ImGui::Image((void*)Renderer::GetFrameBuffer()->GetColorAttachmentID(), ImVec2{ m_viewportSize.x , m_viewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 			ImGui::End();
 
 			ImGui::Begin("Settings");

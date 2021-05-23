@@ -7,11 +7,10 @@ namespace BaldLion
 	namespace Rendering
 	{
 		CubeMesh::CubeMesh(Material* material, AABB aabb, const glm::mat4& worldTransform, bool isStatic, float size) :
-			Mesh(material, aabb, worldTransform, isStatic),
-			m_size(size)
+			Mesh(material, aabb, worldTransform, isStatic),	m_size(size)
 		{
 
-		}
+		} 
 
 		void CubeMesh::SetUpCube()
 		{

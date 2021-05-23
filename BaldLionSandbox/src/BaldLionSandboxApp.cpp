@@ -25,13 +25,7 @@ public:
 
 		m_animatedModels = DynamicArray<Rendering::AnimatedModel*>(AllocationType::FreeList_Renderer, 1);		
 
-		BaldLion::Rendering::FramebufferSpecification fbSpec;
-		fbSpec.Width = Application::GetInstance().GetWindow().GetWidth();
-		fbSpec.Height = Application::GetInstance().GetWindow().GetHeight();
-
-		m_frameBuffer = BaldLion::Rendering::Framebuffer::Create(fbSpec);
-
-		ProjectionCameraManager::Init(glm::vec3(0, 0, 250), (float)fbSpec.Width, (float)fbSpec.Height, 0.1f, 50000.0f, 100.0f);
+		ProjectionCameraManager::Init(glm::vec3(0, 0, 250), (float)Application::GetInstance().GetWindow().GetWidth(), (float)Application::GetInstance().GetWindow().GetHeight(), 0.1f, 50000.0f, 100.0f);
 
 		glm::mat4 initialTransform = glm::mat4(1.0f);
 
@@ -48,6 +42,7 @@ public:
 			glm::vec3(-0.2f, -1.0f, -0.3f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
+			LightType::DirectionalLight,
 			glm::vec3(1.0f, 1.0f, 1.0f)
 		};
 
@@ -74,8 +69,7 @@ public:
 
 		JobManagement::JobManager::WaitForJobs();
 		{
-			OPTICK_CATEGORY("Renderer::BeginScene", Optick::Category::Rendering);
-			m_frameBuffer->Bind();
+			OPTICK_CATEGORY("Renderer::BeginScene", Optick::Category::Rendering);			
 			Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight);
 		}
 
@@ -86,7 +80,6 @@ public:
 				m_animatedModels[i]->Draw();
 			}
 			Renderer::EndScene();
-			m_frameBuffer->Unbind();
 		}
 	}
 
@@ -125,8 +118,6 @@ public:
 			MemoryManager::DeleteNoDestructor(m_animatedModels[i]);
 		}
 		m_animatedModels.Clear();
-
-		MemoryManager::Delete(m_frameBuffer);
 	}
 
 
@@ -151,8 +142,7 @@ public:
 
 private:
 
-	DynamicArray<Rendering::AnimatedModel*> m_animatedModels;
-	Rendering::Framebuffer* m_frameBuffer;
+	DynamicArray<Rendering::AnimatedModel*> m_animatedModels;	
 
 	glm::vec2 m_viewportSize;
 	bool m_viewPortFocused;

@@ -31,21 +31,21 @@ namespace BaldLion
 
 		private:
 			OpenGLShader* m_shader;
+
+			const ui32 m_ambientTexSlot = (ui32)TextureSlots::AmbientTexture;
+			ui32 m_useAmbientTex = 0;
 			
-			int m_ambientTexSlot = 0;
-			int m_useAmbientTex = 0;
+			const ui32 m_diffuseTexSlot = (ui32)TextureSlots::DiffuseTexture;
+			ui32 m_useDiffuseTex = 0;
 			
-			int m_diffuseTexSlot = 0;
-			int m_useDiffuseTex = 0;
+			const ui32 m_emissiveTexSlot = (ui32)TextureSlots::EmissiveTexture;
+			ui32 m_useEmissiveTex = 0;
 			
-			int m_emissiveTexSlot = 0;
-			int m_useEmissiveTex = 0;
+			const ui32 m_specularTexSlot = (ui32)TextureSlots::SpecularTexture;
+			ui32 m_useSpecularTex = 0;
 			
-			int m_specularTexSlot = 0;
-			int m_useSpecularTex = 0;
-			
-			int m_normalTexSlot = 0;
-			int m_useNormalTex = 0;
+			const ui32 m_normalTexSlot = (ui32)TextureSlots::AmbientTexture;
+			ui32 m_useNormalTex = 0;
 		};
 	}
 }

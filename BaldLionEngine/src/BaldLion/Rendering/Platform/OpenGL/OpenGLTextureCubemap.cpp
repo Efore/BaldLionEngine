@@ -77,5 +77,21 @@ namespace BaldLion
 			glBindTexture(GL_TEXTURE_CUBE_MAP, m_rendererID);
 
 		}
+
+
+		void OpenGLTextureCubemap::Bind() const
+		{
+			BL_PROFILE_FUNCTION();
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, m_rendererID);
+
+		}
+
+		void OpenGLTextureCubemap::SetWrapMode(WrapMode xCoord, WrapMode yCoord) const
+		{
+
+		}
+
 	}
 }

@@ -47,7 +47,7 @@ namespace BaldLion
 			}
 		}
 
-		void AnimationManager::OnParallelUpdate(float timeStep, StringId& paralellJobID)
+		void AnimationManager::OnParallelUpdate(float timeStep)
 		{
 			if (s_registeredAnimators.Size() == 0)
 				return;
@@ -66,7 +66,6 @@ namespace BaldLion
 
 				JobManagement::JobManager::QueueJob(animationJob);
 			}			
-
 		}
 
 		void AnimationManager::GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping, SkinnedMesh* animatedMesh)

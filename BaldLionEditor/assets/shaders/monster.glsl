@@ -27,9 +27,10 @@ void main()
 {
 	mat4 jointTransform = u_joints[int(vertex_joint_ids.x)] * vertex_joint_weights.x;
     jointTransform += u_joints[int(vertex_joint_ids.y)] * vertex_joint_weights.y;
-    jointTransform += u_joints[int(vertex_joint_ids.z)] * vertex_joint_weights.z;  
+    jointTransform += u_joints[int(vertex_joint_ids.z)] * vertex_joint_weights.z;   
 
-	vs_out.vs_position = vec3(u_worldTransformMatrix * (jointTransform * vec4(vertex_position, 1.f))).xyz;
+	vec4 pos = u_worldTransformMatrix * (jointTransform * vec4(vertex_position, 1.f));
+	vs_out.vs_position = vec3(pos);
 	vs_out.vs_color = vertex_color;
 	vs_out.vs_texcoord = vec2(vertex_texcoord.x,-vertex_texcoord.y);
 
@@ -41,7 +42,7 @@ void main()
 	
 	vs_out.TBN = mat3(T,B,N);	
 
-	gl_Position = (u_viewProjectionMatrix * u_worldTransformMatrix) * (jointTransform * vec4(vertex_position, 1.f));
+	gl_Position = u_viewProjectionMatrix * pos;
 }
 
 #type fragment

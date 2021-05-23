@@ -24,7 +24,6 @@ namespace BaldLion
 			bool OnWindowResizeEvent(WindowResizeEvent& e);
 
 		private:
-			Rendering::Framebuffer* m_frameBuffer;
 
 			glm::vec2 m_viewportSize;
 			bool m_viewPortFocused;

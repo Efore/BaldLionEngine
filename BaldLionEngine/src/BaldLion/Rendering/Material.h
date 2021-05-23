@@ -4,23 +4,6 @@
 #include "BaldLion/Core/Core.h"
 #include <glm/glm.hpp>
 
-#define MATKEY_AMBIENT_COLOR	STRING_TO_ID("u_material.ambientColor")
-#define MATKEY_DIFFUSE_COLOR	STRING_TO_ID("u_material.diffuseColor" )
-#define MATKEY_EMISSIVE_COLOR	STRING_TO_ID("u_material.emissiveColor")
-#define MATKEY_SPECULAR_COLOR	STRING_TO_ID("u_material.specularColor")
-#define MATKEY_SHININESS		STRING_TO_ID("u_material.shininess")
-
-#define MATKEY_USE_AMBIENT_TEX		STRING_TO_ID("u_material.useAmbientTex" )
-#define MATKEY_AMBIENT_TEX			STRING_TO_ID("u_material.ambientTex" )
-#define MATKEY_USE_DIFFUSE_TEX		STRING_TO_ID("u_material.useDiffuseTex" )
-#define MATKEY_DIFFUSE_TEX			STRING_TO_ID("u_material.diffuseTex")
-#define MATKEY_USE_EMISSIVE_TEX		STRING_TO_ID("u_material.useEmissiveTex" )
-#define MATKEY_EMISSIVE_TEX			STRING_TO_ID("u_material.emissiveTex")
-#define MATKEY_USE_SPECULAR_TEX		STRING_TO_ID("u_material.useSpecularTex" )
-#define MATKEY_SPECULAR_TEX			STRING_TO_ID("u_material.specularTex")
-#define MATKEY_USE_NORMAL_TEX		STRING_TO_ID("u_material.useNormalTex" )
-#define MATKEY_NORMAL_TEX			STRING_TO_ID("u_material.normalTex")
-
 namespace BaldLion
 {
 	namespace Rendering
@@ -46,6 +29,22 @@ namespace BaldLion
 				None
 			};
 
+			enum class TextureSlots
+			{
+				AmbientTexture = 0,
+				DiffuseTexture = 1,
+				EmissiveTexture = 2,
+				SpecularTexture = 3,
+				NormalTexture = 4,
+				ShadowMap = 5
+			};
+			
+			enum class ShadowsSettingsBitMask
+			{
+				CastShadows = 1 << 0,
+				ReceiveShadows = 1 << 1
+			};
+
 			struct MaterialProperties {
 
 				StringId shaderPath;
@@ -63,6 +62,7 @@ namespace BaldLion
 				BlendMode blendMode;
 				DepthBufferMode depthBufferMode;
 				CullingMode cullingMode;
+				ui8 shadowSettings;
 
 				MaterialProperties() {}
 
@@ -79,7 +79,8 @@ namespace BaldLion
 					Texture* nTex,
 					BlendMode bMode,
 					DepthBufferMode dbMode,
-					CullingMode cMode) :
+					CullingMode cMode,
+					ui8 shadowSettingsMask) :
 					shaderPath(sPath),
 					ambientColor(aColor),
 					diffuseColor(dColor),
@@ -93,7 +94,8 @@ namespace BaldLion
 					normalTex(nTex),
 					blendMode(bMode),
 					depthBufferMode(dbMode),
-					cullingMode(cMode)
+					cullingMode(cMode),
+					shadowSettings(shadowSettingsMask)
 				{}
 
 				MaterialProperties(const MaterialProperties& other) : 
@@ -110,7 +112,8 @@ namespace BaldLion
 					normalTex(other.normalTex),
 					blendMode(other.blendMode),
 					depthBufferMode(other.depthBufferMode),
-					cullingMode(other.cullingMode)
+					cullingMode(other.cullingMode),
+					shadowSettings(other.shadowSettings)
 				{}
 			};
 
@@ -132,10 +135,15 @@ namespace BaldLion
 			StringId GetShaderPath() { return m_materialProperties.shaderPath; }
 			StringId GetMaterialName() { return m_materialName; }
 
+			bool GetCastShadows() const { return (m_materialProperties.shadowSettings & (ui8)Material::ShadowsSettingsBitMask::CastShadows) > 0; }
+			bool GetReceiveShadows() const { return (m_materialProperties.shadowSettings & (ui8)Material::ShadowsSettingsBitMask::ReceiveShadows) > 0; }
+
 			virtual ~Material() = default;
 
 			virtual void Bind() const = 0;
 			virtual void Unbind() const = 0;
+
+
 			
 		protected:
 

@@ -26,10 +26,12 @@ namespace BaldLion
 			inline const AABB& GetAABB() const { return m_aabb; }
 
 			inline const DynamicArray<Vertex>& GetVertices() const { return m_geometryData->vertices; }
-			inline const DynamicArray<ui32>& GetIndices() const { return m_geometryData->indices; }
-
 			inline DynamicArray<Vertex>& GetVertices() { return m_geometryData->vertices; }
+
+			inline const DynamicArray<ui32>& GetIndices() const { return m_geometryData->indices; }
 			inline DynamicArray<ui32>& GetIndices() { return m_geometryData->indices; }
+
+			inline const VertexArray* GetVertexArray() const { return m_vertexArray; }
 
 			inline const bool GetIsStatic() const { return m_isStatic; }
 			inline const glm::mat4& GetWorldTransform() const { return m_worldTransform; }
@@ -46,7 +48,6 @@ namespace BaldLion
 			GeometryData* m_geometryData;			
 			VertexArray* m_vertexArray;
 			Material* m_material;
-
 
 			bool m_isStatic;
 		};

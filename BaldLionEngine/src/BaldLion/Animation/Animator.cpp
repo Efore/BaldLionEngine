@@ -32,6 +32,8 @@ namespace BaldLion
 
 		void Animator::CalculateInterpolatedTransforms(const AnimationData* animation, DynamicArray<JointTransform>& result)
 		{
+			BL_PROFILE_FUNCTION();
+
 			int prevFrameIndex = 0;
 			int nextFrameIndex = 0;
 
@@ -59,6 +61,8 @@ namespace BaldLion
 
 		void Animator::OnUpdate(BaldLion::TimeStep timeStep)
 		{
+			BL_PROFILE_FUNCTION();
+
 			m_animationTime = glm::mod(m_animationTime + timeStep, m_currentAnimation->AnimationLength);
 
 			DynamicArray<JointTransform> transforms;

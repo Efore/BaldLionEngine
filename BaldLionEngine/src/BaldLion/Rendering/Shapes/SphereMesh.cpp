@@ -21,8 +21,8 @@ namespace BaldLion
 			DynamicArray<Vertex> vertices(Memory::AllocationType::FreeList_Renderer, m_rings * m_sectors);
 			DynamicArray<ui32> indices(Memory::AllocationType::FreeList_Renderer, m_rings * m_sectors * 6);
 
-			const float ringSize = 1.0f / (m_rings - 1); //in units
-			const float sectorSize = 1.0f / (m_sectors - 1); //in radians
+			const float ringSize = 1.0f / (m_rings - 1); 
+			const float sectorSize = 1.0f / (m_sectors - 1);
 
 			for (ui32 i = 0; i < m_rings; i++)
 			{
@@ -35,7 +35,7 @@ namespace BaldLion
 						vertexPos * m_radius,
 						glm::vec3(1.0f),
 						vertexPos,
-						glm::vec2(i / m_rings, j / m_sectors),
+						glm::vec2((float)(i / m_rings), (float)(j / m_sectors)),
 						glm::vec3(1.0f)
 					);
 				}

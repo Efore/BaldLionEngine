@@ -2,11 +2,24 @@
 #include <string_view>
 #include "SkyboxPlatformInterface.h"
 
+#include "Platform/OpenGL/OpenGLSkybox.h"
+#include "RendererPlatformInterface.h"
+
 namespace BaldLion
 {
 	namespace Rendering
 	{
-		SkyboxPlatformInterface::SkyboxPlatform SkyboxPlatformInterface::s_skyboxPlatform = SkyboxPlatformInterface::SkyboxPlatform::OpenGL;
+		SkyboxPlatformInterface* SkyboxPlatformInterface::Create()
+		{
+			switch (RendererPlatformInterface::GetAPI())
+			{
+			case RendererPlatformInterface::RendererPlatform::None:			BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+			case RendererPlatformInterface::RendererPlatform::OpenGL:		return MemoryManager::New<OpenGLSkybox>("OpenGLRenderer", AllocationType::FreeList_Renderer);
+			}
+
+			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
+			return nullptr;
+		}
 
 		void SkyboxPlatformInterface::Init(const std::string& path)
 		{

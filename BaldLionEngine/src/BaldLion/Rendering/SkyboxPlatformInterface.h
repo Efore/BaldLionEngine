@@ -12,19 +12,11 @@ namespace BaldLion
 		{
 		public:
 
-			enum class SkyboxPlatform
-			{
-				None = 0, OpenGL = 1
-			};
-
 			virtual void Init(const std::string& path);
 			virtual void Draw() = 0;	
 			virtual void Stop();
 
-			inline static SkyboxPlatform GetAPI() { return s_skyboxPlatform; }		
-
-		private:
-			static SkyboxPlatform s_skyboxPlatform;
+			static SkyboxPlatformInterface* Create();
 
 		protected:			
 			VertexArray* m_vertexArray;

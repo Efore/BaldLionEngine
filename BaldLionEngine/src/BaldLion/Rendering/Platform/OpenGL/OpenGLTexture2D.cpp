@@ -9,8 +9,11 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
+		OpenGLTexture2D::OpenGLTexture2D(const std::string& path, bool emptyTexture)
 		{
+			if (emptyTexture)
+				return;
+
 			TextureLibrary::GetNameFromPath(path, m_name);
 
 			BL_PROFILE_FUNCTION();
@@ -55,7 +58,6 @@ namespace BaldLion
 
 			stbi_image_free(data);
 		}
-		
 
 		OpenGLTexture2D::OpenGLTexture2D(const std::string& path, const unsigned char* textureData, int size) 			
 		{
@@ -114,10 +116,63 @@ namespace BaldLion
 		void OpenGLTexture2D::Bind(ui32 slot) const
 		{
 			BL_PROFILE_FUNCTION();
-
+			
 			glActiveTexture(GL_TEXTURE0 + slot);
 			glBindTextureUnit(slot, m_rendererID);
-			glActiveTexture(GL_TEXTURE0);
+			
 		}
+
+		void OpenGLTexture2D::Bind() const
+		{
+			BL_PROFILE_FUNCTION();
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_rendererID);			
+		}
+
+		void OpenGLTexture2D::SetWrapMode(WrapMode xCoord, WrapMode yCoord) const
+		{
+			glBindTexture(GL_TEXTURE_2D, m_rendererID);
+
+			switch (xCoord)
+			{
+			case BaldLion::Rendering::Repeat:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				break;
+			case BaldLion::Rendering::Mirrored:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+				break;
+			case BaldLion::Rendering::ClampToEdge:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				break;
+			case BaldLion::Rendering::ClampToBorder:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+				break;
+			default:
+				break;
+			}
+
+			switch (yCoord)
+			{
+			case BaldLion::Rendering::Repeat:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				break;
+			case BaldLion::Rendering::Mirrored:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+				break;
+			case BaldLion::Rendering::ClampToEdge:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				break;
+			case BaldLion::Rendering::ClampToBorder:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+				break;
+			default:
+				break;
+			}
+			
+			
+
+		}
+
 	}
 }

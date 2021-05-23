@@ -18,14 +18,21 @@ namespace BaldLion
 
 			void Invalidate();
 
-			virtual ui32 GetColorAttachmentID() const override { return m_colorAttachmentID; }
-			virtual ui32 GetDepthAttachmentID() const override { return m_depthAttachmentID; }
+			virtual ui32 GetColorAttachmentID() const override { return m_colorBufferID; }
+			virtual ui32 GetDepthAttachmentID() const override { return m_depthBufferID; }
+			virtual ui32 GetStencilAttachmentID() const override { return m_stencilBufferID; }
+
 			virtual const FramebufferSpecification& GetSpecification() const override { return m_framebufferSpecification; }
 
 		private:
+
+			ui32 m_framebufferID = 0;
+			ui32 m_colorBufferID = 0;
+			ui32 m_depthBufferID = 0;	
+			ui32 m_stencilBufferID = 0;
+
 			FramebufferSpecification m_framebufferSpecification;
-			ui32 m_rendererID = 0;
-			ui32 m_colorAttachmentID = 0, m_depthAttachmentID = 0;
+			
 		};
 	}
 }

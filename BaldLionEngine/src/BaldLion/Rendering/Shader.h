@@ -4,6 +4,38 @@
 #include "BaldLion/Core/Containers/HashTable.h"
 #include "BaldLion/Core/Core.h"
 
+
+#define UNIFORM_AMBIENT_COLOR			STRING_TO_ID("u_material.ambientColor")
+#define UNIFORM_DIFFUSE_COLOR			STRING_TO_ID("u_material.diffuseColor" )
+#define UNIFORM_EMISSIVE_COLOR			STRING_TO_ID("u_material.emissiveColor")
+#define UNIFORM_SPECULAR_COLOR			STRING_TO_ID("u_material.specularColor")
+#define UNIFORM_SHININESS				STRING_TO_ID("u_material.shininess")
+
+#define UNIFORM_USE_AMBIENT_TEX			STRING_TO_ID("u_material.useAmbientTex")
+#define UNIFORM_AMBIENT_TEX				STRING_TO_ID("u_material.ambientTex")
+#define UNIFORM_USE_DIFFUSE_TEX			STRING_TO_ID("u_material.useDiffuseTex" )
+#define UNIFORM_DIFFUSE_TEX				STRING_TO_ID("u_material.diffuseTex")
+#define UNIFORM_USE_EMISSIVE_TEX		STRING_TO_ID("u_material.useEmissiveTex" )
+#define UNIFORM_EMISSIVE_TEX			STRING_TO_ID("u_material.emissiveTex")
+#define UNIFORM_USE_SPECULAR_TEX		STRING_TO_ID("u_material.useSpecularTex" )
+#define UNIFORM_SPECULAR_TEX			STRING_TO_ID("u_material.specularTex")
+#define UNIFORM_USE_NORMAL_TEX			STRING_TO_ID("u_material.useNormalTex")
+#define UNIFORM_NORMAL_TEX				STRING_TO_ID("u_material.normalTex")
+
+#define UNIFORM_USE_SHADOWMAP_TEX		STRING_TO_ID("u_useShadowMap")
+#define UNIFORM_SHADOWMAP_TEX			STRING_TO_ID("u_shadowMapTex")
+
+#define UNIFORM_MODEL_SPACE_TRANSFORM	STRING_TO_ID("u_worldTransformMatrix")
+#define UNIFORM_VIEW_PROJECTION			STRING_TO_ID("u_viewProjectionMatrix")
+#define UNIFORM_CAMERA_POS				STRING_TO_ID("u_cameraPos")
+
+#define UNIFORM_LIGHT_SPACE_TRANSFORM	STRING_TO_ID("u_lightViewProjectionMatrix")
+
+#define UNIFORM_DIR_LIGHT_DIRECTION		STRING_TO_ID("u_directionalLight.direction")
+#define UNIFORM_DIR_LIGHT_AMBIENT		STRING_TO_ID("u_directionalLight.ambientColor")
+#define UNIFORM_DIR_LIGHT_DIFUSSE		STRING_TO_ID("u_directionalLight.diffuseColor")
+#define UNIFORM_DIR_LIGHT_SPECULAR		STRING_TO_ID("u_directionalLight.specularColor")
+
 namespace BaldLion 
 {
 	namespace Rendering

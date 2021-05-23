@@ -162,11 +162,11 @@ namespace BaldLion
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
 				{
 					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
-					ambientTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+					ambientTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, TextureType::Texture2d);
 				}
 				else
 				{
-					ambientTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+					ambientTex = Renderer::GetTextureLibrary().Load(completeTexPath, TextureType::Texture2d);
 				}
 			}
 
@@ -179,11 +179,11 @@ namespace BaldLion
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
 				{
 					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
-					diffuseTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+					diffuseTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, TextureType::Texture2d);
 				}
 				else
 				{
-					diffuseTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+					diffuseTex = Renderer::GetTextureLibrary().Load(completeTexPath, TextureType::Texture2d);
 				}
 			}
 
@@ -196,11 +196,11 @@ namespace BaldLion
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
 				{
 					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
-					specularTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+					specularTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, TextureType::Texture2d);
 				}
 				else
 				{
-					specularTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+					specularTex = Renderer::GetTextureLibrary().Load(completeTexPath, TextureType::Texture2d);
 				}
 			}
 
@@ -214,11 +214,11 @@ namespace BaldLion
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
 				{
 					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
-					emissiveTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+					emissiveTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, TextureType::Texture2d);
 				}
 				else
 				{
-					emissiveTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+					emissiveTex = Renderer::GetTextureLibrary().Load(completeTexPath, TextureType::Texture2d);
 				}
 			}
 
@@ -231,11 +231,11 @@ namespace BaldLion
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
 				{
 					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
-					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, BL_TEXTURE_TYPE_2D);
+					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size, TextureType::Texture2d);
 				}
 				else
 				{
-					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, BL_TEXTURE_TYPE_2D);
+					normalTex = Renderer::GetTextureLibrary().Load(completeTexPath, TextureType::Texture2d);
 				}
 			}
 		}
@@ -262,20 +262,21 @@ namespace BaldLion
 
 			Material::MaterialProperties materialProperties
 			{
-					STRING_TO_ID("assets/shaders/BaseLit.glsl"),
-					glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
-					glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
-					glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
-					glm::vec3(specularColor.r, specularColor.g, specularColor.b),
-					32.0f,
-					ambientTex,
-					diffuseTex,
-					specularTex,
-					emissiveTex,
-					normalTex,
-					Material::BlendMode::None,
-					Material::DepthBufferMode::TestAndWrite,
-					Material::CullingMode::Back
+				STRING_TO_ID("assets/shaders/BaseLit.glsl"),
+				glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
+				glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
+				glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
+				glm::vec3(specularColor.r, specularColor.g, specularColor.b),
+				32.0f,
+				ambientTex,
+				diffuseTex,
+				specularTex,
+				emissiveTex,
+				normalTex,
+				Material::BlendMode::None,
+				Material::DepthBufferMode::TestAndWrite,
+				Material::CullingMode::Back,
+				(ui8)Material::ShadowsSettingsBitMask::CastShadows
 			};
 
 			Material* meshMaterial = MaterialLibrary::Load(aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data, &materialProperties);

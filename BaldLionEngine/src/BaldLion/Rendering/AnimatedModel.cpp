@@ -232,7 +232,8 @@ namespace BaldLion
 					normalTex,
 					Material::BlendMode::None,
 					Material::DepthBufferMode::TestAndWrite,
-					Material::CullingMode::Back
+					Material::CullingMode::Back,
+					(ui8)Material::ShadowsSettingsBitMask::CastShadows,
 			};
 
 			Material* meshMaterial = MaterialLibrary::Load(aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data, &materialProperties);
