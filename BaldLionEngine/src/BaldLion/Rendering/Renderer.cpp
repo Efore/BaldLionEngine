@@ -31,6 +31,7 @@ namespace BaldLion
 		Texture2D* Renderer::s_shadowMapTex;
 
 		Shader* Renderer::s_depthMapShader;
+		Shader* Renderer::s_depthMapSkinnedShader;
 
 		glm::mat4 Renderer::s_lightViewProjection;
 
@@ -74,6 +75,7 @@ namespace BaldLion
 			});
 
 			s_depthMapShader = Shader::Create("assets/shaders/depthMap.glsl");
+			s_depthMapSkinnedShader = Shader::Create("assets/shaders/depthMapSkinned.glsl");
 
 			LightManager::Init();
 		}
@@ -150,9 +152,9 @@ namespace BaldLion
 				ui32 shadowMapSlot = (ui32)Material::TextureSlots::ShadowMap;
 				shader->SetUniform(UNIFORM_SHADOWMAP_TEX, ShaderDataType::Int, &shadowMapSlot);
 				s_shadowMapTex->Bind(shadowMapSlot);
-				shader->SetUniform(UNIFORM_LIGHT_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_lightViewProjection));
 			}
 
+			shader->SetUniform(UNIFORM_LIGHT_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_lightViewProjection));
 			shader->SetUniform(UNIFORM_USE_SHADOWMAP_TEX, ShaderDataType::Int, &useShadowMapTex);
 			shader->SetUniform(UNIFORM_MODEL_SPACE_TRANSFORM, ShaderDataType::Mat4, &(transform[0][0]));
 			shader->SetUniform(UNIFORM_VIEW_PROJECTION, ShaderDataType::Mat4, &(s_sceneData.viewProjectionMatrix));
@@ -229,8 +231,8 @@ namespace BaldLion
 			if (s_castingShadowMeshes.Size() == 0)
 				return;
 
-			float shadowDistance = 1000.0f;			
-			glm::mat4 lightView = glm::lookAt(LightManager::GetDirectionalLight().direction * -shadowDistance, glm::vec3(0.0f), MathUtils::Vector3UnitY);
+			float shadowDistance = 200.0f;			
+			glm::mat4 lightView = glm::lookAt(LightManager::GetDirectionalLight().direction * (-shadowDistance * 0.5f), glm::vec3(0.0f), MathUtils::Vector3UnitY);
 			glm::mat4 lightProjection = glm::ortho(-shadowDistance, shadowDistance, -shadowDistance, shadowDistance, 0.0f, shadowDistance * 2.0f);
 
 			s_lightViewProjection = lightProjection * lightView;	
@@ -241,13 +243,32 @@ namespace BaldLion
 
 			for (ui32 i = 0; i < s_castingShadowMeshes.Size(); ++i)
 			{
-				s_depthMapShader->Bind();
-				s_depthMapShader->SetUniform(UNIFORM_LIGHT_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_lightViewProjection));
-				s_depthMapShader->SetUniform(UNIFORM_MODEL_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_castingShadowMeshes[i]->GetWorldTransform()[0][0]));
-				s_rendererPlatformInterface->DrawVertexArray(s_castingShadowMeshes[i]->GetVertexArray());
+				if (s_castingShadowMeshes[i]->GetIsStatic())
+				{
+					s_depthMapShader->Bind();
+					s_depthMapShader->SetUniform(UNIFORM_LIGHT_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_lightViewProjection));
+					s_depthMapShader->SetUniform(UNIFORM_MODEL_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_castingShadowMeshes[i]->GetWorldTransform()[0][0]));
+					s_rendererPlatformInterface->DrawVertexArray(s_castingShadowMeshes[i]->GetVertexArray());
 
+					s_depthMapShader->Unbind();
+				}
+				else
+				{
+					s_depthMapSkinnedShader->Bind();
+					s_depthMapSkinnedShader->SetUniform(UNIFORM_LIGHT_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_lightViewProjection));
+					s_depthMapSkinnedShader->SetUniform(UNIFORM_MODEL_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_castingShadowMeshes[i]->GetWorldTransform()[0][0]));
+
+					DynamicArray<Animation::Joint>* joints = &(static_cast<SkinnedMesh*>(s_castingShadowMeshes[i])->GetJoints());
+					
+					for (ui32 i = 0; i < joints->Size(); ++i)
+					{
+						s_depthMapSkinnedShader->SetUniform(STRING_TO_ID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &((*joints)[i].jointAnimationTransform));
+					}
+
+					s_rendererPlatformInterface->DrawVertexArray(s_castingShadowMeshes[i]->GetVertexArray());
+					s_depthMapSkinnedShader->Unbind();
+				}
 				s_renderStats.drawCalls++;
-				s_depthMapShader->Unbind();
 			}
 
 			s_rendererPlatformInterface->SetFaceCulling(RendererPlatformInterface::FaceCulling::Back);

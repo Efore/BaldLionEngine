@@ -100,6 +100,7 @@ namespace BaldLion
 
 			static Texture2D* s_shadowMapTex;
 			static Shader* s_depthMapShader;
+			static Shader* s_depthMapSkinnedShader;
 
 			static glm::mat4 s_lightViewProjection;
 

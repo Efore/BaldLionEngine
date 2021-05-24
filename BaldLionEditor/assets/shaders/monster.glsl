@@ -11,6 +11,7 @@ layout (location = 6) in vec3 vertex_joint_weights;
 
 uniform mat4 u_viewProjectionMatrix;  
 uniform mat4 u_worldTransformMatrix;
+uniform mat4 u_lightViewProjectionMatrix;
 		
 const int MAX_JOINTS = 100;
 uniform mat4 u_joints[MAX_JOINTS];
@@ -21,6 +22,7 @@ out VS_OUT
 	vec3 vs_color;
 	vec2 vs_texcoord;
 	mat3 TBN;
+	vec4 vs_posLightSpace;
 } vs_out;			
 
 void main()
@@ -33,6 +35,7 @@ void main()
 	vs_out.vs_position = vec3(pos);
 	vs_out.vs_color = vertex_color;
 	vs_out.vs_texcoord = vec2(vertex_texcoord.x,-vertex_texcoord.y);
+	vs_out.vs_posLightSpace = u_lightViewProjectionMatrix * vec4(vs_out.vs_position ,1.0);
 
 	vec3 T = normalize(u_worldTransformMatrix * (jointTransform * vec4(vertex_tangent,0.f))).xyz;
 	vec3 N = normalize(u_worldTransformMatrix * (jointTransform * vec4(vertex_normal,0.f))).xyz;
@@ -54,6 +57,7 @@ in VS_OUT
 	vec3 vs_color;
 	vec2 vs_texcoord;
 	mat3 TBN;
+	vec4 vs_posLightSpace;
 } fs_in;	
 
 struct DirectionalLight 
@@ -102,15 +106,51 @@ out vec4 fs_color;
 
 //Uniforms
 uniform Material u_material;
+
 uniform DirectionalLight u_directionalLight;
+
 uniform PointLight u_pointLights[MAX_POINT_LIGHTS];
 uniform int u_numPointLights;
+
 uniform vec3 u_cameraPos;
-uniform vec3 u_lightPos;
+
+uniform int u_useShadowMap;
+uniform sampler2D u_shadowMapTex;
 
 //Functions
 
-vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
+{
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	projCoords = (projCoords * 0.5) + 0.5; 
+
+	float closestDepth = texture(u_shadowMapTex, projCoords.xy).r;  	
+
+	float currentDepth = projCoords.z; 
+	
+    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+
+	float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(u_shadowMapTex, 0);
+
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(u_shadowMapTex, projCoords.xy + vec2(x, y) * texelSize).r; 
+            shadow += currentDepth - bias > pcfDepth  ? 0.8 : 0.0;        
+        }    
+    }
+    shadow /= 9.0;
+    
+    // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+    if(projCoords.z > 1.0)
+        shadow = 0.0;
+
+	return shadow;
+}
+
+vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec4 posLightSpace)
 {
     vec3 lightDir = normalize(-light.direction);
 
@@ -136,12 +176,14 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 	specularTexResult.y = clamp(specularTexResult.y + (1 - u_material.useSpecularTex), 0.0, 1.0);
 	specularTexResult.z = clamp(specularTexResult.z + (1 - u_material.useSpecularTex), 0.0, 1.0);
 
+	float shadow = ShadowCalculation(posLightSpace, normal, lightDir) * float(u_useShadowMap);
+    
 	// combine results
     vec3 ambient  = light.ambientColor * u_material.ambientColor * ambientTexResult;
     vec3 diffuse  = light.diffuseColor  * diff * u_material.diffuseColor * diffuseTexResult;
     vec3 specular = light.specularColor * spec * u_material.specularColor * specularTexResult;
-    
-	return (ambient + diffuse + specular);	
+
+	return (ambient + ((1.0 - shadow) * (diffuse + specular)));	
 }  
 
 
@@ -200,7 +242,7 @@ void main()
 	vec3 posToViewDir = normalize(u_cameraPos - fs_in.vs_position);
 
 	//Directional Lighting
-	vec3 result = CalcDirLight(u_directionalLight, norm, posToViewDir);
+	vec3 result = CalcDirLight(u_directionalLight, norm, posToViewDir, fs_in.vs_posLightSpace);
 
 	for(int i = 0; i < u_numPointLights; i++)
         result += CalcPointLight(u_pointLights[i], norm, posToViewDir); 

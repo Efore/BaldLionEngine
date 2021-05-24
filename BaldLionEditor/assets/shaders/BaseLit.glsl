@@ -28,7 +28,7 @@ void main()
 	vs_out.vs_position = vec3(u_worldTransformMatrix * vec4(vertex_position,1.0));
 	vs_out.vs_color = vertex_color;
 	vs_out.vs_texcoord = vec2(vertex_texcoord.x,-vertex_texcoord.y);
-	vs_out.vs_posLightSpace = u_lightViewProjectionMatrix * u_worldTransformMatrix * vec4(vertex_position,1.0);
+	vs_out.vs_posLightSpace = u_lightViewProjectionMatrix * vec4(vs_out.vs_position ,1.0);
 
 	vec3 T = normalize(u_worldTransformMatrix * vec4(vertex_tangent,0.f)).xyz;
 	vec3 N = normalize(u_worldTransformMatrix * vec4(vertex_normal,0.f)).xyz;

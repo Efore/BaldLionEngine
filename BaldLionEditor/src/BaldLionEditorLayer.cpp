@@ -21,13 +21,13 @@ namespace BaldLion
 		{
 			OPTICK_EVENT();
 						
-			ProjectionCameraManager::Init(glm::vec3(0, 50, 150), (float)Application::GetInstance().GetWindow().GetWidth(), (float)Application::GetInstance().GetWindow().GetHeight(), 0.1f, 50000.0f, 500.0f);
+			ProjectionCameraManager::Init(glm::vec3(0, 5, 10), (float)Application::GetInstance().GetWindow().GetWidth(), (float)Application::GetInstance().GetWindow().GetHeight(), 0.1f, 50000.0f, 50.0f);
 
 			Texture* gridTexture = Renderer::GetTextureLibrary().Load("assets/textures/TextureGrid.png",TextureType::Texture2d);
 			gridTexture->SetWrapMode(WrapMode::Repeat, WrapMode::Repeat);
 
 			Rendering::Material::MaterialProperties shapeMaterialProperties{
-					STRING_TO_ID("assets/shaders/BaseLit.glsl"),
+					STRING_TO_ID("assets/shaders/baseLit.glsl"),
 					glm::vec3(1.0f),
 					glm::vec3(1.0f),
 					glm::vec3(1.0f),
@@ -48,7 +48,7 @@ namespace BaldLion
 			shapeMaterial->AssignShader();
 
 			{
-				auto plane = MemoryManager::New<Rendering::PlaneMesh>("Plane", AllocationType::FreeList_Renderer, shapeMaterial, AABB{ glm::vec3(0.0f), glm::vec3(0.0f) }, glm::scale(glm::mat4(1.0f), glm::vec3(100.0f, 1.0f, 100.0f)), true, 100.0f);
+				auto plane = MemoryManager::New<Rendering::PlaneMesh>("Plane", AllocationType::FreeList_Renderer, shapeMaterial, AABB{ glm::vec3(0.0f), glm::vec3(0.0f) }, glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f)), true, 100.0f);
 				plane->SetUpPlane();
 
 				Renderer::RegisterMesh(plane);
@@ -56,16 +56,16 @@ namespace BaldLion
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
 
-			for (ui32 i = 0; i < 0; ++i)
+			for (ui32 i = 0; i < 3; ++i)
 			{
-				auto model = MemoryManager::New<Rendering::AnimatedModel>(std::string("Animated Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", initialTransform);
+				initialTransform = glm::translate(initialTransform, glm::vec3(15, 0, 15));
+				auto model = MemoryManager::New<Rendering::AnimatedModel>(std::string("Animated Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", glm::scale( initialTransform, glm::vec3(0.1f)));
 				model->SetUpModel();
 				Renderer::RegisterModel(model);
-				initialTransform = glm::translate(initialTransform, glm::vec3(150, 0, 0));
 			}
 
 			initialTransform = glm::mat4(1.0f);
-			initialTransform = glm::scale(initialTransform, glm::vec3(20.0f));
+			initialTransform = glm::scale(initialTransform, glm::vec3(5.0f));
 
 			for (ui32 i = 0; i < 3; ++i)
 			{
