@@ -116,7 +116,7 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			CreateShadowMap();
+			CreateShadowMap(camera);
 
 			s_framebuffer->Bind();
 			s_rendererPlatformInterface->SetClearColor({ 0.3f, 0.3f, 0.8f, 1.0f });
@@ -226,13 +226,18 @@ namespace BaldLion
 			}
 		}
 
-		void Renderer::CreateShadowMap()
+		void Renderer::CreateShadowMap(const Camera* camera)
 		{
 			if (s_castingShadowMeshes.Size() == 0)
 				return;
 
-			float shadowDistance = 200.0f;			
-			glm::mat4 lightView = glm::lookAt(LightManager::GetDirectionalLight().direction * (-shadowDistance * 0.5f), glm::vec3(0.0f), MathUtils::Vector3UnitY);
+			float shadowDistance = 200.0f;	
+
+			glm::vec3 lightPosition = camera->GetPosition();
+			lightPosition.y = 100.0f;
+			glm::vec3 center = lightPosition + LightManager::GetDirectionalLight().direction * glm::length(lightPosition);
+
+			glm::mat4 lightView = glm::lookAt(lightPosition, center, MathUtils::Vector3UnitY);
 			glm::mat4 lightProjection = glm::ortho(-shadowDistance, shadowDistance, -shadowDistance, shadowDistance, 0.0f, shadowDistance * 2.0f);
 
 			s_lightViewProjection = lightProjection * lightView;	

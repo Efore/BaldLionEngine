@@ -15,6 +15,8 @@
 
 #define BL_BIND_FUNCTION(fn) std::bind(&fn, this, std::placeholders::_1)
 
+using ui64 = uint64_t;
+using i64 = int64_t;
 using ui32 = uint32_t;
 using i32 = int32_t;
 using ui16 = uint16_t;

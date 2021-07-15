@@ -22,6 +22,15 @@
     <Filter Include="src\BaldLion\Core\Memory">
       <UniqueIdentifier>{E1E6F51D-CD0B-459E-F656-2A2EE2DA43BC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\BaldLion\ECS">
+      <UniqueIdentifier>{6BC1AF88-57BA-CEDA-80EC-B35F6C44AEE6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\ECS\Components">
+      <UniqueIdentifier>{A00D9AA9-0C1B-C88F-9501-C47A010E9446}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\ECS\Systems">
+      <UniqueIdentifier>{7252BEC0-5E77-0D41-87C2-F2D073460C5F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\BaldLion\Events">
       <UniqueIdentifier>{657105EC-D1D2-E2F9-5A40-29ACC6A019B9}</UniqueIdentifier>
     </Filter>
@@ -39,6 +48,9 @@
     </Filter>
     <Filter Include="src\BaldLion\Rendering\Platform\OpenGL">
       <UniqueIdentifier>{360656DC-2258-2DCC-0B77-6ADCF76746B5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\Rendering\Shapes">
+      <UniqueIdentifier>{216E240E-8D86-0B38-5633-9BD1C20AA0D1}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\BaldLion\Utils">
       <UniqueIdentifier>{C19AE274-AD7E-A3CA-16DF-9D1D02E28D4C}</UniqueIdentifier>
@@ -150,6 +162,9 @@
     <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Profiling.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Core\StringId.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
@@ -158,6 +173,30 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Window.h">
       <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSProjectionCameraComponent.h">
+      <Filter>src\BaldLion\ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSTransformComponent.h">
+      <Filter>src\BaldLion\ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\ECSComponent.h">
+      <Filter>src\BaldLion\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\ECSComponentLookUp.h">
+      <Filter>src\BaldLion\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\ECSManager.h">
+      <Filter>src\BaldLion\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\ECSSystem.h">
+      <Filter>src\BaldLion\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\ECSUtils.h">
+      <Filter>src\BaldLion\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSCameraMovementSystem.h">
+      <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h">
       <Filter>src\BaldLion\Events</Filter>
@@ -187,6 +226,9 @@
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Framebuffer.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\GeometryData.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h">
@@ -245,6 +287,15 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Shader.h">
       <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Shapes\CubeMesh.h">
+      <Filter>src\BaldLion\Rendering\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Shapes\PlaneMesh.h">
+      <Filter>src\BaldLion\Rendering\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Shapes\SphereMesh.h">
+      <Filter>src\BaldLion\Rendering\Shapes</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h">
       <Filter>src\BaldLion\Rendering</Filter>
@@ -1365,11 +1416,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\Profiling.h" />
-    <ClInclude Include="src\BaldLion\Rendering\GeometryData.h" />
-    <ClInclude Include="src\BaldLion\Rendering\Shapes\PlaneMesh.h" />
-    <ClInclude Include="src\BaldLion\Rendering\Shapes\CubeMesh.h" />
-    <ClInclude Include="src\BaldLion\Rendering\Shapes\SphereMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1416,6 +1462,15 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Window.cpp">
       <Filter>src\BaldLion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\ECS\ECSManager.cpp">
+      <Filter>src\BaldLion\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\ECS\ECSSystem.cpp">
+      <Filter>src\BaldLion\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSCameraMovementSystem.cpp">
+      <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
       <Filter>src\BaldLion\ImGui</Filter>
@@ -1486,6 +1541,15 @@
     <ClCompile Include="src\BaldLion\Rendering\Shader.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Shapes\CubeMesh.cpp">
+      <Filter>src\BaldLion\Rendering\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Shapes\PlaneMesh.cpp">
+      <Filter>src\BaldLion\Rendering\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Shapes\SphereMesh.cpp">
+      <Filter>src\BaldLion\Rendering\Shapes</Filter>
+    </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\SkinnedMesh.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
@@ -1510,8 +1574,5 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Shapes\PlaneMesh.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\Shapes\CubeMesh.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\Shapes\SphereMesh.cpp" />
   </ItemGroup>
 </Project>

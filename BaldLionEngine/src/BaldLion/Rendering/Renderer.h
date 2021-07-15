@@ -72,7 +72,7 @@ namespace BaldLion
 			static void AddToBatch( Mesh* mesh);
 			static void ProcessFrustrumCullingParallel(ui32 initialMeshIndex, ui32 finalMeshIndex, const Camera* camera);
 			
-			static void CreateShadowMap();
+			static void CreateShadowMap(const Camera* camera);
 
 
 			static void RenderStatictGeometry();
