@@ -19,7 +19,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BaldLionEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -148,6 +148,7 @@
     <ClInclude Include="src\BaldLion\Animation\AnimationManager.h" />
     <ClInclude Include="src\BaldLion\Animation\Animator.h" />
     <ClInclude Include="src\BaldLion\Animation\Joint.h" />
+    <ClInclude Include="src\BaldLion\Animation\Skeleton.h" />
     <ClInclude Include="src\BaldLion\Core\Application.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\DynamicArray.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\HashTable.h" />
@@ -177,7 +178,6 @@
     <ClInclude Include="src\BaldLion\Events\KeyEvent.h" />
     <ClInclude Include="src\BaldLion\Events\MouseEvent.h" />
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\BaldLion\Rendering\AnimatedModel.h" />
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Camera.h" />
     <ClInclude Include="src\BaldLion\Rendering\CameraManager.h" />
@@ -205,7 +205,6 @@
     <ClInclude Include="src\BaldLion\Rendering\Shapes\CubeMesh.h" />
     <ClInclude Include="src\BaldLion\Rendering\Shapes\PlaneMesh.h" />
     <ClInclude Include="src\BaldLion\Rendering\Shapes\SphereMesh.h" />
-    <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h" />
     <ClInclude Include="src\BaldLion\Rendering\SkyboxPlatformInterface.h" />
     <ClInclude Include="src\BaldLion\Rendering\Texture.h" />
     <ClInclude Include="src\BaldLion\Rendering\Vertex.h" />
@@ -582,6 +581,7 @@
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp" />
     <ClCompile Include="src\BaldLion\Animation\Animator.cpp" />
+    <ClCompile Include="src\BaldLion\Animation\Skeleton.cpp" />
     <ClCompile Include="src\BaldLion\Core\Application.cpp" />
     <ClCompile Include="src\BaldLion\Core\JobManagement\JobManager.cpp" />
     <ClCompile Include="src\BaldLion\Core\JobManagement\ThreadPool.cpp" />
@@ -596,7 +596,6 @@
     <ClCompile Include="src\BaldLion\Core\StringId.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\AnimatedModel.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Camera.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\CameraManager.cpp" />
@@ -621,7 +620,6 @@
     <ClCompile Include="src\BaldLion\Rendering\Shapes\CubeMesh.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Shapes\PlaneMesh.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Shapes\SphereMesh.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\SkinnedMesh.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\SkyboxPlatformInterface.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Texture.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\VertexArray.cpp" />

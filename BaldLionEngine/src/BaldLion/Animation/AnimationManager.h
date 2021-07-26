@@ -7,7 +7,7 @@
  *********************************************************************/
 #pragma once
 #include "Animator.h"
-#include <vector>
+#include <assimp/scene.h>
 #include <mutex>
 
 namespace BaldLion
@@ -24,7 +24,7 @@ namespace BaldLion
 			static void OnUpdate(float timeStep);
 			static void OnParallelUpdate(float timeStep);
 
-			static void GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping, SkinnedMesh* animatedMesh);
+			static void GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping, Skeleton* skeleton);
 
 			static void RegisterAnimator(Animator* animator);
 			static void UnregisterAnimator(Animator* animator);

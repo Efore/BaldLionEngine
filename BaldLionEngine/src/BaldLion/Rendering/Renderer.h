@@ -5,7 +5,7 @@
 #include "LightManager.h"
 #include "SkyboxPlatformInterface.h"
 #include "RendererPlatformInterface.h"
-#include "AnimatedModel.h"
+#include "Model.h"
 #include "Framebuffer.h"
 #include "Framebuffer.h"
 
@@ -72,9 +72,7 @@ namespace BaldLion
 			static void AddToBatch( Mesh* mesh);
 			static void ProcessFrustrumCullingParallel(ui32 initialMeshIndex, ui32 finalMeshIndex, const Camera* camera);
 			
-			static void CreateShadowMap();
-
-
+			static void CreateShadowMap(const Camera* camera);
 			static void RenderStatictGeometry();
 			static void RenderDynamicGeometry();
 

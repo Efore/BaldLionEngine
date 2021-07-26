@@ -59,7 +59,7 @@ namespace BaldLion
 			for (ui32 i = 0; i < 3; ++i)
 			{
 				initialTransform = glm::translate(initialTransform, glm::vec3(15, 0, 15));
-				auto model = MemoryManager::New<Rendering::AnimatedModel>(std::string("Animated Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", glm::scale( initialTransform, glm::vec3(0.1f)));
+				auto model = MemoryManager::New<Rendering::Model>(std::string("Animated Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", glm::scale( initialTransform, glm::vec3(0.1f)));
 				model->SetUpModel();
 				Renderer::RegisterModel(model);
 			}

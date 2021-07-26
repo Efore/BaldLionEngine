@@ -40,6 +40,9 @@
     <Filter Include="src\BaldLion\Rendering\Platform\OpenGL">
       <UniqueIdentifier>{360656DC-2258-2DCC-0B77-6ADCF76746B5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\BaldLion\Rendering\Shapes">
+      <UniqueIdentifier>{216E240E-8D86-0B38-5633-9BD1C20AA0D1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\BaldLion\Utils">
       <UniqueIdentifier>{C19AE274-AD7E-A3CA-16DF-9D1D02E28D4C}</UniqueIdentifier>
     </Filter>
@@ -150,6 +153,9 @@
     <ClInclude Include="src\BaldLion\Core\MouseButtonCodes.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Profiling.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Core\StringId.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
@@ -174,9 +180,6 @@
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h">
       <Filter>src\BaldLion\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\AnimatedModel.h">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
@@ -187,6 +190,9 @@
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Framebuffer.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\GeometryData.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h">
@@ -246,8 +252,14 @@
     <ClInclude Include="src\BaldLion\Rendering\Shader.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h">
-      <Filter>src\BaldLion\Rendering</Filter>
+    <ClInclude Include="src\BaldLion\Rendering\Shapes\CubeMesh.h">
+      <Filter>src\BaldLion\Rendering\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Shapes\PlaneMesh.h">
+      <Filter>src\BaldLion\Rendering\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Shapes\SphereMesh.h">
+      <Filter>src\BaldLion\Rendering\Shapes</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\SkyboxPlatformInterface.h">
       <Filter>src\BaldLion\Rendering</Filter>
@@ -1365,11 +1377,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\Profiling.h" />
-    <ClInclude Include="src\BaldLion\Rendering\GeometryData.h" />
-    <ClInclude Include="src\BaldLion\Rendering\Shapes\PlaneMesh.h" />
-    <ClInclude Include="src\BaldLion\Rendering\Shapes\CubeMesh.h" />
-    <ClInclude Include="src\BaldLion\Rendering\Shapes\SphereMesh.h" />
+    <ClInclude Include="src\BaldLion\Animation\Skeleton.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1419,9 +1427,6 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
       <Filter>src\BaldLion\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\AnimatedModel.cpp">
-      <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
@@ -1486,8 +1491,14 @@
     <ClCompile Include="src\BaldLion\Rendering\Shader.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\SkinnedMesh.cpp">
-      <Filter>src\BaldLion\Rendering</Filter>
+    <ClCompile Include="src\BaldLion\Rendering\Shapes\CubeMesh.cpp">
+      <Filter>src\BaldLion\Rendering\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Shapes\PlaneMesh.cpp">
+      <Filter>src\BaldLion\Rendering\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Rendering\Shapes\SphereMesh.cpp">
+      <Filter>src\BaldLion\Rendering\Shapes</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\SkyboxPlatformInterface.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
@@ -1510,8 +1521,6 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Shapes\PlaneMesh.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\Shapes\CubeMesh.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\Shapes\SphereMesh.cpp" />
+    <ClCompile Include="src\BaldLion\Animation\Skeleton.cpp" />
   </ItemGroup>
 </Project>

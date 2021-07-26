@@ -2,13 +2,12 @@
 #include "Animator.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-
 namespace BaldLion
 {
 	namespace Animation
 	{
-		Animator::Animator(SkinnedMesh* animatedMesh, DynamicArray<AnimationData>& animations, const glm::mat4& rootTransform)
-			: m_animatedMesh(animatedMesh)
+		Animator::Animator(Skeleton* skeleton, DynamicArray<AnimationData>& animations, const glm::mat4& rootTransform)
+			: m_skeleton(skeleton)
 		{
 			m_animations = HashTable<StringId, AnimationData*>(AllocationType::FreeList_Renderer, animations.Size() * 2);
 			for (ui32 i = 0; i < animations.Size(); ++i)
@@ -70,12 +69,13 @@ namespace BaldLion
 			
 			for (ui32 i = 0;  i < transforms.Size(); ++i)
 			{
-				const i32 parentID = m_animatedMesh->GetJoints()[i].parentID;
+				const i32 parentID = m_skeleton->GetJoints()[i].parentID;
 
-				const glm::mat4& parentTransform = parentID == -1 ? glm::mat4(1.0f) : m_animatedMesh->GetJoints()[parentID].jointModelSpaceTransform;
+				const glm::mat4& parentTransform = parentID == -1 ? glm::mat4(1.0f) : m_skeleton->GetJoints()[parentID].jointModelSpaceTransform;
+
 				const glm::mat4& animationTransform = glm::translate(glm::mat4(1.0f), transforms[i].GetDecompressedPosition()) * glm::mat4_cast(transforms[i].GetDecompressedRotation()) * glm::scale(glm::mat4(1.0f),glm::vec3(1.0f));
 				
-				m_animatedMesh->GetJoints()[i].UpdateJointTransforms(m_rootInverseTransform, parentTransform, animationTransform);
+				m_skeleton->GetJoints()[i].UpdateJointTransforms(m_rootInverseTransform, parentTransform, animationTransform);
 			}		
 
 		}

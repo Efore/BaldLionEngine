@@ -9,7 +9,7 @@ namespace BaldLion
 	namespace Rendering
 	{
 		Mesh::Mesh(Material* material, GeometryUtils::AABB aabb, const glm::mat4& worldTransform, bool isStatic) :
-			m_material(material), m_aabb(aabb), m_worldTransform(worldTransform), m_isStatic(isStatic)
+			m_material(material), m_aabb(aabb), m_worldTransform(worldTransform), m_isStatic(isStatic), m_skeleton(nullptr)
 		{	
 		}
 
@@ -18,6 +18,10 @@ namespace BaldLion
 			VertexArray::Destroy(m_vertexArray);	
 			m_geometryData->ClearGeometryData();
 			MemoryManager::Delete(m_geometryData);
+
+			if (m_skeleton != nullptr) {
+				MemoryManager::Delete(m_skeleton);
+			}
 		}
 
 		void Mesh::SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices)
@@ -47,11 +51,25 @@ namespace BaldLion
 			
 		}
 
+		void Mesh::SetSkeleton(Animation::Skeleton* skeleton)
+		{
+			m_skeleton = skeleton;
+		}
+
 		void Mesh::Draw() const
 		{	
 			if (!m_isStatic) {
 
 				m_material->Bind();
+
+				if (m_skeleton != nullptr)
+				{
+					for (ui32 i = 0; i < m_skeleton->GetJoints().Size(); ++i)
+					{
+						m_material->GetShader()->SetUniform(STRING_TO_ID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &(m_skeleton->GetJoints()[i].jointAnimationTransform));
+					}
+				}
+
 				Renderer::Draw(m_vertexArray, m_material->GetShader(), m_material->GetReceiveShadows(), m_worldTransform);
 				m_material->Unbind();
 			}

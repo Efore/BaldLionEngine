@@ -1,11 +1,9 @@
 #pragma once
 #include "AnimationData.h"
-#include "BaldLion/Rendering/SkinnedMesh.h"
 #include "BaldLion/Core/Core.h"
 #include "BaldLion/Core/TimeStep.h"
-#include <map>
-
-using namespace BaldLion::Rendering;
+#include "BaldLion/Core/Containers/HashTable.h"
+#include "Skeleton.h"
 
 namespace BaldLion
 {
@@ -15,7 +13,7 @@ namespace BaldLion
 		class Animator {
 			
 		public:
-			Animator(SkinnedMesh* animatedMesh, DynamicArray<AnimationData>& animations, const glm::mat4& rootTransform);
+			Animator(Skeleton* skeleton, DynamicArray<AnimationData>& animations, const glm::mat4& rootTransform);
 			~Animator();
 
 			void OnUpdate(BaldLion::TimeStep timeStep);
@@ -25,12 +23,14 @@ namespace BaldLion
 
 		private:	
 
-			SkinnedMesh* m_animatedMesh;
+			Skeleton* m_skeleton;
 
 			DynamicArray<AnimationData>* m_animationDataContainer;
 			AnimationData* m_currentAnimation;			
 			HashTable<StringId,AnimationData*> m_animations;
+
 			glm::mat4 m_rootInverseTransform;
+
 			float m_animationTime;
 		};
 	}
