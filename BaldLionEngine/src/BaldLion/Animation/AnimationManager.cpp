@@ -68,7 +68,7 @@ namespace BaldLion
 			}			
 		}
 
-		void AnimationManager::GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping, SkinnedMesh* animatedMesh)
+		void AnimationManager::GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping, Skeleton* skeleton)
 		{
 			if (scene->HasAnimations())
 			{
@@ -105,7 +105,7 @@ namespace BaldLion
 
 				glm::mat4 rootTransform = MathUtils::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
 
-				Animator* animator = MemoryManager::New<Animator>("Animator", AllocationType::FreeList_Renderer, animatedMesh, animations, rootTransform);
+				Animator* animator = MemoryManager::New<Animator>("Animator", AllocationType::FreeList_Renderer, skeleton, animations, rootTransform);
 				RegisterAnimator(animator);
 			}
 		}

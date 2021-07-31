@@ -17,7 +17,6 @@
 // --------------- Renderer -----------------------
 
 #include "BaldLion/Rendering/Renderer.h"
-#include "BaldLion/Rendering/AnimatedModel.h"
 #include "BaldLion/Rendering/CameraManager.h"
 #include "BaldLion/Rendering/Framebuffer.h"
 #include "BaldLion/Rendering/Shapes/PlaneMesh.h"
@@ -40,3 +39,5 @@
 //---------------- Threading ------------------
 
 #include "BaldLion/Core/JobManagement/JobManager.h"
+
+using namespace BaldLion::Rendering;

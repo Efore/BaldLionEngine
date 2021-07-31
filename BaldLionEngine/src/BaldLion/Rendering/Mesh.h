@@ -4,6 +4,7 @@
 #include "Material.h"
 #include "BaldLion/Utils/GeometryUtils.h"
 #include "GeometryData.h"
+#include "BaldLion/Animation/Skeleton.h"
 #include <vector>
 
 namespace BaldLion
@@ -19,6 +20,7 @@ namespace BaldLion
 			~Mesh();
 
 			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);
+
 			virtual void Draw() const;
 
 			inline const Material* GetMaterial() const { return m_material; }
@@ -32,9 +34,13 @@ namespace BaldLion
 			inline DynamicArray<ui32>& GetIndices() { return m_geometryData->indices; }
 
 			inline const VertexArray* GetVertexArray() const { return m_vertexArray; }
+			inline VertexArray* GetVertexArray() { return m_vertexArray; }
 
 			inline const bool GetIsStatic() const { return m_isStatic; }
 			inline const glm::mat4& GetWorldTransform() const { return m_worldTransform; }
+
+			const Animation::Skeleton* GetSkelton() const { return m_skeleton; }
+			void SetSkeleton(Animation::Skeleton* skeleton);
 
 		protected:
 
@@ -48,6 +54,8 @@ namespace BaldLion
 			GeometryData* m_geometryData;			
 			VertexArray* m_vertexArray;
 			Material* m_material;
+
+			Animation::Skeleton* m_skeleton;
 
 			bool m_isStatic;
 		};

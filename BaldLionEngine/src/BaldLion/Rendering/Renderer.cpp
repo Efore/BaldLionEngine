@@ -231,14 +231,15 @@ namespace BaldLion
 			if (s_castingShadowMeshes.Size() == 0)
 				return;
 
-			float shadowDistance = 200.0f;	
+			const float shadowDistance = 200.0f;	
 
-			glm::vec3 lightPosition = camera->GetPosition();
-			lightPosition.y = 100.0f;
-			glm::vec3 center = lightPosition + LightManager::GetDirectionalLight().direction * glm::length(lightPosition);
+			glm::vec3 lookAtEye = camera->GetPosition();
+			lookAtEye.y = shadowDistance * 0.5f;
 
-			glm::mat4 lightView = glm::lookAt(lightPosition, center, MathUtils::Vector3UnitY);
-			glm::mat4 lightProjection = glm::ortho(-shadowDistance, shadowDistance, -shadowDistance, shadowDistance, 0.0f, shadowDistance * 2.0f);
+			const glm::vec3 lookAtCenter = lookAtEye + (LightManager::GetDirectionalLight().direction * glm::length(lookAtEye));
+
+			const glm::mat4 lightView = glm::lookAt(lookAtEye, lookAtCenter, MathUtils::Vector3UnitY);
+			const glm::mat4 lightProjection = glm::ortho(-shadowDistance, shadowDistance, -shadowDistance, shadowDistance, 0.0f, shadowDistance * 2.0f);
 
 			s_lightViewProjection = lightProjection * lightView;	
 
@@ -248,7 +249,7 @@ namespace BaldLion
 
 			for (ui32 i = 0; i < s_castingShadowMeshes.Size(); ++i)
 			{
-				if (s_castingShadowMeshes[i]->GetIsStatic())
+				if (s_castingShadowMeshes[i]->GetSkelton() == nullptr)
 				{
 					s_depthMapShader->Bind();
 					s_depthMapShader->SetUniform(UNIFORM_LIGHT_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_lightViewProjection));
@@ -263,7 +264,7 @@ namespace BaldLion
 					s_depthMapSkinnedShader->SetUniform(UNIFORM_LIGHT_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_lightViewProjection));
 					s_depthMapSkinnedShader->SetUniform(UNIFORM_MODEL_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_castingShadowMeshes[i]->GetWorldTransform()[0][0]));
 
-					DynamicArray<Animation::Joint>* joints = &(static_cast<SkinnedMesh*>(s_castingShadowMeshes[i])->GetJoints());
+					const DynamicArray<Animation::Joint>* joints = &(s_castingShadowMeshes[i]->GetSkelton()->GetJoints());
 					
 					for (ui32 i = 0; i < joints->Size(); ++i)
 					{

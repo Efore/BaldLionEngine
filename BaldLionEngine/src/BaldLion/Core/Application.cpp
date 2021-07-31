@@ -75,6 +75,7 @@ namespace BaldLion
 
 	void Application::Run()
 	{		
+		m_lastFrameTime = (float)glfwGetTime();
 
 		while (m_running)
 		{	
@@ -82,7 +83,13 @@ namespace BaldLion
 
 			float time = (float)glfwGetTime(); // Platform::GetTime
 
+			const float maxFPS = 30.0f;
+			const float maxPeriod = 1.0f / maxFPS;
+
 			TimeStep timeStep = time - m_lastFrameTime;
+
+			if (timeStep.GetSeconds() < maxPeriod)
+				continue;
 
 			m_lastFrameTime = time;
 

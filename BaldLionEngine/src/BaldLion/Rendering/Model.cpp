@@ -1,7 +1,9 @@
 #include "blpch.h"
 #include "Model.h"
 #include "Renderer.h"
+#include "BaldLion/Animation/AnimationManager.h"
 #include "BaldLion/Utils/GeometryUtils.h"
+#include "BaldLion/Utils/MathUtils.h"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -240,6 +242,82 @@ namespace BaldLion
 			}
 		}
 
+		void Model::GenerateJointMapping(const aiMesh *aimesh, HashTable<StringId, ui32>& jointMapping, HashTable<StringId, glm::mat4>& jointOffsetMapping)
+		{
+			for (ui32 i = 0; i < aimesh->mNumBones; ++i)
+			{
+				jointMapping.Emplace(STRING_TO_ID(aimesh->mBones[i]->mName.data), std::move(i));
+				jointOffsetMapping.Emplace(STRING_TO_ID(aimesh->mBones[i]->mName.data), MathUtils::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
+			}
+		}
+
+		void Model::FillJointData(HashTable<StringId, ui32>& jointMapping,
+			DynamicArray<Animation::Joint>& jointsData,
+			const HashTable<StringId, glm::mat4>& jointOffsetMapping,
+			ui32& currentID,
+			const int32_t parentID,
+			const aiNode* node)
+		{
+			const StringId jointName = STRING_TO_ID(node->mName.data);
+
+			if (jointMapping.Contains(jointName))
+			{
+				jointMapping.Get(jointName) = currentID;
+				jointsData[currentID].jointID = currentID;
+				jointsData[currentID].parentID = parentID;
+				jointsData[currentID].jointBindTransform = jointOffsetMapping.Get(jointName);
+				jointsData[currentID].jointAnimationTransform = jointsData[currentID].jointModelSpaceTransform = glm::mat4(1.0f);
+
+				++currentID;
+			}
+
+			for (ui32 i = 0; i < node->mNumChildren; ++i)
+			{
+				FillJointData(jointMapping, jointsData, jointOffsetMapping, currentID, jointMapping.Contains(jointName) ? jointMapping.Get(jointName) : parentID, node->mChildren[i]);
+			}
+		}
+
+		void Model::FillVertexWeightData(const aiMesh* aimesh,
+			const HashTable<StringId, ui32>& jointMapping,
+			DynamicArray<VertexBoneData>& vertices)
+		{
+			ui32* jointsAssigned = new ui32[aimesh->mNumVertices]{ 0 };
+
+			//Fill jointIDs and weights
+			for (ui32 i = 0; i < aimesh->mNumBones; ++i)
+			{
+				for (ui32 j = 0; j < aimesh->mBones[i]->mNumWeights; ++j)
+				{
+					ui32 vertexID = aimesh->mBones[i]->mWeights[j].mVertexId;
+
+					const StringId jointName = STRING_TO_ID(aimesh->mBones[i]->mName.data);
+
+					switch (jointsAssigned[vertexID])
+					{
+					case 0:
+						vertices[vertexID].jointIDs.x = jointMapping.Get(jointName);
+						vertices[vertexID].weights.x = aimesh->mBones[i]->mWeights[j].mWeight;
+						break;
+					case 1:
+						vertices[vertexID].jointIDs.y = jointMapping.Get(jointName);
+						vertices[vertexID].weights.y = aimesh->mBones[i]->mWeights[j].mWeight;
+						break;
+					case 2:
+						vertices[vertexID].jointIDs.z = jointMapping.Get(jointName);
+						vertices[vertexID].weights.z = aimesh->mBones[i]->mWeights[j].mWeight;
+						break;
+					default:
+						break;
+					}
+
+					jointsAssigned[vertexID]++;
+				}
+
+			}
+
+			delete jointsAssigned;
+		}
+
 		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene, const StringId modelFolderPath, const glm::mat4& worldTransform )
 		{
 			DynamicArray<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
@@ -262,7 +340,7 @@ namespace BaldLion
 
 			Material::MaterialProperties materialProperties
 			{
-				STRING_TO_ID("assets/shaders/baseLit.glsl"),
+				aimesh->HasBones() ? STRING_TO_ID("assets/shaders/SkinnedLit.glsl") : STRING_TO_ID("assets/shaders/BaseLit.glsl"),
 				glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 				glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
 				glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
@@ -283,13 +361,47 @@ namespace BaldLion
 
 			meshMaterial->AssignShader();
 
-			Mesh* mesh = MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer,  meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), worldTransform, true);
+			Mesh* mesh = MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer,  meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), worldTransform, !aimesh->HasBones());
+
 			mesh->SetUpMesh(vertices, indices);
+
+			if (aimesh->HasBones())
+			{
+				DynamicArray<VertexBoneData> verticesBoneData(AllocationType::Linear_Frame, aimesh->mNumVertices);
+				DynamicArray<Animation::Joint> jointsData(AllocationType::FreeList_Renderer, aimesh->mNumBones);
+
+				verticesBoneData.Populate();
+				jointsData.Populate();
+
+				HashTable<StringId, ui32> jointMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);
+				HashTable<StringId, glm::mat4> jointOffsetMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);
+
+				GenerateJointMapping(aimesh, jointMapping, jointOffsetMapping);
+
+				ui32 firstID = 0;
+				FillJointData(jointMapping, jointsData, jointOffsetMapping, firstID, -1, aiscene->mRootNode);
+
+				FillVertexWeightData(aimesh, jointMapping, verticesBoneData);
+
+				VertexBuffer* boneDataVertexBuffer = VertexBuffer::Create(verticesBoneData[0].GetFirstElement(), (ui32)(verticesBoneData.Size() * sizeof(VertexBoneData)));
+
+				boneDataVertexBuffer->SetLayout({
+					{ ShaderDataType::Int3,		"vertex_joint_ids" },
+					{ ShaderDataType::Float3,	"vertex_joint_weights" }
+				});
+
+				mesh->GetVertexArray()->AddVertexBuffer(boneDataVertexBuffer);
+
+				Animation::Skeleton* skeleton = MemoryManager::New<Animation::Skeleton>("Skeleton", AllocationType::FreeList_Renderer, jointsData);
+				mesh->SetSkeleton(skeleton);
+
+				Animation::AnimationManager::GenerateAnimator(aiscene, jointMapping, skeleton);
+			}
 
 			return mesh;
 		}
 
-	}
+	} 
 
 }
 

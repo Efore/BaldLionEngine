@@ -19,8 +19,6 @@ namespace BaldLion
 			ui32 jointID;
 			i32 parentID;			
 			
-			Joint(){}
-
 			void UpdateJointTransforms(const glm::mat4& rootInverseTransform, const glm::mat4& parentTransform, const glm::mat4& localAnimationTransform)
 			{			
 				BL_PROFILE_FUNCTION();
@@ -34,9 +32,7 @@ namespace BaldLion
 			Compression::QuantizedVector3 position;
 			Compression::QuantizedQuaterion rotation;		
 
-			JointTransform()
-			{
-			}
+			JointTransform() = default;
 
 			JointTransform(const glm::vec3& decompressedPosition, const glm::quat& decompressedRotation)
 			{

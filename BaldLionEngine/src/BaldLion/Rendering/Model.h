@@ -29,6 +29,7 @@ namespace BaldLion
 			static Mesh* ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene, const StringId modelFolderPath, const glm::mat4& worldTransform);
 
 			static void FillVertexArrayData(const aiMesh *aimesh, DynamicArray<Vertex>& vertices, DynamicArray<ui32>& indices);
+
 			static void FillTextureData(const aiMesh *aimesh,
 				const aiScene *aiscene,
 				const StringId modelFolderPath,
@@ -41,7 +42,22 @@ namespace BaldLion
 				Texture*& specularTex,
 				Texture*& emissiveTex,
 				Texture*& normalTex);
-			
+
+			static void GenerateJointMapping(const aiMesh *aimesh,
+				HashTable<StringId, ui32>& jointMapping,
+				HashTable<StringId, glm::mat4>& jointOffsetMapping);
+
+			static void FillJointData(HashTable<StringId, ui32>& jointMapping,
+				DynamicArray<Animation::Joint>& jointData,
+				const HashTable<StringId, glm::mat4>& jointOffsetMapping,
+				ui32& currentID,
+				const int32_t parentID,
+				const aiNode* node);
+
+			static void FillVertexWeightData(const aiMesh* aimesh,
+				const HashTable<StringId, ui32>& jointMapping,
+				DynamicArray<VertexBoneData>& verticesBoneData);
+
 		protected:
 			StringId m_modelPath;
 			StringId m_modelFolderPath;
