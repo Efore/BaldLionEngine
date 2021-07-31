@@ -22,7 +22,7 @@ namespace BaldLion
 		void ClearNoDestructor();
 
 		template <typename... Args >
-		void EmplaceBack(Args&&... args);
+		T* EmplaceBack(Args&&... args);
 
 		void PushBackRange(const DynamicArray<T>& other, ui32 size = 0);
 		void PushBack(const T& element);
@@ -190,7 +190,7 @@ namespace BaldLion
 
 	template <typename T>
 	template <typename... Args >
-	void BaldLion::DynamicArray<T>::EmplaceBack(Args&&... args)
+	T* BaldLion::DynamicArray<T>::EmplaceBack(Args&&... args)
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
@@ -201,7 +201,7 @@ namespace BaldLion
 			Reallocate((ui32)(m_capacity * 1.5f));		
 		}
 
-		new (&m_elements[m_size++]) T(std::forward<Args>(args)...);
+		return new (&m_elements[m_size++]) T(std::forward<Args>(args)...);
 	}
 
 	template <typename T>
