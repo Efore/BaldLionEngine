@@ -6,9 +6,11 @@
 #include "BaldLion/Core/MouseButtonCodes.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
 
 namespace BaldLion {
+
 	namespace ECS {
 
 		void ECSCameraMovementSystem::OnUpdate(TimeStep timeStep)
