@@ -2,12 +2,17 @@
 #include "ECSSystem.h"
 #include "ECSManager.h"
 #include "BaldLion/Core/Containers/HashTable.h"
+#include "BaldLion/Core/JobManagement/JobManager.h"
 
 namespace BaldLion {
 
 	namespace ECS {
 
-		ECSSystem::ECSSystem(ECSSignature signature, ECSManager* ecsManager) : m_signature(signature), m_ecsManager(ecsManager)
+		ECSSystem::ECSSystem(const char* systemName, const ECSSignature& signature, ECSManager* ecsManager, bool blockSystemsLoop) : 
+			m_systemName(STRING_TO_STRINGID(systemName)), 
+			m_signature(signature), 
+			m_ecsManager(ecsManager),
+			m_blockSystemsLoop(blockSystemsLoop)
 		{
 			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_Main, 6);
 			
@@ -18,6 +23,31 @@ namespace BaldLion {
 					ECSComponentLookUp* componentLookUp = &(m_ecsManager->GetEntityComponents().Get(iterator.GetKey()));
 					m_componentLookUps.PushBack(componentLookUp); 
 				}
+			}
+		}
+
+		void ECSSystem::OnUpdate(TimeStep timeStep)
+		{
+			for (ui32 i = 0; i < m_componentLookUps.Size(); ++i)
+			{
+				ECSComponentLookUp* componentLookUp = m_componentLookUps[i];
+
+				const std::string systemOperation = "SystemOperation" + std::to_string(i);
+
+				JobManagement::Job systemUpdateJob(systemOperation.c_str());
+
+				systemUpdateJob.Task = [this, timeStep, componentLookUp] {
+
+					BL_PROFILE_SCOPE(("ECSSystem::{0}", STRINGID_TO_STRING(m_systemName)), Optick::Category::GameLogic);
+					this->UpdateOperation(timeStep, componentLookUp);
+				};
+
+				JobManagement::JobManager::QueueJob(systemUpdateJob);
+			}
+
+			if (m_blockSystemsLoop)
+			{
+				JobManagement::JobManager::WaitForJobs();
 			}
 		}
 

@@ -40,4 +40,12 @@
 
 #include "BaldLion/Core/JobManagement/JobManager.h"
 
+//---------------- ECS ------------------
+
+#include "BaldLion/ECS/ECSManager.h"
+#include "BaldLion/ECS/Systems/ECSCameraMovementSystem.h"
+#include "BaldLion/ECS/ComponentsSingleton/ECSProjectionCameraSingleton.h"
+
+#include "BaldLion/Utils/MathUtils.h"
+
 using namespace BaldLion::Rendering;

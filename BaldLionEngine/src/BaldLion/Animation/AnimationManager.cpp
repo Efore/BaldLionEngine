@@ -76,7 +76,7 @@ namespace BaldLion
 				for (ui32 i = 0; i < scene->mNumAnimations; ++i)
 				{
 					AnimationData animationData(
-						STRING_TO_ID(scene->mAnimations[i]->mName.data), 
+						STRING_TO_STRINGID(scene->mAnimations[i]->mName.data), 
 						DynamicArray<KeyFrame>(AllocationType::FreeList_Renderer, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys), 
 						(float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond)
 					);
@@ -90,7 +90,7 @@ namespace BaldLion
 
 						for (size_t k = 0; k < scene->mAnimations[i]->mNumChannels; ++k)
 						{
-							const ui32 jointNodeIndex = jointMapping.Get(STRING_TO_ID(scene->mAnimations[i]->mChannels[k]->mNodeName.data));
+							const ui32 jointNodeIndex = jointMapping.Get(STRING_TO_STRINGID(scene->mAnimations[i]->mChannels[k]->mNodeName.data));
 							keyFrame.JointTranforms[jointNodeIndex] = JointTransform(
 								glm::vec3(scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.z),
 								glm::quat(scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.w, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.z)

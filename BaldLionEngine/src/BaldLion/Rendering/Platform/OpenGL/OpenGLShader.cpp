@@ -10,10 +10,10 @@ namespace BaldLion
 	{
 		static GLenum ShaderTypeFromStringId(StringId type)
 		{
-			if (type == STRING_TO_ID("vertex"))
+			if (type == STRING_TO_STRINGID("vertex"))
 				return GL_VERTEX_SHADER;
 
-			if (type == STRING_TO_ID("fragment") || type == STRING_TO_ID("pixel"))
+			if (type == STRING_TO_STRINGID("fragment") || type == STRING_TO_STRINGID("pixel"))
 				return GL_FRAGMENT_SHADER;
 
 			BL_CORE_ASSERT(false, "Unknown shader type!");
@@ -79,11 +79,11 @@ namespace BaldLion
 				BL_CORE_ASSERT(eol != std::string::npos, "Syntax error");
 				size_t begin = pos + typeTokeLength + 1;
 				std::string type = source.substr(begin, eol - begin);
-				BL_CORE_ASSERT(ShaderTypeFromStringId(STRING_TO_ID(type)), "Invalid shader type");
+				BL_CORE_ASSERT(ShaderTypeFromStringId(STRING_TO_STRINGID(type)), "Invalid shader type");
 
 				size_t nextLinePos = source.find_first_of("\r\n", eol);
 				pos = source.find(typeToken, nextLinePos);
-				shaderSources[ShaderTypeFromStringId(STRING_TO_ID(type))] = source.substr(nextLinePos,
+				shaderSources[ShaderTypeFromStringId(STRING_TO_STRINGID(type))] = source.substr(nextLinePos,
 					pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
 			}
 
@@ -247,11 +247,11 @@ namespace BaldLion
 			if (m_uniformLocationCache.Contains(name))
 				return m_uniformLocationCache.Get(name);
 
-			int location = glGetUniformLocation(m_rendererID, ID_TO_STRING(name));
+			int location = glGetUniformLocation(m_rendererID, STRINGID_TO_STRING(name));
 
 			if (location == -1)
 			{
-				BL_LOG_CORE_WARN("Uniform '{0}' not found!", ID_TO_STRING(name));
+				BL_LOG_CORE_WARN("Uniform '{0}' not found!", STRINGID_TO_STRING(name));
 				return location;
 			}
 

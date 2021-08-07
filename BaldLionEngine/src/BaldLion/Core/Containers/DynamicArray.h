@@ -291,7 +291,7 @@ namespace BaldLion
 				Reallocate((ui32)(m_capacity * 1.5f));				
 			}
 
-			T* newLocation = MemoryManager::NewArray<T>(STRING_TO_ID("Dynamic Array"), m_allocationType, m_size == m_capacity ? (ui32)(m_capacity * 1.5f) : m_capacity);
+			T* newLocation = MemoryManager::NewArray<T>(STRING_TO_STRINGID("Dynamic Array"), m_allocationType, m_size == m_capacity ? (ui32)(m_capacity * 1.5f) : m_capacity);
 			const ui32 newSize = m_size + 1;
 
 			std::copy(m_elements, m_elements + index, newLocation);
@@ -367,7 +367,7 @@ namespace BaldLion
 		}
 		else
 		{
-			T* newLocation = MemoryManager::NewArray<T>(STRING_TO_ID("Dynamic Array"), m_allocationType, m_capacity);
+			T* newLocation = MemoryManager::NewArray<T>(STRING_TO_STRINGID("Dynamic Array"), m_allocationType, m_capacity);
 			const ui32 newSize = m_size - 1;
 
 			std::copy(m_elements, m_elements + index, newLocation);

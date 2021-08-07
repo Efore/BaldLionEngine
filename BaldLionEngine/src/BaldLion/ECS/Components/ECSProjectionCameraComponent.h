@@ -11,16 +11,19 @@ namespace BaldLion {
 		{
 		public:
 
-			ECSProjectionCameraComponent(ECSComponentID componentID, const glm::vec3& position, float width, float height, float nearPlane, float farPlane) :
-				ECSComponent(componentID),
+			ECSProjectionCameraComponent(float width, float height, float nearPlane, float farPlane, float cameraMovementSpeed, float cameraRotationSpeed) :
+				ECSComponent(ECSComponentID::ProjectionCamera),
 				width(width),
 				height(height),
 				nearPlane(nearPlane),
-				farPlane(farPlane)
+				farPlane(farPlane),
+				cameraMovementSpeed(cameraMovementSpeed),
+				cameraRotationSpeed(cameraRotationSpeed)
 			{ 
 			}
 
 		public:
+			glm::mat4 viewProjectionMatrix;
 
 			float width;
 			float height;
@@ -31,8 +34,8 @@ namespace BaldLion {
 			float prevX;
 			float prevY;
 
-			float cameraPitchRotation;
-			float cameraYawRotation;
+			float cameraYaw;
+			float cameraPitch;
 
 			float cameraRotationSpeed;
 			float cameraMovementSpeed;

@@ -213,9 +213,6 @@
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h">
       <Filter>src\BaldLion\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\AnimatedModel.h">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
@@ -296,9 +293,6 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Shapes\SphereMesh.h">
       <Filter>src\BaldLion\Rendering\Shapes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\SkinnedMesh.h">
-      <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\SkyboxPlatformInterface.h">
       <Filter>src\BaldLion\Rendering</Filter>
@@ -1416,6 +1410,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Animation\Skeleton.h" />
+    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1474,9 +1470,6 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
       <Filter>src\BaldLion\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\AnimatedModel.cpp">
-      <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
@@ -1550,9 +1543,6 @@
     <ClCompile Include="src\BaldLion\Rendering\Shapes\SphereMesh.cpp">
       <Filter>src\BaldLion\Rendering\Shapes</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\SkinnedMesh.cpp">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\SkyboxPlatformInterface.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
@@ -1574,5 +1564,7 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Animation\Skeleton.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.cpp" />
   </ItemGroup>
 </Project>

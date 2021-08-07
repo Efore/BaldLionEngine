@@ -17,6 +17,7 @@ namespace BaldLion
 			Linear_Frame,
 			Stack,
 			FreeList_Renderer,
+			FreeList_ECS
 		};
 
 		struct AllocationInfo {
@@ -99,7 +100,7 @@ namespace BaldLion
 				break;
 			}		
 
-			s_allocationMap.emplace((void*)result, AllocationInfo(STRING_TO_ID(allocationName), allocationType, sizeof(T)));
+			s_allocationMap.emplace((void*)result, AllocationInfo(STRING_TO_STRINGID(allocationName), allocationType, sizeof(T)));
 			
 			return result;
 		}
@@ -131,7 +132,7 @@ namespace BaldLion
 				break;
 			}
 
-			s_allocationMap.emplace((void*)result, AllocationInfo(STRING_TO_ID(allocationName), allocationType, size * sizeof(T)));
+			s_allocationMap.emplace((void*)result, AllocationInfo(STRING_TO_STRINGID(allocationName), allocationType, size * sizeof(T)));
 
 			return result;
 		}
@@ -220,7 +221,7 @@ namespace BaldLion
 			pointer allocate(size_type num, const void* = 0)
 			{
 
-				return MemoryManager::NewArray<T>(STRING_TO_ID("STL Allocator"),AllocationType::FreeList_Main, (ui32)num);
+				return MemoryManager::NewArray<T>(STRING_TO_STRINGID("STL Allocator"),AllocationType::FreeList_Main, (ui32)num);
 			}
 			void construct(pointer p, const T& value)
 			{
@@ -271,7 +272,7 @@ namespace BaldLion
 
 			pointer allocate(size_type num, const void* = 0)
 			{
-				return MemoryManager::NewArray<T>(STRING_TO_ID("STL Allocator"), AllocationType::FreeList_Renderer, (ui32)num);
+				return MemoryManager::NewArray<T>(STRING_TO_STRINGID("STL Allocator"), AllocationType::FreeList_Renderer, (ui32)num);
 			}
 			void construct(pointer p, const T& value)
 			{
@@ -322,7 +323,7 @@ namespace BaldLion
 
 			pointer allocate(size_type num, const void* = 0)
 			{
-				return MemoryManager::NewArray<T>(STRING_TO_ID("STL Allocator"), AllocationType::Linear_Frame, (ui32)num);
+				return MemoryManager::NewArray<T>(STRING_TO_STRINGID("STL Allocator"), AllocationType::Linear_Frame, (ui32)num);
 			}
 			void construct(pointer p, const T& value)
 			{
@@ -373,7 +374,7 @@ namespace BaldLion
 
 			pointer allocate(size_type num, const void* = 0)
 			{
-				return MemoryManager::NewArray<T>(STRING_TO_ID("STL Allocator"), AllocationType::Stack, (ui32)num);
+				return MemoryManager::NewArray<T>(STRING_TO_STRINGID("STL Allocator"), AllocationType::Stack, (ui32)num);
 			}
 			void construct(pointer p, const T& value)
 			{

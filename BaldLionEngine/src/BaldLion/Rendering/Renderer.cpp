@@ -3,6 +3,7 @@
 
 #include "BaldLion/Core/JobManagement/JobManager.h"
 #include "BaldLion/Utils/MathUtils.h"
+#include "BaldLion/ECS/ComponentsSingleton/ECSProjectionCameraSingleton.h"
 
 const ui32 maxMeshesToProcess = 5u;
 
@@ -99,12 +100,12 @@ namespace BaldLion
 			s_rendererPlatformInterface->SetViewport(0, 0, width, height);			
 		}
 
-		void Renderer::BeginScene(const Camera* camera, const DirectionalLight& directionalLight)
+		void Renderer::BeginScene(const DirectionalLight& directionalLight)
 		{
 			BL_PROFILE_FUNCTION();
 			
-			s_sceneData.viewProjectionMatrix = camera->GetViewProjectionMatrix();
-			s_sceneData.cameraPosition = camera->GetPosition();
+			s_sceneData.viewProjectionMatrix = ECS::SingletonComponents::ECSProjectionCameraSingleton::GetMainCameraViewProjectionMatrix();
+			s_sceneData.cameraPosition = ECS::SingletonComponents::ECSProjectionCameraSingleton::GetMainCameraPosition();
 			
 			LightManager::BeginScene(directionalLight);
 
@@ -112,11 +113,11 @@ namespace BaldLion
 			s_renderStats.vertices = 0;
 		}
 
-		void Renderer::DrawScene(const Camera* camera)
+		void Renderer::DrawScene()
 		{
 			BL_PROFILE_FUNCTION();
 
-			CreateShadowMap(camera);
+			CreateShadowMap();
 
 			s_framebuffer->Bind();
 			s_rendererPlatformInterface->SetClearColor({ 0.3f, 0.3f, 0.8f, 1.0f });
@@ -171,7 +172,7 @@ namespace BaldLion
 			s_renderStats.vertices += vertexArray->GetIndexBuffer()->GetCount();
 		}
 
-		void Renderer::ProcessFrustrumCulling(const Camera* camera)
+		void Renderer::ProcessFrustrumCulling()
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -188,9 +189,9 @@ namespace BaldLion
 
 				const ui32 nextTaskIndex = ((currentMeshIndex + maxMeshesToProcess) > s_registeredMeshes.Size()) ? s_registeredMeshes.Size() : currentMeshIndex + maxMeshesToProcess;
 
-				processFrustrumCulling.Task = [currentMeshIndex, nextTaskIndex, camera]
+				processFrustrumCulling.Task = [currentMeshIndex, nextTaskIndex]
 				{
-					ProcessFrustrumCullingParallel(currentMeshIndex, nextTaskIndex, camera);
+					ProcessFrustrumCullingParallel(currentMeshIndex, nextTaskIndex);
 				};
 
 				currentMeshIndex = nextTaskIndex;
@@ -199,12 +200,12 @@ namespace BaldLion
 			}
 		}
 
-		void Renderer::ProcessFrustrumCullingParallel(ui32 initialMeshIndex, ui32 finalMeshIndex, const Camera* camera)
+		void Renderer::ProcessFrustrumCullingParallel(ui32 initialMeshIndex, ui32 finalMeshIndex)
 		{
 			BL_PROFILE_FUNCTION();
 			for (ui32 i = initialMeshIndex; i < finalMeshIndex; ++i)
 			{
-				if (camera->IsAABBVisible(s_registeredMeshes[i]->GetAABB()))
+				if (ECS::SingletonComponents::ECSProjectionCameraSingleton::IsAABBVisible(s_registeredMeshes[i]->GetAABB()))
 				{
 					if (s_registeredMeshes[i]->GetIsStatic())
 					{
@@ -226,14 +227,14 @@ namespace BaldLion
 			}
 		}
 
-		void Renderer::CreateShadowMap(const Camera* camera)
+		void Renderer::CreateShadowMap()
 		{
 			if (s_castingShadowMeshes.Size() == 0)
 				return;
 
 			const float shadowDistance = 200.0f;	
 
-			glm::vec3 lookAtEye = camera->GetPosition();
+			glm::vec3 lookAtEye = s_sceneData.cameraPosition;
 			lookAtEye.y = shadowDistance * 0.5f;
 
 			const glm::vec3 lookAtCenter = lookAtEye + (LightManager::GetDirectionalLight().direction * glm::length(lookAtEye));
@@ -268,7 +269,7 @@ namespace BaldLion
 					
 					for (ui32 i = 0; i < joints->Size(); ++i)
 					{
-						s_depthMapSkinnedShader->SetUniform(STRING_TO_ID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &((*joints)[i].jointAnimationTransform));
+						s_depthMapSkinnedShader->SetUniform(STRING_TO_STRINGID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &((*joints)[i].jointAnimationTransform));
 					}
 
 					s_rendererPlatformInterface->DrawVertexArray(s_castingShadowMeshes[i]->GetVertexArray());

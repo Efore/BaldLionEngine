@@ -18,7 +18,7 @@ namespace BaldLion
 			BufferElement() { }
 
 			BufferElement(ShaderDataType type, const char* name, bool normalized = false)
-				: Type(type), Name(STRING_TO_ID(name)), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
+				: Type(type), Name(STRING_TO_STRINGID(name)), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
 			{
 			}
 

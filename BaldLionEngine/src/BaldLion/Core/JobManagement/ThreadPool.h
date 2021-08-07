@@ -31,7 +31,7 @@ namespace BaldLion
 				JobParentID = jobParentID;
 				JobDependencyID = 0;
 				ChildrenCount = childrenCount;
-				JobID = STRING_TO_ID(cName);
+				JobID = STRING_TO_STRINGID(cName);
 			}
 
 			Job(const Job& other) : JobID(other.JobID), Task(other.Task), JobDependencyID(other.JobDependencyID), JobParentID(other.JobParentID), ChildrenCount(other.ChildrenCount){}

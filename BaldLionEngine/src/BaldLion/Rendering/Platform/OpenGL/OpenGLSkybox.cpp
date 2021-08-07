@@ -35,9 +35,9 @@ namespace BaldLion
 			const Renderer::SceneData& sceneData = Renderer::GetSceneData();
 
 			int skybox = 0;
-			m_skyboxShader->SetUniform(STRING_TO_ID("skybox"),ShaderDataType::Int, &skybox);
-			m_skyboxShader->SetUniform(STRING_TO_ID("u_worldTransformMatrix"), ShaderDataType::Mat4, &(glm::scale(glm::mat4(1.0f), glm::vec3(49000, 49000, 49000))[0][0]));
-			m_skyboxShader->SetUniform(STRING_TO_ID("u_viewProjectionMatrix"), ShaderDataType::Mat4, &(sceneData.viewProjectionMatrix));
+			m_skyboxShader->SetUniform(STRING_TO_STRINGID("skybox"),ShaderDataType::Int, &skybox);
+			m_skyboxShader->SetUniform(STRING_TO_STRINGID("u_worldTransformMatrix"), ShaderDataType::Mat4, &(glm::scale(glm::mat4(1.0f), glm::vec3(49000, 49000, 49000))[0][0]));
+			m_skyboxShader->SetUniform(STRING_TO_STRINGID("u_viewProjectionMatrix"), ShaderDataType::Mat4, &(sceneData.viewProjectionMatrix));
 
 			m_vertexArray->Bind();
 			m_cubemapTexture->Bind();					

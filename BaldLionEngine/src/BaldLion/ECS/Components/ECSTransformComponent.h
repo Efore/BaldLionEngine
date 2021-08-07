@@ -12,8 +12,8 @@ namespace BaldLion {
 		{
 		public:
 
-			ECSTransformComponent(ECSComponentID componentID, glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale) : 
-				ECSComponent(componentID), 
+			ECSTransformComponent(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale) : 
+				ECSComponent(ECSComponentID::Transform),
 				position(position), 
 				rotation(rotation), 
 				scale(scale)

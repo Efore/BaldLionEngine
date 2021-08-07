@@ -45,8 +45,8 @@ namespace BaldLion
 
 			static void OnWindowResize(ui32 width, ui32 height);
 
-			static void BeginScene(const Camera* camera, const DirectionalLight& directionalLight);
-			static void DrawScene(const Camera* camera);
+			static void BeginScene(const DirectionalLight& directionalLight);
+			static void DrawScene();
 			static void EndScene();
 
 			static ShaderLibrary& GetShaderLibrary() { return s_shaderLibrary; }
@@ -63,16 +63,16 @@ namespace BaldLion
 			static void RegisterMesh(Mesh* mesh);
 			static void UnregisterMesh(Mesh* mesh);
 
-			static void ProcessFrustrumCulling(const Camera* camera);			
+			static void ProcessFrustrumCulling();			
 
 			inline static RendererPlatformInterface::RendererPlatform GetAPI() { return RendererPlatformInterface::GetAPI(); }
 
 		private:
 
 			static void AddToBatch( Mesh* mesh);
-			static void ProcessFrustrumCullingParallel(ui32 initialMeshIndex, ui32 finalMeshIndex, const Camera* camera);
+			static void ProcessFrustrumCullingParallel(ui32 initialMeshIndex, ui32 finalMeshIndex);
 			
-			static void CreateShadowMap(const Camera* camera);
+			static void CreateShadowMap();
 			static void RenderStatictGeometry();
 			static void RenderDynamicGeometry();
 

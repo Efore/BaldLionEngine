@@ -43,7 +43,7 @@ namespace BaldLion
 		{
 			std::lock_guard<std::mutex> lockGuard(s_materialLibraryMutex);
 
-			StringId name = STRING_TO_ID(matName);
+			StringId name = STRING_TO_STRINGID(matName);
 
 			if (s_materials.Contains(name))
 				return s_materials.Get(name);

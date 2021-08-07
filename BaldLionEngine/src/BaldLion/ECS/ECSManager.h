@@ -27,14 +27,16 @@ namespace BaldLion {
 
 			//Add elements
 			void AddEntity(ECSEntityID entityID);			
-			void AddComponentToEntity(ECSComponentID componentID, ECSComponent* component, ECSEntityID entityID);
+			void AddComponentToEntity(ECSEntityID entityID, ECSComponent* component);
 			void AddSystem(ECSSystem* system);			
 			
 			template <typename ECSComponentType, typename... Args >
 			ECSComponentType* AddComponent(ECSComponentID componentID, Args&&... args);
 
-			//Update
+			//Main loop
+			void StartSystems();
 			void UpdateSystems(TimeStep timeStep);
+			void StopSystems();
 
 			//Remove elements
 			void RemoveEntity(ECSEntityID entityID);			
@@ -59,8 +61,10 @@ namespace BaldLion {
 
 			DynamicArray<ECSSystem*> m_systems;
 
+			//Pools
 			HashTable<ECSComponentID, void*> m_componentsPool;
-			
+			DynamicArray<class ECSTransformComponent> m_transformComponentPool;
+			DynamicArray<class ECSProjectionCameraComponent> m_projectionCameraComponentPool;			
 		};
 
 		template<typename ECSComponentType>
@@ -72,7 +76,8 @@ namespace BaldLion {
 		template <typename ECSComponentType, typename...Args >
 		ECSComponentType* BaldLion::ECS::ECSManager::AddComponent(ECSComponentID componentID, Args&&... args)
 		{
-			return ((DynamicArray<ECSComponentType>*)m_componentsPool.Get(componentID))->EmplaceBack(args);
+			DynamicArray<ECSComponentType>* componentPool = static_cast<DynamicArray<ECSComponentType>*>(m_componentsPool.Get(componentID));
+			return componentPool->EmplaceBack(std::forward<Args>(args)...);
 		}
 
 	}

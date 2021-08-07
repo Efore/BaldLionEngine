@@ -12,7 +12,7 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();		
 
-			m_materialName = STRING_TO_ID(matName);
+			m_materialName = STRING_TO_STRINGID(matName);
 
 			m_useAmbientTex = materialProperties.ambientTex != nullptr;
 			m_useDiffuseTex = materialProperties.diffuseTex != nullptr;
@@ -23,7 +23,7 @@ namespace BaldLion
 
 		void OpenGLMaterial::AssignShader()
 		{
-			m_shader = (OpenGLShader*)(Shader::Create(ID_TO_STRING(m_materialProperties.shaderPath)));
+			m_shader = (OpenGLShader*)(Shader::Create(STRINGID_TO_STRING(m_materialProperties.shaderPath)));
 			m_shader->Bind();
 
 			m_shader->SetUniform(UNIFORM_AMBIENT_COLOR, ShaderDataType::Float3, &m_materialProperties.ambientColor);

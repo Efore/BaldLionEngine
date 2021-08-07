@@ -19,18 +19,17 @@ namespace BaldLion {
 			m_componentsPool = HashTable<ECSComponentID, void*>(AllocationType::FreeList_Main, 100);
 
 			//Pools initialization
-			DynamicArray<ECSTransformComponent> transformComponentPool(AllocationType::FreeList_Main, 1000);
-			m_componentsPool.Emplace(ECSComponentID::Transform, &transformComponentPool);
+			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_Main, 1000);
+			m_componentsPool.Emplace(ECSComponentID::Transform, std::move(&m_transformComponentPool));
 
-			DynamicArray<ECSProjectionCameraComponent> projectionCameraComponentPool(AllocationType::FreeList_Main, 1000);
-			m_componentsPool.Emplace(ECSComponentID::ProjectionCamera, &projectionCameraComponentPool);
-
+			m_projectionCameraComponentPool = DynamicArray<ECSProjectionCameraComponent>(AllocationType::FreeList_Main, 1000);
+			m_componentsPool.Emplace(ECSComponentID::ProjectionCamera, std::move(&m_projectionCameraComponentPool));
 		}
 
 		ECSManager::~ECSManager()
 		{
 			m_entityComponents.Clear();
-			m_entityComponents.Clear();
+			m_entitySignatures.Clear();
 
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
 			{
@@ -47,6 +46,8 @@ namespace BaldLion {
 
 		void ECSManager::AddEntity(ECSEntityID entityID)
 		{
+			BL_ASSERT(!m_entitySignatures.Contains(entityID), "Entity already exists");
+
 			ECSSignature newSignature;
 			newSignature.reset();
 
@@ -56,8 +57,10 @@ namespace BaldLion {
 			m_entityComponents.Emplace(entityID, std::move(newComponentLookUp));
 		}
 
-		void ECSManager::AddComponentToEntity(ECSComponentID componentID, ECSComponent* component, ECSEntityID entityID)
+		void ECSManager::AddComponentToEntity(ECSEntityID entityID, ECSComponent* component)
 		{
+			const ECSComponentID componentID = component->GetComponentID();
+
 			ECSSignature componentSignature;
 			componentSignature.set((ui32)componentID);
 
@@ -70,11 +73,27 @@ namespace BaldLion {
 			m_systems.PushBack(system);
 		}
 
+		void ECSManager::StartSystems()
+		{
+			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			{
+				m_systems[i]->OnStart();
+			}
+		}
+
 		void ECSManager::UpdateSystems(TimeStep timeStep)
 		{
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
 			{
 				m_systems[i]->OnUpdate(timeStep);
+			}
+		}
+
+		void ECSManager::StopSystems()
+		{
+			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			{
+				m_systems[i]->OnStop();
 			}
 		}
 

@@ -166,7 +166,7 @@ namespace BaldLion
 			lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
 			auto lastDot = path.rfind('.');
 			auto count = lastDot == std::string::npos ? path.size() - lastSlash : lastDot - lastSlash;
-			name = STRING_TO_ID(path.substr(lastSlash, count));			
+			name = STRING_TO_STRINGID(path.substr(lastSlash, count));			
 		}
 
 	}

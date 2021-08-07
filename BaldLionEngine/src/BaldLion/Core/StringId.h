@@ -37,5 +37,5 @@ namespace BaldLion {
 	extern const char* StringIdToString(StringId sid);
 }
 
-#define STRING_TO_ID(x) ::BaldLion::StringToStringId(x)
-#define ID_TO_STRING(x) ::BaldLion::StringIdToString(x)
+#define STRING_TO_STRINGID(x) ::BaldLion::StringToStringId(x)
+#define STRINGID_TO_STRING(x) ::BaldLion::StringIdToString(x)

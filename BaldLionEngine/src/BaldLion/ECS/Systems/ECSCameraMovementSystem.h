@@ -10,17 +10,16 @@ namespace BaldLion {
 		class ECSCameraMovementSystem : public ECSSystem
 		{
 		public:
-			virtual void OnStart() override {};
-			virtual void OnUpdate(TimeStep timeStep) override;
-			virtual void OnDestroy() override {};
+			ECSCameraMovementSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager, bool blockSystemsLoop) : 
+				ECSSystem(systemName, signature, ecsManager, blockSystemsLoop) {}
+
+			virtual void OnStart() override;
+			virtual void UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp) override;
+			virtual void OnStop() override {};
 
 		private:
 			void CalculateCameraMovement(const float deltaTime, const float cameraMovementSpeed, const glm::mat4& cameraTransform, glm::vec3& cameraMovement);
-			void CalculateCameraRotation(const float deltaTime, const float cameraRotationSpeed, float& prevX, float& prevY, float& cameraYaw, float& cameraPitch);
-
-			const glm::vec3 GetForwardDirection(const glm::mat4& transformMatrix) const;
-			const glm::vec3 GetRightDirection(const glm::mat4& transformMatrix) const;
-			
+			void CalculateCameraRotation(const float deltaTime, const float cameraRotationSpeed, float& prevX, float& prevY, float& cameraYaw, float& cameraPitch);			
 		};
 
 	}

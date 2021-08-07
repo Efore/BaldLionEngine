@@ -65,7 +65,7 @@ namespace BaldLion
 
 			if (bestFitBlock == nullptr)
 			{
-				BL_LOG_CORE_ERROR("{0}: Not enough memory", ID_TO_STRING(m_allocatorName));
+				BL_LOG_CORE_ERROR("{0}: Not enough memory", STRINGID_TO_STRING(m_allocatorName));
 				return nullptr;
 			}
 

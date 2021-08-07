@@ -6,7 +6,7 @@ namespace BaldLion
 	namespace Memory
 	{
 		FreeListAllocator* MemoryManager::s_freeListMainAllocator;
-		FreeListAllocator* MemoryManager::s_freeListRendererAllocator;
+		FreeListAllocator* MemoryManager::s_freeListRendererAllocator;		
 		LinearAllocator* MemoryManager::s_linearFrameAllocator;
 		StackAllocator* MemoryManager::s_stackAllocator;
 		

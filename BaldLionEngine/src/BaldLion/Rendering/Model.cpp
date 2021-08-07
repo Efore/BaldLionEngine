@@ -19,9 +19,9 @@ namespace BaldLion
 
 			// Extracting folder path from filePath
 
-			m_modelPath = STRING_TO_ID(filePath);
+			m_modelPath = STRING_TO_STRINGID(filePath);
 			auto lastSlash = filePath.find_last_of("/\\");		
-			m_modelFolderPath = STRING_TO_ID(filePath.substr(0, lastSlash + 1));
+			m_modelFolderPath = STRING_TO_STRINGID(filePath.substr(0, lastSlash + 1));
 			m_subMeshes = DynamicArray<Mesh*>(AllocationType::FreeList_Renderer, 5);
 			m_importFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes;
 			
@@ -42,7 +42,7 @@ namespace BaldLion
 
 			Assimp::Importer import;			
 
-			const aiScene *scene = import.ReadFile(ID_TO_STRING(m_modelPath), m_importFlags);
+			const aiScene *scene = import.ReadFile(STRINGID_TO_STRING(m_modelPath), m_importFlags);
 
 			if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 			{
@@ -158,7 +158,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(modelFolderPath);
+				completeTexPath = STRINGID_TO_STRING(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -175,7 +175,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(modelFolderPath);
+				completeTexPath = STRINGID_TO_STRING(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -192,7 +192,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(modelFolderPath);
+				completeTexPath = STRINGID_TO_STRING(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -210,7 +210,7 @@ namespace BaldLion
 			{
 				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &relativeTexPath);
 				
-				completeTexPath = ID_TO_STRING(modelFolderPath);
+				completeTexPath = STRINGID_TO_STRING(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -227,7 +227,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &relativeTexPath);
-				completeTexPath = ID_TO_STRING(modelFolderPath);
+				completeTexPath = STRINGID_TO_STRING(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -246,8 +246,8 @@ namespace BaldLion
 		{
 			for (ui32 i = 0; i < aimesh->mNumBones; ++i)
 			{
-				jointMapping.Emplace(STRING_TO_ID(aimesh->mBones[i]->mName.data), std::move(i));
-				jointOffsetMapping.Emplace(STRING_TO_ID(aimesh->mBones[i]->mName.data), MathUtils::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
+				jointMapping.Emplace(STRING_TO_STRINGID(aimesh->mBones[i]->mName.data), std::move(i));
+				jointOffsetMapping.Emplace(STRING_TO_STRINGID(aimesh->mBones[i]->mName.data), MathUtils::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
 			}
 		}
 
@@ -258,7 +258,7 @@ namespace BaldLion
 			const int32_t parentID,
 			const aiNode* node)
 		{
-			const StringId jointName = STRING_TO_ID(node->mName.data);
+			const StringId jointName = STRING_TO_STRINGID(node->mName.data);
 
 			if (jointMapping.Contains(jointName))
 			{
@@ -290,7 +290,7 @@ namespace BaldLion
 				{
 					ui32 vertexID = aimesh->mBones[i]->mWeights[j].mVertexId;
 
-					const StringId jointName = STRING_TO_ID(aimesh->mBones[i]->mName.data);
+					const StringId jointName = STRING_TO_STRINGID(aimesh->mBones[i]->mName.data);
 
 					switch (jointsAssigned[vertexID])
 					{
@@ -340,7 +340,7 @@ namespace BaldLion
 
 			Material::MaterialProperties materialProperties
 			{
-				aimesh->HasBones() ? STRING_TO_ID("assets/shaders/SkinnedLit.glsl") : STRING_TO_ID("assets/shaders/BaseLit.glsl"),
+				aimesh->HasBones() ? STRING_TO_STRINGID("assets/shaders/SkinnedLit.glsl") : STRING_TO_STRINGID("assets/shaders/BaseLit.glsl"),
 				glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 				glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
 				glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),

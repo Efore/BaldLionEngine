@@ -8,6 +8,7 @@
 #include "BaldLion/Rendering/Platform/OpenGL/OpenGLShader.h"
 #include "ImGui/imgui.h"
 
+
 namespace BaldLion
 {
 	namespace Editor
@@ -20,14 +21,49 @@ namespace BaldLion
 		void BaldLionEditorLayer::OnAttach()
 		{
 			OPTICK_EVENT();
-						
-			ProjectionCameraManager::Init(glm::vec3(0, 5, 10), (float)Application::GetInstance().GetWindow().GetWidth(), (float)Application::GetInstance().GetWindow().GetHeight(), 0.1f, 50000.0f, 50.0f);
+			
+			//ECS setup
+
+			m_ecsManager = MemoryManager::New<ECS::ECSManager>("ECS Manager", AllocationType::FreeList_Main);
+
+			ECS::ECSEntityID cameraEntity = STRING_TO_STRINGID("Main Camera");
+
+			m_ecsManager->AddEntity(cameraEntity);
+			
+			ECS::ECSTransformComponent* cameraTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,				
+				glm::vec3(0, 5, 10),
+				MathUtils::QuaternionIdentity,
+				glm::vec3(1.0f));
+
+			ECS::ECSProjectionCameraComponent* projectionCameraComponent = m_ecsManager->AddComponent<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentID::ProjectionCamera,				
+				(float)Application::GetInstance().GetWindow().GetWidth(),
+				(float)Application::GetInstance().GetWindow().GetHeight(),
+				0.1f,
+				50000.0f,
+				50.0f,
+				10.f);
+
+			ECS::SingletonComponents::ECSProjectionCameraSingleton::SetMainCamera(projectionCameraComponent, cameraTransformComponent);
+
+			m_ecsManager->AddComponentToEntity(cameraEntity, cameraTransformComponent);
+			m_ecsManager->AddComponentToEntity(cameraEntity, projectionCameraComponent);
+
+			ECS::ECSSignature cameraMovementSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::ProjectionCamera, ECS::ECSComponentID::Transform);
+			
+			ECS::ECSCameraMovementSystem* cameraMovementSystem = MemoryManager::New<ECS::ECSCameraMovementSystem>("ECS CameraMovementSystem", AllocationType::FreeList_Main, 
+				"ECS CameraMovementSystem", cameraMovementSystemSignature, m_ecsManager, false);
+
+			m_ecsManager->AddSystem(cameraMovementSystem);
+
+			m_ecsManager->StartSystems();
+
+			//END ECS setup
 
 			Texture* gridTexture = Renderer::GetTextureLibrary().Load("assets/textures/TextureGrid.png",TextureType::Texture2d);
 			gridTexture->SetWrapMode(WrapMode::Repeat, WrapMode::Repeat);
 
 			Rendering::Material::MaterialProperties shapeMaterialProperties{
-					STRING_TO_ID("assets/shaders/baseLit.glsl"),
+					STRING_TO_STRINGID("assets/shaders/baseLit.glsl"),
 					glm::vec3(1.0f),
 					glm::vec3(1.0f),
 					glm::vec3(1.0f),
@@ -95,6 +131,8 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnDetach()
 		{
+			m_ecsManager->StopSystems();
+			MemoryManager::Delete(m_ecsManager);
 		}
 
 		void BaldLionEditorLayer::OnUpdate(TimeStep timeStep)
@@ -105,9 +143,11 @@ namespace BaldLion
 				OPTICK_CATEGORY("CameraController::OnUpdate",Optick::Category::Camera);
 				
 				if (m_viewPortFocused)
-					ProjectionCameraManager::OnUpdate(timeStep);
+				{
+					m_ecsManager->UpdateSystems(timeStep);
+				}
 			}
-
+			
 			{
 				OPTICK_CATEGORY("CameraController::OnUpdate", Optick::Category::Animation);		
 				Animation::AnimationManager::OnParallelUpdate(timeStep);		
@@ -116,14 +156,14 @@ namespace BaldLion
 			//Waiting for animation jobs
 			JobManagement::JobManager::WaitForJobs();
 				
-			Renderer::BeginScene(ProjectionCameraManager::GetCamera(), m_directionalLight);
+			Renderer::BeginScene(m_directionalLight);
 			
-			Renderer::ProcessFrustrumCulling(ProjectionCameraManager::GetCamera());
+			Renderer::ProcessFrustrumCulling();
 
 			//Waiting for frustrum culling jobs
 			JobManagement::JobManager::WaitForJobs();
 
-			Renderer::DrawScene(ProjectionCameraManager::GetCamera());
+			Renderer::DrawScene();
 			Renderer::EndScene();		
 		}
 

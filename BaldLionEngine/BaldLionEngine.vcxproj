@@ -173,6 +173,7 @@
     <ClInclude Include="src\BaldLion\Core\StringId.h" />
     <ClInclude Include="src\BaldLion\Core\TimeStep.h" />
     <ClInclude Include="src\BaldLion\Core\Window.h" />
+    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSProjectionCameraComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSTransformComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSComponent.h" />
@@ -603,6 +604,7 @@
     <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\StringId.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ECSManager.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ECSSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSCameraMovementSystem.cpp" />
@@ -655,4 +657,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>
