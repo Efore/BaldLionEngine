@@ -62,6 +62,7 @@ namespace BaldLion
 
 			static FreeListAllocator* s_freeListMainAllocator;
 			static FreeListAllocator* s_freeListRendererAllocator;
+			static FreeListAllocator* s_freeListECSAllocator;
 			static LinearAllocator* s_linearFrameAllocator;
 			static StackAllocator* s_stackAllocator;
 
@@ -98,6 +99,9 @@ namespace BaldLion
 			case AllocationType::FreeList_Renderer:
 				result = new (s_freeListRendererAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
 				break;
+			case AllocationType::FreeList_ECS:
+				result = new (s_freeListECSAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
+				break;
 			}		
 
 			s_allocationMap.emplace((void*)result, AllocationInfo(STRING_TO_STRINGID(allocationName), allocationType, sizeof(T)));
@@ -122,13 +126,16 @@ namespace BaldLion
 				result = (T*)s_freeListMainAllocator->Allocate(size * sizeof(T), __alignof(T));
 				break;
 			case AllocationType::Linear_Frame:
-				result = (T*)s_linearFrameAllocator->Allocate(size * sizeof(T), __alignof(T));;
+				result = (T*)s_linearFrameAllocator->Allocate(size * sizeof(T), __alignof(T));
 				break;
 			case AllocationType::Stack:
-				result = (T*)s_stackAllocator->Allocate(size * sizeof(T), __alignof(T));;
+				result = (T*)s_stackAllocator->Allocate(size * sizeof(T), __alignof(T));
 				break;
 			case AllocationType::FreeList_Renderer:
-				result = (T*)s_freeListRendererAllocator->Allocate(size * sizeof(T), __alignof(T));;
+				result = (T*)s_freeListRendererAllocator->Allocate(size * sizeof(T), __alignof(T));
+				break;
+			case AllocationType::FreeList_ECS:
+				result = (T*)s_freeListECSAllocator->Allocate(size * sizeof(T), __alignof(T));
 				break;
 			}
 
@@ -166,6 +173,10 @@ namespace BaldLion
 			case AllocationType::FreeList_Renderer:
 				if (s_freeListRendererAllocator != nullptr)
 					s_freeListRendererAllocator->Deallocate(element);
+				break;
+			case AllocationType::FreeList_ECS:
+				if (s_freeListECSAllocator != nullptr)
+					s_freeListECSAllocator->Deallocate(element);
 				break;
 			}
 
@@ -292,6 +303,56 @@ namespace BaldLion
 		bool operator==(const STLFreeListRendererAllocator<T1>&, const STLFreeListRendererAllocator<T2>&) { return true; }
 		template<typename T1, typename T2>
 		bool operator!=(const STLFreeListRendererAllocator<T1>&, const STLFreeListRendererAllocator<T2>&) { return false; }
+		//--------------------------------------------------------------------------
+
+		template<typename T>
+		class STLFreeListECSAllocator
+		{
+		public:
+			typedef T value_type;
+			typedef T* pointer;
+			typedef const T* const_pointer;
+			typedef T& reference;
+			typedef const T& const_reference;
+			typedef std::size_t size_type;
+			typedef std::ptrdiff_t difference_type;
+
+			template<typename U>
+			struct rebind { typedef STLFreeListECSAllocator<U> other; };
+
+			pointer address(reference value) const { return &value; }
+			const_pointer address(const_reference value) const { return &value; }
+
+			STLFreeListECSAllocator() {}
+			STLFreeListECSAllocator(const STLFreeListECSAllocator&) {}
+			template<typename U>
+			STLFreeListECSAllocator(const STLFreeListECSAllocator<U>&) {}
+			~STLFreeListECSAllocator() {}
+
+			size_type max_size() const { return SIZE_MAX / sizeof(T); }
+
+			pointer allocate(size_type num, const void* = 0)
+			{
+				return MemoryManager::NewArray<T>(STRING_TO_STRINGID("STL Allocator"), AllocationType::FreeList_ECS, (ui32)num);
+			}
+			void construct(pointer p, const T& value)
+			{
+				new (p) T(value);
+			}
+			void destroy(pointer p)
+			{
+				p->~T();
+			}
+			void deallocate(pointer p, size_type)
+			{
+				MemoryManager::Delete(p);
+			}
+		};
+
+		template<typename T1, typename T2>
+		bool operator==(const STLFreeListECSAllocator<T1>&, const STLFreeListECSAllocator<T2>&) { return true; }
+		template<typename T1, typename T2>
+		bool operator!=(const STLFreeListECSAllocator<T1>&, const STLFreeListECSAllocator<T2>&) { return false; }
 
 		//--------------------------------------------------------------------------
 

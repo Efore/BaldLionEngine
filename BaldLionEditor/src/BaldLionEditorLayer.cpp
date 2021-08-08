@@ -24,7 +24,7 @@ namespace BaldLion
 			
 			//ECS setup
 
-			m_ecsManager = MemoryManager::New<ECS::ECSManager>("ECS Manager", AllocationType::FreeList_Main);
+			m_ecsManager = MemoryManager::New<ECS::ECSManager>("ECS Manager", AllocationType::FreeList_ECS);
 
 			ECS::ECSEntityID cameraEntity = STRING_TO_STRINGID("Main Camera");
 
@@ -50,7 +50,7 @@ namespace BaldLion
 
 			ECS::ECSSignature cameraMovementSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::ProjectionCamera, ECS::ECSComponentID::Transform);
 			
-			ECS::ECSCameraMovementSystem* cameraMovementSystem = MemoryManager::New<ECS::ECSCameraMovementSystem>("ECS CameraMovementSystem", AllocationType::FreeList_Main, 
+			ECS::ECSCameraMovementSystem* cameraMovementSystem = MemoryManager::New<ECS::ECSCameraMovementSystem>("ECS CameraMovementSystem", AllocationType::FreeList_ECS,
 				"ECS CameraMovementSystem", cameraMovementSystemSignature, m_ecsManager, false);
 
 			m_ecsManager->AddSystem(cameraMovementSystem);
@@ -202,6 +202,7 @@ namespace BaldLion
 			ImGui::Text("Total Memory: %zu", MemoryManager::GetMemorySize());
 			ImGui::Text("Free List Main Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::FreeList_Main), MemoryManager::GetAllocatorSize(AllocationType::FreeList_Main));
 			ImGui::Text("Free List Renderer Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::FreeList_Renderer), MemoryManager::GetAllocatorSize(AllocationType::FreeList_Renderer));
+			ImGui::Text("Free List ECS Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::FreeList_ECS), MemoryManager::GetAllocatorSize(AllocationType::FreeList_ECS));
 			ImGui::Text("Linear Frame Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::Linear_Frame), MemoryManager::GetAllocatorSize(AllocationType::Linear_Frame));
 			ImGui::Text("Stack Scope Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::Stack), MemoryManager::GetAllocatorSize(AllocationType::Stack));
 

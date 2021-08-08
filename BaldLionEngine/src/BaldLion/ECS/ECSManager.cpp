@@ -11,18 +11,18 @@ namespace BaldLion {
 
 		ECSManager::ECSManager()
 		{
-			m_entityComponents = HashTable<ECSEntityID, ECSComponentLookUp>(AllocationType::FreeList_Main,100);
-			m_entitySignatures = HashTable<ECSEntityID, ECSSignature>(AllocationType::FreeList_Main, 100);
+			m_entityComponents = HashTable<ECSEntityID, ECSComponentLookUp>(AllocationType::FreeList_ECS,100);
+			m_entitySignatures = HashTable<ECSEntityID, ECSSignature>(AllocationType::FreeList_ECS, 100);
 			
-			m_systems = DynamicArray<ECSSystem*>(AllocationType::FreeList_Main,100);
+			m_systems = DynamicArray<ECSSystem*>(AllocationType::FreeList_ECS,100);
 
-			m_componentsPool = HashTable<ECSComponentID, void*>(AllocationType::FreeList_Main, 100);
+			m_componentsPool = HashTable<ECSComponentID, void*>(AllocationType::FreeList_ECS, 100);
 
 			//Pools initialization
-			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_Main, 1000);
+			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_ECS, 1000);
 			m_componentsPool.Emplace(ECSComponentID::Transform, std::move(&m_transformComponentPool));
 
-			m_projectionCameraComponentPool = DynamicArray<ECSProjectionCameraComponent>(AllocationType::FreeList_Main, 1000);
+			m_projectionCameraComponentPool = DynamicArray<ECSProjectionCameraComponent>(AllocationType::FreeList_ECS, 1000);
 			m_componentsPool.Emplace(ECSComponentID::ProjectionCamera, std::move(&m_projectionCameraComponentPool));
 		}
 

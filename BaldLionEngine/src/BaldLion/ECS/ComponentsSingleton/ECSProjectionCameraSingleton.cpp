@@ -13,7 +13,7 @@ namespace BaldLion {
 			
 			void ECSProjectionCameraSingleton::Init()
 			{
-				s_frustrumPlanes = DynamicArray<glm::vec4>(AllocationType::FreeList_Renderer, 6);
+				s_frustrumPlanes = DynamicArray<glm::vec4>(AllocationType::FreeList_ECS, 6);
 				s_frustrumPlanes.Populate();
 			}
 

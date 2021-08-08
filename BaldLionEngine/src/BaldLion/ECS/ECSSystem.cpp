@@ -14,7 +14,7 @@ namespace BaldLion {
 			m_ecsManager(ecsManager),
 			m_blockSystemsLoop(blockSystemsLoop)
 		{
-			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_Main, 6);
+			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_ECS, 6);
 			
 			for (HashTable<ECSEntityID, ECSSignature>::Iterator iterator = m_ecsManager->GetEntitySignatures().Begin(); iterator != m_ecsManager->GetEntitySignatures().End(); ++iterator)
 			{
