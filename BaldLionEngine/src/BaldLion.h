@@ -17,7 +17,6 @@
 // --------------- Renderer -----------------------
 
 #include "BaldLion/Rendering/Renderer.h"
-#include "BaldLion/Rendering/CameraManager.h"
 #include "BaldLion/Rendering/Framebuffer.h"
 #include "BaldLion/Rendering/Shapes/PlaneMesh.h"
 #include "BaldLion/Rendering/Shapes/CubeMesh.h"

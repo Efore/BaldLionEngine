@@ -188,8 +188,6 @@
     <ClInclude Include="src\BaldLion\Events\MouseEvent.h" />
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h" />
-    <ClInclude Include="src\BaldLion\Rendering\Camera.h" />
-    <ClInclude Include="src\BaldLion\Rendering\CameraManager.h" />
     <ClInclude Include="src\BaldLion\Rendering\Framebuffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\GeometryData.h" />
     <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h" />
@@ -610,8 +608,6 @@
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSCameraMovementSystem.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\Camera.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\CameraManager.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Framebuffer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\LightManager.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Material.cpp" />

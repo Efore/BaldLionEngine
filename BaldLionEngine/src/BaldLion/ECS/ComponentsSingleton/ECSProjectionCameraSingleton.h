@@ -16,6 +16,7 @@ namespace BaldLion {
 
 				static void Init();
 				static void SetMainCamera(ECSProjectionCameraComponent* cameraComponent, ECSTransformComponent* cameraTransform);
+				static void SetCameraSize(float width, float height);
 				static bool IsAABBVisible(const GeometryUtils::AABB& aabb);
 				static void UpdateFrustrumPlanes();
 

@@ -43,6 +43,7 @@ namespace BaldLion
 				50.0f,
 				10.f);
 
+			ECS::SingletonComponents::ECSProjectionCameraSingleton::Init();
 			ECS::SingletonComponents::ECSProjectionCameraSingleton::SetMainCamera(projectionCameraComponent, cameraTransformComponent);
 
 			m_ecsManager->AddComponentToEntity(cameraEntity, cameraTransformComponent);
@@ -291,8 +292,7 @@ namespace BaldLion
 			ui32 width = e.GetWidth();
 			ui32 height = e.GetHeight();
 
-			ProjectionCameraManager::GetCamera()->SetWidth((float)width);
-			ProjectionCameraManager::GetCamera()->SetHeight((float)height);
+			ECS::SingletonComponents::ECSProjectionCameraSingleton::SetCameraSize((float)width, (float)height);
 
 			Renderer::OnWindowResize(width, height);
 

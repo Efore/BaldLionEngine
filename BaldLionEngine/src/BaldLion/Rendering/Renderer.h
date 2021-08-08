@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Camera.h"
 #include "Shader.h"
 #include "LightManager.h"
 #include "SkyboxPlatformInterface.h"

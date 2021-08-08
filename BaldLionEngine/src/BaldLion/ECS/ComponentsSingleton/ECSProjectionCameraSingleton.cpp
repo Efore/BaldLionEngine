@@ -45,6 +45,12 @@ namespace BaldLion {
 				s_mainCameraTransform = cameraTransform;
 			}
 
+			void ECSProjectionCameraSingleton::SetCameraSize(float width, float height)
+			{
+				s_mainCamera->width = width;
+				s_mainCamera->height = height;
+			}
+
 			bool ECSProjectionCameraSingleton::IsAABBVisible(const GeometryUtils::AABB& aabb)
 			{
 				const glm::vec3 minPointInWorldSpace = aabb.minPoint;

@@ -106,7 +106,8 @@ namespace BaldLion
 			
 			s_sceneData.viewProjectionMatrix = ECS::SingletonComponents::ECSProjectionCameraSingleton::GetMainCameraViewProjectionMatrix();
 			s_sceneData.cameraPosition = ECS::SingletonComponents::ECSProjectionCameraSingleton::GetMainCameraPosition();
-			
+			ECS::SingletonComponents::ECSProjectionCameraSingleton::UpdateFrustrumPlanes();
+
 			LightManager::BeginScene(directionalLight);
 
 			s_renderStats.drawCalls = 0;

@@ -216,12 +216,6 @@
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Camera.h">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\CameraManager.h">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Framebuffer.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
@@ -1472,12 +1466,6 @@
       <Filter>src\BaldLion\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\Camera.cpp">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\CameraManager.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Framebuffer.cpp">
