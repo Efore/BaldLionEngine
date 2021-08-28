@@ -22,7 +22,7 @@ namespace BaldLion
 		DynamicArray<Mesh*> Renderer::s_dynamicMeshesToRender;	
 		DynamicArray<Mesh*> Renderer::s_castingShadowMeshes;
 
-		HashTable<Material*, GeometryData*> Renderer::s_geometryToBatch;
+		HashMap<Material*, GeometryData*> Renderer::s_geometryToBatch;
 		DynamicArray<VertexArray*> Renderer::s_batchedVertexArrays;
 
 		Framebuffer* Renderer::s_framebuffer;
@@ -179,7 +179,7 @@ namespace BaldLion
 
 			s_dynamicMeshesToRender = DynamicArray<Mesh*>(AllocationType::Linear_Frame, s_registeredMeshes.Size());
 			s_castingShadowMeshes = DynamicArray<Mesh*>(AllocationType::Linear_Frame, s_registeredMeshes.Size());
-			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::Linear_Frame, s_registeredMeshes.Size());
+			s_geometryToBatch = HashMap<Material*, GeometryData*>(AllocationType::Linear_Frame, s_registeredMeshes.Size());
 
 			const ui32 numOfTasks = (ui32)(glm::ceil( (float)s_registeredMeshes.Size() / (float)maxMeshesToProcess));
 			ui32 currentMeshIndex = 0;
@@ -290,7 +290,7 @@ namespace BaldLion
 				s_batchedVertexArrays = DynamicArray<VertexArray*>(AllocationType::FreeList_Renderer, s_geometryToBatch.Size());
 
 				//Draw batches
-				for (HashTable<Material*, GeometryData*>::Iterator iterator = s_geometryToBatch.Begin(); iterator != s_geometryToBatch.End(); ++iterator)
+				for (HashMap<Material*, GeometryData*>::Iterator iterator = s_geometryToBatch.Begin(); iterator != s_geometryToBatch.End(); ++iterator)
 				{
 					VertexArray* vertexArray = VertexArray::Create();
 
@@ -333,7 +333,7 @@ namespace BaldLion
 
 			GeometryData* batch = nullptr;
 			
-			if (!s_geometryToBatch.Contains(mesh->GetMaterial()))
+			if (!s_geometryToBatch.TryGet(mesh->GetMaterial(),batch))
 			{
 				BL_PROFILE_SCOPE("Emplace material for batch", Optick::Category::Rendering);
 
@@ -342,10 +342,6 @@ namespace BaldLion
 				batch->indices = DynamicArray<ui32>(AllocationType::Linear_Frame, batch->vertices.Capacity() * 2);
 
 				s_geometryToBatch.Emplace(mesh->GetMaterial(), std::move(batch));				
-			}
-			else
-			{	
-				batch = s_geometryToBatch.Get(mesh->GetMaterial());
 			}
 
 			{

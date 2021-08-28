@@ -45,11 +45,15 @@ namespace BaldLion
 
 			StringId name = STRING_TO_STRINGID(matName);
 
-			if (s_materials.Contains(name))
-				return s_materials.Get(name);
+			Material* material = nullptr;
 
-			Material* material = Material::Create(matName, *materialProperties);
+			if (s_materials.TryGet(name, material))
+				return material;
+
+			material = Material::Create(matName, *materialProperties);
+
 			Add(material);
+
 			return material;
 		}
 

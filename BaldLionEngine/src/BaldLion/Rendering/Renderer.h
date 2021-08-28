@@ -6,7 +6,7 @@
 #include "RendererPlatformInterface.h"
 #include "Model.h"
 #include "Framebuffer.h"
-#include "Framebuffer.h"
+#include "BaldLion/Core/Containers/HashMap.h"
 
 namespace BaldLion
 {
@@ -89,8 +89,8 @@ namespace BaldLion
 
 			static DynamicArray<Mesh*> s_castingShadowMeshes;
 
-			static HashTable<Material*, GeometryData*> s_geometryToBatch;
-			static DynamicArray<VertexArray*> s_batchedVertexArrays;
+			static HashMap<Material*, GeometryData*> s_geometryToBatch;
+			static DynamicArray<VertexArray*> s_batchedVertexArrays;	 
 
 			static Framebuffer* s_framebuffer;
 			static Framebuffer* s_shadowFramebuffer;

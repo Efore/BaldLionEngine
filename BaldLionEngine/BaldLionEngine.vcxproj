@@ -151,6 +151,7 @@
     <ClInclude Include="src\BaldLion\Animation\Skeleton.h" />
     <ClInclude Include="src\BaldLion\Core\Application.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\DynamicArray.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\HashMap.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\HashTable.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\Queue.h" />
     <ClInclude Include="src\BaldLion\Core\Core.h" />

@@ -7,25 +7,25 @@
 namespace BaldLion
 {
 	template <typename K, typename V>
-	struct HashNode {
-
-		bool used = false;
-		hashType hashedKey;
-		K nodeKey;
-		V nodeValue; 
-
-		HashNode(): nodeValue(V()) { }
-
-		HashNode::~HashNode() {
-
-			nodeValue.~V();
-		}		
-	};
-
-	template <typename K, typename V>
 	class HashTable
 	{ 
 		public:
+
+		template <typename K, typename V>
+		struct HashTableNode {
+
+			bool used = false;
+			hashType hashedKey;
+			K nodeKey;
+			V nodeValue;
+
+			HashTableNode() : nodeValue(V()) { }
+
+			HashTableNode::~HashTableNode() {
+
+				nodeValue.~V();
+			}
+		};
 
 		struct Iterator
 		{
@@ -74,7 +74,7 @@ namespace BaldLion
 		private:
 
 			ui32 m_tableIndex = 0;
-			DynamicArray<HashNode<K,V>>* m_tableToIterate = nullptr;
+			DynamicArray<HashTable::HashTableNode<K,V>>* m_tableToIterate = nullptr;
 		};
 
 		public:
@@ -85,6 +85,8 @@ namespace BaldLion
 			bool Contains(const K& key) const;			
 
 			void Emplace(const K& key, V&& value) noexcept;
+
+			bool TryGet(const K& key, V& result);
 
 			const V& Get(const K& key) const;
 			V& Get(const K& key);
@@ -118,9 +120,8 @@ namespace BaldLion
 			ui32 m_size = 0;
 
 			ui32 m_firstElementIndex = 0;
-			ui32 m_lastElementIndex = 0;
 
-			DynamicArray<HashNode<K,V>> m_table;
+			DynamicArray<HashTableNode<K,V>> m_table;
 			AllocationType m_allocationType;	
 	};
 
@@ -133,11 +134,10 @@ namespace BaldLion
 	template <typename K, typename V>
 	BaldLion::HashTable<K, V>::HashTable(Memory::AllocationType allocationType, ui32 capacity) : m_size(0), m_capacity(capacity), m_allocationType(allocationType)
 	{
-		m_table = DynamicArray<HashNode<K, V>>(m_allocationType, capacity);
+		m_table = DynamicArray<HashTableNode<K, V>>(m_allocationType, capacity);
 		m_table.Populate();
 
 		m_firstElementIndex = capacity;
-		m_lastElementIndex = capacity;
 	}
 
 	template <typename K, typename V>
@@ -180,6 +180,21 @@ namespace BaldLion
 		}
 
 		return -1;
+	}
+
+	template <typename K, typename V>
+	bool BaldLion::HashTable<K, V>::TryGet(const K& key, V& result)
+	{
+		const hashType hashedKey = std::hash<K>()(key);
+		const i32 tableIndex = FindIndex(hashedKey);
+
+		if (tableIndex >= 0) 
+		{
+			result = m_table[tableIndex].nodeValue;
+			return true;
+		}
+
+		return false;
 	}
 
 	template <typename K, typename V>
@@ -231,11 +246,10 @@ namespace BaldLion
 	{
 		const float ratio = (float)(++m_size) / (float)(m_capacity);
 
-		if (ratio > 0.5f)
+		if (ratio > 0.75f)
 		{
 			//BL_LOG_CORE_INFO("Need reallocation");
 			Reallocate((ui32)(m_capacity * 1.5f));
-			m_lastElementIndex = m_table.Capacity();
 		}
 
 		const hashType hashedKey = std::hash<K>()(key);
@@ -248,7 +262,7 @@ namespace BaldLion
 
 		//BL_LOG_CORE_INFO("found free node");
 
-		HashNode<K,V>& node = m_table[tableIndex];
+		HashTableNode<K,V>& node = m_table[tableIndex];
 		node.used = true;
 		node.hashedKey = hashedKey;
 		node.nodeKey = key;
@@ -268,6 +282,7 @@ namespace BaldLion
 			return false;
 		
 		m_table[tableIndex].used = false;
+		m_table[tableIndex].nodeKey.~K();
 		m_table[tableIndex].nodeValue.~V();
 		--m_size;
 
@@ -275,8 +290,6 @@ namespace BaldLion
 		{
 			m_firstElementIndex = FindFirstElementIndex();
 		}
-
-		m_lastElementIndex = m_table.Capacity();
 
 		return true;
 	}
@@ -321,7 +334,6 @@ namespace BaldLion
 		m_capacity = other.m_capacity;
 		m_table = std::move(other.m_table);		
 		m_firstElementIndex = other.m_firstElementIndex;
-		m_lastElementIndex = other.m_lastElementIndex;
 
 		return *this;
 	}
@@ -335,9 +347,8 @@ namespace BaldLion
 		m_allocationType = other.m_allocationType;
 		m_size = other.m_size;
 		m_capacity = other.m_capacity;
-		m_table = DynamicArray<HashNode<K, V>>(other.m_table);
+		m_table = DynamicArray<HashTableNode<K, V>>(other.m_table);
 		m_firstElementIndex = other.m_firstElementIndex;
-		m_lastElementIndex = other.m_lastElementIndex;
 
 		return *this;
 	}
@@ -351,13 +362,13 @@ namespace BaldLion
 	template <typename K, typename V>
 	typename BaldLion::HashTable<K, V> ::Iterator BaldLion::HashTable<K, V>::End()
 	{
-		return HashTable<K,V>::Iterator(this, m_lastElementIndex);
+		return HashTable<K,V>::Iterator(this, m_capacity);
 	}
 
 	template <typename K, typename V>
 	void BaldLion::HashTable<K, V>::Reallocate(ui32 capacity)
 	{
-		DynamicArray<HashNode<K, V>> newTable = DynamicArray<HashNode<K, V>>(m_allocationType, capacity);
+		DynamicArray<HashTableNode<K, V>> newTable = DynamicArray<HashTableNode<K, V>>(m_allocationType, capacity);
 		newTable.Populate();
 
 		for (ui32 i = 0; i < m_table.Size(); ++i)
@@ -376,8 +387,9 @@ namespace BaldLion
 		}
 
 		m_table.Clear();
-		m_table = DynamicArray<HashNode<K, V>>(newTable);
+		m_table = std::move(newTable);
 		m_capacity = capacity;
+		m_firstElementIndex = FindFirstElementIndex();
 
 		newTable.Clear();
 	}

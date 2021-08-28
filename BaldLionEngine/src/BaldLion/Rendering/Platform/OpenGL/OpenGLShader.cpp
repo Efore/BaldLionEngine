@@ -244,10 +244,12 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			if (m_uniformLocationCache.Contains(name))
-				return m_uniformLocationCache.Get(name);
+			int location = -1;
 
-			int location = glGetUniformLocation(m_rendererID, STRINGID_TO_STRING(name));
+			if (m_uniformLocationCache.TryGet(name, location))
+				return location;
+
+			location = glGetUniformLocation(m_rendererID, STRINGID_TO_STRING(name));
 
 			if (location == -1)
 			{

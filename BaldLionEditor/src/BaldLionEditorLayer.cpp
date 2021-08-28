@@ -104,7 +104,7 @@ namespace BaldLion
 			initialTransform = glm::mat4(1.0f);
 			initialTransform = glm::scale(initialTransform, glm::vec3(5.0f));
 
-			for (ui32 i = 0; i < 3; ++i)
+			for (ui32 i = 0; i < 15; ++i)
 			{
 				auto model = MemoryManager::New<Rendering::Model>(std::string("Static Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj", glm::rotate(initialTransform, glm::linearRand(0.0f, 359.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 				model->SetUpModel();

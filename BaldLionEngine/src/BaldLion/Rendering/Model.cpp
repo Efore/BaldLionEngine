@@ -260,9 +260,10 @@ namespace BaldLion
 		{
 			const StringId jointName = STRING_TO_STRINGID(node->mName.data);
 
+
 			if (jointMapping.Contains(jointName))
 			{
-				jointMapping.Get(jointName) = currentID;
+				jointMapping.Set(jointName,currentID);
 				jointsData[currentID].jointID = currentID;
 				jointsData[currentID].parentID = parentID;
 				jointsData[currentID].jointBindTransform = jointOffsetMapping.Get(jointName);
@@ -273,7 +274,14 @@ namespace BaldLion
 
 			for (ui32 i = 0; i < node->mNumChildren; ++i)
 			{
-				FillJointData(jointMapping, jointsData, jointOffsetMapping, currentID, jointMapping.Contains(jointName) ? jointMapping.Get(jointName) : parentID, node->mChildren[i]);
+				ui32 jointId = -1;
+
+				if (!jointMapping.TryGet(jointName, jointId))
+				{
+					jointId = parentID;
+				}
+
+				FillJointData(jointMapping, jointsData, jointOffsetMapping, currentID, jointId, node->mChildren[i]);
 			}
 		}
 

@@ -82,10 +82,9 @@ namespace BaldLion
 
 		void Animator::SetCurrentAnimation(StringId AnimationName)
 		{
-			if(m_animations.Contains(AnimationName))
+			if(m_animations.TryGet(AnimationName, m_currentAnimation))
 			{
 				m_animationTime = 0;
-				m_currentAnimation = m_animations.Get(AnimationName);
 			}
 		}
 

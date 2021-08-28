@@ -1406,6 +1406,7 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\Animation\Skeleton.h" />
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\HashMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
