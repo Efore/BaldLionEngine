@@ -5,7 +5,6 @@
 #include "BaldLion/Utils/GeometryUtils.h"
 #include "GeometryData.h"
 #include "BaldLion/Animation/Skeleton.h"
-#include <vector>
 
 namespace BaldLion
 {

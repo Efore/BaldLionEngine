@@ -2,6 +2,7 @@
 #include "ECSManager.h"
 #include "BaldLion/ECS/Components/ECSTransformComponent.h"
 #include "BaldLion/ECS/Components/ECSProjectionCameraComponent.h"
+#include "BaldLion/ECS/Components/ECSDirectionalLightComponent.h"
 
 namespace BaldLion {
 
@@ -22,8 +23,11 @@ namespace BaldLion {
 			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_ECS, 1000);
 			m_componentsPool.Emplace(ECSComponentID::Transform, std::move(&m_transformComponentPool));
 
-			m_projectionCameraComponentPool = DynamicArray<ECSProjectionCameraComponent>(AllocationType::FreeList_ECS, 1000);
+			m_projectionCameraComponentPool = DynamicArray<ECSProjectionCameraComponent>(AllocationType::FreeList_ECS, 10);
 			m_componentsPool.Emplace(ECSComponentID::ProjectionCamera, std::move(&m_projectionCameraComponentPool));
+
+			m_directionalLightComponentPool = DynamicArray<ECSDirectionalLightComponent>(AllocationType::FreeList_ECS, 10);
+			m_componentsPool.Emplace(ECSComponentID::DirectionalLight, std::move(&m_directionalLightComponentPool));
 		}
 
 		ECSManager::~ECSManager()
@@ -38,8 +42,9 @@ namespace BaldLion {
 
 			m_systems.Clear();			
 
-			CleanComponentPool< ECSTransformComponent>(ECSComponentID::Transform);
-			CleanComponentPool< ECSProjectionCameraComponent>(ECSComponentID::ProjectionCamera);
+			CleanComponentPool<ECSTransformComponent>(ECSComponentID::Transform);
+			CleanComponentPool<ECSProjectionCameraComponent>(ECSComponentID::ProjectionCamera);
+			CleanComponentPool<ECSDirectionalLightComponent>(ECSComponentID::DirectionalLight);
 
 			m_componentsPool.Clear();
 		}

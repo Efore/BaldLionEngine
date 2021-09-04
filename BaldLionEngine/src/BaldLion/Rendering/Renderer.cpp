@@ -4,6 +4,7 @@
 #include "BaldLion/Core/JobManagement/JobManager.h"
 #include "BaldLion/Utils/MathUtils.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSProjectionCameraSingleton.h"
+#include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
 
 const ui32 maxMeshesToProcess = 5u;
 
@@ -22,7 +23,7 @@ namespace BaldLion
 		DynamicArray<Mesh*> Renderer::s_dynamicMeshesToRender;	
 		DynamicArray<Mesh*> Renderer::s_castingShadowMeshes;
 
-		HashMap<Material*, GeometryData*> Renderer::s_geometryToBatch;
+		HashTable<Material*, GeometryData*> Renderer::s_geometryToBatch;
 		DynamicArray<VertexArray*> Renderer::s_batchedVertexArrays;
 
 		Framebuffer* Renderer::s_framebuffer;
@@ -77,8 +78,6 @@ namespace BaldLion
 
 			s_depthMapShader = Shader::Create("assets/shaders/depthMap.glsl");
 			s_depthMapSkinnedShader = Shader::Create("assets/shaders/depthMapSkinned.glsl");
-
-			LightManager::Init();
 		}
 
 		void Renderer::Stop()
@@ -100,15 +99,13 @@ namespace BaldLion
 			s_rendererPlatformInterface->SetViewport(0, 0, width, height);			
 		}
 
-		void Renderer::BeginScene(const DirectionalLight& directionalLight)
+		void Renderer::BeginScene()
 		{
 			BL_PROFILE_FUNCTION();
 			
 			s_sceneData.viewProjectionMatrix = ECS::SingletonComponents::ECSProjectionCameraSingleton::GetMainCameraViewProjectionMatrix();
 			s_sceneData.cameraPosition = ECS::SingletonComponents::ECSProjectionCameraSingleton::GetMainCameraPosition();
 			ECS::SingletonComponents::ECSProjectionCameraSingleton::UpdateFrustrumPlanes();
-
-			LightManager::BeginScene(directionalLight);
 
 			s_renderStats.drawCalls = 0;
 			s_renderStats.vertices = 0;
@@ -162,10 +159,10 @@ namespace BaldLion
 			shader->SetUniform(UNIFORM_VIEW_PROJECTION, ShaderDataType::Mat4, &(s_sceneData.viewProjectionMatrix));
 			shader->SetUniform(UNIFORM_CAMERA_POS, ShaderDataType::Float3, &(s_sceneData.cameraPosition));
 
-			shader->SetUniform(UNIFORM_DIR_LIGHT_DIRECTION, ShaderDataType::Float3, &(LightManager::GetDirectionalLight().direction));
-			shader->SetUniform(UNIFORM_DIR_LIGHT_AMBIENT,ShaderDataType::Float3, &(LightManager::GetDirectionalLight().ambientColor));
-			shader->SetUniform(UNIFORM_DIR_LIGHT_DIFUSSE, ShaderDataType::Float3, &(LightManager::GetDirectionalLight().diffuseColor));
-			shader->SetUniform(UNIFORM_DIR_LIGHT_SPECULAR, ShaderDataType::Float3, &(LightManager::GetDirectionalLight().specularColor));
+			shader->SetUniform(UNIFORM_DIR_LIGHT_DIRECTION, ShaderDataType::Float3, &(ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightDirection()));
+			shader->SetUniform(UNIFORM_DIR_LIGHT_AMBIENT,ShaderDataType::Float3, &(ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightAmbientColor()));
+			shader->SetUniform(UNIFORM_DIR_LIGHT_DIFFUSE, ShaderDataType::Float3, &(ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightDiffuseColor()));
+			shader->SetUniform(UNIFORM_DIR_LIGHT_SPECULAR, ShaderDataType::Float3, &(ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightSpecularColor()));
 
 			s_rendererPlatformInterface->DrawVertexArray(vertexArray);
 
@@ -179,7 +176,7 @@ namespace BaldLion
 
 			s_dynamicMeshesToRender = DynamicArray<Mesh*>(AllocationType::Linear_Frame, s_registeredMeshes.Size());
 			s_castingShadowMeshes = DynamicArray<Mesh*>(AllocationType::Linear_Frame, s_registeredMeshes.Size());
-			s_geometryToBatch = HashMap<Material*, GeometryData*>(AllocationType::Linear_Frame, s_registeredMeshes.Size());
+			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::Linear_Frame, s_registeredMeshes.Size());
 
 			const ui32 numOfTasks = (ui32)(glm::ceil( (float)s_registeredMeshes.Size() / (float)maxMeshesToProcess));
 			ui32 currentMeshIndex = 0;
@@ -238,7 +235,7 @@ namespace BaldLion
 			glm::vec3 lookAtEye = s_sceneData.cameraPosition;
 			lookAtEye.y = shadowDistance * 0.5f;
 
-			const glm::vec3 lookAtCenter = lookAtEye + (LightManager::GetDirectionalLight().direction * glm::length(lookAtEye));
+			const glm::vec3 lookAtCenter = lookAtEye + (ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightDirection() * glm::length(lookAtEye));
 
 			const glm::mat4 lightView = glm::lookAt(lookAtEye, lookAtCenter, MathUtils::Vector3UnitY);
 			const glm::mat4 lightProjection = glm::ortho(-shadowDistance, shadowDistance, -shadowDistance, shadowDistance, 0.0f, shadowDistance * 2.0f);
@@ -290,7 +287,7 @@ namespace BaldLion
 				s_batchedVertexArrays = DynamicArray<VertexArray*>(AllocationType::FreeList_Renderer, s_geometryToBatch.Size());
 
 				//Draw batches
-				for (HashMap<Material*, GeometryData*>::Iterator iterator = s_geometryToBatch.Begin(); iterator != s_geometryToBatch.End(); ++iterator)
+				for (HashTable<Material*, GeometryData*>::Iterator iterator = s_geometryToBatch.Begin(); iterator != s_geometryToBatch.End(); ++iterator)
 				{
 					VertexArray* vertexArray = VertexArray::Create();
 

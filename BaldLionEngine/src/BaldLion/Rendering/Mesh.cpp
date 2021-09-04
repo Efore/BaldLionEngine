@@ -28,7 +28,7 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			m_geometryData = MemoryManager::New<GeometryData>("Geometry data", AllocationType::FreeList_Renderer, vertices, indices, m_worldTransform);
+			m_geometryData = MemoryManager::New<GeometryData>("Geometry data", AllocationType::FreeList_Renderer, vertices, indices);
 
 			m_aabb = RecalculateAABB();
 

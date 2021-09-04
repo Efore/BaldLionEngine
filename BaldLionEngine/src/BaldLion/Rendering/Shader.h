@@ -33,7 +33,7 @@
 
 #define UNIFORM_DIR_LIGHT_DIRECTION		STRING_TO_STRINGID("u_directionalLight.direction")
 #define UNIFORM_DIR_LIGHT_AMBIENT		STRING_TO_STRINGID("u_directionalLight.ambientColor")
-#define UNIFORM_DIR_LIGHT_DIFUSSE		STRING_TO_STRINGID("u_directionalLight.diffuseColor")
+#define UNIFORM_DIR_LIGHT_DIFFUSE		STRING_TO_STRINGID("u_directionalLight.diffuseColor")
 #define UNIFORM_DIR_LIGHT_SPECULAR		STRING_TO_STRINGID("u_directionalLight.specularColor")
 
 namespace BaldLion 

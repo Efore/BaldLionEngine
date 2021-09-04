@@ -44,7 +44,7 @@ namespace BaldLion
 
 			static void OnWindowResize(ui32 width, ui32 height);
 
-			static void BeginScene(const DirectionalLight& directionalLight);
+			static void BeginScene();
 			static void DrawScene();
 			static void EndScene();
 
@@ -89,7 +89,7 @@ namespace BaldLion
 
 			static DynamicArray<Mesh*> s_castingShadowMeshes;
 
-			static HashMap<Material*, GeometryData*> s_geometryToBatch;
+			static HashTable<Material*, GeometryData*> s_geometryToBatch;
 			static DynamicArray<VertexArray*> s_batchedVertexArrays;	 
 
 			static Framebuffer* s_framebuffer;

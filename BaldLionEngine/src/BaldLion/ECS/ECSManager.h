@@ -65,6 +65,7 @@ namespace BaldLion {
 			HashTable<ECSComponentID, void*> m_componentsPool;
 			DynamicArray<class ECSTransformComponent> m_transformComponentPool;
 			DynamicArray<class ECSProjectionCameraComponent> m_projectionCameraComponentPool;			
+			DynamicArray<class ECSDirectionalLightComponent> m_directionalLightComponentPool;
 		};
 
 		template<typename ECSComponentType>

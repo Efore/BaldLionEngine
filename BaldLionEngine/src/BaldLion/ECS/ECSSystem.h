@@ -12,11 +12,11 @@ namespace BaldLion
 		class ECSSystem {
 
 		public:
-			ECSSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager, bool blockSystemsLoop);
+			ECSSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager, bool blockSystemsLoop, bool parallelize);
 			virtual ~ECSSystem();
 
 			virtual void OnStart() = 0;
-			void OnUpdate(TimeStep timeStep);
+			virtual void OnUpdate(TimeStep timeStep);
 			virtual void OnStop() = 0;
 
 			virtual void UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp) = 0;
@@ -28,6 +28,7 @@ namespace BaldLion
 			class ECSManager* m_ecsManager;
 			StringId m_systemName;
 			bool m_blockSystemsLoop;			
+			bool m_parallelize;
 		};
 	}
 }

@@ -28,7 +28,6 @@ namespace BaldLion
 			glm::vec2 m_viewportSize;
 			bool m_viewPortFocused;
 
-			DirectionalLight m_directionalLight;
 			ECS::ECSManager* m_ecsManager;
 		};
 	}

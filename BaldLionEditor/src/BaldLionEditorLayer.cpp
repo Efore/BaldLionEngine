@@ -26,35 +26,55 @@ namespace BaldLion
 
 			m_ecsManager = MemoryManager::New<ECS::ECSManager>("ECS Manager", AllocationType::FreeList_ECS);
 
-			ECS::ECSEntityID cameraEntity = STRING_TO_STRINGID("Main Camera");
+			{//Camera setup
 
-			m_ecsManager->AddEntity(cameraEntity);
-			
-			ECS::ECSTransformComponent* cameraTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,				
-				glm::vec3(0, 5, 10),
-				MathUtils::QuaternionIdentity,
-				glm::vec3(1.0f));
+				ECS::ECSEntityID cameraEntity = STRING_TO_STRINGID("Main Camera");
 
-			ECS::ECSProjectionCameraComponent* projectionCameraComponent = m_ecsManager->AddComponent<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentID::ProjectionCamera,				
-				(float)Application::GetInstance().GetWindow().GetWidth(),
-				(float)Application::GetInstance().GetWindow().GetHeight(),
-				0.1f,
-				50000.0f,
-				50.0f,
-				10.f);
+				m_ecsManager->AddEntity(cameraEntity);
 
-			ECS::SingletonComponents::ECSProjectionCameraSingleton::Init();
-			ECS::SingletonComponents::ECSProjectionCameraSingleton::SetMainCamera(projectionCameraComponent, cameraTransformComponent);
+				ECS::ECSTransformComponent* cameraTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
+					glm::vec3(0, 5, 10),
+					MathUtils::QuaternionIdentity,
+					glm::vec3(1.0f));
 
-			m_ecsManager->AddComponentToEntity(cameraEntity, cameraTransformComponent);
-			m_ecsManager->AddComponentToEntity(cameraEntity, projectionCameraComponent);
+				ECS::ECSProjectionCameraComponent* projectionCameraComponent = m_ecsManager->AddComponent<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentID::ProjectionCamera,
+					(float)Application::GetInstance().GetWindow().GetWidth(),
+					(float)Application::GetInstance().GetWindow().GetHeight(),
+					0.1f,
+					50000.0f,
+					50.0f,
+					10.f);
 
-			ECS::ECSSignature cameraMovementSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::ProjectionCamera, ECS::ECSComponentID::Transform);
-			
-			ECS::ECSCameraMovementSystem* cameraMovementSystem = MemoryManager::New<ECS::ECSCameraMovementSystem>("ECS CameraMovementSystem", AllocationType::FreeList_ECS,
-				"ECS CameraMovementSystem", cameraMovementSystemSignature, m_ecsManager, false);
+				m_ecsManager->AddComponentToEntity(cameraEntity, cameraTransformComponent);
+				m_ecsManager->AddComponentToEntity(cameraEntity, projectionCameraComponent);
 
-			m_ecsManager->AddSystem(cameraMovementSystem);
+				ECS::SingletonComponents::ECSProjectionCameraSingleton::Init();
+				ECS::SingletonComponents::ECSProjectionCameraSingleton::SetMainCamera(projectionCameraComponent, cameraTransformComponent);
+
+				const ECS::ECSSignature cameraMovementSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::ProjectionCamera, ECS::ECSComponentID::Transform);
+
+				ECS::ECSCameraMovementSystem* cameraMovementSystem = MemoryManager::New<ECS::ECSCameraMovementSystem>("ECS CameraMovementSystem", AllocationType::FreeList_ECS,
+					"ECS CameraMovementSystem", cameraMovementSystemSignature, m_ecsManager, false, true);
+
+				m_ecsManager->AddSystem(cameraMovementSystem);
+			}
+
+			{//Directional Light setup
+
+				ECS::ECSEntityID directionalLight = STRING_TO_STRINGID("Directional Light");
+
+				m_ecsManager->AddEntity(directionalLight);
+				ECS::ECSDirectionalLightComponent* directionalLightComponent = m_ecsManager->AddComponent<ECS::ECSDirectionalLightComponent>(
+					ECS::ECSComponentID::DirectionalLight,
+					glm::vec3(0.0f),
+					glm::vec3(1.0f),
+					glm::vec3(0.2f),
+					glm::vec3(-1.0f, -1.0f, -1.0f));
+
+				m_ecsManager->AddComponentToEntity(directionalLight, directionalLightComponent);
+
+				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
+			}
 
 			m_ecsManager->StartSystems();
 
@@ -118,16 +138,7 @@ namespace BaldLion
 				{
 					initialTransform = glm::translate(initialTransform, glm::vec3(15.0f, 0, 0.0f));
 				}
-			}
-
-			m_directionalLight = {				
-				glm::vec3(0.0f),
-				glm::vec3(1.0f),
-				glm::vec3(0.2f),
-				LightType::DirectionalLight,
-				glm::vec3(-1.0f, -1.0f, -1.0f)
-			};
-			
+			}			
 		}
 
 		void BaldLionEditorLayer::OnDetach()
@@ -157,8 +168,7 @@ namespace BaldLion
 			//Waiting for animation jobs
 			JobManagement::JobManager::WaitForJobs();
 				
-			Renderer::BeginScene(m_directionalLight);
-			
+			Renderer::BeginScene();			
 			Renderer::ProcessFrustrumCulling();
 
 			//Waiting for frustrum culling jobs
@@ -190,11 +200,21 @@ namespace BaldLion
 
 			ImGui::Begin("Settings");
 
+			glm::vec3 directionalLightAmbientColor = ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightAmbientColor();
+			glm::vec3 directionalLightDiffuseColor = ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightDiffuseColor();
+			glm::vec3 directionalLightSpecularColor = ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightSpecularColor();
+			glm::vec3 directionalLightDirection = ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightDirection();
+
 			ImGui::Text("Directional Light");
-			ImGui::SliderFloat3("Light Direction", glm::value_ptr(m_directionalLight.direction), -1.0f, 1.0f);
-			ImGui::ColorEdit3("Light Ambient Color", glm::value_ptr(m_directionalLight.ambientColor));
-			ImGui::ColorEdit3("Light Diffuse Color", glm::value_ptr(m_directionalLight.diffuseColor));
-			ImGui::ColorEdit3("Light Specular Color", glm::value_ptr(m_directionalLight.specularColor));
+			ImGui::SliderFloat3("Light Direction", glm::value_ptr(directionalLightDirection), -1.0f, 1.0f);
+			ImGui::ColorEdit3("Light Ambient Color", glm::value_ptr(directionalLightAmbientColor));
+			ImGui::ColorEdit3("Light Diffuse Color", glm::value_ptr(directionalLightDiffuseColor));
+			ImGui::ColorEdit3("Light Specular Color", glm::value_ptr(directionalLightSpecularColor));
+
+			ECS::SingletonComponents::ECSLightSingleton::SetDirectionaLightAmbientColor(directionalLightAmbientColor);
+			ECS::SingletonComponents::ECSLightSingleton::SetDirectionaLightDiffuseColor(directionalLightDiffuseColor);
+			ECS::SingletonComponents::ECSLightSingleton::SetDirectionaLightSpecularColor(directionalLightSpecularColor);
+			ECS::SingletonComponents::ECSLightSingleton::SetDirectionaLightDirection(directionalLightDirection);
 
 			ImGui::End();
 

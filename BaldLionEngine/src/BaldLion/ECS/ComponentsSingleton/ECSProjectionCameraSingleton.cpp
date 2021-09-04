@@ -3,7 +3,9 @@
 #include "ECSProjectionCameraSingleton.h"
 
 namespace BaldLion {
+
 	namespace ECS {
+
 		namespace SingletonComponents {
 
 			ECSProjectionCameraComponent* ECSProjectionCameraSingleton::s_mainCamera;

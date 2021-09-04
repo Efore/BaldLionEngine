@@ -174,7 +174,10 @@
     <ClInclude Include="src\BaldLion\Core\StringId.h" />
     <ClInclude Include="src\BaldLion\Core\TimeStep.h" />
     <ClInclude Include="src\BaldLion\Core\Window.h" />
+    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.h" />
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSDirectionalLightComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshRendererComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSProjectionCameraComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSTransformComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSComponent.h" />
@@ -183,6 +186,7 @@
     <ClInclude Include="src\BaldLion\ECS\ECSSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSUtils.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSCameraMovementSystem.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSRenderSystem.h" />
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h" />
     <ClInclude Include="src\BaldLion\Events\Event.h" />
     <ClInclude Include="src\BaldLion\Events\KeyEvent.h" />
@@ -192,8 +196,6 @@
     <ClInclude Include="src\BaldLion\Rendering\Framebuffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\GeometryData.h" />
     <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h" />
-    <ClInclude Include="src\BaldLion\Rendering\LightClasses\Light.h" />
-    <ClInclude Include="src\BaldLion\Rendering\LightManager.h" />
     <ClInclude Include="src\BaldLion\Rendering\Material.h" />
     <ClInclude Include="src\BaldLion\Rendering\Mesh.h" />
     <ClInclude Include="src\BaldLion\Rendering\Model.h" />
@@ -603,14 +605,15 @@
     <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\StringId.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ECSManager.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ECSSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSCameraMovementSystem.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSRenderSystem.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Framebuffer.cpp" />
-    <ClCompile Include="src\BaldLion\Rendering\LightManager.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Material.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Mesh.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Model.cpp" />

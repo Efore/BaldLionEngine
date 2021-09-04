@@ -225,12 +225,6 @@
     <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\LightClasses\Light.h">
-      <Filter>src\BaldLion\Rendering\LightClasses</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\LightManager.h">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Material.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
@@ -1407,6 +1401,10 @@
     <ClInclude Include="src\BaldLion\Animation\Skeleton.h" />
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\HashMap.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshRendererComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSRenderSystem.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSDirectionalLightComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1470,9 +1468,6 @@
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Framebuffer.cpp">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Rendering\LightManager.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Rendering\Material.cpp">
@@ -1555,5 +1550,7 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\Animation\Skeleton.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSRenderSystem.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.cpp" />
   </ItemGroup>
 </Project>
