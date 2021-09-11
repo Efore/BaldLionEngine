@@ -32,21 +32,21 @@ namespace BaldLion {
 
 		ECSManager::~ECSManager()
 		{
-			m_entityComponents.Clear();
-			m_entitySignatures.Clear();
+			m_entityComponents.Delete();
+			m_entitySignatures.Delete();
 
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
 			{
 				MemoryManager::Delete(m_systems[i]);
 			}
 
-			m_systems.Clear();			
+			m_systems.Delete();			
 
 			CleanComponentPool<ECSTransformComponent>(ECSComponentID::Transform);
 			CleanComponentPool<ECSProjectionCameraComponent>(ECSComponentID::ProjectionCamera);
 			CleanComponentPool<ECSDirectionalLightComponent>(ECSComponentID::DirectionalLight);
 
-			m_componentsPool.Clear();
+			m_componentsPool.Delete();
 		}
 
 		void ECSManager::AddEntity(ECSEntityID entityID)

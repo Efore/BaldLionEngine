@@ -37,7 +37,7 @@ namespace BaldLion
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 
-		void OpenGLRenderer::Clear()
+		void OpenGLRenderer::Delete()
 		{		
 			BL_PROFILE_FUNCTION();
 

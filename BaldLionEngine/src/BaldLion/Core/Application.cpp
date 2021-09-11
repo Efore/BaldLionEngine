@@ -39,7 +39,7 @@ namespace BaldLion
 	Application::~Application()
 	{
 		m_layerStack.PopOverlay(m_imGuiLayer);
-		m_layerStack.Clear();
+		m_layerStack.Delete();
 		Window::Destroy(m_window);
 		Rendering::Renderer::Stop();
 		JobManagement::JobManager::Stop();
@@ -114,7 +114,7 @@ namespace BaldLion
 			}
 
 			m_window->OnUpdate();			
-			MemoryManager::Clear(AllocationType::Linear_Frame);
+			MemoryManager::Delete(AllocationType::Linear_Frame);
 		}	
 
 		OPTICK_SHUTDOWN();

@@ -25,8 +25,8 @@ namespace BaldLion
 
 		Animator::~Animator()
 		{
-			m_animationDataContainer->Clear();
-			m_animations.Clear();
+			m_animationDataContainer->Delete();
+			m_animations.Delete();
 		}
 
 		void Animator::CalculateInterpolatedTransforms(const AnimationData* animation, DynamicArray<JointTransform>& result)

@@ -80,7 +80,7 @@ namespace BaldLion
 			Texture* Load(const std::string& filepath,const unsigned char* textureData, int size, TextureType textureType);
 			Texture* Load(StringId name, const std::string& filepath, TextureType textureType);
 
-			void Clear();
+			void Delete();
 			bool Exists(StringId name) const;
 
 			static void GetNameFromPath(const std::string &path, StringId& name);

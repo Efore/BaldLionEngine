@@ -37,7 +37,7 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 
 			glDeleteProgram(m_rendererID);
-			m_uniformLocationCache.Clear();
+			m_uniformLocationCache.Delete();
 		}
 
 		std::string OpenGLShader::ReadFile(const std::string& filepath)

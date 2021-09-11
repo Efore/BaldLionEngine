@@ -18,9 +18,9 @@ namespace BaldLion
 		m_layers = DynamicArray<Layer*>(Memory::AllocationType::FreeList_Main, 10);
 	}
 
-	void LayerStack::Clear()
+	void LayerStack::Delete()
 	{
-		m_layers.Clear();
+		m_layers.Delete();
 	}
 
 	void LayerStack::PushLayer(Layer * layer)

@@ -3,7 +3,6 @@
 #include "BaldLion/Rendering/VertexArray.h"
 #include "BaldLion/Rendering/Material.h"
 #include "BaldLion/Utils/GeometryUtils.h"
-#include "BaldLion/Rendering/GeometryData.h"
 
 using namespace BaldLion::Rendering;
 using namespace BaldLion::GeometryUtils;
@@ -12,10 +11,10 @@ namespace BaldLion {
 
 	namespace ECS
 	{
-		class ECSMeshRendererComponent : public ECSComponent
+		class ECSMeshComponent : public ECSComponent
 		{
-			ECSMeshRendererComponent(ECSComponentID componentID, bool isStatic) : 
-				ECSComponent(componentID), 
+			ECSMeshComponent(bool isStatic) : 
+				ECSComponent(ECSComponentID::Mesh),
 				isStatic(isStatic)
 			{
 
@@ -28,7 +27,7 @@ namespace BaldLion {
 			DynamicArray<ui32> indices;
 
 			bool isStatic;
-			DynamicArray<Material*> materials;
+			Material* material;
 		};
 
 	}

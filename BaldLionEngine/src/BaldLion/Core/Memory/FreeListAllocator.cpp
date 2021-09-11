@@ -174,10 +174,10 @@ namespace BaldLion
 			m_used_memory -= blockSize;
 		}
 
-		void FreeListAllocator::Clear()
+		void FreeListAllocator::Delete()
 		{
 			const std::lock_guard<std::mutex> lock(m_mutex);
-			Allocator::Clear();
+			Allocator::Delete();
 			m_allocationBlocksBegin = nullptr;
 		}
 

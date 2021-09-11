@@ -43,10 +43,10 @@ namespace BaldLion
 		{
 		}
 
-		void LinearAllocator::Clear()
+		void LinearAllocator::Delete()
 		{
 			const std::lock_guard<std::mutex> lock(m_mutex);
-			Allocator::Clear();
+			Allocator::Delete();
 			m_current_position = m_start;			
 		}
 	}

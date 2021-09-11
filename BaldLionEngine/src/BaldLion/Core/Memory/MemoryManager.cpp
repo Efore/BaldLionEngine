@@ -52,7 +52,7 @@ namespace BaldLion
 			
 		}
 
-		void MemoryManager::Clear(AllocationType allocationType)
+		void MemoryManager::Delete(AllocationType allocationType)
 		{
 			switch (allocationType)
 			{
@@ -61,12 +61,12 @@ namespace BaldLion
 
 			case BaldLion::Memory::AllocationType::Linear_Frame:
 				if(s_linearFrameAllocator != nullptr)
-					s_linearFrameAllocator->Clear();
+					s_linearFrameAllocator->Delete();
 				break;
 
 			case BaldLion::Memory::AllocationType::Stack:
 				if (s_stackAllocator != nullptr)
-					s_stackAllocator->Clear();
+					s_stackAllocator->Delete();
 				break;
 
 			case BaldLion::Memory::AllocationType::FreeList_Renderer:
@@ -84,29 +84,29 @@ namespace BaldLion
 		{
 			if (s_linearFrameAllocator != nullptr)
 			{
-				s_linearFrameAllocator->Clear();
+				s_linearFrameAllocator->Delete();
 				Delete(s_linearFrameAllocator);
 			}
 
 			if (s_stackAllocator != nullptr)
 			{		
-				s_stackAllocator->Clear();
+				s_stackAllocator->Delete();
 				Delete(s_stackAllocator);
 			}
 
 			if (s_freeListRendererAllocator != nullptr)
 			{				
-				s_freeListRendererAllocator->Clear();
+				s_freeListRendererAllocator->Delete();
 				Delete(s_freeListRendererAllocator);
 			}
 
 			if (s_freeListECSAllocator != nullptr)
 			{
-				s_freeListECSAllocator->Clear();
+				s_freeListECSAllocator->Delete();
 				Delete(s_freeListECSAllocator);
 			}
 
-			s_freeListMainAllocator->Clear();
+			s_freeListMainAllocator->Delete();
 			s_freeListMainAllocator->~FreeListAllocator();
 
 			free(s_memory);			

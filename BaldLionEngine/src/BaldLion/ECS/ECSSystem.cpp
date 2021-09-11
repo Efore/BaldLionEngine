@@ -8,12 +8,12 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		ECSSystem::ECSSystem(const char* systemName, const ECSSignature& signature, ECSManager* ecsManager, bool blockSystemsLoop, bool parallelize) :
+		ECSSystem::ECSSystem(const char* systemName, const ECSSignature& signature, ECSManager* ecsManager, bool parallelize, bool blockSystemsLoop) :
 			m_systemName(STRING_TO_STRINGID(systemName)), 
 			m_signature(signature), 
 			m_ecsManager(ecsManager),
-			m_blockSystemsLoop(blockSystemsLoop),
-			m_parallelize(parallelize)
+			m_parallelize(parallelize),
+			m_blockSystemsLoop(blockSystemsLoop)
 		{
 			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_ECS, 100);
 			
@@ -61,7 +61,7 @@ namespace BaldLion {
 
 		ECSSystem::~ECSSystem()
 		{
-			m_componentLookUps.Clear();
+			m_componentLookUps.Delete();
 		}
 	}
 }

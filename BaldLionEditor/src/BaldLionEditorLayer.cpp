@@ -54,7 +54,7 @@ namespace BaldLion
 				const ECS::ECSSignature cameraMovementSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::ProjectionCamera, ECS::ECSComponentID::Transform);
 
 				ECS::ECSCameraMovementSystem* cameraMovementSystem = MemoryManager::New<ECS::ECSCameraMovementSystem>("ECS CameraMovementSystem", AllocationType::FreeList_ECS,
-					"ECS CameraMovementSystem", cameraMovementSystemSignature, m_ecsManager, false, true);
+					"ECS CameraMovementSystem", cameraMovementSystemSignature, m_ecsManager);
 
 				m_ecsManager->AddSystem(cameraMovementSystem);
 			}
@@ -108,7 +108,7 @@ namespace BaldLion
 				auto plane = MemoryManager::New<Rendering::PlaneMesh>("Plane", AllocationType::FreeList_Renderer, shapeMaterial, AABB{ glm::vec3(0.0f), glm::vec3(0.0f) }, glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f)), true, 100.0f);
 				plane->SetUpPlane();
 
-				Renderer::RegisterMesh(plane);
+				//Renderer::RegisterMesh(plane);
 			}
 
 			glm::mat4 initialTransform = glm::mat4(1.0f);
@@ -118,7 +118,7 @@ namespace BaldLion
 				initialTransform = glm::translate(initialTransform, glm::vec3(15, 0, 15));
 				auto model = MemoryManager::New<Rendering::Model>(std::string("Animated Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", glm::scale( initialTransform, glm::vec3(0.1f)));
 				model->SetUpModel();
-				Renderer::RegisterModel(model);
+				//Renderer::RegisterModel(model);
 			}
 
 			initialTransform = glm::mat4(1.0f);
@@ -128,7 +128,7 @@ namespace BaldLion
 			{
 				auto model = MemoryManager::New<Rendering::Model>(std::string("Static Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj", glm::rotate(initialTransform, glm::linearRand(0.0f, 359.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 				model->SetUpModel();
-				Renderer::RegisterModel(model);
+				//Renderer::RegisterModel(model);
 
 				if (i > 0 && i % 60 == 0)
 				{
@@ -169,11 +169,6 @@ namespace BaldLion
 			JobManagement::JobManager::WaitForJobs();
 				
 			Renderer::BeginScene();			
-			Renderer::ProcessFrustrumCulling();
-
-			//Waiting for frustrum culling jobs
-			JobManagement::JobManager::WaitForJobs();
-
 			Renderer::DrawScene();
 			Renderer::EndScene();		
 		}

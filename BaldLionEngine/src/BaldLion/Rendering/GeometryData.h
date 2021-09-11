@@ -19,8 +19,8 @@ namespace BaldLion {
 
 			void ClearGeometryData()
 			{
-				vertices.Clear();
-				indices.Clear();
+				vertices.Delete();
+				indices.Delete();
 			}
 		};
 

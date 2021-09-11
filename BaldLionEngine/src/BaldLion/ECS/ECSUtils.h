@@ -12,7 +12,8 @@ namespace BaldLion
 			None,
 			Transform,
 			ProjectionCamera,
-			MeshRenderer,
+			Mesh,
+			Skeleton,
 			DirectionalLight,
 			PointLight,
 

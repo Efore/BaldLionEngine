@@ -36,7 +36,7 @@ namespace BaldLion
 			{
 				MemoryManager::DeleteNoDestructor(s_registeredAnimators[i]);
 			}
-			s_registeredAnimators.Clear();
+			s_registeredAnimators.Delete();
 		}
 
 		void AnimationManager::OnUpdate(float timeStep)

@@ -1,12 +1,15 @@
 #pragma once
 
 #include "Shader.h"
-#include "LightManager.h"
 #include "SkyboxPlatformInterface.h"
 #include "RendererPlatformInterface.h"
 #include "Model.h"
 #include "Framebuffer.h"
 #include "BaldLion/Core/Containers/HashMap.h"
+
+#include "BaldLion/ECS/Components/ECSMeshComponent.h"
+#include "BaldLion/ECS/Components/ECSTransformComponent.h"
+#include "BaldLion/ECS/Components/ECSSkeletonComponent.h"
 
 namespace BaldLion
 {
@@ -21,6 +24,13 @@ namespace BaldLion
 			Particles,
 
 			Count
+		};	
+
+		struct RenderMeshData {
+
+			const glm::mat4 transformMatrix;
+			const ECS::ECSMeshComponent* meshComponent;
+			const ECS::ECSSkeletonComponent* skeletonComponent;
 		};
 
 		class Renderer
@@ -54,26 +64,19 @@ namespace BaldLion
 			static RendererStats& GetRenderStats() { return s_renderStats; }
 			static Framebuffer* GetFrameBuffer() { return s_framebuffer; }
 
-			static void Draw(const VertexArray* vertexArray, Shader* shader, bool receiveShadows, const glm::mat4& transform = glm::mat4(1.0f));
-
-			static void RegisterModel(Model* model);
-			static void UnregisterModel(Model* model);
-
-			static void RegisterMesh(Mesh* mesh);
-			static void UnregisterMesh(Mesh* mesh);
-
-			static void ProcessFrustrumCulling();			
+			static void Draw(const VertexArray* vertexArray, Shader* shader, bool receiveShadows, const glm::mat4& transform = glm::mat4(1.0f));	
 
 			inline static RendererPlatformInterface::RendererPlatform GetAPI() { return RendererPlatformInterface::GetAPI(); }
 
-		private:
+			static void AddStaticMeshToBatch(const ECS::ECSMeshComponent* staticMeshComponent, const ECS::ECSTransformComponent* staticMeshTransform);
+			static void AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
+			static void AddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
 
-			static void AddToBatch( Mesh* mesh);
-			static void ProcessFrustrumCullingParallel(ui32 initialMeshIndex, ui32 finalMeshIndex);
+		private:
 			
-			static void CreateShadowMap();
-			static void RenderStatictGeometry();
-			static void RenderDynamicGeometry();
+			static void DrawShadowMap();
+			static void DrawDynamicMeshes();
+			static void DrawBatchedMeshes();
 
 		private:
 
@@ -82,15 +85,13 @@ namespace BaldLion
 			static ShaderLibrary s_shaderLibrary;
 			static TextureLibrary s_textureLibrary;
 			static RendererPlatformInterface* s_rendererPlatformInterface;
-			static SkyboxPlatformInterface* s_skyboxPlatformInterface;
-						
-			static DynamicArray<Mesh*> s_registeredMeshes;
-			static DynamicArray<Mesh*> s_dynamicMeshesToRender;	
+			static SkyboxPlatformInterface* s_skyboxPlatformInterface;						
 
-			static DynamicArray<Mesh*> s_castingShadowMeshes;
-
+			static DynamicArray<RenderMeshData> s_shadowCastingMeshes;
+			static DynamicArray<RenderMeshData> s_dynamicMeshes;
 			static HashTable<Material*, GeometryData*> s_geometryToBatch;
-			static DynamicArray<VertexArray*> s_batchedVertexArrays;	 
+
+			static DynamicArray<VertexArray*> s_disposableVertexArrays;	 
 
 			static Framebuffer* s_framebuffer;
 			static Framebuffer* s_shadowFramebuffer;
@@ -101,9 +102,10 @@ namespace BaldLion
 
 			static glm::mat4 s_lightViewProjection;
 
+		public:
 			static std::mutex s_geometryToBatchMutex;
 			static std::mutex s_dynamicMeshesToRenderMutex;
-			static std::mutex s_castingShadowMeshesMutex;
+			static std::mutex s_shadowCastingMeshesMutex;
 		};
 	}
 }

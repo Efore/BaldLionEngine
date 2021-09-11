@@ -161,7 +161,7 @@ namespace BaldLion
 			static void Init();
 			static void Add(Material* shader);
 			static Material* Load(const std::string& name, Material::MaterialProperties* materialProperties);
-			static void Clear();
+			static void Delete();
 
 		private:
 			static HashTable<StringId, Material*> s_materials;

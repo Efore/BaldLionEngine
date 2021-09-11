@@ -14,7 +14,7 @@ namespace BaldLion
 
 			virtual void* Allocate(size_t size, uint8_t alignment) override;
 			virtual void Deallocate(void* p) override;
-			virtual void Clear() override;
+			virtual void Delete() override;
 
 		private:
 

@@ -13,7 +13,7 @@ namespace BaldLion
 			virtual void SetViewport(ui32 x, ui32 y, ui32 width, ui32 height) override;
 
 			virtual void SetClearColor(const glm::vec4& color) override;
-			virtual void Clear() override;
+			virtual void Delete() override;
 
 			virtual void DrawVertexArray(const VertexArray* vertexArray) override;
 			virtual void SetFaceCulling(FaceCulling faceCulling) const override;

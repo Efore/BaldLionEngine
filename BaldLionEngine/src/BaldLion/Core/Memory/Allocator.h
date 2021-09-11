@@ -17,7 +17,7 @@ namespace BaldLion
 
 			virtual void* Allocate(size_t size, uint8_t alignment = 8) = 0;
 			virtual void Deallocate(void* p) = 0;
-			virtual void Clear();
+			virtual void Delete();
 
 			void* GetStart() { return m_start; }
 			size_t Size() const { return m_size; }

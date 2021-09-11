@@ -14,7 +14,7 @@ namespace BaldLion
 		~LayerStack();
 
 		void Init();
-		void Clear();
+		void Delete();
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);

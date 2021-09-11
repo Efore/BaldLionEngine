@@ -19,7 +19,8 @@ namespace BaldLion
 		ui32 Capacity() const { return m_capacity; }
 
 		void Clear();
-		void ClearNoDestructor();
+		void Delete();
+		void DeleteNoDestructor();
 
 		template <typename... Args >
 		void EmplaceBack(Args&&... args);
@@ -116,7 +117,7 @@ namespace BaldLion
 		if (&other == this)
 			return *this;
 
-		Clear();
+		Delete();
 
 		m_allocationType = other.m_allocationType;
 		m_size = other.m_size;
@@ -135,7 +136,7 @@ namespace BaldLion
 	{
 		
 	}
-	
+
 	template <typename T>
 	void BaldLion::Queue<T>::Clear()
 	{
@@ -149,11 +150,28 @@ namespace BaldLion
 			m_elements[m_size].~T();
 		}
 
-		ClearNoDestructor();
+		m_size = 0;
+		m_frontIndex = 0;
 	}
 
 	template <typename T>
-	void BaldLion::Queue<T>::ClearNoDestructor()
+	void BaldLion::Queue<T>::Delete()
+	{
+		if (m_elements == nullptr)
+		{
+			return;
+		}
+
+		for (ui32 i = 0; i < m_size; ++i)
+		{
+			m_elements[m_size].~T();
+		}
+
+		DeleteNoDestructor();
+	}
+
+	template <typename T>
+	void BaldLion::Queue<T>::DeleteNoDestructor()
 	{
 		if (m_elements == nullptr)
 		{
@@ -250,7 +268,7 @@ namespace BaldLion
 			newLocation[i] = std::move(m_elements[i]);
 		}
 
-		Clear();
+		Delete();
 
 		m_elements = newLocation;
 		m_capacity = newCapacity;

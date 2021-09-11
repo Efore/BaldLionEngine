@@ -52,7 +52,7 @@ namespace BaldLion
 				MemoryManager::Delete(m_vertexBuffers[i]);
 			}
 
-			m_vertexBuffers.ClearNoDestructor();
+			m_vertexBuffers.DeleteNoDestructor();
 		}
 
 		void OpenGLVertexArray::Bind() const

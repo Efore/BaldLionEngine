@@ -57,9 +57,9 @@ namespace BaldLion
 			return material;
 		}
 
-		void MaterialLibrary::Clear()
+		void MaterialLibrary::Delete()
 		{
-			s_materials.Clear();
+			s_materials.Delete();
 		}
 	}
 }

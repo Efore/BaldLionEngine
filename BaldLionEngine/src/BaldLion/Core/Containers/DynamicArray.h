@@ -20,6 +20,8 @@ namespace BaldLion
 
 		void Clear();
 		void ClearNoDestructor();
+		void Delete();
+		void DeleteNoDestructor();
 
 		template <typename... Args >
 		T* EmplaceBack(Args&&... args);
@@ -173,11 +175,35 @@ namespace BaldLion
 			m_elements[m_size].~T();
 		}
 
-		ClearNoDestructor();
+		m_size = 0;
 	}
+
 
 	template <typename T>
 	void BaldLion::DynamicArray<T>::ClearNoDestructor()
+	{
+		if (m_elements == nullptr)
+			return;
+
+		m_size = 0;
+	}
+
+	template <typename T>
+	void BaldLion::DynamicArray<T>::Delete()
+	{
+		if (m_elements == nullptr)
+			return;
+
+		for (ui32 i = 0; i < m_size; ++i)
+		{
+			m_elements[m_size].~T();
+		}
+
+		DeleteNoDestructor();
+	}
+
+	template <typename T>
+	void BaldLion::DynamicArray<T>::DeleteNoDestructor()
 	{
 		if (m_elements == nullptr)
 			return;
@@ -267,7 +293,7 @@ namespace BaldLion
 			newLocation[index] = element;
 			std::copy(m_elements + index + 1, m_elements + m_size, newLocation + index);
 			
-			Clear();
+			Delete();
 
 			m_elements = newLocation;
 			m_size = newSize;
@@ -298,7 +324,7 @@ namespace BaldLion
 			newLocation[index] = std::move(element);
 			std::copy(m_elements + index + 1, m_elements + m_size, newLocation + index);
 
-			Clear();
+			Delete();
 
 			m_elements = newLocation;
 			m_size = newSize;			
@@ -373,7 +399,7 @@ namespace BaldLion
 			std::copy(m_elements, m_elements + index, newLocation);
 			std::copy(m_elements + index + 1, m_elements + m_size, newLocation + index);
 
-			Clear();
+			Delete();
 
 			m_elements = newLocation;
 			m_size = newSize;
@@ -477,7 +503,7 @@ namespace BaldLion
 		
 		{
 			BL_DEEP_PROFILE_SCOPE("Clearing old data", Optick::Category::None);
-			Clear();
+			Delete();
 		}
 
 		m_elements = newLocation;

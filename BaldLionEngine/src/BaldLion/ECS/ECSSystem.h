@@ -12,7 +12,7 @@ namespace BaldLion
 		class ECSSystem {
 
 		public:
-			ECSSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager, bool blockSystemsLoop, bool parallelize);
+			ECSSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager, bool parallelize, bool blockSystemsLoop);
 			virtual ~ECSSystem();
 
 			virtual void OnStart() = 0;

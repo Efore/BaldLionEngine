@@ -69,9 +69,9 @@ namespace BaldLion
 			return m_shaders.Contains(name);
 		}
 
-		void ShaderLibrary::Clear()
+		void ShaderLibrary::Delete()
 		{
-			m_shaders.Clear();
+			m_shaders.Delete();
 		}
 
 		void ShaderLibrary::GetNameFromPath(const std::string &path, StringId& name)

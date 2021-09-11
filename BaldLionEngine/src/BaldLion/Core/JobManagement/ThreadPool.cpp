@@ -34,7 +34,7 @@ namespace BaldLion {
 
 		void ThreadPool::Stop()
 		{
-			s_threads.ClearNoDestructor();
+			s_threads.DeleteNoDestructor();
 		}
 
 		void ThreadPool::QueueJob(const Job& job)

@@ -148,10 +148,10 @@ namespace BaldLion
 			return texture;
 		}
 
-		void TextureLibrary::Clear()
+		void TextureLibrary::Delete()
 		{
 			std::lock_guard<std::mutex> lockGuard(m_textureLibraryMutex);
-			m_textures.Clear();
+			m_textures.Delete();
 		}
 
 		bool TextureLibrary::Exists(StringId name) const

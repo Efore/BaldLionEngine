@@ -62,11 +62,11 @@ namespace BaldLion
 		
 		}
 
-		void StackAllocator::Clear()
+		void StackAllocator::Delete()
 		{
 			const std::lock_guard<std::mutex> lock(m_mutex);
 
-			Allocator::Clear();
+			Allocator::Delete();
 			m_current_position = m_start;
 		}
 

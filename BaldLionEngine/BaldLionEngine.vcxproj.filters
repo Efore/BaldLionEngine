@@ -1401,10 +1401,11 @@
     <ClInclude Include="src\BaldLion\Animation\Skeleton.h" />
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\HashMap.h" />
-    <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshRendererComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSRenderSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSDirectionalLightComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSSkeletonComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">

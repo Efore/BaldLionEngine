@@ -94,7 +94,7 @@ namespace BaldLion
 			Shader* Load(const std::string& filepath);
 			Shader* Load(StringId name, const std::string& filepath);
 			
-			void Clear();
+			void Delete();
 			bool Exists(StringId name) const;
 
 			static void GetNameFromPath(const std::string& path, StringId& name);

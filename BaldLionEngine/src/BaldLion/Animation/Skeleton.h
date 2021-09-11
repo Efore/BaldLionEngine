@@ -15,11 +15,11 @@ namespace BaldLion {
 
 			~Skeleton();
 
-			const DynamicArray<Joint>& GetJoints() const { return m_joints; }
-			DynamicArray<Joint>& GetJoints() { return m_joints; }
+			const DynamicArray<Joint>& GetJoints() const { return joints; }
+			DynamicArray<Joint>& GetJoints() { return joints; }
 
 		private:
-			DynamicArray<Joint> m_joints;
+			DynamicArray<Joint> joints;
 		};
 	}
 }

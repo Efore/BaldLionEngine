@@ -177,8 +177,9 @@
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.h" />
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSDirectionalLightComponent.h" />
-    <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshRendererComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSProjectionCameraComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSSkeletonComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSTransformComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSComponentLookUp.h" />

@@ -111,13 +111,13 @@ public:
 
 	void OnDetach()
 	{
-		m_pointLights.Clear();
+		m_pointLights.Delete();
 
 		for (ui32 i = 0; i < m_animatedModels.Size(); ++i)
 		{
 			MemoryManager::DeleteNoDestructor(m_animatedModels[i]);
 		}
-		m_animatedModels.Clear();
+		m_animatedModels.Delete();
 	}
 
 

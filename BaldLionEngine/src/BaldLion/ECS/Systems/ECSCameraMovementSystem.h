@@ -11,8 +11,8 @@ namespace BaldLion {
 		class ECSCameraMovementSystem : public ECSSystem
 		{
 		public:
-			ECSCameraMovementSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager, bool blockSystemsLoop, bool parallelize) :
-				ECSSystem(systemName, signature, ecsManager, blockSystemsLoop, parallelize) {}
+			ECSCameraMovementSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager) :
+				ECSSystem(systemName, signature, ecsManager, true, false) {}
 
 			virtual void OnStart() override;
 			virtual void UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp) override;

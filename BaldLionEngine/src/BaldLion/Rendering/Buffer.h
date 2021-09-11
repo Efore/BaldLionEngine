@@ -63,7 +63,7 @@ namespace BaldLion
 			
 			~BufferLayout()
 			{
-				m_elements.Clear();				
+				m_elements.Delete();				
 			}
 
 			inline const ui32& GetStride() const { return m_stride; }

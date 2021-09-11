@@ -15,7 +15,7 @@ namespace BaldLion
 			BL_ASSERT(m_num_allocations == 0 && m_used_memory == 0, "Memory Leak");
 		}		
 
-		void Allocator::Clear()
+		void Allocator::Delete()
 		{
 			m_num_allocations = 0;
 			m_used_memory = 0;

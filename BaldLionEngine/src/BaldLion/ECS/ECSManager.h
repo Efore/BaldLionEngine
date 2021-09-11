@@ -71,7 +71,7 @@ namespace BaldLion {
 		template<typename ECSComponentType>
 		void BaldLion::ECS::ECSManager::CleanComponentPool(ECSComponentID componentID)
 		{
-			((DynamicArray<ECSComponentType>*)m_componentsPool.Get(componentID))->Clear();
+			((DynamicArray<ECSComponentType>*)m_componentsPool.Get(componentID))->Delete();
 		}
 
 		template <typename ECSComponentType, typename...Args >

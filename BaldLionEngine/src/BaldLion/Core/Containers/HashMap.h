@@ -112,8 +112,8 @@ namespace BaldLion
 
 			bool Remove(const K& key);
 
-			void Clear();
-			void ClearNoDestructor();
+			void Delete();
+			void DeleteNoDestructor();
 
 			const ui32 Size() const { return m_size; }
 			ui32 IndexOf(const K& key) const;
@@ -340,7 +340,7 @@ namespace BaldLion
 	}
 
 	template <typename K, typename V>
-	void BaldLion::HashMap<K, V>::ClearNoDestructor()
+	void BaldLion::HashMap<K, V>::DeleteNoDestructor()
 	{
 		for (ui32 i = 0; i < m_table.Size(); ++i)
 		{
@@ -356,13 +356,13 @@ namespace BaldLion
 			}
 		}
 
-		m_table.ClearNoDestructor();
+		m_table.DeleteNoDestructor();
 		m_capacity = 0;
 		m_size = 0;
 	}
 
 	template <typename K, typename V>
-	void BaldLion::HashMap<K, V>::Clear()
+	void BaldLion::HashMap<K, V>::Delete()
 	{
 		for (ui32 i = 0; i < m_table.Size(); ++i)
 		{
@@ -378,7 +378,7 @@ namespace BaldLion
 			}
 		}
 
-		m_table.Clear(); 
+		m_table.Delete(); 
 		m_capacity = 0;
 		m_size = 0;
 	}
@@ -400,7 +400,7 @@ namespace BaldLion
 		if (&other == this)
 			return *this;
 
-		Clear();
+		Delete();
 
 		m_allocationType = other.m_allocationType;
 		m_size = other.m_size;
@@ -473,11 +473,11 @@ namespace BaldLion
 			}
 		}
 
-		m_table.Clear();
+		m_table.Delete();
 		m_table = std::move(newTable);
 		m_capacity = capacity;
 
-		newTable.Clear();
+		newTable.Delete();
 	}
 
 	template <typename K, typename V>
