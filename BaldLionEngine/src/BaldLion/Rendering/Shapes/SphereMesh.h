@@ -9,7 +9,7 @@ namespace BaldLion
 		class SphereMesh : public Mesh {
 
 		public:
-			SphereMesh(Material* material, AABB aabb, const glm::mat4& worldTransform, bool isStatic, float radius, ui32 rings, ui32 sectors);
+			SphereMesh(Material* material, float radius, ui32 rings, ui32 sectors);
 
 			void SetUpSphere();
 

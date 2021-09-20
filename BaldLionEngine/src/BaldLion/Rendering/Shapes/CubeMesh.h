@@ -9,7 +9,7 @@ namespace BaldLion
 		class CubeMesh : public Mesh {
 
 		public:
-			CubeMesh(Material* material, AABB aabb, const glm::mat4& worldTransform, bool isStatic, float size);
+			CubeMesh(Material* material, float size);
 
 			void SetUpCube();
 

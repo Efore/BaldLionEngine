@@ -12,8 +12,7 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Model::Model(const std::string& filePath, const glm::mat4& initialWorldTransform): 
-			m_worldTransform(initialWorldTransform)
+		Model::Model(const std::string& filePath)
 		{
 			BL_PROFILE_FUNCTION(); 
 
@@ -69,7 +68,7 @@ namespace BaldLion
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 				
-				m_subMeshes.PushBack(Model::ProcessMesh(mesh, scene, m_modelPath, m_worldTransform));
+				m_subMeshes.PushBack(Model::ProcessMesh(mesh, scene, m_modelPath));
 			}
 			// then do the same for each of its children
 			for (ui32 i = 0; i < node->mNumChildren; i++)
@@ -325,8 +324,9 @@ namespace BaldLion
 
 			delete jointsAssigned;
 		}
+	
 
-		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene, const StringId modelFolderPath, const glm::mat4& worldTransform )
+		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene, const StringId modelFolderPath)
 		{
 			DynamicArray<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
 			DynamicArray<ui32> indices(AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
@@ -368,8 +368,8 @@ namespace BaldLion
 			Material* meshMaterial = MaterialLibrary::Load(aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data, &materialProperties);
 
 			meshMaterial->AssignShader();
-
-			Mesh* mesh = MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer,  meshMaterial, GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), worldTransform, !aimesh->HasBones());
+			//GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), !aimesh->HasBones()
+			Mesh* mesh = MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer,  meshMaterial);
 
 			mesh->SetUpMesh(vertices, indices);
 
@@ -391,19 +391,11 @@ namespace BaldLion
 
 				FillVertexWeightData(aimesh, jointMapping, verticesBoneData);
 
-				VertexBuffer* boneDataVertexBuffer = VertexBuffer::Create(verticesBoneData[0].GetFirstElement(), (ui32)(verticesBoneData.Size() * sizeof(VertexBoneData)));
 
-				boneDataVertexBuffer->SetLayout({
-					{ ShaderDataType::Int3,		"vertex_joint_ids" },
-					{ ShaderDataType::Float3,	"vertex_joint_weights" }
-				});
+				//Animation::Skeleton* skeleton = MemoryManager::New<Animation::Skeleton>("Skeleton", AllocationType::FreeList_Renderer, jointsData);
+				
 
-				mesh->GetVertexArray()->AddVertexBuffer(boneDataVertexBuffer);
-
-				Animation::Skeleton* skeleton = MemoryManager::New<Animation::Skeleton>("Skeleton", AllocationType::FreeList_Renderer, jointsData);
-				mesh->SetSkeleton(skeleton);
-
-				Animation::AnimationManager::GenerateAnimator(aiscene, jointMapping, skeleton);
+				//Animation::AnimationManager::GenerateAnimator(aiscene, jointMapping, skeleton);
 			}
 
 			return mesh;

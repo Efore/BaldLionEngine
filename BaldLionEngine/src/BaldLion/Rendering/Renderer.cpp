@@ -80,6 +80,7 @@ namespace BaldLion
 			s_dynamicMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
 			s_shadowCastingMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
 			s_disposableVertexArrays = DynamicArray<VertexArray*>(AllocationType::FreeList_Renderer, 100);
+			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::FreeList_Renderer, 10);
 		}
 
 		void Renderer::Stop()
@@ -110,7 +111,6 @@ namespace BaldLion
 			s_renderStats.drawCalls = 0;
 			s_renderStats.vertices = 0;		
 
-			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::Linear_Frame, s_shadowCastingMeshes.Size());
 		}
 
 		void Renderer::DrawScene()
@@ -136,6 +136,7 @@ namespace BaldLion
 
 			s_dynamicMeshes.Clear();
 			s_shadowCastingMeshes.Clear();
+			s_geometryToBatch.Clear();
 
 			s_skyboxPlatformInterface->Draw();
 

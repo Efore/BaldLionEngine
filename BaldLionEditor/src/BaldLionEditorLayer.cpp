@@ -8,7 +8,6 @@
 #include "BaldLion/Rendering/Platform/OpenGL/OpenGLShader.h"
 #include "ImGui/imgui.h"
 
-
 namespace BaldLion
 {
 	namespace Editor
@@ -50,13 +49,6 @@ namespace BaldLion
 
 				ECS::SingletonComponents::ECSProjectionCameraSingleton::Init();
 				ECS::SingletonComponents::ECSProjectionCameraSingleton::SetMainCamera(projectionCameraComponent, cameraTransformComponent);
-
-				const ECS::ECSSignature cameraMovementSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::ProjectionCamera, ECS::ECSComponentID::Transform);
-
-				ECS::ECSCameraMovementSystem* cameraMovementSystem = MemoryManager::New<ECS::ECSCameraMovementSystem>("ECS CameraMovementSystem", AllocationType::FreeList_ECS,
-					"ECS CameraMovementSystem", cameraMovementSystemSignature, m_ecsManager);
-
-				m_ecsManager->AddSystem(cameraMovementSystem);
 			}
 
 			{//Directional Light setup
@@ -76,69 +68,113 @@ namespace BaldLion
 				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
 			}
 
+			{//Plane setup
+
+				ECS::ECSEntityID planeEntity = STRING_TO_STRINGID("Plane");
+
+				m_ecsManager->AddEntity(planeEntity);
+
+				ECS::ECSTransformComponent* planeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
+					glm::vec3(0, 0, 0),
+					MathUtils::QuaternionIdentity,
+					glm::vec3(10.0f, 1.0f, 10.0f));
+
+				Texture* gridTexture = Renderer::GetTextureLibrary().Load("assets/textures/TextureGrid.png", TextureType::Texture2d);
+				gridTexture->SetWrapMode(WrapMode::Repeat, WrapMode::Repeat);
+
+				Rendering::Material::MaterialProperties shapeMaterialProperties{
+						STRING_TO_STRINGID("assets/shaders/baseLit.glsl"),
+						glm::vec3(1.0f),
+						glm::vec3(1.0f),
+						glm::vec3(1.0f),
+						glm::vec3(1.0f),
+						32.0f,
+						nullptr,
+						gridTexture,
+						nullptr,
+						nullptr,
+						nullptr,
+						Material::BlendMode::None,
+						Material::DepthBufferMode::TestAndWrite,
+						Material::CullingMode::Back,
+						(ui8)Material::ShadowsSettingsBitMask::ReceiveShadows
+				};
+
+				Rendering::Material* shapeMaterial = Rendering::MaterialLibrary::Load("PlaneMaterial", &shapeMaterialProperties);
+				shapeMaterial->AssignShader();
+				
+				Rendering::PlaneMesh* plane = MemoryManager::New<Rendering::PlaneMesh>("Plane", AllocationType::FreeList_Renderer, shapeMaterial, 100.0f);
+				plane->SetUpPlane();
+
+				ECS::ECSMeshComponent* planeMeshComponent = plane->GenerateMeshComponent(m_ecsManager, true);
+
+				m_ecsManager->AddComponentToEntity(planeEntity, planeMeshComponent);
+				m_ecsManager->AddComponentToEntity(planeEntity, planeTransformComponent);				
+			}
+
+			{//Trees setup				
+				glm::vec3 position = glm::vec3(0.0f);
+				for (ui32 i = 0; i < 15; ++i)
+				{
+					Model* treeModel = MemoryManager::New<Rendering::Model>(std::string("Static Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj");
+					treeModel->SetUpModel();
+
+					for (ui32 j = 0; j < treeModel->GetSubMeshes().Size(); ++j)
+					{
+						ECS::ECSEntityID treeEntity = STRING_TO_STRINGID(("Tree" + std::to_string(i) + std::to_string(j)).c_str());
+						m_ecsManager->AddEntity(treeEntity);
+
+						ECS::ECSTransformComponent* treeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
+							position,
+							MathUtils::QuaternionIdentity,
+							glm::vec3(5.0f));
+					
+						ECS::ECSMeshComponent* treeMeshComponent = treeModel->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager, true);
+
+						m_ecsManager->AddComponentToEntity(treeEntity, treeMeshComponent);
+						m_ecsManager->AddComponentToEntity(treeEntity, treeTransformComponent);
+					}
+
+					
+					position += glm::vec3(-15.0f, 0, 15.0f);
+					
+					
+				}
+			}
+
+			{//Systems
+				const ECS::ECSSignature cameraMovementSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::ProjectionCamera, ECS::ECSComponentID::Transform);
+
+				ECS::ECSCameraMovementSystem* cameraMovementSystem = MemoryManager::New<ECS::ECSCameraMovementSystem>("ECS CameraMovementSystem", AllocationType::FreeList_ECS,
+					"ECS CameraMovementSystem", cameraMovementSystemSignature, m_ecsManager);
+
+				const ECS::ECSSignature renderSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::Mesh, ECS::ECSComponentID::Transform);
+
+				ECS::ECSRenderSystem* renderSystem = MemoryManager::New<ECS::ECSRenderSystem>("ECS RenderSystem", AllocationType::FreeList_ECS,
+					"ECS RenderSystem", renderSystemSignature, m_ecsManager);
+
+				m_ecsManager->AddSystem(cameraMovementSystem);
+				m_ecsManager->AddSystem(renderSystem);
+			}
+
 			m_ecsManager->StartSystems();
 
 			//END ECS setup
 
-			Texture* gridTexture = Renderer::GetTextureLibrary().Load("assets/textures/TextureGrid.png",TextureType::Texture2d);
-			gridTexture->SetWrapMode(WrapMode::Repeat, WrapMode::Repeat);
 
-			Rendering::Material::MaterialProperties shapeMaterialProperties{
-					STRING_TO_STRINGID("assets/shaders/baseLit.glsl"),
-					glm::vec3(1.0f),
-					glm::vec3(1.0f),
-					glm::vec3(1.0f),
-					glm::vec3(1.0f),
-					32.0f,
-					nullptr,
-					gridTexture,
-					nullptr,
-					nullptr,
-					nullptr,
-					Material::BlendMode::None,
-					Material::DepthBufferMode::TestAndWrite,
-					Material::CullingMode::Back,
-					(ui8)Material::ShadowsSettingsBitMask::ReceiveShadows
-			};
 
-			Rendering::Material* shapeMaterial = Rendering::MaterialLibrary::Load("PlaneMaterial", &shapeMaterialProperties);
-			shapeMaterial->AssignShader();
+			//for (ui32 i = 0; i < 3; ++i)
+			//{
+			//	initialTransform = glm::translate(initialTransform, glm::vec3(15, 0, 15));
+			//	auto model = MemoryManager::New<Rendering::Model>(std::string("Animated Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", glm::scale( initialTransform, glm::vec3(0.1f)));
+			//	model->SetUpModel();
+			//	//Renderer::RegisterModel(model);
+			//}
 
-			{
-				auto plane = MemoryManager::New<Rendering::PlaneMesh>("Plane", AllocationType::FreeList_Renderer, shapeMaterial, AABB{ glm::vec3(0.0f), glm::vec3(0.0f) }, glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f)), true, 100.0f);
-				plane->SetUpPlane();
+			//initialTransform = glm::mat4(1.0f);
+			//initialTransform = glm::scale(initialTransform, glm::vec3(5.0f));
 
-				//Renderer::RegisterMesh(plane);
-			}
-
-			glm::mat4 initialTransform = glm::mat4(1.0f);
-
-			for (ui32 i = 0; i < 3; ++i)
-			{
-				initialTransform = glm::translate(initialTransform, glm::vec3(15, 0, 15));
-				auto model = MemoryManager::New<Rendering::Model>(std::string("Animated Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", glm::scale( initialTransform, glm::vec3(0.1f)));
-				model->SetUpModel();
-				//Renderer::RegisterModel(model);
-			}
-
-			initialTransform = glm::mat4(1.0f);
-			initialTransform = glm::scale(initialTransform, glm::vec3(5.0f));
-
-			for (ui32 i = 0; i < 15; ++i)
-			{
-				auto model = MemoryManager::New<Rendering::Model>(std::string("Static Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj", glm::rotate(initialTransform, glm::linearRand(0.0f, 359.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-				model->SetUpModel();
-				//Renderer::RegisterModel(model);
-
-				if (i > 0 && i % 60 == 0)
-				{
-					initialTransform = glm::translate(initialTransform, glm::vec3(-15.0f * 60, 0, 15.0f * (i / 60)));
-				}
-				else
-				{
-					initialTransform = glm::translate(initialTransform, glm::vec3(15.0f, 0, 0.0f));
-				}
-			}			
+				
 		}
 
 		void BaldLionEditorLayer::OnDetach()
@@ -161,8 +197,8 @@ namespace BaldLion
 			}
 			
 			{
-				OPTICK_CATEGORY("CameraController::OnUpdate", Optick::Category::Animation);		
-				Animation::AnimationManager::OnParallelUpdate(timeStep);		
+				//OPTICK_CATEGORY("CameraController::OnUpdate", Optick::Category::Animation);
+				//Animation::AnimationManager::OnParallelUpdate(timeStep);
 			}			
 			
 			//Waiting for animation jobs

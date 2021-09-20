@@ -3,13 +3,14 @@
 #include "Buffer.h"
 #include "Renderer.h"
 #include <glm/gtc/quaternion.hpp>
+#include "BaldLion/ECS/ECSManager.h"
 
 namespace BaldLion
 {
 	namespace Rendering
 	{
-		Mesh::Mesh(Material* material, GeometryUtils::AABB aabb, const glm::mat4& worldTransform, bool isStatic) :
-			m_material(material), m_aabb(aabb), m_worldTransform(worldTransform), m_isStatic(isStatic), m_skeleton(nullptr)
+		Mesh::Mesh(Material* material) :
+			m_material(material)
 		{	
 		}
 
@@ -18,10 +19,6 @@ namespace BaldLion
 			VertexArray::Destroy(m_vertexArray);	
 			m_geometryData->ClearGeometryData();
 			MemoryManager::Delete(m_geometryData);
-
-			if (m_skeleton != nullptr) {
-				MemoryManager::Delete(m_skeleton);
-			}
 		}
 
 		void Mesh::SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices)
@@ -29,8 +26,6 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 
 			m_geometryData = MemoryManager::New<GeometryData>("Geometry data", AllocationType::FreeList_Renderer, vertices, indices);
-
-			m_aabb = RecalculateAABB();
 
 			m_vertexArray = VertexArray::Create();
 
@@ -47,89 +42,25 @@ namespace BaldLion
 				});
 
 			m_vertexArray->AddIndexBuffer(indexBuffer);
-			m_vertexArray->AddVertexBuffer(vertexBuffer);
-			
-		}
-
-		void Mesh::SetSkeleton(Animation::Skeleton* skeleton)
-		{
-			m_skeleton = skeleton;
+			m_vertexArray->AddVertexBuffer(vertexBuffer);			
 		}
 
 		void Mesh::Draw() const
-		{	
-			if (!m_isStatic) {
-
-				m_material->Bind();
-
-				if (m_skeleton != nullptr)
-				{
-					for (ui32 i = 0; i < m_skeleton->GetJoints().Size(); ++i)
-					{
-						m_material->GetShader()->SetUniform(STRING_TO_STRINGID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &(m_skeleton->GetJoints()[i].jointAnimationTransform));
-					}
-				}
-
-				Renderer::Draw(m_vertexArray, m_material->GetShader(), m_material->GetReceiveShadows(), m_worldTransform);
-				m_material->Unbind();
-			}
+		{			
+			m_material->Bind();
+			Renderer::Draw(m_vertexArray, m_material->GetShader(), m_material->GetReceiveShadows(), glm::mat4(1.0f));
+			m_material->Unbind();			
 		}
 
-		#define FAST_AABB 0
-
-		AABB Mesh::RecalculateAABB() const
+		ECS::ECSMeshComponent* Mesh::GenerateMeshComponent(ECS::ECSManager* ecsManager, bool isStatic)
 		{
+			ECS::ECSMeshComponent* meshComponent = ecsManager->AddComponent<ECS::ECSMeshComponent>(ECS::ECSComponentID::Mesh, isStatic);
 
-			#if FAST_AABB
+			meshComponent->material = m_material;
+			meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices);
+			meshComponent->indices = DynamicArray<ui32>(AllocationType::FreeList_ECS, m_geometryData->indices);
 
-			DynamicArray<glm::vec3> bbCorners = DynamicArray<glm::vec3>(AllocationType::Linear_Frame, 8);
-
-			bbCorners.EmplaceBack(m_aabb.maxPoint);
-			bbCorners.EmplaceBack(glm::vec3(m_aabb.maxPoint.x, m_aabb.maxPoint.y, m_aabb.minPoint.z));
-			bbCorners.EmplaceBack(glm::vec3(m_aabb.maxPoint.x, m_aabb.minPoint.y, m_aabb.maxPoint.z));
-			bbCorners.EmplaceBack(glm::vec3(m_aabb.maxPoint.x, m_aabb.minPoint.y, m_aabb.minPoint.z));
-			bbCorners.EmplaceBack(glm::vec3(m_aabb.minPoint.x, m_aabb.maxPoint.y, m_aabb.maxPoint.z));
-			bbCorners.EmplaceBack(glm::vec3(m_aabb.minPoint.x, m_aabb.maxPoint.y, m_aabb.minPoint.z));
-			bbCorners.EmplaceBack(glm::vec3(m_aabb.minPoint.x, m_aabb.minPoint.y, m_aabb.maxPoint.z));
-			bbCorners.EmplaceBack(m_aabb.minPoint);
-
-			glm::vec3 minPointInWorldSpace = glm::vec3(glm::vec4(bbCorners[0], 1.0f));
-			glm::vec3 maxPointInWorldSpace = glm::vec3(glm::vec4(bbCorners[0], 1.0f));
-
-			for (ui32 i = 0; i < bbCorners.Size(); ++i)
-			{
-				const glm::vec3 vertexPosInWorldSpace = m_worldTransform * glm::vec4(bbCorners[i], 1.0f);
-
-				if (vertexPosInWorldSpace.x > maxPointInWorldSpace.x)	maxPointInWorldSpace.x = vertexPosInWorldSpace.x;
-				if (vertexPosInWorldSpace.y > maxPointInWorldSpace.y)	maxPointInWorldSpace.y = vertexPosInWorldSpace.y;
-				if (vertexPosInWorldSpace.z > maxPointInWorldSpace.z)	maxPointInWorldSpace.z = vertexPosInWorldSpace.z;
-
-				if (vertexPosInWorldSpace.x < minPointInWorldSpace.x)	minPointInWorldSpace.x = vertexPosInWorldSpace.x;
-				if (vertexPosInWorldSpace.y < minPointInWorldSpace.y)	minPointInWorldSpace.y = vertexPosInWorldSpace.y;
-				if (vertexPosInWorldSpace.z < minPointInWorldSpace.z)	minPointInWorldSpace.z = vertexPosInWorldSpace.z;
-			}
-
-			#else
-
-			glm::vec3 minPointInWorldSpace = glm::vec3(m_worldTransform * glm::vec4(m_geometryData->vertices[0].position, 1.0f));
-			glm::vec3 maxPointInWorldSpace = glm::vec3(m_worldTransform * glm::vec4(m_geometryData->vertices[0].position, 1.0f));
-
-			for(ui32 i = 0; i < m_geometryData->vertices.Size(); ++i)
-			{ 
-				const glm::vec3 vertexPosInWorldSpace = glm::vec3(m_worldTransform * glm::vec4(m_geometryData->vertices[i].position, 1.0f));
-
-				if (vertexPosInWorldSpace.x > maxPointInWorldSpace.x)	maxPointInWorldSpace.x = vertexPosInWorldSpace.x;
-				if (vertexPosInWorldSpace.y > maxPointInWorldSpace.y)	maxPointInWorldSpace.y = vertexPosInWorldSpace.y;
-				if (vertexPosInWorldSpace.z > maxPointInWorldSpace.z)	maxPointInWorldSpace.z = vertexPosInWorldSpace.z;
-
-				if (vertexPosInWorldSpace.x < minPointInWorldSpace.x)	minPointInWorldSpace.x = vertexPosInWorldSpace.x;
-				if (vertexPosInWorldSpace.y < minPointInWorldSpace.y)	minPointInWorldSpace.y = vertexPosInWorldSpace.y;
-				if (vertexPosInWorldSpace.z < minPointInWorldSpace.z)	minPointInWorldSpace.z = vertexPosInWorldSpace.z;
-			}
-
-			#endif
-
-			return { minPointInWorldSpace, maxPointInWorldSpace };
+			return meshComponent;
 		}
 
 	}

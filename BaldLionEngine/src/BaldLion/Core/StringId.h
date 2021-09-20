@@ -5,6 +5,19 @@ typedef ui32 StringId;
 namespace std
 {
 	template <>
+	struct hash<const char *>
+	{
+		size_t operator()(const char *s) const
+		{
+			size_t h = 5381;
+			int c;
+			while ((c = *s++))
+				h = ((h << 5) + h) + c;
+			return h;
+		}
+	};
+
+	template <>
 	struct hash<char *>
 	{
 		size_t operator()(char *s) const
@@ -17,18 +30,6 @@ namespace std
 		}
 	};
 
-	template <>
-	struct hash<const char *>
-	{
-		size_t operator()(const char *s) const
-		{
-			size_t h = 5381;
-			int c;
-			while ((c = *s++))
-				h = ((h << 5) + h) + c;
-			return h;
-		}
-	};
 }
 
 namespace BaldLion {

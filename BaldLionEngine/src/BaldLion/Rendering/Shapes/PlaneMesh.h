@@ -9,7 +9,7 @@ namespace BaldLion
 		class PlaneMesh : public Mesh {
 
 		public:
-			PlaneMesh(Material* material, AABB aabb, const glm::mat4& worldTransform, bool isStatic, float size);
+			PlaneMesh(Material* material, float size);
 
 			void SetUpPlane();
 

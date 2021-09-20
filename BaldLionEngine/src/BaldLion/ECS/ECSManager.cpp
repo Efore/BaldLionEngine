@@ -2,6 +2,7 @@
 #include "ECSManager.h"
 #include "BaldLion/ECS/Components/ECSTransformComponent.h"
 #include "BaldLion/ECS/Components/ECSProjectionCameraComponent.h"
+#include "BaldLion/ECS/Components/ECSMeshComponent.h"
 #include "BaldLion/ECS/Components/ECSDirectionalLightComponent.h"
 
 namespace BaldLion {
@@ -28,6 +29,9 @@ namespace BaldLion {
 
 			m_directionalLightComponentPool = DynamicArray<ECSDirectionalLightComponent>(AllocationType::FreeList_ECS, 10);
 			m_componentsPool.Emplace(ECSComponentID::DirectionalLight, std::move(&m_directionalLightComponentPool));
+
+			m_meshComponentPool = DynamicArray<ECSMeshComponent>(AllocationType::FreeList_ECS, 40);
+			m_componentsPool.Emplace(ECSComponentID::Mesh, std::move(&m_meshComponentPool));
 		}
 
 		ECSManager::~ECSManager()
@@ -45,6 +49,7 @@ namespace BaldLion {
 			CleanComponentPool<ECSTransformComponent>(ECSComponentID::Transform);
 			CleanComponentPool<ECSProjectionCameraComponent>(ECSComponentID::ProjectionCamera);
 			CleanComponentPool<ECSDirectionalLightComponent>(ECSComponentID::DirectionalLight);
+			CleanComponentPool<ECSMeshComponent>(ECSComponentID::Mesh);
 
 			m_componentsPool.Delete();
 		}

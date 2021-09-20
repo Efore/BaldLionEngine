@@ -11,9 +11,9 @@ namespace BaldLion
 		public:
 			ECSComponentLookUp()
 			{
-				for (ECSComponent* ptr : m_components)
+				for (ui32 i = 0; i < (ui32)ECSComponentID::Count; ++i)
 				{
-					ptr = nullptr;
+					m_components[i] = nullptr;
 				}
 			}
 
@@ -43,6 +43,7 @@ namespace BaldLion
 		const ECSComponentType* BaldLion::ECS::ECSComponentLookUp::Read(ECSComponentID componentID) const
 		{
 			static_assert(std::is_base_of<ECSComponent, ECSComponentType>::value, "T must inherit from ECSComponent");
+			
 			return (ECSComponentType*)m_components[(ui32)componentID];
 		}
 	}

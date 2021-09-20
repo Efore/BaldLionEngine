@@ -6,8 +6,8 @@ namespace BaldLion
 	namespace Rendering
 	{
 
-		PlaneMesh::PlaneMesh(Material* material, AABB aabb, const glm::mat4& worldTransform, bool isStatic, float size) :
-			Mesh(material, aabb, worldTransform, isStatic),
+		PlaneMesh::PlaneMesh(Material* material, float size) :
+			Mesh(material),
 			m_size(size)			
 		{
 		}		

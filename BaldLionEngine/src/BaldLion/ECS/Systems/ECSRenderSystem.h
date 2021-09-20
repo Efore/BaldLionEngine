@@ -9,12 +9,12 @@ namespace BaldLion {
 		{
 		public:
 			ECSRenderSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager) :
-				ECSSystem(systemName, signature, ecsManager, false, true) {}
+				ECSSystem(systemName, signature, ecsManager, true, true) {}
 			
+			virtual void OnStart() override {};
 			virtual void OnUpdate(TimeStep timeStep) override;
-			virtual void UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp) override;			
-
-		private:
+			virtual void UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp) override;		
+			virtual void OnStop() override {};
 
 		};
 

@@ -13,16 +13,22 @@ namespace BaldLion {
 	{
 		class ECSMeshComponent : public ECSComponent
 		{
+
+		public:
 			ECSMeshComponent(bool isStatic) : 
 				ECSComponent(ECSComponentID::Mesh),
 				isStatic(isStatic)
 			{
 
 			}
+
+			~ECSMeshComponent() {
+				vertices.Delete();
+				indices.Delete();
+			}
 			
 		public:
 
-			AABB aabb;
 			DynamicArray<Vertex> vertices;
 			DynamicArray<ui32> indices;
 
