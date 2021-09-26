@@ -27,6 +27,8 @@ namespace BaldLion
 		T* EmplaceBack(Args&&... args);
 
 		void PushBackRange(const DynamicArray<T>& other, ui32 size = 0);
+		void PushBackRange(const T* other, ui32 size = 0);
+
 		void PushBack(const T& element);
 		void PushBack(T&& element);
 
@@ -98,7 +100,7 @@ namespace BaldLion
 		: m_allocationType(allocationType), m_size(other.Size())
 	{
 		Reserve(other.m_capacity);
-		std::copy(other.m_elements, other.m_elements + m_size, m_elements);
+		memcpy(m_elements, other.m_elements, m_size * sizeof(T));
 	}
 
 	template <typename T>
@@ -106,7 +108,7 @@ namespace BaldLion
 		: m_allocationType(other.m_allocationType), m_size(other.Size())
 	{
 		Reserve(other.m_capacity);
-		std::copy(other.m_elements, other.m_elements + m_size, m_elements);
+		memcpy(m_elements, other.m_elements, m_size * sizeof(T));
 	}
 
 	template <typename T>
@@ -133,7 +135,7 @@ namespace BaldLion
 
 		Reserve(other.Capacity());
 
-		std::copy(other.m_elements, other.m_elements + m_size, m_elements);
+		memcpy(m_elements, other.m_elements, m_size * sizeof(T));
 		
 		return *this;
 	}
@@ -264,9 +266,19 @@ namespace BaldLion
 		if (size == 0) size = other.m_size;
 
 		if (m_size + size > m_capacity)
-			Reallocate(m_capacity + size);
+			Reallocate(m_size + size);
 
-		memcpy(m_elements + sizeof(T) * m_size, other.m_elements, size * sizeof(T));
+		memcpy(&(m_elements[m_size]), other.m_elements, size * sizeof(T));
+		m_size += size;
+	}
+
+	template <typename T>
+	void BaldLion::DynamicArray<T>::PushBackRange(const T* other, ui32 size)
+	{
+		if (m_size + size > m_capacity)
+			Reallocate(m_size + size);
+
+		memcpy(&(m_elements[m_size]), other, size * sizeof(T));
 		m_size += size;
 	}
 
@@ -276,7 +288,7 @@ namespace BaldLion
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
 		if (index >= m_size - 1)
-		{	
+		{
 			PushBack(element);
 		}
 		else {
@@ -289,10 +301,15 @@ namespace BaldLion
 			T* newLocation = MemoryManager::NewArray<T>("Dynamic Array", m_allocationType, m_size == m_capacity ? (ui32)(m_capacity * 1.5f) : m_capacity);
 			const ui32 newSize = m_size + 1;
 
-			std::copy(m_elements, m_elements + index, newLocation);
+			if (index - 1 >= 0)
+			{
+				memcpy(newLocation, m_elements, index * sizeof(T));
+			}
+
 			newLocation[index] = element;
-			std::copy(m_elements + index + 1, m_elements + m_size, newLocation + index);
-			
+
+			memcpy(&(newLocation[index+1]), &m_elements[index], (m_size - index) * sizeof(T));
+
 			Delete();
 
 			m_elements = newLocation;
@@ -307,30 +324,35 @@ namespace BaldLion
 		BL_ASSERT(index < m_size, "Index is bigger than size");
 
 		if (index >= m_size - 1)
-		{			
+		{
 			PushBack(element);
 		}
 		else {
 
 			if (m_size == m_capacity)
-			{				
-				Reallocate((ui32)(m_capacity * 1.5f));				
+			{
+				Reallocate((ui32)(m_capacity * 1.5f));
 			}
 
 			T* newLocation = MemoryManager::NewArray<T>("Dynamic Array", m_allocationType, m_size == m_capacity ? (ui32)(m_capacity * 1.5f) : m_capacity);
 			const ui32 newSize = m_size + 1;
 
-			std::copy(m_elements, m_elements + index, newLocation);
+			if (index - 1 >= 0)
+			{
+				memcpy(newLocation, m_elements, index * sizeof(T));
+			}
+
 			newLocation[index] = std::move(element);
-			std::copy(m_elements + index + 1, m_elements + m_size, newLocation + index);
+
+			memcpy(&(newLocation[index + 1]), &m_elements[index], (m_size - index) * sizeof(T));
 
 			Delete();
 
 			m_elements = newLocation;
-			m_size = newSize;			
+			m_size = newSize;
 		}
 	}
-
+	
 	template <typename T>
 	void BaldLion::DynamicArray<T>::PopBack()
 	{		
@@ -385,10 +407,10 @@ namespace BaldLion
 	template <typename T>
 	void BaldLion::DynamicArray<T>::RemoveAt(ui32 index)
 	{
-		BL_ASSERT(index < m_size, "Index can't be bigger than or equal to m_size");			
+		BL_ASSERT(index < m_size, "Index can't be bigger than or equal to m_size");
 
 		if (index == m_size - 1)
-		{			
+		{
 			PopBack();
 		}
 		else
@@ -396,8 +418,12 @@ namespace BaldLion
 			T* newLocation = MemoryManager::NewArray<T>("Dynamic Array", m_allocationType, m_capacity);
 			const ui32 newSize = m_size - 1;
 
-			std::copy(m_elements, m_elements + index, newLocation);
-			std::copy(m_elements + index + 1, m_elements + m_size, newLocation + index);
+			if (index - 1 >= 0)
+			{
+				memcpy(newLocation, m_elements, index * sizeof(T));
+			}
+
+			memcpy(&(newLocation[index]), &(m_elements[index+1]), (m_size - (index + 1)) * sizeof(T));
 
 			Delete();
 
@@ -486,25 +512,14 @@ namespace BaldLion
 	void BaldLion::DynamicArray<T>::Reallocate(ui32 newCapacity)
 	{	
 		BL_DEEP_PROFILE_FUNCTION();
+
 		T* newLocation = MemoryManager::NewArray<T>("Dynamic array", m_allocationType, newCapacity);
 
 		const ui32 newSize = newCapacity < m_size ? newCapacity : m_size;
 
-		{
-			BL_DEEP_PROFILE_SCOPE("Moving", Optick::Category::None);
+		memcpy(newLocation, m_elements, sizeof(T) * newSize);
 
-			memcpy(newLocation, m_elements, sizeof(T) * newSize);
-
-			//for (ui32 i = 0; i < newSize; ++i)
-			//{
-			//	newLocation[i] = std::move(m_elements[i]);
-			//}
-		}
-		
-		{
-			BL_DEEP_PROFILE_SCOPE("Clearing old data", Optick::Category::None);
-			Delete();
-		}
+		Delete();		
 
 		m_elements = newLocation;
 		m_capacity = newCapacity;

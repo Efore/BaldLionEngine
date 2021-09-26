@@ -17,7 +17,9 @@ namespace BaldLion
 				return &position.x;
 			}
 
-			Vertex(){}
+			Vertex(){
+
+			}
 
 			Vertex(const glm::vec3& pos, const glm::vec3& col, const glm::vec3& nor, const glm::vec2& tCoords, const glm::vec3& tan) :
 				position(pos),
@@ -56,6 +58,7 @@ namespace BaldLion
 
 			friend Vertex operator* (const Vertex& vertex, const glm::mat4& transform)
 			{
+				BL_DEEP_PROFILE_SCOPE("Vertex operator*", Optick::Category::Rendering);
 				Vertex result = vertex;
 				result.position = glm::vec3(transform * glm::vec4(vertex.position, 1.0f));
 				return result;

@@ -55,6 +55,7 @@ namespace BaldLion {
 
 			bool ECSProjectionCameraSingleton::IsAABBVisible(const GeometryUtils::AABB& aabb)
 			{
+				BL_PROFILE_FUNCTION();
 				const glm::vec3 minPointInWorldSpace = aabb.minPoint;
 				const glm::vec3 maxPointInWorldSpace = aabb.maxPoint;
 

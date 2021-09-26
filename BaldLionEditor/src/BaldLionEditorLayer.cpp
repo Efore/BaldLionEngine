@@ -19,7 +19,7 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnAttach()
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 			
 			//ECS setup
 
@@ -112,9 +112,10 @@ namespace BaldLion
 				m_ecsManager->AddComponentToEntity(planeEntity, planeTransformComponent);				
 			}
 
-			{//Trees setup				
+			{//Trees setup	
+
 				glm::vec3 position = glm::vec3(0.0f);
-				for (ui32 i = 0; i < 15; ++i)
+				for (ui32 i = 0; i < 2; ++i)
 				{
 					Model* treeModel = MemoryManager::New<Rendering::Model>(std::string("Static Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj");
 					treeModel->SetUpModel();
@@ -135,10 +136,7 @@ namespace BaldLion
 						m_ecsManager->AddComponentToEntity(treeEntity, treeTransformComponent);
 					}
 
-					
 					position += glm::vec3(-15.0f, 0, 15.0f);
-					
-					
 				}
 			}
 
@@ -185,15 +183,10 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnUpdate(TimeStep timeStep)
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
-			{
-				OPTICK_CATEGORY("CameraController::OnUpdate",Optick::Category::Camera);
-				
-				if (m_viewPortFocused)
-				{
-					m_ecsManager->UpdateSystems(timeStep);
-				}
+			{	
+				m_ecsManager->UpdateSystems(timeStep);
 			}
 			
 			{
@@ -211,7 +204,7 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnImGuiRender(TimeStep timeStep)
 		{
-			OPTICK_EVENT();
+			BL_PROFILE_FUNCTION();
 
 			RenderDockSpace();
 

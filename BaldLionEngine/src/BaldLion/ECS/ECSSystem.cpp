@@ -35,13 +35,12 @@ namespace BaldLion {
 
 				if (m_parallelize)
 				{
-					const std::string systemOperation = "SystemOperation" + std::to_string(i);
+					const std::string systemOperation = std::to_string(m_systemName) + std::to_string(i);
 
 					JobManagement::Job systemUpdateJob(systemOperation.c_str());
 
 					systemUpdateJob.Task = [this, timeStep, componentLookUp] {
 
-						BL_PROFILE_SCOPE(("ECSSystem::{0}", STRINGID_TO_STRING(m_systemName)), Optick::Category::GameLogic);
 						this->UpdateOperation(timeStep, componentLookUp);
 					};
 

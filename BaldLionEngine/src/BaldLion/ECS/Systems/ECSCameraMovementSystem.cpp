@@ -28,6 +28,8 @@ namespace BaldLion {
 
 		void ECSCameraMovementSystem::UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp)
 		{	
+			BL_PROFILE_FUNCTION();
+
 			ECSTransformComponent* cameraTransform = componentLookUp->Write<ECSTransformComponent>(ECSComponentID::Transform);
 			ECSProjectionCameraComponent* projectionCamera = componentLookUp->Write<ECSProjectionCameraComponent>(ECSComponentID::ProjectionCamera);
 

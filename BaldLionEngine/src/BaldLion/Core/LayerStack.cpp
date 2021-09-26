@@ -38,7 +38,7 @@ namespace BaldLion
 
 	void LayerStack::PopLayer(Layer * layer)
 	{		
-		m_layers.RemoveFast(layer);
+		m_layers.RemoveAtFast(m_layerInsertIndex);
 		--m_layerInsertIndex;
 		layer->OnDetach();
 	}

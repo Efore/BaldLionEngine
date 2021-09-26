@@ -102,7 +102,6 @@ namespace BaldLion
 
 			static glm::mat4 s_lightViewProjection;
 
-		public:
 			static std::mutex s_geometryToBatchMutex;
 			static std::mutex s_dynamicMeshesToRenderMutex;
 			static std::mutex s_shadowCastingMeshesMutex;

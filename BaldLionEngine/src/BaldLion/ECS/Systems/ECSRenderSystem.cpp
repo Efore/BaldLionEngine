@@ -33,6 +33,7 @@ namespace BaldLion {
 			glm::vec3 minPointInWorldSpace = glm::vec3(meshTransformMatrix * glm::vec4(meshComponent->vertices[0].position, 1.0f));
 			glm::vec3 maxPointInWorldSpace = glm::vec3(meshTransformMatrix * glm::vec4(meshComponent->vertices[0].position, 1.0f));
 
+			
 			for (ui32 i = 0; i < meshComponent->vertices.Size(); ++i)
 			{
 				const glm::vec3 vertexPosInWorldSpace = glm::vec3(meshTransformMatrix * glm::vec4(meshComponent->vertices[i].position, 1.0f));
@@ -46,25 +47,24 @@ namespace BaldLion {
 				if (vertexPosInWorldSpace.z < minPointInWorldSpace.z)	minPointInWorldSpace.z = vertexPosInWorldSpace.z;
 			}
 			
+
 			const AABB meshAABB = { minPointInWorldSpace, maxPointInWorldSpace };
 			
 			if (ECS::SingletonComponents::ECSProjectionCameraSingleton::IsAABBVisible(meshAABB))
-			{
+			{	
+				BL_PROFILE_SCOPE("Distributing mesh data", Optick::Category::Rendering);
 				if (skeletonComponent == nullptr && meshComponent->isStatic)
-				{
-					std::lock_guard<std::mutex> frustrumCullingGuard(Renderer::s_geometryToBatchMutex);
+				{							
 					Renderer::AddStaticMeshToBatch(meshComponent, meshTransform);					
 				}
 				else
-				{
-					std::lock_guard<std::mutex> frustrumCullingGuard(Renderer::s_dynamicMeshesToRenderMutex);
+				{					
 					Renderer::AddDynamicMesh(meshComponent, meshTransform, skeletonComponent);
 				}
 			}	
 
 			if (meshComponent->material->GetCastShadows())
-			{
-				std::lock_guard<std::mutex> frustrumCullingGuard(Renderer::s_shadowCastingMeshesMutex);
+			{				
 				Renderer::AddShadowCastingMesh(meshComponent, meshTransform, skeletonComponent);
 			}
 		}

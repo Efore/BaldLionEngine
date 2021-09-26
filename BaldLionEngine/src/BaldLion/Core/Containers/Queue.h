@@ -72,8 +72,7 @@ namespace BaldLion
 		: m_allocationType(allocationType), m_size(other.Size()), m_frontIndex(other.m_frontIndex)
 	{
 		Reserve(other.m_capacity);
-
-		std::copy(other.m_elements, other.m_elements + m_size, m_elements);
+		memcpy(m_elements, other.m_elements, m_size * sizeof(T));
 	}
 
 	template <typename T>
@@ -81,7 +80,7 @@ namespace BaldLion
 		: m_allocationType(other.m_allocationType), m_size(other.Size()), m_frontIndex(other.m_frontIndex)
 	{
 		Reserve(other.m_capacity);
-		std::copy(other.m_elements, other.m_elements + m_size, m_elements);
+		memcpy(m_elements, other.m_elements, m_size * sizeof(T));
 	}
 
 	template <typename T>
@@ -104,9 +103,10 @@ namespace BaldLion
 		m_allocationType = other.m_allocationType;
 		m_size = other.m_size;
 		m_frontIndex = other.m_frontIndex;
+
 		Reserve(other.Capacity());
 
-		std::copy(other.m_elements, other.m_elements + m_size, m_elements);
+		memcpy(m_elements, other.m_elements, m_size * sizeof(T));
 
 		return *this;
 	}
