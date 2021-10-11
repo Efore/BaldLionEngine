@@ -13,25 +13,17 @@ namespace BaldLion
 		class Animator {
 			
 		public:
-			Animator(Skeleton* skeleton, DynamicArray<AnimationData>& animations, const glm::mat4& rootTransform);
+			Animator(DynamicArray<AnimationData>& animations, const StringId animatorID);
 			~Animator();
 
-			void OnUpdate(BaldLion::TimeStep timeStep);
-			inline void SetCurrentAnimation(StringId AnimationName);
-
-			void CalculateInterpolatedTransforms(const AnimationData* animation, DynamicArray<JointTransform>& result);
+			const AnimationData* GetAnimation(const StringId animationID) const;
+			const StringId GetAnimatorID() { return m_animatorID; } const;
 
 		private:	
 
-			Skeleton* m_skeleton;
-
+			StringId m_animatorID;
 			DynamicArray<AnimationData>* m_animationDataContainer;
-			AnimationData* m_currentAnimation;			
 			HashTable<StringId,AnimationData*> m_animations;
-
-			glm::mat4 m_rootInverseTransform;
-
-			float m_animationTime;
 		};
 	}
 }

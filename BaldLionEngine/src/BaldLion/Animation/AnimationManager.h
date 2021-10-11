@@ -21,17 +21,15 @@ namespace BaldLion
 			static void Init();
 			static void Stop();
 
-			static void OnUpdate(float timeStep);
-			static void OnParallelUpdate(float timeStep);
-
-			static void GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping, Skeleton* skeleton);
+			static void GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping);
+			static Animator* GetAnimator(const StringId animatorID);
 
 			static void RegisterAnimator(Animator* animator);
 			static void UnregisterAnimator(Animator* animator);
 
 		private:			
 			static bool s_initialized;
-			static DynamicArray<Animator*> s_registeredAnimators;			
+			static HashTable<StringId,Animator*> s_registeredAnimators;			
 			static std::mutex s_animationManagerMutex;
 		};
 	}

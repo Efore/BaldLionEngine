@@ -41,6 +41,7 @@ namespace BaldLion
 			GeometryData* m_geometryData;
 			VertexArray* m_vertexArray;
 			Material* m_material;
+			Skeleton* m_skeleton;
 		};
 	}
 }

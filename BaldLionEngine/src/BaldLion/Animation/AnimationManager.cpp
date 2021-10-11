@@ -15,7 +15,8 @@ namespace BaldLion
 {
 	namespace Animation
 	{
-		DynamicArray<Animator*> AnimationManager::s_registeredAnimators;
+	
+		HashTable<StringId, Animator*> AnimationManager::s_registeredAnimators;
 		std::mutex AnimationManager::s_animationManagerMutex;
 
 		bool AnimationManager::s_initialized = false;
@@ -25,59 +26,33 @@ namespace BaldLion
 			if (!s_initialized)
 			{
 				s_initialized = true;
-				s_registeredAnimators = DynamicArray<Animator*>(AllocationType::FreeList_Renderer, 10);
+				s_registeredAnimators = HashTable<StringId, Animator*>(AllocationType::FreeList_Main, 10);
 			}
 		}
 
 		void AnimationManager::Stop()
 		{	
 			s_initialized = false;
-			for (ui32 i = 0; i < s_registeredAnimators.Size(); ++i)
+
+			for (HashTable<StringId, Animator*>::Iterator it = s_registeredAnimators.Begin(); it != s_registeredAnimators.End(); ++it)
 			{
-				MemoryManager::DeleteNoDestructor(s_registeredAnimators[i]);
+				MemoryManager::DeleteNoDestructor(it.GetValue());
 			}
+
 			s_registeredAnimators.Delete();
 		}
 
-		void AnimationManager::OnUpdate(float timeStep)
-		{
-			for (ui32 i = 0; i < s_registeredAnimators.Size(); ++i)
-			{
-				s_registeredAnimators[i]->OnUpdate(timeStep);
-			}
-		}
-
-		void AnimationManager::OnParallelUpdate(float timeStep)
-		{
-			if (s_registeredAnimators.Size() == 0)
-				return;
-
-			for (ui32 i = 0; i < s_registeredAnimators.Size(); ++i)
-			{
-				Animator* animatorToUpdate = s_registeredAnimators[i];
-
-				const std::string animatorName = "Animator" + std::to_string(i);
-
-				JobManagement::Job animationJob(animatorName.c_str());
-				animationJob.Task = [animatorToUpdate, timeStep] {
-					BL_PROFILE_SCOPE("AnimationManager::OnUpdateAnimation", Optick::Category::Animation);
-					animatorToUpdate->OnUpdate(timeStep);
-				};
-
-				JobManagement::JobManager::QueueJob(animationJob);
-			}			
-		}
-
-		void AnimationManager::GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping, Skeleton* skeleton)
+		void AnimationManager::GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping)
 		{
 			if (scene->HasAnimations())
 			{
-				DynamicArray<AnimationData> animations(AllocationType::FreeList_Renderer, scene->mNumAnimations);
+				DynamicArray<AnimationData> animations(AllocationType::FreeList_Main, scene->mNumAnimations);
+
 				for (ui32 i = 0; i < scene->mNumAnimations; ++i)
 				{
 					AnimationData animationData(
 						STRING_TO_STRINGID(scene->mAnimations[i]->mName.data), 
-						DynamicArray<KeyFrame>(AllocationType::FreeList_Renderer, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys), 
+						DynamicArray<KeyFrame>(AllocationType::FreeList_Main, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys),
 						(float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond)
 					);
 
@@ -85,7 +60,7 @@ namespace BaldLion
 
 					for (size_t j = 0; j < (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys; ++j)
 					{
-						KeyFrame keyFrame(DynamicArray<JointTransform>(AllocationType::FreeList_Renderer, glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.Size())), glm::min(timeStamp * j, animationData.AnimationLength));
+						KeyFrame keyFrame(DynamicArray<JointTransform>(AllocationType::FreeList_Main, glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.Size())), glm::min(timeStamp * j, animationData.AnimationLength));
 						keyFrame.JointTranforms.Populate();
 
 						for (size_t k = 0; k < scene->mAnimations[i]->mNumChannels; ++k)
@@ -105,18 +80,29 @@ namespace BaldLion
 
 				glm::mat4 rootTransform = MathUtils::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
 
-				Animator* animator = MemoryManager::New<Animator>("Animator", AllocationType::FreeList_Renderer, skeleton, animations, rootTransform);
+				Animator* animator = MemoryManager::New<Animator>("Animator", AllocationType::FreeList_Main, animations);
 				RegisterAnimator(animator);
 			}
+		}
+
+		BaldLion::Animation::Animator* AnimationManager::GetAnimator(const StringId animatorID)
+		{
+			Animator* result = nullptr;
+
+			if (s_registeredAnimators.TryGet(animatorID, result)) {
+				return result;
+			}
+
+			return nullptr;
 		}
 
 		void AnimationManager::RegisterAnimator(Animator* animator)
 		{
 			std::lock_guard<std::mutex> lockGuard(s_animationManagerMutex);
 
-			if (!s_registeredAnimators.Contains(animator))
+			if (!s_registeredAnimators.Contains(animator->GetAnimatorID()))
 			{
-				s_registeredAnimators.PushBack(animator);
+				s_registeredAnimators.Emplace(animator->GetAnimatorID(), std::move(animator));
 			}
 		}
 
@@ -124,9 +110,9 @@ namespace BaldLion
 		{			
 			std::lock_guard<std::mutex> lockGuard(s_animationManagerMutex);
 
-			if (s_registeredAnimators.Contains(animator))
+			if (!s_registeredAnimators.Contains(animator->GetAnimatorID()))
 			{				
-				s_registeredAnimators.RemoveFast(animator);
+				s_registeredAnimators.Remove(animator->GetAnimatorID());
 			}
 		}
 	}

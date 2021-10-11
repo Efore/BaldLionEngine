@@ -4,6 +4,8 @@
 #include "BaldLion/ECS/Components/ECSProjectionCameraComponent.h"
 #include "BaldLion/ECS/Components/ECSMeshComponent.h"
 #include "BaldLion/ECS/Components/ECSDirectionalLightComponent.h"
+#include "BaldLion/ECS/Components/ECSAnimationComponent.h"
+#include "BaldLion/ECS/Components/ECSSkeletonComponent.h"
 
 namespace BaldLion {
 
@@ -32,6 +34,12 @@ namespace BaldLion {
 
 			m_meshComponentPool = DynamicArray<ECSMeshComponent>(AllocationType::FreeList_ECS, 40);
 			m_componentsPool.Emplace(ECSComponentID::Mesh, std::move(&m_meshComponentPool));
+
+			m_animationComponentPool = DynamicArray<ECSAnimationComponent>(AllocationType::FreeList_ECS, 40);
+			m_componentsPool.Emplace(ECSComponentID::Mesh, std::move(&m_animationComponentPool));
+
+			m_skeletonComponentPool = DynamicArray<ECSSkeletonComponent>(AllocationType::FreeList_ECS, 40);
+			m_componentsPool.Emplace(ECSComponentID::Mesh, std::move(&m_skeletonComponentPool));
 		}
 
 		ECSManager::~ECSManager()
@@ -50,6 +58,8 @@ namespace BaldLion {
 			CleanComponentPool<ECSProjectionCameraComponent>(ECSComponentID::ProjectionCamera);
 			CleanComponentPool<ECSDirectionalLightComponent>(ECSComponentID::DirectionalLight);
 			CleanComponentPool<ECSMeshComponent>(ECSComponentID::Mesh);
+			CleanComponentPool<ECSAnimationComponent>(ECSComponentID::Animation);
+			CleanComponentPool<ECSSkeletonComponent>(ECSComponentID::Skeleton);
 
 			m_componentsPool.Delete();
 		}

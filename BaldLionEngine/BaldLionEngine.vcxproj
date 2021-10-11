@@ -176,6 +176,7 @@
     <ClInclude Include="src\BaldLion\Core\Window.h" />
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.h" />
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSAnimationComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSDirectionalLightComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSProjectionCameraComponent.h" />
@@ -186,6 +187,7 @@
     <ClInclude Include="src\BaldLion\ECS\ECSManager.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSUtils.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSCameraMovementSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSRenderSystem.h" />
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h" />
@@ -610,6 +612,7 @@
     <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ECSManager.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ECSSystem.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSCameraMovementSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSRenderSystem.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />

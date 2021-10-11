@@ -16,6 +16,7 @@ namespace BaldLion
 			Skeleton,
 			DirectionalLight,
 			PointLight,
+			Animation,
 
 			Count
 		};

@@ -140,6 +140,34 @@ namespace BaldLion
 				}
 			}
 
+			{//Characters setup	
+
+				glm::vec3 position = glm::vec3(0.0f);
+				for (ui32 i = 0; i < 2; ++i)
+				{
+					Model* character = MemoryManager::New<Rendering::Model>(std::string("Character Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx");
+					character->SetUpModel();
+
+					for (ui32 j = 0; j < character->GetSubMeshes().Size(); ++j)
+					{
+						ECS::ECSEntityID characterEntity = STRING_TO_STRINGID(("Character" + std::to_string(i) + std::to_string(j)).c_str());
+						m_ecsManager->AddEntity(characterEntity);
+
+						ECS::ECSTransformComponent* characterTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
+							position,
+							MathUtils::QuaternionIdentity,
+							glm::vec3(5.0f));
+
+						ECS::ECSMeshComponent* characterMeshComponent = character->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager, true);
+
+						m_ecsManager->AddComponentToEntity(characterEntity, characterTransformComponent);
+						m_ecsManager->AddComponentToEntity(characterEntity, characterMeshComponent);
+					}
+
+					position += glm::vec3(-15.0f, 0, 15.0f);
+				}
+			}
+
 			{//Systems
 				const ECS::ECSSignature cameraMovementSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::ProjectionCamera, ECS::ECSComponentID::Transform);
 

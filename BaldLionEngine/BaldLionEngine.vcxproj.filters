@@ -1406,6 +1406,8 @@
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSSkeletonComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSAnimationComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1553,5 +1555,6 @@
     <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSRenderSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.cpp" />
   </ItemGroup>
 </Project>

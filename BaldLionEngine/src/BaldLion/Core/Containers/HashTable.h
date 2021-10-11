@@ -87,6 +87,7 @@ namespace BaldLion
 			void Emplace(const K& key, V&& value) noexcept;
 
 			bool TryGet(const K& key, V& result);
+			bool TryGet(const K& key, V& result) const;
 
 			const V& Get(const K& key) const;
 			V& Get(const K& key);
@@ -192,6 +193,21 @@ namespace BaldLion
 		const i32 tableIndex = FindIndex(hashedKey);
 
 		if (tableIndex >= 0) 
+		{
+			result = m_table[tableIndex].nodeValue;
+			return true;
+		}
+
+		return false;
+	}
+
+	template <typename K, typename V>
+	bool BaldLion::HashTable<K, V>::TryGet(const K& key, V& result) const
+	{
+		const hashType hashedKey = std::hash<K>()(key);
+		const i32 tableIndex = FindIndex(hashedKey);
+
+		if (tableIndex >= 0)
 		{
 			result = m_table[tableIndex].nodeValue;
 			return true;

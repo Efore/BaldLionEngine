@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include <glm/gtc/quaternion.hpp>
 #include "BaldLion/ECS/ECSManager.h"
+#include "BaldLion/Animation/Skeleton.h"
 
 namespace BaldLion
 {

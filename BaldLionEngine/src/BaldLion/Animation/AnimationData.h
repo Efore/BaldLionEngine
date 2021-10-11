@@ -10,6 +10,7 @@
 
 #include "Joint.h"
 #include "BaldLion/Core/Containers/DynamicArray.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace BaldLion
 {
@@ -64,6 +65,7 @@ namespace BaldLion
 
 		struct AnimationData {
 
+			glm::mat4 InverseRootTransform;
 			StringId AnimationName;
 			DynamicArray<KeyFrame> AnimationFrames;
 			float AnimationLength;
