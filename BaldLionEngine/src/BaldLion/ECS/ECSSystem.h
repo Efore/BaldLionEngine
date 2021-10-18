@@ -27,7 +27,7 @@ namespace BaldLion
 			ECSSignature m_signature;
 			class ECSManager* m_ecsManager;
 			StringId m_systemName;
-			bool m_blockSystemsLoop;			
+			bool m_waitForUpdatesOperationsToFinish;			
 			bool m_parallelize;
 		};
 	}

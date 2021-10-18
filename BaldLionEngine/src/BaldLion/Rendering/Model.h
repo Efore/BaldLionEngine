@@ -55,7 +55,7 @@ namespace BaldLion
 
 			static void FillVertexWeightData(const aiMesh* aimesh,
 				const HashTable<StringId, ui32>& jointMapping,
-				DynamicArray<VertexBoneData>& verticesBoneData);
+				DynamicArray<VertexBone>& verticesBoneData);
 
 		protected:
 			StringId m_modelPath;

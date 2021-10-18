@@ -6,10 +6,12 @@
 #include "GeometryData.h"
 #include "BaldLion/ECS/Components/ECSMeshComponent.h"
 #include "BaldLion/ECS/ECSManager.h"
+#include "BaldLion/Animation/Skeleton.h"
 
 namespace BaldLion
 {
 	using namespace GeometryUtils;
+	using namespace Animation;
 
 	namespace Rendering
 	{
@@ -34,7 +36,18 @@ namespace BaldLion
 			inline const VertexArray* GetVertexArray() const { return m_vertexArray; }
 			inline VertexArray* GetVertexArray() { return m_vertexArray; }
 
+			inline Skeleton* GetSkeleton() { return m_skeleton; }
+			inline const Skeleton* GetSkeleton() const { return m_skeleton; }
+
+			inline void SetSkeleton(Skeleton* skeleton) { m_skeleton = skeleton; }
+
+			inline DynamicArray<VertexBone>& GetVertexBones() { return m_vertexBones; }
+			inline const DynamicArray<VertexBone>& GetVertexBones() const { return m_vertexBones; }
+
+			void SetVertexBones(const DynamicArray<VertexBone>& vertexBones);
+
 			ECS::ECSMeshComponent* GenerateMeshComponent(ECS::ECSManager* ecsManager, bool isStatic);
+			ECS::ECSSkeletonComponent* GenerateSkeletonComponent(ECS::ECSManager* ecsManager);
 
 		protected:
 
@@ -42,6 +55,7 @@ namespace BaldLion
 			VertexArray* m_vertexArray;
 			Material* m_material;
 			Skeleton* m_skeleton;
+			DynamicArray<VertexBone> m_vertexBones;
 		};
 	}
 }

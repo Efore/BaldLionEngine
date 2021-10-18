@@ -2,7 +2,10 @@
 #include "BaldLion/ECS/ECSSystem.h"
 #include "BaldLion/Animation/AnimationData.h"
 
+
 namespace BaldLion {
+
+	using namespace Animation;
 
 	namespace ECS {
 
@@ -10,12 +13,11 @@ namespace BaldLion {
 		{
 		public:
 			ECSAnimationSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager) :
-				ECSSystem(systemName, signature, ecsManager, true, true) {}
+				ECSSystem(systemName, signature, ecsManager, true, false) {}
 
-			virtual void OnStart() override {};
-			virtual void OnUpdate(TimeStep timeStep) override {};
+			virtual void OnStart() override {}
 			virtual void UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp) override;
-			virtual void OnStop() override {};
+			virtual void OnStop() override {}
 
 		private:
 			void CalculateInterpolatedTransforms(float progress, const AnimationData* animation, DynamicArray<JointTransform>& result);

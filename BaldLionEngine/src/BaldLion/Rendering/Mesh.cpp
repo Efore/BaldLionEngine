@@ -43,7 +43,20 @@ namespace BaldLion
 				});
 
 			m_vertexArray->AddIndexBuffer(indexBuffer);
-			m_vertexArray->AddVertexBuffer(vertexBuffer);			
+			m_vertexArray->AddVertexBuffer(vertexBuffer);	
+
+			if (m_skeleton != nullptr)
+			{
+				VertexBuffer* boneDataVertexBuffer = VertexBuffer::Create(m_vertexBones[0].GetFirstElement(),
+					(ui32)(m_vertexBones.Size() * sizeof(VertexBone)));
+
+				boneDataVertexBuffer->SetLayout({
+					{ ShaderDataType::Int3,		"vertex_joint_ids" },
+					{ ShaderDataType::Float3,	"vertex_joint_weights" }
+					});
+
+				m_vertexArray->AddVertexBuffer(boneDataVertexBuffer);
+			}
 		}
 
 		void Mesh::Draw() const
@@ -51,6 +64,11 @@ namespace BaldLion
 			m_material->Bind();
 			Renderer::Draw(m_vertexArray, m_material->GetShader(), m_material->GetReceiveShadows(), glm::mat4(1.0f));
 			m_material->Unbind();			
+		}
+
+		void Mesh::SetVertexBones(const DynamicArray<VertexBone>& vertexBones)
+		{
+			m_vertexBones = DynamicArray<VertexBone>(AllocationType::FreeList_Renderer, vertexBones);
 		}
 
 		ECS::ECSMeshComponent* Mesh::GenerateMeshComponent(ECS::ECSManager* ecsManager, bool isStatic)
@@ -62,6 +80,16 @@ namespace BaldLion
 			meshComponent->indices = DynamicArray<ui32>(AllocationType::FreeList_ECS, m_geometryData->indices);
 
 			return meshComponent;
+		}
+
+		BaldLion::ECS::ECSSkeletonComponent* Mesh::GenerateSkeletonComponent(ECS::ECSManager* ecsManager)
+		{
+			ECS::ECSSkeletonComponent* skeletonComponent = ecsManager->AddComponent<ECS::ECSSkeletonComponent>(ECS::ECSComponentID::Skeleton);
+
+			skeletonComponent->joints = DynamicArray<Animation::Joint>(AllocationType::FreeList_ECS, m_skeleton->GetJoints());
+			skeletonComponent->boneData = DynamicArray<VertexBone>(AllocationType::FreeList_ECS, m_vertexBones);
+		
+			return skeletonComponent;
 		}
 
 	}

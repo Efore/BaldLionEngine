@@ -30,7 +30,7 @@ namespace BaldLion {
 		public:
 
 			DynamicArray<Vertex> vertices;
-			DynamicArray<ui32> indices;
+			DynamicArray<ui32> indices;			
 
 			bool isStatic;
 			Material* material;

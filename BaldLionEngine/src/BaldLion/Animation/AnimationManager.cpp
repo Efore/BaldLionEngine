@@ -48,9 +48,12 @@ namespace BaldLion
 			{
 				DynamicArray<AnimationData> animations(AllocationType::FreeList_Main, scene->mNumAnimations);
 
+				glm::mat4 rootTransform = MathUtils::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
+
 				for (ui32 i = 0; i < scene->mNumAnimations; ++i)
 				{
 					AnimationData animationData(
+						glm::inverse(rootTransform),
 						STRING_TO_STRINGID(scene->mAnimations[i]->mName.data), 
 						DynamicArray<KeyFrame>(AllocationType::FreeList_Main, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys),
 						(float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond)
@@ -76,12 +79,13 @@ namespace BaldLion
 					}
 
 					animations.EmplaceBack(std::move(animationData));
+				}				
+
+				if (!s_registeredAnimators.Contains(STRING_TO_STRINGID("Animator"))) {
+
+					Animator* animator = MemoryManager::New<Animator>("Animator", AllocationType::FreeList_Main, animations, STRING_TO_STRINGID("Animator"));
+					RegisterAnimator(animator);
 				}
-
-				glm::mat4 rootTransform = MathUtils::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
-
-				Animator* animator = MemoryManager::New<Animator>("Animator", AllocationType::FreeList_Main, animations);
-				RegisterAnimator(animator);
 			}
 		}
 

@@ -36,10 +36,10 @@ namespace BaldLion {
 			m_componentsPool.Emplace(ECSComponentID::Mesh, std::move(&m_meshComponentPool));
 
 			m_animationComponentPool = DynamicArray<ECSAnimationComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.Emplace(ECSComponentID::Mesh, std::move(&m_animationComponentPool));
+			m_componentsPool.Emplace(ECSComponentID::Animation, std::move(&m_animationComponentPool));
 
 			m_skeletonComponentPool = DynamicArray<ECSSkeletonComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.Emplace(ECSComponentID::Mesh, std::move(&m_skeletonComponentPool));
+			m_componentsPool.Emplace(ECSComponentID::Skeleton, std::move(&m_skeletonComponentPool));
 		}
 
 		ECSManager::~ECSManager()

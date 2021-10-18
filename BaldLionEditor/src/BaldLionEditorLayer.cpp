@@ -112,42 +112,44 @@ namespace BaldLion
 				m_ecsManager->AddComponentToEntity(planeEntity, planeTransformComponent);				
 			}
 
-			{//Trees setup	
+			//{//Trees setup	
 
-				glm::vec3 position = glm::vec3(0.0f);
-				for (ui32 i = 0; i < 2; ++i)
-				{
-					Model* treeModel = MemoryManager::New<Rendering::Model>(std::string("Static Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj");
-					treeModel->SetUpModel();
+			//	glm::vec3 position = glm::vec3(0.0f);
+			//	for (ui32 i = 0; i < 2; ++i)
+			//	{
+			//		Model* treeModel = MemoryManager::New<Rendering::Model>(std::string("Static Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj");
+			//		treeModel->SetUpModel();
 
-					for (ui32 j = 0; j < treeModel->GetSubMeshes().Size(); ++j)
-					{
-						ECS::ECSEntityID treeEntity = STRING_TO_STRINGID(("Tree" + std::to_string(i) + std::to_string(j)).c_str());
-						m_ecsManager->AddEntity(treeEntity);
+			//		for (ui32 j = 0; j < treeModel->GetSubMeshes().Size(); ++j)
+			//		{
+			//			ECS::ECSEntityID treeEntity = STRING_TO_STRINGID(("Tree" + std::to_string(i) + std::to_string(j)).c_str());
+			//			m_ecsManager->AddEntity(treeEntity);
 
-						ECS::ECSTransformComponent* treeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
-							position,
-							MathUtils::QuaternionIdentity,
-							glm::vec3(5.0f));
-					
-						ECS::ECSMeshComponent* treeMeshComponent = treeModel->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager, true);
+			//			ECS::ECSTransformComponent* treeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
+			//				position,
+			//				MathUtils::QuaternionIdentity,
+			//				glm::vec3(5.0f));
+			//		
+			//			ECS::ECSMeshComponent* treeMeshComponent = treeModel->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager, true);
 
-						m_ecsManager->AddComponentToEntity(treeEntity, treeMeshComponent);
-						m_ecsManager->AddComponentToEntity(treeEntity, treeTransformComponent);
-					}
+			//			m_ecsManager->AddComponentToEntity(treeEntity, treeMeshComponent);
+			//			m_ecsManager->AddComponentToEntity(treeEntity, treeTransformComponent);
+			//		}
 
-					position += glm::vec3(-15.0f, 0, 15.0f);
-				}
-			}
+			//		position += glm::vec3(-15.0f, 0, 15.0f);
+			//	}
+			//}
 
 			{//Characters setup	
 
+				Model* character = MemoryManager::New<Rendering::Model>(std::string("Character Model").c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx");
+
+				character->SetUpModel();
+
 				glm::vec3 position = glm::vec3(0.0f);
+
 				for (ui32 i = 0; i < 2; ++i)
 				{
-					Model* character = MemoryManager::New<Rendering::Model>(std::string("Character Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx");
-					character->SetUpModel();
-
 					for (ui32 j = 0; j < character->GetSubMeshes().Size(); ++j)
 					{
 						ECS::ECSEntityID characterEntity = STRING_TO_STRINGID(("Character" + std::to_string(i) + std::to_string(j)).c_str());
@@ -156,15 +158,22 @@ namespace BaldLion
 						ECS::ECSTransformComponent* characterTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
 							position,
 							MathUtils::QuaternionIdentity,
-							glm::vec3(5.0f));
+							glm::vec3(0.1f));
 
-						ECS::ECSMeshComponent* characterMeshComponent = character->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager, true);
+						ECS::ECSMeshComponent* characterMeshComponent = character->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager,false);
+						ECS::ECSSkeletonComponent* characterSkeletonComponent = character->GetSubMeshes()[j]->GenerateSkeletonComponent(m_ecsManager);
+						ECS::ECSAnimationComponent* characterAnimationComponent = m_ecsManager->AddComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentID::Animation);
+
+						characterAnimationComponent->animatorID = STRING_TO_STRINGID("Animator");
+						characterAnimationComponent->currentAnimationID = STRING_TO_STRINGID("mixamo.com");
 
 						m_ecsManager->AddComponentToEntity(characterEntity, characterTransformComponent);
+						m_ecsManager->AddComponentToEntity(characterEntity, characterSkeletonComponent);
 						m_ecsManager->AddComponentToEntity(characterEntity, characterMeshComponent);
+						m_ecsManager->AddComponentToEntity(characterEntity, characterAnimationComponent);
 					}
 
-					position += glm::vec3(-15.0f, 0, 15.0f);
+					position += glm::vec3(-15.0f, 0, 0.0f);
 				}
 			}
 
@@ -179,7 +188,12 @@ namespace BaldLion
 				ECS::ECSRenderSystem* renderSystem = MemoryManager::New<ECS::ECSRenderSystem>("ECS RenderSystem", AllocationType::FreeList_ECS,
 					"ECS RenderSystem", renderSystemSignature, m_ecsManager);
 
+				const ECS::ECSSignature animationSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::Animation, ECS::ECSComponentID::Skeleton);
+
+				ECS::ECSAnimationSystem* animationSystem = MemoryManager::New<ECS::ECSAnimationSystem>("ECS AnimationSystem", AllocationType::FreeList_ECS, "ECS AnimationSystem", animationSystemSignature, m_ecsManager);
+
 				m_ecsManager->AddSystem(cameraMovementSystem);
+				//m_ecsManager->AddSystem(animationSystem);
 				m_ecsManager->AddSystem(renderSystem);
 			}
 
@@ -215,12 +229,7 @@ namespace BaldLion
 
 			{	
 				m_ecsManager->UpdateSystems(timeStep);
-			}
-			
-			{
-				//OPTICK_CATEGORY("CameraController::OnUpdate", Optick::Category::Animation);
-				//Animation::AnimationManager::OnParallelUpdate(timeStep);
-			}			
+			}	
 			
 			//Waiting for animation jobs
 			JobManagement::JobManager::WaitForJobs();

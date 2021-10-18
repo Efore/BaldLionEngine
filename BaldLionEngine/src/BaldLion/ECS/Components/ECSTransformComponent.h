@@ -22,8 +22,7 @@ namespace BaldLion {
 
 			const glm::mat4 GetTransformMatrix() const {
 
-				BL_DEEP_PROFILE_SCOPE("GetTransformMatrix", Optick::Category::Rendering);
-				return glm::translate(glm::mat4(1.0f), position) * glm::mat4_cast(rotation) * glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
+				return glm::translate(glm::mat4(1.0f), position) * glm::mat4_cast(rotation) * glm::scale(glm::mat4(1.0f), scale);
 			}
 
 

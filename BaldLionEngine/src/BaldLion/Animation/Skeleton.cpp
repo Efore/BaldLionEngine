@@ -6,14 +6,14 @@ namespace BaldLion {
 	namespace Animation {
 
 
-		Skeleton::Skeleton(const DynamicArray<Animation::Joint>& joints) : joints(std::move(joints))
+		Skeleton::Skeleton(const DynamicArray<Animation::Joint>& joints) : m_joints(std::move(joints))
 		{
 
 		}
 
 		Skeleton::~Skeleton()
 		{
-			joints.Delete();
+			m_joints.Delete();
 		}
 	}
 }

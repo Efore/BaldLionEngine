@@ -123,6 +123,7 @@ namespace BaldLion
 			s_rendererPlatformInterface->SetClearColor({ 0.3f, 0.3f, 0.8f, 1.0f });
 
 			DrawBatchedMeshes();
+			DrawDynamicMeshes();
 		}
 
 		void Renderer::EndScene()
@@ -221,7 +222,7 @@ namespace BaldLion
 				if (s_shadowCastingMeshes[i].skeletonComponent != nullptr)
 				{
 					VertexBuffer* boneDataVertexBuffer = VertexBuffer::Create(s_shadowCastingMeshes[i].skeletonComponent->boneData[0].GetFirstElement(), 
-						(ui32)(s_shadowCastingMeshes[i].skeletonComponent->boneData.Size() * sizeof(VertexBoneData)));
+						(ui32)(s_shadowCastingMeshes[i].skeletonComponent->boneData.Size() * sizeof(VertexBone)));
 
 					boneDataVertexBuffer->SetLayout({
 						{ ShaderDataType::Int3,		"vertex_joint_ids" },
@@ -288,7 +289,7 @@ namespace BaldLion
 				if (s_dynamicMeshes[i].skeletonComponent != nullptr)
 				{
 					VertexBuffer* boneDataVertexBuffer = VertexBuffer::Create(s_dynamicMeshes[i].skeletonComponent->boneData[0].GetFirstElement(),
-						(ui32)(s_dynamicMeshes[i].skeletonComponent->boneData.Size() * sizeof(VertexBoneData)));
+						(ui32)(s_dynamicMeshes[i].skeletonComponent->boneData.Size() * sizeof(VertexBone)));
 
 					boneDataVertexBuffer->SetLayout({
 						{ ShaderDataType::Int3,		"vertex_joint_ids" },
@@ -310,7 +311,7 @@ namespace BaldLion
 					}
 				}					
 				
-				Draw(vertexArray, s_dynamicMeshes[i].meshComponent->material->GetShader(), s_dynamicMeshes[i].meshComponent->material->GetReceiveShadows());
+				Draw(vertexArray, s_dynamicMeshes[i].meshComponent->material->GetShader(), s_dynamicMeshes[i].meshComponent->material->GetReceiveShadows(), s_dynamicMeshes[i].transformMatrix);
 
 				s_dynamicMeshes[i].meshComponent->material->Unbind();
 

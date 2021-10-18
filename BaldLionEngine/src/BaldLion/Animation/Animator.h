@@ -17,7 +17,7 @@ namespace BaldLion
 			~Animator();
 
 			const AnimationData* GetAnimation(const StringId animationID) const;
-			const StringId GetAnimatorID() { return m_animatorID; } const;
+			const StringId GetAnimatorID() const { return m_animatorID; } ;
 
 		private:	
 

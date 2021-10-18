@@ -286,7 +286,7 @@ namespace BaldLion
 
 		void Model::FillVertexWeightData(const aiMesh* aimesh,
 			const HashTable<StringId, ui32>& jointMapping,
-			DynamicArray<VertexBoneData>& vertices)
+			DynamicArray<VertexBone>& vertices)
 		{
 			ui32* jointsAssigned = new ui32[aimesh->mNumVertices]{ 0 };
 
@@ -368,14 +368,13 @@ namespace BaldLion
 			Material* meshMaterial = MaterialLibrary::Load(aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data, &materialProperties);
 
 			meshMaterial->AssignShader();
-			//GeometryUtils::AABB::AiAABBToAABB(aimesh->mAABB), !aimesh->HasBones()
+			
 			Mesh* mesh = MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer,  meshMaterial);
 
-			mesh->SetUpMesh(vertices, indices);
 
 			if (aimesh->HasBones())
 			{
-				DynamicArray<VertexBoneData> verticesBoneData(AllocationType::Linear_Frame, aimesh->mNumVertices);
+				DynamicArray<VertexBone> verticesBoneData(AllocationType::Linear_Frame, aimesh->mNumVertices);
 				DynamicArray<Animation::Joint> jointsData(AllocationType::FreeList_Renderer, aimesh->mNumBones);
 
 				verticesBoneData.Populate();
@@ -391,12 +390,13 @@ namespace BaldLion
 
 				FillVertexWeightData(aimesh, jointMapping, verticesBoneData);
 
+				mesh->SetSkeleton(MemoryManager::New<Animation::Skeleton>("Skeleton", AllocationType::FreeList_Renderer, jointsData));		
+				mesh->SetVertexBones(verticesBoneData);
 
-				//Animation::Skeleton* skeleton = MemoryManager::New<Animation::Skeleton>("Skeleton", AllocationType::FreeList_Renderer, jointsData);
-				
-
-				//Animation::AnimationManager::GenerateAnimator(aiscene, jointMapping, skeleton);
+				Animation::AnimationManager::GenerateAnimator(aiscene, jointMapping);
 			}
+
+			mesh->SetUpMesh(vertices, indices);
 
 			return mesh;
 		}
