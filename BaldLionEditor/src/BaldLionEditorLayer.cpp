@@ -158,7 +158,7 @@ namespace BaldLion
 						ECS::ECSTransformComponent* characterTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
 							position,
 							MathUtils::QuaternionIdentity,
-							glm::vec3(0.1f));
+							glm::vec3(1.0f));
 
 						ECS::ECSMeshComponent* characterMeshComponent = character->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager,false);
 						ECS::ECSSkeletonComponent* characterSkeletonComponent = character->GetSubMeshes()[j]->GenerateSkeletonComponent(m_ecsManager);
@@ -173,7 +173,7 @@ namespace BaldLion
 						m_ecsManager->AddComponentToEntity(characterEntity, characterAnimationComponent);
 					}
 
-					position += glm::vec3(-15.0f, 0, 0.0f);
+					position += glm::vec3(-150.0f, 0, 0.0f);
 				}
 			}
 
@@ -193,7 +193,7 @@ namespace BaldLion
 				ECS::ECSAnimationSystem* animationSystem = MemoryManager::New<ECS::ECSAnimationSystem>("ECS AnimationSystem", AllocationType::FreeList_ECS, "ECS AnimationSystem", animationSystemSignature, m_ecsManager);
 
 				m_ecsManager->AddSystem(cameraMovementSystem);
-				//m_ecsManager->AddSystem(animationSystem);
+				m_ecsManager->AddSystem(animationSystem);
 				m_ecsManager->AddSystem(renderSystem);
 			}
 

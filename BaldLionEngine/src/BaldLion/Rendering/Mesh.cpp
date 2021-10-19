@@ -11,7 +11,7 @@ namespace BaldLion
 	namespace Rendering
 	{
 		Mesh::Mesh(Material* material) :
-			m_material(material)
+			m_material(material), m_skeleton(nullptr)
 		{	
 		}
 
@@ -62,6 +62,15 @@ namespace BaldLion
 		void Mesh::Draw() const
 		{			
 			m_material->Bind();
+
+			if (m_skeleton != nullptr)
+			{
+				for (ui32 i = 0; i < m_skeleton->GetJoints().Size(); ++i)
+				{
+					m_material->GetShader()->SetUniform(STRING_TO_STRINGID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &(m_skeleton->GetJoints()[i].jointAnimationTransform));
+				}
+			}
+
 			Renderer::Draw(m_vertexArray, m_material->GetShader(), m_material->GetReceiveShadows(), glm::mat4(1.0f));
 			m_material->Unbind();			
 		}

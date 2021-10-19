@@ -16,7 +16,7 @@
 #define BL_PROFILE_SCOPE(Name, Category) 
 #endif
 
-#define DEEP_PROFILE 1
+#define DEEP_PROFILE 0
 
 #if DEEP_PROFILE
 	#define BL_DEEP_PROFILE_FUNCTION() BL_PROFILE_FUNCTION()

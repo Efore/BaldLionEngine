@@ -77,7 +77,7 @@ namespace BaldLion
 			//---------------------------------------------------------------------------------------
 
 			AnimationData(const glm::mat4& inverseRootTransform, const StringId animationName, const DynamicArray<KeyFrame>& animationFrames, const float animationLenght) :
-				InverseRootTransform(InverseRootTransform),
+				InverseRootTransform(inverseRootTransform),
 				AnimationName(animationName), 
 				AnimationFrames(animationFrames), 
 				AnimationLength(animationLenght)

@@ -237,9 +237,9 @@ namespace BaldLion
 
 					const DynamicArray<Animation::Joint>* joints = &(s_shadowCastingMeshes[i].skeletonComponent->joints);
 					
-					for (ui32 i = 0; i < joints->Size(); ++i)
+					for (ui32 j = 0; j < joints->Size(); ++j)
 					{
-						s_depthMapSkinnedShader->SetUniform(STRING_TO_STRINGID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &((*joints)[i].jointAnimationTransform));
+						s_depthMapSkinnedShader->SetUniform(STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &((*joints)[j].jointAnimationTransform));
 					}
 
 					s_rendererPlatformInterface->DrawVertexArray(vertexArray);
@@ -305,9 +305,9 @@ namespace BaldLion
 
 					const DynamicArray<Animation::Joint>* joints = &(s_dynamicMeshes[i].skeletonComponent->joints);
 
-					for (ui32 i = 0; i < joints->Size(); ++i)
+					for (ui32 j = 0; j < joints->Size(); ++j)
 					{
-						s_depthMapSkinnedShader->SetUniform(STRING_TO_STRINGID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &((*joints)[i].jointAnimationTransform));
+						s_dynamicMeshes[i].meshComponent->material->GetShader()->SetUniform(STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &((*joints)[j].jointAnimationTransform));
 					}
 				}					
 				
@@ -391,12 +391,14 @@ namespace BaldLion
 
 		void Renderer::AddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
 		{
+			BL_PROFILE_FUNCTION();
 			std::lock_guard<std::mutex> frustrumCullingGuard(s_shadowCastingMeshesMutex);
 			s_shadowCastingMeshes.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
 		}		
 
 		void Renderer::AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
 		{
+			BL_PROFILE_FUNCTION();
 			std::lock_guard<std::mutex> frustrumCullingGuard(s_dynamicMeshesToRenderMutex);
 			s_dynamicMeshes.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
 		}

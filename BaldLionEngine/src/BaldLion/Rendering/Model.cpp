@@ -371,7 +371,6 @@ namespace BaldLion
 			
 			Mesh* mesh = MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer,  meshMaterial);
 
-
 			if (aimesh->HasBones())
 			{
 				DynamicArray<VertexBone> verticesBoneData(AllocationType::Linear_Frame, aimesh->mNumVertices);

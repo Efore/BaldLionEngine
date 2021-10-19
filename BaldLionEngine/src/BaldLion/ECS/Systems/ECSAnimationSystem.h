@@ -13,7 +13,7 @@ namespace BaldLion {
 		{
 		public:
 			ECSAnimationSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager) :
-				ECSSystem(systemName, signature, ecsManager, true, false) {}
+				ECSSystem(systemName, signature, ecsManager, true, true) {}
 
 			virtual void OnStart() override {}
 			virtual void UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp) override;
