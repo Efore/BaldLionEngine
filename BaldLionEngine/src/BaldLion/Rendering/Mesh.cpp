@@ -88,6 +88,26 @@ namespace BaldLion
 			meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices);
 			meshComponent->indices = DynamicArray<ui32>(AllocationType::FreeList_ECS, m_geometryData->indices);
 
+			glm::vec3 minPointInLocalSpace = meshComponent->vertices[0].position;
+			glm::vec3 maxPointInLocalSpace = meshComponent->vertices[0].position;
+
+			{				
+				for (ui32 i = 0; i < meshComponent->vertices.Size(); ++i)
+				{
+					const glm::vec3 vertexPosInWorldSpace = meshComponent->vertices[i].position;
+
+					if (vertexPosInWorldSpace.x > maxPointInLocalSpace.x)	maxPointInLocalSpace.x = vertexPosInWorldSpace.x;
+					if (vertexPosInWorldSpace.y > maxPointInLocalSpace.y)	maxPointInLocalSpace.y = vertexPosInWorldSpace.y;
+					if (vertexPosInWorldSpace.z > maxPointInLocalSpace.z)	maxPointInLocalSpace.z = vertexPosInWorldSpace.z;
+
+					if (vertexPosInWorldSpace.x < minPointInLocalSpace.x)	minPointInLocalSpace.x = vertexPosInWorldSpace.x;
+					if (vertexPosInWorldSpace.y < minPointInLocalSpace.y)	minPointInLocalSpace.y = vertexPosInWorldSpace.y;
+					if (vertexPosInWorldSpace.z < minPointInLocalSpace.z)	minPointInLocalSpace.z = vertexPosInWorldSpace.z;
+				}
+			}
+
+			meshComponent->localAABB = { minPointInLocalSpace , maxPointInLocalSpace };
+
 			return meshComponent;
 		}
 

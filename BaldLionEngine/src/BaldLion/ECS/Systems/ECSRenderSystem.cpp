@@ -30,29 +30,21 @@ namespace BaldLion {
 
 			const glm::mat4 meshTransformMatrix = meshTransform->GetTransformMatrix();
 
-			glm::vec3 minPointInWorldSpace = glm::vec3(meshTransformMatrix * glm::vec4(meshComponent->vertices[0].position, 1.0f));
-			glm::vec3 maxPointInWorldSpace = glm::vec3(meshTransformMatrix * glm::vec4(meshComponent->vertices[0].position, 1.0f));
+			const glm::vec3 minPointInWorldSpace = glm::vec3(meshTransformMatrix * glm::vec4(meshComponent->localAABB.minPoint, 1.0f));
+			const glm::vec3 maxPointInWorldSpace = glm::vec3(meshTransformMatrix * glm::vec4(meshComponent->localAABB.maxPoint, 1.0f));
 
-			
-			for (ui32 i = 0; i < meshComponent->vertices.Size(); ++i)
-			{
-				const glm::vec3 vertexPosInWorldSpace = glm::vec3(meshTransformMatrix * glm::vec4(meshComponent->vertices[i].position, 1.0f));
+			const float minX = minPointInWorldSpace.x < maxPointInWorldSpace.x ? minPointInWorldSpace.x : maxPointInWorldSpace.x;
+			const float minY = minPointInWorldSpace.y < maxPointInWorldSpace.y ? minPointInWorldSpace.y : maxPointInWorldSpace.y;
+			const float minZ = minPointInWorldSpace.z < maxPointInWorldSpace.z ? minPointInWorldSpace.z : maxPointInWorldSpace.z;
 
-				if (vertexPosInWorldSpace.x > maxPointInWorldSpace.x)	maxPointInWorldSpace.x = vertexPosInWorldSpace.x;
-				if (vertexPosInWorldSpace.y > maxPointInWorldSpace.y)	maxPointInWorldSpace.y = vertexPosInWorldSpace.y;
-				if (vertexPosInWorldSpace.z > maxPointInWorldSpace.z)	maxPointInWorldSpace.z = vertexPosInWorldSpace.z;
+			const float maxX = minPointInWorldSpace.x > maxPointInWorldSpace.x ? minPointInWorldSpace.x : maxPointInWorldSpace.x;
+			const float maxY = minPointInWorldSpace.y > maxPointInWorldSpace.y ? minPointInWorldSpace.y : maxPointInWorldSpace.y;
+			const float maxZ = minPointInWorldSpace.z > maxPointInWorldSpace.z ? minPointInWorldSpace.z : maxPointInWorldSpace.z;
 
-				if (vertexPosInWorldSpace.x < minPointInWorldSpace.x)	minPointInWorldSpace.x = vertexPosInWorldSpace.x;
-				if (vertexPosInWorldSpace.y < minPointInWorldSpace.y)	minPointInWorldSpace.y = vertexPosInWorldSpace.y;
-				if (vertexPosInWorldSpace.z < minPointInWorldSpace.z)	minPointInWorldSpace.z = vertexPosInWorldSpace.z;
-			}
-			
-
-			const AABB meshAABB = { minPointInWorldSpace, maxPointInWorldSpace };
+			const AABB meshAABB = { glm::vec3(minX,minY,minZ), glm::vec3(maxX,maxY,maxZ) };
 			
 			if (ECS::SingletonComponents::ECSProjectionCameraSingleton::IsAABBVisible(meshAABB))
-			{	
-				BL_PROFILE_SCOPE("Distributing mesh data", Optick::Category::Rendering);
+			{					
 				if (skeletonComponent == nullptr && meshComponent->isStatic)
 				{							
 					Renderer::AddStaticMeshToBatch(meshComponent, meshTransform);					
