@@ -174,7 +174,7 @@ namespace BaldLion
 
 		for (ui32 i = 0; i < m_size; ++i)
 		{
-			m_elements[m_size].~T();
+			m_elements[i].~T();
 		}
 
 		m_size = 0;
@@ -198,7 +198,7 @@ namespace BaldLion
 
 		for (ui32 i = 0; i < m_size; ++i)
 		{
-			m_elements[m_size].~T();
+			m_elements[i].~T();
 		}
 
 		DeleteNoDestructor();
