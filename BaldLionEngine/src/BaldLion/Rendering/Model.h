@@ -44,11 +44,11 @@ namespace BaldLion
 
 			static void GenerateJointMapping(const aiMesh *aimesh,
 				HashTable<StringId, ui32>& jointMapping,
-				HashTable<StringId, glm::mat4>& jointOffsetMapping);
+				HashMap<StringId, glm::mat4>& jointOffsetMapping);
 
 			static void FillJointData(HashTable<StringId, ui32>& jointMapping,
 				DynamicArray<Animation::Joint>& jointData,
-				const HashTable<StringId, glm::mat4>& jointOffsetMapping,
+				const HashMap<StringId, glm::mat4>& jointOffsetMapping,
 				ui32& currentID,
 				const int32_t parentID,
 				const aiNode* node);

@@ -1428,6 +1428,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\SceneManagement\Scene.h" />
+    <ClInclude Include="src\BaldLion\SceneManagement\SceneManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1586,5 +1588,7 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\SceneManagement\Scene.cpp" />
+    <ClCompile Include="src\BaldLion\SceneManagement\SceneManager.cpp" />
   </ItemGroup>
 </Project>

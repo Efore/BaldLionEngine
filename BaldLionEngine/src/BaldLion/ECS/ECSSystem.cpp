@@ -1,7 +1,7 @@
 #include "blpch.h"
 #include "ECSSystem.h"
 #include "ECSManager.h"
-#include "BaldLion/Core/Containers/HashTable.h"
+#include "BaldLion/Core/Containers/HashMap.h"
 #include "BaldLion/Core/JobManagement/JobManager.h"
 
 namespace BaldLion {
@@ -17,14 +17,19 @@ namespace BaldLion {
 		{
 			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_ECS, 100);
 			
-			for (HashTable<ECSEntityID, ECSSignature>::Iterator iterator = m_ecsManager->GetEntitySignatures().Begin(); iterator != m_ecsManager->GetEntitySignatures().End(); ++iterator)
+			for (HashMap<ECSEntityID, ECSSignature>::Iterator iterator = m_ecsManager->GetEntitySignatures().Begin(); iterator != m_ecsManager->GetEntitySignatures().End(); ++iterator)
 			{
-				if ((iterator.GetValue() & signature) == signature)
+				if ((iterator.GetValue() & m_signature) == m_signature)
 				{
 					ECSComponentLookUp* componentLookUp = &(m_ecsManager->GetEntityComponents().Get(iterator.GetKey()));
 					m_componentLookUps.PushBack(componentLookUp); 
 				}
 			}
+		}
+
+		ECSSystem::~ECSSystem()
+		{
+			m_componentLookUps.Delete();
 		}
 
 		void ECSSystem::OnUpdate(TimeStep timeStep)
@@ -58,9 +63,30 @@ namespace BaldLion {
 			}
 		}
 
-		ECSSystem::~ECSSystem()
+		void ECSSystem::OnEndOfFrame()
 		{
-			m_componentLookUps.Delete();
+			if (m_refreshComponentLookUps) {
+
+				m_componentLookUps.ClearNoDestructor();
+
+				for (HashMap<ECSEntityID, ECSSignature>::Iterator iterator = m_ecsManager->GetEntitySignatures().Begin(); iterator != m_ecsManager->GetEntitySignatures().End(); ++iterator)
+				{
+					if ((iterator.GetValue() & m_signature) == m_signature)
+					{
+						ECSComponentLookUp* componentLookUp = &(m_ecsManager->GetEntityComponents().Get(iterator.GetKey()));
+						m_componentLookUps.PushBack(componentLookUp);
+					}
+				}
+
+				m_refreshComponentLookUps = false;
+			}
+		}
+
+		void ECSSystem::OnEntityModified(ECSSignature entitySignature)
+		{
+			if ((entitySignature & m_signature) == m_signature) {
+				m_refreshComponentLookUps = true;
+			}			
 		}
 	}
 }

@@ -15,8 +15,8 @@ namespace BaldLion {
 
 		ECSManager::ECSManager()
 		{
-			m_entityComponents = HashTable<ECSEntityID, ECSComponentLookUp>(AllocationType::FreeList_ECS,100);
-			m_entitySignatures = HashTable<ECSEntityID, ECSSignature>(AllocationType::FreeList_ECS, 100);
+			m_entityComponents = HashMap<ECSEntityID, ECSComponentLookUp>(AllocationType::FreeList_ECS,100);
+			m_entitySignatures = HashMap<ECSEntityID, ECSSignature>(AllocationType::FreeList_ECS, 100);
 			
 			m_systems = DynamicArray<ECSSystem*>(AllocationType::FreeList_ECS,100);
 
@@ -75,6 +75,11 @@ namespace BaldLion {
 
 			ECSComponentLookUp newComponentLookUp;
 			m_entityComponents.Emplace(entityID, std::move(newComponentLookUp));
+
+			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			{
+				m_systems[i]->OnEntityModified(m_entitySignatures.Get(entityID));
+			}
 		}
 
 		void ECSManager::AddComponentToEntity(ECSEntityID entityID, ECSComponent* component)
@@ -109,6 +114,14 @@ namespace BaldLion {
 			}
 		}
 
+		void ECSManager::EndOfFrame()
+		{
+			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			{
+				m_systems[i]->OnEndOfFrame();
+			}
+		}
+
 		void ECSManager::StopSystems()
 		{
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
@@ -119,6 +132,11 @@ namespace BaldLion {
 
 		void ECSManager::RemoveEntity(ECSEntityID entityID)
 		{
+			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			{
+				m_systems[i]->OnEntityModified(m_entitySignatures.Get(entityID));
+			}
+
 			m_entityComponents.Remove(entityID);
 			m_entitySignatures.Remove(entityID);
 		}
@@ -131,6 +149,11 @@ namespace BaldLion {
 
 			m_entitySignatures.Get(entityID) &= signatureToRemove;			
 			m_entityComponents.Get(entityID).Set(componentID, nullptr);
+
+			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			{
+				m_systems[i]->OnEntityModified(m_entitySignatures.Get(entityID));
+			}
 		}
 
 		void ECSManager::RemoveSystem(ECSSystem* system)

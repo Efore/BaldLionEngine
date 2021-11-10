@@ -21,13 +21,8 @@ namespace BaldLion
 
 			HashMapNode<K, V>* nextNode;
 
+			HashMapNode(const hashType hashedKey, const K& key) : hashedMapKey(hashedKey), nodeKey(key), nextNode(nullptr) { }
 			HashMapNode(const hashType hashedKey, const K& key, V&& value) : hashedMapKey(hashedKey), nodeKey(key), nodeValue(std::move(value)), nextNode(nullptr)  { }
-
-			HashMapNode::~HashMapNode() {
-
-				nodeKey.~K();
-				nodeValue.~V();
-			}
 		};
 
 		struct Iterator
@@ -102,6 +97,9 @@ namespace BaldLion
 			bool Contains(const K& key) const;			
 
 			void Emplace(const K& key, V&& value) noexcept;
+
+			template <typename... Args >
+			void Emplace(const K& key, Args&&... args) noexcept;
 
 			bool TryGet(const K& key, V& result);
 			const V& Get(const K& key) const;
@@ -234,7 +232,7 @@ namespace BaldLion
 	const V& BaldLion::HashMap<K, V>::Get(const K& key) const
 	{
 		const hashType hashedMapKey = std::hash<K>()(key);
-		HashMapNode<K, V>* node = FindNode(hashedMapKey);
+		const HashMapNode<K, V>* node = FindNode(hashedMapKey);
 
 		BL_ASSERT(node, "Key not contained");
 		return node->nodeValue;
@@ -299,6 +297,47 @@ namespace BaldLion
 	}
 
 	template <typename K, typename V>
+	template <typename... Args >
+	void BaldLion::HashMap<K, V>::Emplace(const K& key, Args&&... args) noexcept
+	{
+		const float ratio = (float)(++m_size) / (float)(m_capacity);
+
+		if (ratio > 0.75f)
+		{
+			//BL_LOG_CORE_INFO("Need reallocation");
+			Reallocate((ui32)(m_capacity * 1.5f));
+			m_lastElementIndex = m_table.Capacity();
+		}
+
+		const hashType hashedMapKey = std::hash<K>()(key);
+
+		HashMapNode<K, V>* newNode = MemoryManager::New<HashMapNode<K, V>>("HashMapNode", m_allocationType, hashedMapKey, key);
+		new (&(newNode->nodeValue)) V(std::forward<Args>(args)...);
+
+		const hashType tableIndex = hashedMapKey % m_capacity;
+
+		if (m_table[tableIndex] == nullptr)
+		{
+			m_table[tableIndex] = newNode;
+		}
+		else {
+
+			HashMapNode<K, V>* nodeIterator = m_table[tableIndex];
+
+			while (nodeIterator->nextNode != nullptr)
+			{
+				nodeIterator = nodeIterator->nextNode;
+			}
+
+			nodeIterator->nextNode = newNode;
+		}
+
+		if (m_firstElementIndex == -1 || tableIndex < m_firstElementIndex)
+			m_firstElementIndex = (i32)tableIndex;
+	}
+
+
+	template <typename K, typename V>
 	bool BaldLion::HashMap<K, V>::Remove(const K& key)
 	{
 		const hashType hashedMapKey = std::hash<K>()(key);
@@ -326,7 +365,8 @@ namespace BaldLion
 			prevNodeIterator->nextNode = node->nextNode;
 		}
 
-		MemoryManager::Delete(nodeIterator);
+		MemoryManager::Delete(node);
+
 		--m_size;
 
 		if (tableIndex == m_firstElementIndex)

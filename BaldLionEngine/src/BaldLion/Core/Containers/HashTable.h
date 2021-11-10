@@ -19,12 +19,7 @@ namespace BaldLion
 			K nodeKey;
 			V nodeValue;
 
-			HashTableNode() : nodeValue(V()) { }
-
-			HashTableNode::~HashTableNode() {
-
-				nodeValue.~V();
-			}
+			HashTableNode() : nodeValue(V()) { }			
 		};
 
 		struct Iterator
@@ -85,6 +80,9 @@ namespace BaldLion
 			bool Contains(const K& key) const;			
 
 			void Emplace(const K& key, V&& value) noexcept;
+
+			template <typename... Args >
+			void Emplace(const K& key, Args&&... args) noexcept;
 
 			bool TryGet(const K& key, V& result);
 			bool TryGet(const K& key, V& result) const;
@@ -286,6 +284,39 @@ namespace BaldLion
 		node.hashedKey = hashedKey;
 		node.nodeKey = key;
 		node.nodeValue = std::move(value);
+
+		if (m_firstElementIndex == -1 || tableIndex < m_firstElementIndex)
+			m_firstElementIndex = (i32)tableIndex;
+	}
+
+	template <typename K, typename V>
+	template <typename... Args >
+	void BaldLion::HashTable<K, V>::Emplace(const K& key, Args&&... args) noexcept
+	{
+		const float ratio = (float)(++m_size) / (float)(m_capacity);
+
+		if (ratio > 0.75f)
+		{
+			//BL_LOG_CORE_INFO("Need reallocation");
+			Reallocate((ui32)(m_capacity * 1.5f));
+		}
+
+		const hashType hashedKey = std::hash<K>()(key);
+		hashType tableIndex = hashedKey % m_capacity;
+
+		while (m_table[tableIndex].used)
+		{
+			tableIndex = (tableIndex + 1) % m_capacity;
+		}
+
+		//BL_LOG_CORE_INFO("found free node");
+
+		HashTableNode<K, V>& node = m_table[tableIndex];
+		node.used = true;
+		node.hashedKey = hashedKey;
+		node.nodeKey = key;
+
+		new (&node.nodeValue) V(std::forward<Args>(args)...);
 
 		if (m_firstElementIndex == -1 || tableIndex < m_firstElementIndex)
 			m_firstElementIndex = (i32)tableIndex;

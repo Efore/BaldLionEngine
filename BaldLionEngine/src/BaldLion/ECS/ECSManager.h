@@ -4,6 +4,7 @@
 #include "ECSSystem.h"
 #include "ECSUtils.h"
 #include "BaldLion/Core/TimeStep.h"
+#include "BaldLion/Core/Containers/HashMap.h"
 #include "BaldLion/Core/Containers/HashTable.h"
 
 namespace BaldLion {
@@ -36,6 +37,7 @@ namespace BaldLion {
 			//Main loop
 			void StartSystems();
 			void UpdateSystems(TimeStep timeStep);
+			void EndOfFrame();
 			void StopSystems();
 
 			//Remove elements
@@ -43,11 +45,11 @@ namespace BaldLion {
 			void RemoveComponentFromEntity(ECSComponentID componentID, ECSEntityID entityID);
 			void RemoveSystem(ECSSystem* system);
 
-			HashTable<ECSEntityID, ECSComponentLookUp>& GetEntityComponents() { return m_entityComponents; }
-			const HashTable<ECSEntityID, ECSComponentLookUp>& GetEntityComponents() const { return m_entityComponents; }
+			HashMap<ECSEntityID, ECSComponentLookUp>& GetEntityComponents() { return m_entityComponents; }
+			const HashMap<ECSEntityID, ECSComponentLookUp>& GetEntityComponents() const { return m_entityComponents; }
 
-			HashTable<ECSEntityID, ECSSignature>& GetEntitySignatures() { return m_entitySignatures; }
-			const HashTable<ECSEntityID, ECSSignature>& GetEntitySignatures() const { return m_entitySignatures; }
+			HashMap<ECSEntityID, ECSSignature>& GetEntitySignatures() { return m_entitySignatures; }
+			const HashMap<ECSEntityID, ECSSignature>& GetEntitySignatures() const { return m_entitySignatures; }
 
 		private:
 
@@ -56,8 +58,8 @@ namespace BaldLion {
 
 		private:
 
-			HashTable<ECSEntityID, ECSComponentLookUp> m_entityComponents;
-			HashTable<ECSEntityID, ECSSignature> m_entitySignatures;
+			HashMap<ECSEntityID, ECSComponentLookUp> m_entityComponents;
+			HashMap<ECSEntityID, ECSSignature> m_entitySignatures;
 
 			DynamicArray<ECSSystem*> m_systems;
 

@@ -132,10 +132,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLionEditorLayer.h" />
+    <ClInclude Include="src\Panels\ComponentInspectorPanel.h" />
+    <ClInclude Include="src\Panels\Components\TransformComponentInspector.h" />
+    <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp" />
     <ClCompile Include="src\BaldLionEditorLayer.cpp" />
+    <ClCompile Include="src\Panels\ComponentInspectorPanel.cpp" />
+    <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaldLionEngine\BaldLionEngine.vcxproj">

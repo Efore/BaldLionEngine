@@ -241,7 +241,7 @@ namespace BaldLion
 			}
 		}
 
-		void Model::GenerateJointMapping(const aiMesh *aimesh, HashTable<StringId, ui32>& jointMapping, HashTable<StringId, glm::mat4>& jointOffsetMapping)
+		void Model::GenerateJointMapping(const aiMesh *aimesh, HashTable<StringId, ui32>& jointMapping, HashMap<StringId, glm::mat4>& jointOffsetMapping)
 		{
 			for (ui32 i = 0; i < aimesh->mNumBones; ++i)
 			{
@@ -252,7 +252,7 @@ namespace BaldLion
 
 		void Model::FillJointData(HashTable<StringId, ui32>& jointMapping,
 			DynamicArray<Animation::Joint>& jointsData,
-			const HashTable<StringId, glm::mat4>& jointOffsetMapping,
+			const HashMap<StringId, glm::mat4>& jointOffsetMapping,
 			ui32& currentID,
 			const int32_t parentID,
 			const aiNode* node)
@@ -380,7 +380,7 @@ namespace BaldLion
 				jointsData.Populate();
 
 				HashTable<StringId, ui32> jointMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);
-				HashTable<StringId, glm::mat4> jointOffsetMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);
+				HashMap<StringId, glm::mat4> jointOffsetMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);
 
 				GenerateJointMapping(aimesh, jointMapping, jointOffsetMapping);
 

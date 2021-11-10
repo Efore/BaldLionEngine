@@ -82,6 +82,38 @@ namespace BaldLion
 
 		void MemoryManager::Stop()
 		{
+			BL_LOG_CORE_INFO("Memory not freed:");
+
+			for (std::unordered_map<void*, AllocationInfo>::const_iterator it = s_allocationMap.begin(); it != s_allocationMap.end(); ++it) {
+				
+				switch (it->second.allocationType)
+				{
+				case AllocationType::FreeList_Main:
+					BL_LOG_CORE_INFO("FreeList Main Allocator");
+					break;
+				case AllocationType::FreeList_ECS:
+					BL_LOG_CORE_INFO("FreeList ECS Allocator");
+					break;
+				case AllocationType::FreeList_Renderer:
+					BL_LOG_CORE_INFO("FreeList Renderer Allocator");
+					break;
+				case AllocationType::Linear_Frame:
+					BL_LOG_CORE_INFO("LinearFrame Allocator");
+					break;
+				case AllocationType::Stack:
+					BL_LOG_CORE_INFO("Stack Allocator");
+					break;
+
+				default:
+					break;
+				}
+
+
+				BL_LOG_CORE_INFO(STRINGID_TO_STRING(it->second.allocationDescription));				
+				BL_LOG_CORE_INFO("Size: {0}",(it->second.allocationSize));
+				BL_LOG_CORE_INFO("---------------");
+			}
+
 			if (s_linearFrameAllocator != nullptr)
 			{
 				s_linearFrameAllocator->Delete();

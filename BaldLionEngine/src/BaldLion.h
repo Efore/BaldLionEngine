@@ -49,6 +49,7 @@
 #include "BaldLion/ECS/ComponentsSingleton/ECSProjectionCameraSingleton.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
 
+#include "BaldLion/SceneManagement/SceneManager.h"
 
 //---------------- Others ------------------
 

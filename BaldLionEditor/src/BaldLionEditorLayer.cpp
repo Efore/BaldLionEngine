@@ -11,7 +11,7 @@
 namespace BaldLion
 {
 	namespace Editor
-	{
+	{	
 		BaldLionEditorLayer::BaldLionEditorLayer()			
 		{
 			
@@ -19,11 +19,15 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::OnAttach()
 		{
-			BL_PROFILE_FUNCTION();
-			
+			BL_PROFILE_FUNCTION();		
+
 			//ECS setup
 
-			m_ecsManager = MemoryManager::New<ECS::ECSManager>("ECS Manager", AllocationType::FreeList_ECS);
+			SceneManagement::SceneManager::Init();
+			SceneManagement::SceneManager::AddScene("EditorScene", true);
+
+
+			m_ecsManager = SceneManagement::SceneManager::GetECSManager();
 
 			{//Camera setup
 
@@ -199,44 +203,25 @@ namespace BaldLion
 
 			m_ecsManager->StartSystems();
 
-			//END ECS setup
-
-
-
-			//for (ui32 i = 0; i < 3; ++i)
-			//{
-			//	initialTransform = glm::translate(initialTransform, glm::vec3(15, 0, 15));
-			//	auto model = MemoryManager::New<Rendering::Model>(std::string("Animated Model " + i).c_str(), AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx", glm::scale( initialTransform, glm::vec3(0.1f)));
-			//	model->SetUpModel();
-			//	//Renderer::RegisterModel(model);
-			//}
-
-			//initialTransform = glm::mat4(1.0f);
-			//initialTransform = glm::scale(initialTransform, glm::vec3(5.0f));
-
-				
+			//END ECS setup			
 		}
 
 		void BaldLionEditorLayer::OnDetach()
 		{
-			m_ecsManager->StopSystems();
-			MemoryManager::Delete(m_ecsManager);
+			SceneManagement::SceneManager::Stop();			
 		}
 
 		void BaldLionEditorLayer::OnUpdate(TimeStep timeStep)
 		{
 			BL_PROFILE_FUNCTION();
 
-			{	
-				m_ecsManager->UpdateSystems(timeStep);
-			}	
-			
-			//Waiting for animation jobs
-			JobManagement::JobManager::WaitForJobs();
+			SceneManagement::SceneManager::Update(timeStep);
 				
 			Renderer::BeginScene();			
 			Renderer::DrawScene();
 			Renderer::EndScene();		
+
+			SceneManagement::SceneManager::EndOfFrame();
 		}
 
 		void BaldLionEditorLayer::OnImGuiRender(TimeStep timeStep)

@@ -18,17 +18,24 @@ namespace BaldLion
 			virtual void OnStart() = 0;
 			virtual void OnUpdate(TimeStep timeStep);
 			virtual void OnStop() = 0;
+			virtual void OnEndOfFrame();
 
 			virtual void UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp) = 0;
 
+			void OnEntityModified(ECSSignature entitySignature);					
+
 		protected:
 
-			DynamicArray<ECSComponentLookUp*> m_componentLookUps;
 			ECSSignature m_signature;
+			DynamicArray<ECSComponentLookUp*> m_componentLookUps;
+
 			class ECSManager* m_ecsManager;
 			StringId m_systemName;
+
 			bool m_waitForUpdatesOperationsToFinish;			
 			bool m_parallelize;
+
+			bool m_refreshComponentLookUps;
 		};
 	}
 }
