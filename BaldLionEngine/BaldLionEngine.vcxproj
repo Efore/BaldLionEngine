@@ -176,6 +176,7 @@
     <ClInclude Include="src\BaldLion\Core\Window.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSAnimationComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSDirectionalLightComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSHierarchyComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSProjectionCameraComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSSkeletonComponent.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSComponentLookUp.h" />
+    <ClInclude Include="src\BaldLion\ECS\ECSEntity.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSManager.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSUtils.h" />

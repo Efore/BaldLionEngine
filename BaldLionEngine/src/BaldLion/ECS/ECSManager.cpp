@@ -6,6 +6,7 @@
 #include "BaldLion/ECS/Components/ECSDirectionalLightComponent.h"
 #include "BaldLion/ECS/Components/ECSAnimationComponent.h"
 #include "BaldLion/ECS/Components/ECSSkeletonComponent.h"
+#include "BaldLion/ECS/Components/ECSHierarchyComponent.h"
 
 namespace BaldLion {
 
@@ -17,7 +18,9 @@ namespace BaldLion {
 		{
 			m_entityComponents = HashMap<ECSEntityID, ECSComponentLookUp>(AllocationType::FreeList_ECS,100);
 			m_entitySignatures = HashMap<ECSEntityID, ECSSignature>(AllocationType::FreeList_ECS, 100);
-			
+			m_entitiyMap = HashMap<ECSEntityID, ECSEntity*>(AllocationType::FreeList_ECS, 100);
+
+			m_entities = DynamicArray<ECSEntity>(AllocationType::FreeList_ECS,100);			
 			m_systems = DynamicArray<ECSSystem*>(AllocationType::FreeList_ECS,100);
 
 			m_componentsPool = HashTable<ECSComponentID, void*>(AllocationType::FreeList_ECS, 100);
@@ -40,12 +43,18 @@ namespace BaldLion {
 
 			m_skeletonComponentPool = DynamicArray<ECSSkeletonComponent>(AllocationType::FreeList_ECS, 40);
 			m_componentsPool.Emplace(ECSComponentID::Skeleton, std::move(&m_skeletonComponentPool));
+
+			m_hierarchyComponentPool = DynamicArray<ECSHierarchyComponent>(AllocationType::FreeList_ECS, 40);
+			m_componentsPool.Emplace(ECSComponentID::Hierarchy, std::move(&m_hierarchyComponentPool));
+
+			m_entityIDProvider = 0;
 		}
 
 		ECSManager::~ECSManager()
 		{
 			m_entityComponents.Delete();
 			m_entitySignatures.Delete();
+			m_entities.Delete();
 
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
 			{
@@ -60,13 +69,19 @@ namespace BaldLion {
 			CleanComponentPool<ECSMeshComponent>(ECSComponentID::Mesh);
 			CleanComponentPool<ECSAnimationComponent>(ECSComponentID::Animation);
 			CleanComponentPool<ECSSkeletonComponent>(ECSComponentID::Skeleton);
+			CleanComponentPool<ECSHierarchyComponent>(ECSComponentID::Hierarchy);
 
 			m_componentsPool.Delete();
 		}
 
-		void ECSManager::AddEntity(ECSEntityID entityID)
+		ECSEntityID ECSManager::AddEntity(const char* entityName)
 		{
-			BL_ASSERT(!m_entitySignatures.Contains(entityID), "Entity already exists");
+			ECSEntityID entityID = m_entityIDProvider++;
+
+			ECSEntity newEntity(entityName, entityID);
+
+			m_entities.PushBack(std::move(newEntity));
+			m_entitiyMap.Emplace(entityID, &m_entities[m_entities.Size() - 1]);
 
 			ECSSignature newSignature;
 			newSignature.reset();
@@ -74,12 +89,14 @@ namespace BaldLion {
 			m_entitySignatures.Emplace(entityID, std::move(newSignature));
 
 			ECSComponentLookUp newComponentLookUp;
-			m_entityComponents.Emplace(entityID, std::move(newComponentLookUp));
+			m_entityComponents.Emplace(entityID, std::move(newComponentLookUp));			
 
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
 			{
 				m_systems[i]->OnEntityModified(m_entitySignatures.Get(entityID));
 			}
+
+			return entityID;
 		}
 
 		void ECSManager::AddComponentToEntity(ECSEntityID entityID, ECSComponent* component)
@@ -137,6 +154,14 @@ namespace BaldLion {
 				m_systems[i]->OnEntityModified(m_entitySignatures.Get(entityID));
 			}
 
+			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			{
+				if (m_entities[i].GetEntityID() == entityID) {
+					m_entities.RemoveAtFast(i);
+					break;
+				}				
+			}
+			
 			m_entityComponents.Remove(entityID);
 			m_entitySignatures.Remove(entityID);
 		}

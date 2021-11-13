@@ -1,5 +1,6 @@
 #pragma once
 #include <BaldLion.h>
+#include "Panels/SceneHierarchyPanel.h"
 
 namespace BaldLion
 {
@@ -29,6 +30,9 @@ namespace BaldLion
 			bool m_viewPortFocused;
 
 			ECS::ECSManager* m_ecsManager;
+
+			//Panels
+			SceneHierarchyPanel m_sceneHierarchyPanel;
 		};
 	}
 }

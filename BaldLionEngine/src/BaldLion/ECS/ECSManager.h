@@ -3,15 +3,14 @@
 #include "ECSComponent.h"
 #include "ECSSystem.h"
 #include "ECSUtils.h"
+#include "ECSEntity.h"
 #include "BaldLion/Core/TimeStep.h"
 #include "BaldLion/Core/Containers/HashMap.h"
 #include "BaldLion/Core/Containers/HashTable.h"
 
 namespace BaldLion {
 
-	namespace ECS {
-
-		
+	namespace ECS {		
 
 		//---------------------------------------------------------------------------------------------------
 
@@ -27,7 +26,7 @@ namespace BaldLion {
 			~ECSManager();
 
 			//Add elements
-			void AddEntity(ECSEntityID entityID);			
+			ECSEntityID AddEntity(const char* entityName);
 			void AddComponentToEntity(ECSEntityID entityID, ECSComponent* component);
 			void AddSystem(ECSSystem* system);			
 			
@@ -51,16 +50,26 @@ namespace BaldLion {
 			HashMap<ECSEntityID, ECSSignature>& GetEntitySignatures() { return m_entitySignatures; }
 			const HashMap<ECSEntityID, ECSSignature>& GetEntitySignatures() const { return m_entitySignatures; }
 
+			HashMap<ECSEntityID, ECSEntity*>& GetEntityMap() { return m_entitiyMap; }
+			const HashMap<ECSEntityID, ECSEntity*>& GetEntityMap() const { return m_entitiyMap; }
+
+			DynamicArray<ECSEntity>& GetEntities() { return m_entities; }
+			const DynamicArray<ECSEntity>& GetEntities() const { return m_entities; }
+
+
 		private:
 
 			template<typename ECSComponentType>
-			void CleanComponentPool(ECSComponentID componentID);
+			void CleanComponentPool(ECSComponentID componentID);			
 
 		private:
 
 			HashMap<ECSEntityID, ECSComponentLookUp> m_entityComponents;
 			HashMap<ECSEntityID, ECSSignature> m_entitySignatures;
 
+			HashMap<ECSEntityID, ECSEntity*> m_entitiyMap;
+
+			DynamicArray<ECSEntity> m_entities;
 			DynamicArray<ECSSystem*> m_systems;
 
 			//Pools
@@ -71,6 +80,9 @@ namespace BaldLion {
 			DynamicArray<class ECSMeshComponent> m_meshComponentPool;
 			DynamicArray<class ECSAnimationComponent> m_animationComponentPool;
 			DynamicArray<class ECSSkeletonComponent> m_skeletonComponentPool;
+			DynamicArray<class ECSHierarchyComponent> m_hierarchyComponentPool;
+
+			ui32 m_entityIDProvider;
 		};
 
 		template<typename ECSComponentType>

@@ -5,8 +5,6 @@
 namespace BaldLion
 {
 	namespace ECS {
-
-	
 		
 		class ECSComponent {
 

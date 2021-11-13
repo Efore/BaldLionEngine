@@ -3,6 +3,8 @@
 
 namespace BaldLion
 {
+	using namespace Memory;
+
 	template <typename T>
 	class DynamicArray
 	{

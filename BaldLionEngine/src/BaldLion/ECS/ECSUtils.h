@@ -17,6 +17,7 @@ namespace BaldLion
 			DirectionalLight,
 			PointLight,
 			Animation,
+			Hierarchy,
 
 			Count
 		};

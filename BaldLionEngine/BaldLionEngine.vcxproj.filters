@@ -1430,6 +1430,8 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\SceneManagement\Scene.h" />
     <ClInclude Include="src\BaldLion\SceneManagement\SceneManager.h" />
+    <ClInclude Include="src\BaldLion\ECS\ECSEntity.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSHierarchyComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">

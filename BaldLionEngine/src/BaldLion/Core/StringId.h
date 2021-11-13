@@ -1,4 +1,5 @@
 #pragma once
+#include "Core.h"
 
 typedef ui32 StringId; 
 

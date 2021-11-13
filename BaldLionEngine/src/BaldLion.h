@@ -34,6 +34,7 @@
 
 #include "BaldLion/Core/Containers/DynamicArray.h"
 #include "BaldLion/Core/Containers/HashTable.h"
+#include "BaldLion/Core/Containers/HashMap.h"
 
 //---------------- Threading ------------------
 
@@ -48,6 +49,7 @@
 #include "BaldLion/ECS/Components/ECSAnimationComponent.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSProjectionCameraSingleton.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
+#include "BaldLion/ECS/Components/ECSHierarchyComponent.h"
 
 #include "BaldLion/SceneManagement/SceneManager.h"
 

@@ -30,10 +30,8 @@ namespace BaldLion
 			m_ecsManager = SceneManagement::SceneManager::GetECSManager();
 
 			{//Camera setup
-
-				ECS::ECSEntityID cameraEntity = STRING_TO_STRINGID("Main Camera");
-
-				m_ecsManager->AddEntity(cameraEntity);
+				
+				ECS::ECSEntityID cameraEntity = m_ecsManager->AddEntity("Main Camera");
 
 				ECS::ECSTransformComponent* cameraTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
 					glm::vec3(0, 5, 10),
@@ -57,9 +55,7 @@ namespace BaldLion
 
 			{//Directional Light setup
 
-				ECS::ECSEntityID directionalLight = STRING_TO_STRINGID("Directional Light");
-
-				m_ecsManager->AddEntity(directionalLight);
+				ECS::ECSEntityID directionalLight = m_ecsManager->AddEntity("Directional Light");
 				ECS::ECSDirectionalLightComponent* directionalLightComponent = m_ecsManager->AddComponent<ECS::ECSDirectionalLightComponent>(
 					ECS::ECSComponentID::DirectionalLight,
 					glm::vec3(0.0f),
@@ -72,12 +68,9 @@ namespace BaldLion
 				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
 			}
 
+			
 			{//Plane setup
-
-				ECS::ECSEntityID planeEntity = STRING_TO_STRINGID("Plane");
-
-				m_ecsManager->AddEntity(planeEntity);
-
+				ECS::ECSEntityID planeEntity = m_ecsManager->AddEntity("Plane");
 				ECS::ECSTransformComponent* planeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
 					glm::vec3(0, 0, 0),
 					MathUtils::QuaternionIdentity,
@@ -110,7 +103,7 @@ namespace BaldLion
 				Rendering::PlaneMesh* plane = MemoryManager::New<Rendering::PlaneMesh>("Plane", AllocationType::FreeList_Renderer, shapeMaterial, 100.0f);
 				plane->SetUpPlane();
 
-				ECS::ECSMeshComponent* planeMeshComponent = plane->GenerateMeshComponent(m_ecsManager, true);
+				ECS::ECSMeshComponent* planeMeshComponent = plane->GenerateMeshComponent(m_ecsManager, true);				
 
 				m_ecsManager->AddComponentToEntity(planeEntity, planeMeshComponent);
 				m_ecsManager->AddComponentToEntity(planeEntity, planeTransformComponent);				
@@ -125,9 +118,8 @@ namespace BaldLion
 					treeModel->SetUpModel();
 
 					for (ui32 j = 0; j < treeModel->GetSubMeshes().Size(); ++j)
-					{
-						ECS::ECSEntityID treeEntity = STRING_TO_STRINGID(("Tree" + std::to_string(i) + std::to_string(j)).c_str());
-						m_ecsManager->AddEntity(treeEntity);
+					{					
+						ECS::ECSEntityID treeEntity = m_ecsManager->AddEntity(("Tree" + std::to_string(i) + std::to_string(j)).c_str());
 
 						ECS::ECSTransformComponent* treeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
 							position,
@@ -135,7 +127,7 @@ namespace BaldLion
 							glm::vec3(5.0f));
 					
 						ECS::ECSMeshComponent* treeMeshComponent = treeModel->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager, true);
-
+						
 						m_ecsManager->AddComponentToEntity(treeEntity, treeMeshComponent);
 						m_ecsManager->AddComponentToEntity(treeEntity, treeTransformComponent);
 					}
@@ -155,9 +147,8 @@ namespace BaldLion
 				for (ui32 i = 0; i < 2; ++i)
 				{
 					for (ui32 j = 0; j < character->GetSubMeshes().Size(); ++j)
-					{
-						ECS::ECSEntityID characterEntity = STRING_TO_STRINGID(("Character" + std::to_string(i) + std::to_string(j)).c_str());
-						m_ecsManager->AddEntity(characterEntity);
+					{	
+						ECS::ECSEntityID characterEntity = m_ecsManager->AddEntity(("Character" + std::to_string(i) + std::to_string(j)).c_str());
 
 						ECS::ECSTransformComponent* characterTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
 							position,
@@ -204,6 +195,8 @@ namespace BaldLion
 			m_ecsManager->StartSystems();
 
 			//END ECS setup			
+
+			m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
 		}
 
 		void BaldLionEditorLayer::OnDetach()
@@ -280,6 +273,8 @@ namespace BaldLion
 			ImGui::Text("Draw calls: %zu", Renderer::GetRenderStats().drawCalls);
 			ImGui::Text("Vertices: %zu", Renderer::GetRenderStats().vertices);
 			ImGui::End();
+
+			m_sceneHierarchyPanel.OnImGuiRender();
 		}
 
 		void BaldLionEditorLayer::OnEvent(Event& e)
