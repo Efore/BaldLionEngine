@@ -1,6 +1,7 @@
 #pragma once
 #include <BaldLion.h>
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ComponentInspectorPanel.h"
 
 namespace BaldLion
 {
@@ -33,6 +34,7 @@ namespace BaldLion
 
 			//Panels
 			SceneHierarchyPanel m_sceneHierarchyPanel;
+			ComponentInspectorPanel m_componentInspectorPanel;
 		};
 	}
 }

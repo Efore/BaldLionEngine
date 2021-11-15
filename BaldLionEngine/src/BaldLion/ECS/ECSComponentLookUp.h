@@ -22,29 +22,33 @@ namespace BaldLion
 				m_components[(ui32)index] = ptrToComponent;
 			}
 
-			template<typename ECSComponentType>
-			const ECSComponentType* Read(ECSComponentID componentID) const;
+			template<typename T>
+			const T* Read(ECSComponentID componentID) const;
 
-			template<typename ECSComponentType>
-			ECSComponentType* Write(ECSComponentID componentID);
+			template<typename T>
+			T* Write(ECSComponentID componentID);
+
+			ECSComponent* operator[](ui32 index) {
+				return m_components[index];
+			}
 
 		private:
 			ECSComponent* m_components[(ui32)ECSComponentID::Count];
 		};
 
-		template<typename ECSComponentType>
-		ECSComponentType* BaldLion::ECS::ECSComponentLookUp::Write(ECSComponentID componentID)
+		template<typename T>
+		T* BaldLion::ECS::ECSComponentLookUp::Write(ECSComponentID componentID)
 		{
-			static_assert(std::is_base_of<ECSComponent, ECSComponentType>::value, "T must inherit from ECSComponent");
-			return (ECSComponentType*)m_components[(ui32)componentID];
+			static_assert(std::is_base_of<ECSComponent, T>::value, "T must inherit from ECSComponent");
+			return (T*)m_components[(ui32)componentID];
 		}
 
-		template<typename ECSComponentType>
-		const ECSComponentType* BaldLion::ECS::ECSComponentLookUp::Read(ECSComponentID componentID) const
+		template<typename T>
+		const T* BaldLion::ECS::ECSComponentLookUp::Read(ECSComponentID componentID) const
 		{
-			static_assert(std::is_base_of<ECSComponent, ECSComponentType>::value, "T must inherit from ECSComponent");
+			static_assert(std::is_base_of<ECSComponent, T>::value, "T must inherit from ECSComponent");
 			
-			return (ECSComponentType*)m_components[(ui32)componentID];
+			return (T*)m_components[(ui32)componentID];
 		}
 	}
 }

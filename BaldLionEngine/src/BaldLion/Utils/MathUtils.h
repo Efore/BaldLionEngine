@@ -33,5 +33,6 @@ namespace BaldLion
 
 			return glm::vec3(transformMatrix[0][0], transformMatrix[0][1], transformMatrix[0][2]);
 		}
+
 	} 
 }

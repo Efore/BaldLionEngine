@@ -21,8 +21,8 @@ namespace BaldLion {
 				const ECSTransformComponent* cameraTransform = m_componentLookUps[i]->Read<ECSTransformComponent>(ECSComponentID::Transform);
 				ECSProjectionCameraComponent* projectionCamera = m_componentLookUps[i]->Write<ECSProjectionCameraComponent>(ECSComponentID::ProjectionCamera);
 
-				projectionCamera->cameraPitch = glm::degrees(glm::pitch(cameraTransform->rotation));
-				projectionCamera->cameraYaw = glm::degrees(glm::yaw(cameraTransform->rotation));
+				projectionCamera->cameraPitch = glm::degrees(cameraTransform->rotation.x);
+				projectionCamera->cameraYaw = glm::degrees(cameraTransform->rotation.y);
 			}
 		}
 
@@ -40,7 +40,7 @@ namespace BaldLion {
 			CalculateCameraRotation(timeStep, projectionCamera->cameraRotationSpeed, projectionCamera->prevX, projectionCamera->prevY, projectionCamera->cameraYaw, projectionCamera->cameraPitch);
 
 			cameraTransform->position += cameraMovement;
-			cameraTransform->rotation = glm::quat_cast(glm::yawPitchRoll(glm::radians(projectionCamera->cameraYaw), glm::radians(projectionCamera->cameraPitch), 0.0f));
+			cameraTransform->rotation = glm::vec3(glm::radians(projectionCamera->cameraPitch),glm::radians(projectionCamera->cameraYaw), 0.0f);
 
 			cameraMatrixTransform = cameraTransform->GetTransformMatrix();
 

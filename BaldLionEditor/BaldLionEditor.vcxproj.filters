@@ -11,5 +11,6 @@
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
     <ClInclude Include="src\Panels\ComponentInspectorPanel.h" />
     <ClInclude Include="src\Panels\Components\TransformComponentInspector.h" />
+    <ClInclude Include="src\Panels\Components\ComponentInspector.h" />
   </ItemGroup>
 </Project>

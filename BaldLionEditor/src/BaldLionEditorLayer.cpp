@@ -35,7 +35,7 @@ namespace BaldLion
 
 				ECS::ECSTransformComponent* cameraTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
 					glm::vec3(0, 5, 10),
-					MathUtils::QuaternionIdentity,
+					MathUtils::Vector3Zero,
 					glm::vec3(1.0f));
 
 				ECS::ECSProjectionCameraComponent* projectionCameraComponent = m_ecsManager->AddComponent<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentID::ProjectionCamera,
@@ -73,7 +73,7 @@ namespace BaldLion
 				ECS::ECSEntityID planeEntity = m_ecsManager->AddEntity("Plane");
 				ECS::ECSTransformComponent* planeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
 					glm::vec3(0, 0, 0),
-					MathUtils::QuaternionIdentity,
+					MathUtils::Vector3Zero,
 					glm::vec3(10.0f, 1.0f, 10.0f));
 
 				Texture* gridTexture = Renderer::GetTextureLibrary().Load("assets/textures/TextureGrid.png", TextureType::Texture2d);
@@ -123,7 +123,7 @@ namespace BaldLion
 
 						ECS::ECSTransformComponent* treeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
 							position,
-							MathUtils::QuaternionIdentity,
+							MathUtils::Vector3Zero,
 							glm::vec3(5.0f));
 					
 						ECS::ECSMeshComponent* treeMeshComponent = treeModel->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager, true);
@@ -152,7 +152,7 @@ namespace BaldLion
 
 						ECS::ECSTransformComponent* characterTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
 							position,
-							MathUtils::QuaternionIdentity,
+							MathUtils::Vector3Zero,
 							glm::vec3(0.5f));
 
 						ECS::ECSMeshComponent* characterMeshComponent = character->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager,false);
@@ -197,6 +197,7 @@ namespace BaldLion
 			//END ECS setup			
 
 			m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
+			m_componentInspectorPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);			
 		}
 
 		void BaldLionEditorLayer::OnDetach()
@@ -275,6 +276,7 @@ namespace BaldLion
 			ImGui::End();
 
 			m_sceneHierarchyPanel.OnImGuiRender();
+			m_componentInspectorPanel.OnImGuiRender();
 		}
 
 		void BaldLionEditorLayer::OnEvent(Event& e)
