@@ -4,13 +4,14 @@
     <ClCompile Include="src\BaldLionEditorLayer.cpp" />
     <ClCompile Include="src\BaldLionEditorApp.cpp" />
     <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
-    <ClCompile Include="src\Panels\ComponentInspectorPanel.cpp" />
+    <ClCompile Include="src\Panels\EntityPropertiesPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLionEditorLayer.h" />
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
-    <ClInclude Include="src\Panels\ComponentInspectorPanel.h" />
     <ClInclude Include="src\Panels\Components\TransformComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\ComponentInspector.h" />
+    <ClInclude Include="src\Panels\Components\DirectionalLightComponentInspector.h" />
+    <ClInclude Include="src\Panels\EntityPropertiesPanel.h" />
   </ItemGroup>
 </Project>

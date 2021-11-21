@@ -8,7 +8,7 @@ namespace BaldLion {
 
 	namespace Editor {
 
-		SceneHierarchyPanel::SceneHierarchyPanel(Scene* sceneContext) : m_sceneContext(sceneContext)
+		SceneHierarchyPanel::SceneHierarchyPanel(Scene* sceneContext) : m_sceneContext(sceneContext), m_selectedEntityID(0)
 		{
 
 		}

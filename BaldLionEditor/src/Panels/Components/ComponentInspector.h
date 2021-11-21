@@ -10,6 +10,31 @@ namespace BaldLion {
 		class ComponentInspector {
 
 		public:
+
+			static void BeginComponentRender(const char* componentName, float childHeight) {
+
+				ImGui::BeginChild(componentName, ImVec2(0, childHeight), true, ImGuiWindowFlags_MenuBar);
+
+				if (ImGui::BeginMenuBar())
+				{
+					if (ImGui::BeginMenu(componentName)) //name of the component here
+					{
+						if (ImGui::MenuItem("Remove component"))
+						{
+
+						}
+
+						ImGui::EndMenu();
+					}
+					ImGui::EndMenuBar();
+				}
+			}
+
+			static void EndComponentRender() {
+
+				ImGui::EndChild();
+			}
+
 			static void DrawVec3Handler(char const* label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f) 
 			{
 				ImGuiIO& io = ImGui::GetIO();
@@ -87,9 +112,10 @@ namespace BaldLion {
 
 				ImGui::PopID();
 			}
-
-
+			
 		};
+
+		
 
 	}
 }

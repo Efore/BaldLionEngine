@@ -197,7 +197,7 @@ namespace BaldLion
 			//END ECS setup			
 
 			m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
-			m_componentInspectorPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);			
+			m_entityPropertiesPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);			
 		}
 
 		void BaldLionEditorLayer::OnDetach()
@@ -236,27 +236,7 @@ namespace BaldLion
 			}
 
 			ImGui::Image((void*)Renderer::GetFrameBuffer()->GetColorAttachmentID(), ImVec2{ m_viewportSize.x , m_viewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-			ImGui::End();
-
-			ImGui::Begin("Settings");
-
-			glm::vec3 directionalLightAmbientColor = ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightAmbientColor();
-			glm::vec3 directionalLightDiffuseColor = ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightDiffuseColor();
-			glm::vec3 directionalLightSpecularColor = ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightSpecularColor();
-			glm::vec3 directionalLightDirection = ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightDirection();
-
-			ImGui::Text("Directional Light");
-			ImGui::SliderFloat3("Light Direction", glm::value_ptr(directionalLightDirection), -1.0f, 1.0f);
-			ImGui::ColorEdit3("Light Ambient Color", glm::value_ptr(directionalLightAmbientColor));
-			ImGui::ColorEdit3("Light Diffuse Color", glm::value_ptr(directionalLightDiffuseColor));
-			ImGui::ColorEdit3("Light Specular Color", glm::value_ptr(directionalLightSpecularColor));
-
-			ECS::SingletonComponents::ECSLightSingleton::SetDirectionaLightAmbientColor(directionalLightAmbientColor);
-			ECS::SingletonComponents::ECSLightSingleton::SetDirectionaLightDiffuseColor(directionalLightDiffuseColor);
-			ECS::SingletonComponents::ECSLightSingleton::SetDirectionaLightSpecularColor(directionalLightSpecularColor);
-			ECS::SingletonComponents::ECSLightSingleton::SetDirectionaLightDirection(directionalLightDirection);
-
-			ImGui::End();
+			ImGui::End();			
 
 			ImGui::Begin("Memory");
 
@@ -276,7 +256,7 @@ namespace BaldLion
 			ImGui::End();
 
 			m_sceneHierarchyPanel.OnImGuiRender();
-			m_componentInspectorPanel.OnImGuiRender();
+			m_entityPropertiesPanel.OnImGuiRender();
 		}
 
 		void BaldLionEditorLayer::OnEvent(Event& e)

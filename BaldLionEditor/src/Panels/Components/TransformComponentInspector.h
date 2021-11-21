@@ -14,6 +14,8 @@ namespace BaldLion
 
 				ECS::ECSTransformComponent* componentTransform = (ECS::ECSTransformComponent*)component;
 
+				ComponentInspector::BeginComponentRender("Transform Component", (GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f) * 5.0f);
+
 				DrawVec3Handler("Position", componentTransform->position);
 
 				glm::vec3 rotation = glm::degrees(componentTransform->rotation);
@@ -21,6 +23,8 @@ namespace BaldLion
 				componentTransform->rotation = glm::radians(glm::vec3(rotation.x, rotation.y, rotation.z));
 
 				DrawVec3Handler("Scale", componentTransform->scale, 1.0f);
+
+				ComponentInspector::EndComponentRender();
 			}
 
 		};

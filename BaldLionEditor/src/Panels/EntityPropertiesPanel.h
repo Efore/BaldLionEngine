@@ -7,11 +7,11 @@ namespace BaldLion {
 
 	namespace Editor {
 
-		class ComponentInspectorPanel {
+		class EntityPropertiesPanel {
 
 		public:
-			ComponentInspectorPanel() = default;
-			ComponentInspectorPanel(SceneHierarchyPanel* sceneHierarchyPanel);			
+			EntityPropertiesPanel() = default;
+			EntityPropertiesPanel(SceneHierarchyPanel* sceneHierarchyPanel);			
 
 			void OnImGuiRender();
 			void SetHierarchyPanel(SceneHierarchyPanel* sceneHierarchyPanel);
