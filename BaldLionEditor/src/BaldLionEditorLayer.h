@@ -2,6 +2,7 @@
 #include <BaldLion.h>
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/EntityPropertiesPanel.h"
+#include "Panels/EditorViewportPanel.h"
 
 namespace BaldLion
 {
@@ -27,14 +28,12 @@ namespace BaldLion
 
 		private:
 
-			glm::vec2 m_viewportSize;
-			bool m_viewPortFocused;
-
 			ECS::ECSManager* m_ecsManager;
 
 			//Panels
 			SceneHierarchyPanel m_sceneHierarchyPanel;
 			EntityPropertiesPanel m_entityPropertiesPanel;
+			EditorViewportPanel m_editorViewportPanel;
 		};
 	}
 }

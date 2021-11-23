@@ -52,6 +52,9 @@
     <Filter Include="src\BaldLion\Rendering\Shapes">
       <UniqueIdentifier>{216E240E-8D86-0B38-5633-9BD1C20AA0D1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\BaldLion\SceneManagement">
+      <UniqueIdentifier>{5B37E96B-47F2-D817-F0A9-5162DC4323A8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\BaldLion\Utils">
       <UniqueIdentifier>{C19AE274-AD7E-A3CA-16DF-9D1D02E28D4C}</UniqueIdentifier>
     </Filter>
@@ -63,6 +66,9 @@
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGuizmo">
+      <UniqueIdentifier>{73BF7F4C-DF4A-ED10-E85B-700554664911}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\glm">
       <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
@@ -186,6 +192,9 @@
     <ClInclude Include="src\BaldLion\ECS\Components\ECSDirectionalLightComponent.h">
       <Filter>src\BaldLion\ECS\Components</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSHierarchyComponent.h">
+      <Filter>src\BaldLion\ECS\Components</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshComponent.h">
       <Filter>src\BaldLion\ECS\Components</Filter>
     </ClInclude>
@@ -210,6 +219,9 @@
     <ClInclude Include="src\BaldLion\ECS\ECSComponentLookUp.h">
       <Filter>src\BaldLion\ECS</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\ECSEntity.h">
+      <Filter>src\BaldLion\ECS</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\ECSManager.h">
       <Filter>src\BaldLion\ECS</Filter>
     </ClInclude>
@@ -220,9 +232,6 @@
       <Filter>src\BaldLion\ECS</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.h">
-      <Filter>src\BaldLion\ECS\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\Systems\ECSCameraMovementSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSRenderSystem.h">
@@ -324,6 +333,12 @@
     <ClInclude Include="src\BaldLion\Rendering\VertexArray.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\SceneManagement\Scene.h">
+      <Filter>src\BaldLion\SceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\SceneManagement\SceneManager.h">
+      <Filter>src\BaldLion\SceneManagement</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Utils\Compression.h">
       <Filter>src\BaldLion\Utils</Filter>
     </ClInclude>
@@ -338,6 +353,9 @@
     </ClInclude>
     <ClInclude Include="src\blpch.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
+      <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -1428,10 +1446,9 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\SceneManagement\Scene.h" />
-    <ClInclude Include="src\BaldLion\SceneManagement\SceneManager.h" />
-    <ClInclude Include="src\BaldLion\ECS\ECSEntity.h" />
-    <ClInclude Include="src\BaldLion\ECS\Components\ECSHierarchyComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSEditorCameraMovementSystem.h">
+      <Filter>src\BaldLion\ECS\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1495,9 +1512,6 @@
       <Filter>src\BaldLion\ECS</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.cpp">
-      <Filter>src\BaldLion\ECS\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\ECS\Systems\ECSCameraMovementSystem.cpp">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSRenderSystem.cpp">
@@ -1578,6 +1592,12 @@
     <ClCompile Include="src\BaldLion\Rendering\VertexArray.cpp">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\SceneManagement\Scene.cpp">
+      <Filter>src\BaldLion\SceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\SceneManagement\SceneManager.cpp">
+      <Filter>src\BaldLion\SceneManagement</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -1587,10 +1607,14 @@
     <ClCompile Include="src\blpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
+      <Filter>vendor\ImGuizmo</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\SceneManagement\Scene.cpp" />
-    <ClCompile Include="src\BaldLion\SceneManagement\SceneManager.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSEditorCameraMovementSystem.cpp">
+      <Filter>src\BaldLion\ECS\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -18,6 +18,7 @@ IncludeDir["glm"] = "BaldLionEngine/vendor/glm/"
 IncludeDir["stb_image"] = "BaldLionEngine/vendor/stb_image/"
 IncludeDir["assimp"] = "BaldLionEngine/vendor/assimp/include"
 IncludeDir["optick"] = "BaldLionEngine/vendor/optick/include"
+IncludeDir["ImGuizmo"] = "BaldLionEngine/vendor/ImGuizmo"
 
 group "Dependencies"
 	include "BaldLionEngine/vendor/GLFW"
@@ -45,7 +46,9 @@ project "BaldLionEngine"
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"
+		"%{prj.name}/vendor/glm/glm/**.inl",		
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"
 	}
 
 	defines
@@ -64,7 +67,7 @@ project "BaldLionEngine"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.assimp}",
-		"%{IncludeDir.optick}"		
+		"%{IncludeDir.optick}"	
 	}	
 	
 	libdirs 
@@ -81,6 +84,9 @@ project "BaldLionEngine"
 		"assimp-vc141-mtd.lib",
 		"OptickCore.lib"
 	}
+	
+	filter "files:BaldLionEngine/vendor/ImGuizmo/**.cpp"
+		flags {"NoPCH"}
 
 	filter "system:windows"		
 		systemversion "latest"
@@ -133,7 +139,8 @@ project "BaldLionEditor"
 		"BaldLionEngine/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.assimp}",
-		"%{IncludeDir.optick}"
+		"%{IncludeDir.optick}",	
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links

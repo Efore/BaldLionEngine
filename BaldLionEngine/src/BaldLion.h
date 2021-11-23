@@ -43,7 +43,7 @@
 //---------------- ECS ------------------
 
 #include "BaldLion/ECS/ECSManager.h"
-#include "BaldLion/ECS/Systems/ECSCameraMovementSystem.h"
+#include "BaldLion/ECS/Systems/ECSEditorCameraMovementSystem.h"
 #include "BaldLion/ECS/Systems/ECSRenderSystem.h"
 #include "BaldLion/ECS/Systems/ECSAnimationSystem.h"
 #include "BaldLion/ECS/Components/ECSAnimationComponent.h"

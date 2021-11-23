@@ -7,6 +7,7 @@
 
 #include "BaldLion/Rendering/Platform/OpenGL/OpenGLShader.h"
 #include "ImGui/imgui.h"
+#include "ImGuizmo/ImGuizmo.h"
 
 namespace BaldLion
 {
@@ -34,11 +35,12 @@ namespace BaldLion
 				ECS::ECSEntityID cameraEntity = m_ecsManager->AddEntity("Main Camera");
 
 				ECS::ECSTransformComponent* cameraTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
-					glm::vec3(0, 5, 10),
+					glm::vec3(0, 5, 180),
 					MathUtils::Vector3Zero,
 					glm::vec3(1.0f));
 
 				ECS::ECSProjectionCameraComponent* projectionCameraComponent = m_ecsManager->AddComponent<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentID::ProjectionCamera,
+					45.0f,
 					(float)Application::GetInstance().GetWindow().GetWidth(),
 					(float)Application::GetInstance().GetWindow().GetHeight(),
 					0.1f,
@@ -175,7 +177,7 @@ namespace BaldLion
 			{//Systems
 				const ECS::ECSSignature cameraMovementSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::ProjectionCamera, ECS::ECSComponentID::Transform);
 
-				ECS::ECSCameraMovementSystem* cameraMovementSystem = MemoryManager::New<ECS::ECSCameraMovementSystem>("ECS CameraMovementSystem", AllocationType::FreeList_ECS,
+				ECS::ECSEditorCameraMovementSystem* cameraMovementSystem = MemoryManager::New<ECS::ECSEditorCameraMovementSystem>("ECS CameraMovementSystem", AllocationType::FreeList_ECS,
 					"ECS CameraMovementSystem", cameraMovementSystemSignature, m_ecsManager);
 
 				const ECS::ECSSignature renderSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::Mesh, ECS::ECSComponentID::Transform);
@@ -198,6 +200,7 @@ namespace BaldLion
 
 			m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
 			m_entityPropertiesPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);			
+			m_editorViewportPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);
 		}
 
 		void BaldLionEditorLayer::OnDetach()
@@ -222,21 +225,7 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			RenderDockSpace();
-
-			ImGui::Begin("Viewport");
-
-			m_viewPortFocused = ImGui::IsWindowFocused();
-
-			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-			if (m_viewportSize != glm::vec2{ viewportPanelSize.x, viewportPanelSize.y })
-			{
-				m_viewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-				Renderer::GetFrameBuffer()->Resize((ui32)viewportPanelSize.x, (ui32)viewportPanelSize.y);
-			}
-
-			ImGui::Image((void*)Renderer::GetFrameBuffer()->GetColorAttachmentID(), ImVec2{ m_viewportSize.x , m_viewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-			ImGui::End();			
+			RenderDockSpace();				
 
 			ImGui::Begin("Memory");
 
@@ -255,6 +244,7 @@ namespace BaldLion
 			ImGui::Text("Vertices: %zu", Renderer::GetRenderStats().vertices);
 			ImGui::End();
 
+			m_editorViewportPanel.OnImGuiRender();
 			m_sceneHierarchyPanel.OnImGuiRender();
 			m_entityPropertiesPanel.OnImGuiRender();
 		}

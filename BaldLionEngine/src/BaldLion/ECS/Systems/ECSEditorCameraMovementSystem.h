@@ -8,10 +8,10 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		class ECSCameraMovementSystem : public ECSSystem
+		class ECSEditorCameraMovementSystem : public ECSSystem
 		{
 		public:
-			ECSCameraMovementSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager) :
+			ECSEditorCameraMovementSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager) :
 				ECSSystem(systemName, signature, ecsManager, true, true) {}
 
 			virtual void OnStart() override;

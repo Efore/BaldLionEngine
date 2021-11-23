@@ -1,5 +1,5 @@
 #include "blpch.h"
-#include "ECSCameraMovementSystem.h"
+#include "ECSEditorCameraMovementSystem.h"
 #include "BaldLion/Utils/MathUtils.h"
 #include "BaldLion/Core/Input.h"
 #include "BaldLion/Core/KeyCodes.h"
@@ -14,7 +14,7 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		void ECSCameraMovementSystem::OnStart()
+		void ECSEditorCameraMovementSystem::OnStart()
 		{
 			for (ui32 i = 0; i < m_componentLookUps.Size(); ++i)
 			{
@@ -26,7 +26,7 @@ namespace BaldLion {
 			}
 		}
 
-		void ECSCameraMovementSystem::UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp)
+		void ECSEditorCameraMovementSystem::UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp)
 		{	
 			BL_PROFILE_FUNCTION();
 
@@ -45,30 +45,33 @@ namespace BaldLion {
 			cameraMatrixTransform = cameraTransform->GetTransformMatrix();
 
 			const glm::mat4 viewMatrix = glm::inverse(cameraMatrixTransform);
-			const glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), projectionCamera->width / projectionCamera->height, projectionCamera->nearPlane, projectionCamera->farPlane);
+			const glm::mat4 projectionMatrix = glm::perspective(glm::radians(projectionCamera->fov), projectionCamera->width / projectionCamera->height, projectionCamera->nearPlane, projectionCamera->farPlane);
 
 			projectionCamera->viewProjectionMatrix = projectionMatrix * viewMatrix;			
 		}
 
-		void ECSCameraMovementSystem::CalculateCameraMovement(const float deltaTime, const float cameraMovementSpeed,  const glm::mat4& cameraTransform, glm::vec3& cameraMovement)
+		void ECSEditorCameraMovementSystem::CalculateCameraMovement(const float deltaTime, const float cameraMovementSpeed,  const glm::mat4& cameraTransform, glm::vec3& cameraMovement)
 		{
 			cameraMovement = glm::vec3(0, 0, 0);			
 
-			if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
-				cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * deltaTime * cameraMovementSpeed;
-			else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
-				cameraMovement += MathUtils::GetTransformForwardDirection(cameraTransform) * deltaTime * cameraMovementSpeed;
+			if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
+			{
+				if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
+					cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * deltaTime * cameraMovementSpeed;
+				else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
+					cameraMovement += MathUtils::GetTransformForwardDirection(cameraTransform) * deltaTime * cameraMovementSpeed;
 
-			if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
-				cameraMovement -= MathUtils::GetTransformRightDirection(cameraTransform) * deltaTime * cameraMovementSpeed;
-			else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
-				cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * deltaTime * cameraMovementSpeed;
+				if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
+					cameraMovement -= MathUtils::GetTransformRightDirection(cameraTransform) * deltaTime * cameraMovementSpeed;
+				else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
+					cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * deltaTime * cameraMovementSpeed;
 
-			if (BaldLion::Input::IsKeyPressed(BL_KEY_LEFT_SHIFT))
-				cameraMovement *= 2;
+				if (BaldLion::Input::IsKeyPressed(BL_KEY_LEFT_SHIFT))
+					cameraMovement *= 2;
+			}
 		}
 
-		void ECSCameraMovementSystem::CalculateCameraRotation(const float deltaTime, const float cameraRotationSpeed, float& prevX, float& prevY, float& cameraYaw, float& cameraPitch)
+		void ECSEditorCameraMovementSystem::CalculateCameraRotation(const float deltaTime, const float cameraRotationSpeed, float& prevX, float& prevY, float& cameraYaw, float& cameraPitch)
 		{
 			if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 			{

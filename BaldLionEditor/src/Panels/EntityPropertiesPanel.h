@@ -1,5 +1,4 @@
 #pragma once
-#include "BaldLion/SceneManagement/Scene.h"
 #include "SceneHierarchyPanel.h"
 #include "BaldLion/ECS/ECSComponent.h"
 

@@ -17,11 +17,16 @@ namespace BaldLion {
 				static void Init();
 				static void SetMainCamera(ECSProjectionCameraComponent* cameraComponent, ECSTransformComponent* cameraTransform);
 				static void SetCameraSize(float width, float height);
-				static bool IsAABBVisible(const GeometryUtils::AABB& aabb);
-				static void UpdateFrustrumPlanes();
 
 				static const glm::mat4& GetMainCameraViewProjectionMatrix() { return s_mainCamera->viewProjectionMatrix; }
 				static const glm::vec3& GetMainCameraPosition() { return s_mainCameraTransform->position; }
+				
+				static ECSTransformComponent* GetMainCameraTransform() { return s_mainCameraTransform; }
+
+				static const ECSProjectionCameraComponent* GetMainCamera() { return s_mainCamera; }
+
+				static bool IsAABBVisible(const GeometryUtils::AABB& aabb);
+				static void UpdateFrustrumPlanes();
 
 			private:
 				static ECSProjectionCameraComponent* s_mainCamera;
