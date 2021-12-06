@@ -18,8 +18,8 @@ namespace BaldLion {
 		{
 			BL_PROFILE_FUNCTION();
 
-			ECSSkeletonComponent* entitySkeleton = componentLookUp->Write<ECSSkeletonComponent>(ECSComponentID::Skeleton);
-			ECSAnimationComponent* entityAnimation = componentLookUp->Write<ECSAnimationComponent>(ECSComponentID::Animation);
+			ECSSkeletonComponent* entitySkeleton = componentLookUp->Write<ECSSkeletonComponent>(ECSComponentType::Skeleton);
+			ECSAnimationComponent* entityAnimation = componentLookUp->Write<ECSAnimationComponent>(ECSComponentType::Animation);
 			
 			const Animator* entityAnimator = AnimationManager::GetAnimator(entityAnimation->animatorID);
 			const AnimationData* currentAnimation = entityAnimator->GetAnimation(entityAnimation->currentAnimationID);

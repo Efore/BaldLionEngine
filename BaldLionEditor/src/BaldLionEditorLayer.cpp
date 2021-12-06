@@ -34,12 +34,12 @@ namespace BaldLion
 				
 				ECS::ECSEntityID cameraEntity = m_ecsManager->AddEntity("Main Camera");
 
-				ECS::ECSTransformComponent* cameraTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
+				ECS::ECSTransformComponent* cameraTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
 					glm::vec3(0, 5, 180),
 					MathUtils::Vector3Zero,
 					glm::vec3(1.0f));
 
-				ECS::ECSProjectionCameraComponent* projectionCameraComponent = m_ecsManager->AddComponent<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentID::ProjectionCamera,
+				ECS::ECSProjectionCameraComponent* projectionCameraComponent = m_ecsManager->AddComponent<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentType::ProjectionCamera,
 					45.0f,
 					(float)Application::GetInstance().GetWindow().GetWidth(),
 					(float)Application::GetInstance().GetWindow().GetHeight(),
@@ -59,7 +59,7 @@ namespace BaldLion
 
 				ECS::ECSEntityID directionalLight = m_ecsManager->AddEntity("Directional Light");
 				ECS::ECSDirectionalLightComponent* directionalLightComponent = m_ecsManager->AddComponent<ECS::ECSDirectionalLightComponent>(
-					ECS::ECSComponentID::DirectionalLight,
+					ECS::ECSComponentType::DirectionalLight,
 					glm::vec3(0.0f),
 					glm::vec3(1.0f),
 					glm::vec3(0.2f),
@@ -73,7 +73,7 @@ namespace BaldLion
 			
 			{//Plane setup
 				ECS::ECSEntityID planeEntity = m_ecsManager->AddEntity("Plane");
-				ECS::ECSTransformComponent* planeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
+				ECS::ECSTransformComponent* planeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
 					glm::vec3(0, 0, 0),
 					MathUtils::Vector3Zero,
 					glm::vec3(10.0f, 1.0f, 10.0f));
@@ -123,7 +123,7 @@ namespace BaldLion
 					{					
 						ECS::ECSEntityID treeEntity = m_ecsManager->AddEntity(("Tree" + std::to_string(i) + std::to_string(j)).c_str());
 
-						ECS::ECSTransformComponent* treeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
+						ECS::ECSTransformComponent* treeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
 							position,
 							MathUtils::Vector3Zero,
 							glm::vec3(5.0f));
@@ -152,14 +152,14 @@ namespace BaldLion
 					{	
 						ECS::ECSEntityID characterEntity = m_ecsManager->AddEntity(("Character" + std::to_string(i) + std::to_string(j)).c_str());
 
-						ECS::ECSTransformComponent* characterTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform,
+						ECS::ECSTransformComponent* characterTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
 							position,
 							MathUtils::Vector3Zero,
 							glm::vec3(0.5f));
 
 						ECS::ECSMeshComponent* characterMeshComponent = character->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager,false);
 						ECS::ECSSkeletonComponent* characterSkeletonComponent = character->GetSubMeshes()[j]->GenerateSkeletonComponent(m_ecsManager);
-						ECS::ECSAnimationComponent* characterAnimationComponent = m_ecsManager->AddComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentID::Animation);
+						ECS::ECSAnimationComponent* characterAnimationComponent = m_ecsManager->AddComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentType::Animation);
 
 						characterAnimationComponent->animatorID = STRING_TO_STRINGID("Animator");
 						characterAnimationComponent->currentAnimationID = STRING_TO_STRINGID("mixamo.com");
@@ -175,17 +175,17 @@ namespace BaldLion
 			}
 
 			{//Systems
-				const ECS::ECSSignature cameraMovementSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::ProjectionCamera, ECS::ECSComponentID::Transform);
+				const ECS::ECSSignature cameraMovementSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentType::ProjectionCamera, ECS::ECSComponentType::Transform);
 
 				ECS::ECSEditorCameraMovementSystem* cameraMovementSystem = MemoryManager::New<ECS::ECSEditorCameraMovementSystem>("ECS CameraMovementSystem", AllocationType::FreeList_ECS,
 					"ECS CameraMovementSystem", cameraMovementSystemSignature, m_ecsManager);
 
-				const ECS::ECSSignature renderSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::Mesh, ECS::ECSComponentID::Transform);
+				const ECS::ECSSignature renderSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentType::Mesh, ECS::ECSComponentType::Transform);
 
 				ECS::ECSRenderSystem* renderSystem = MemoryManager::New<ECS::ECSRenderSystem>("ECS RenderSystem", AllocationType::FreeList_ECS,
 					"ECS RenderSystem", renderSystemSignature, m_ecsManager);
 
-				const ECS::ECSSignature animationSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentID::Animation, ECS::ECSComponentID::Skeleton);
+				const ECS::ECSSignature animationSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentType::Animation, ECS::ECSComponentType::Skeleton);
 
 				ECS::ECSAnimationSystem* animationSystem = MemoryManager::New<ECS::ECSAnimationSystem>("ECS AnimationSystem", AllocationType::FreeList_ECS, "ECS AnimationSystem", animationSystemSignature, m_ecsManager);
 
@@ -212,41 +212,28 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
+			SceneManagement::SceneManager::FrameStart();
+
 			SceneManagement::SceneManager::Update(timeStep);
 				
 			Renderer::BeginScene();			
 			Renderer::DrawScene();
 			Renderer::EndScene();		
 
-			SceneManagement::SceneManager::EndOfFrame();
+			SceneManagement::SceneManager::FrameEnd();
 		}
 
 		void BaldLionEditorLayer::OnImGuiRender(TimeStep timeStep)
 		{
 			BL_PROFILE_FUNCTION();
 
-			RenderDockSpace();				
+			RenderDockSpace();			
 
-			ImGui::Begin("Memory");
-
-			ImGui::Text("Total Memory: %zu", MemoryManager::GetMemorySize());
-			ImGui::Text("Free List Main Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::FreeList_Main), MemoryManager::GetAllocatorSize(AllocationType::FreeList_Main));
-			ImGui::Text("Free List Renderer Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::FreeList_Renderer), MemoryManager::GetAllocatorSize(AllocationType::FreeList_Renderer));
-			ImGui::Text("Free List ECS Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::FreeList_ECS), MemoryManager::GetAllocatorSize(AllocationType::FreeList_ECS));
-			ImGui::Text("Linear Frame Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::Linear_Frame), MemoryManager::GetAllocatorSize(AllocationType::Linear_Frame));
-			ImGui::Text("Stack Scope Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::Stack), MemoryManager::GetAllocatorSize(AllocationType::Stack));
-
-			ImGui::End();
-
-			ImGui::Begin("Rendering");
-			ImGui::Text("Performance: %f", 1.0f / timeStep.GetSeconds());
-			ImGui::Text("Draw calls: %zu", Renderer::GetRenderStats().drawCalls);
-			ImGui::Text("Vertices: %zu", Renderer::GetRenderStats().vertices);
-			ImGui::End();
-
-			m_editorViewportPanel.OnImGuiRender();
 			m_sceneHierarchyPanel.OnImGuiRender();
-			m_entityPropertiesPanel.OnImGuiRender();
+			m_editorViewportPanel.OnImGuiRender();
+			m_entityPropertiesPanel.OnImGuiRender(); 
+			m_memoryAllocationPanel.OnImGuiRender();
+			m_renderingDataPanel.OnImGuiRender(timeStep);
 		}
 
 		void BaldLionEditorLayer::OnEvent(Event& e)

@@ -24,6 +24,7 @@ namespace BaldLion {
 		private:
 
 			void DrawEntityElement(const ECS::ECSEntity& entity, bool firstCall);
+			void HandleInput();
 
 		private:
 			

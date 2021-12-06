@@ -19,6 +19,7 @@ namespace BaldLion {
 			glm::vec2 m_viewportSize;
 			bool m_viewPortFocused;
 			ui32 m_imGuizmoOperation;
+
 		};
 	}
 }

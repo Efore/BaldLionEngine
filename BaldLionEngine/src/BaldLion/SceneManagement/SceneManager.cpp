@@ -13,6 +13,14 @@ namespace BaldLion
 			m_scenes = HashMap<StringId, Scene>(AllocationType::FreeList_ECS, 10);
 		}
 
+		void SceneManager::FrameStart()
+		{
+			if (m_mainScene != nullptr)
+			{
+				m_mainScene->FrameStart();
+			}
+		}
+
 		void SceneManager::Update(TimeStep timeStep)
 		{
 			if (m_mainScene != nullptr)
@@ -21,11 +29,11 @@ namespace BaldLion
 			}
 		}
 
-		void SceneManager::EndOfFrame()
+		void SceneManager::FrameEnd()
 		{
 			if (m_mainScene != nullptr)
 			{
-				m_mainScene->EndOfFrame();
+				m_mainScene->FrameEnd();
 			}
 		}
 

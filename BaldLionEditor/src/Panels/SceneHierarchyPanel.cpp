@@ -21,6 +21,34 @@ namespace BaldLion {
 		void SceneHierarchyPanel::OnImGuiRender()
 		{
 			ImGui::Begin("Scene Hierarchy");
+			
+			if (ImGui::Button("Add Entity"))
+			{
+				ImGui::OpenPopup("Create Entity");
+			}
+
+			ImGui::Separator();			
+
+			if (ImGui::BeginPopupModal("Create Entity", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				static char entityName[64] = "";
+				ImGui::InputText("Entity Name", entityName, 64);
+
+				if (entityName != "" && ImGui::Button("Create")) 
+				{
+					m_sceneContext->GetECSManager()->AddEntity(entityName);
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("Close")) 
+				{
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}			
 
 			for (ui32 i = 0; i < m_sceneContext->GetECSManager()->GetEntities().Size(); ++i) 
 			{				
@@ -28,13 +56,15 @@ namespace BaldLion {
 			}
 
 			ImGui::End();
+
+			HandleInput();
 		}
 
 		void SceneHierarchyPanel::DrawEntityElement(const ECS::ECSEntity& entity, bool firstCall)
 		{
 			ImGuiTreeNodeFlags flags = (m_selectedEntityID == entity.GetEntityID() ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;			
 
-			const ECS::ECSHierarchyComponent* hierarchyComponent = m_sceneContext->GetECSManager()->GetEntityComponents().Get(entity.GetEntityID()).Read<ECS::ECSHierarchyComponent>(ECS::ECSComponentID::Hierarchy);
+			const ECS::ECSHierarchyComponent* hierarchyComponent = m_sceneContext->GetECSManager()->GetEntityComponents().Get(entity.GetEntityID()).Read<ECS::ECSHierarchyComponent>(ECS::ECSComponentType::Hierarchy);
 
 			if (hierarchyComponent != nullptr && hierarchyComponent->hasParent && firstCall) 
 			{
@@ -64,6 +94,15 @@ namespace BaldLion {
 			{
 				m_selectedEntityID = entity.GetEntityID();
 			}		
+		}
+
+		void SceneHierarchyPanel::HandleInput()
+		{
+			if (m_selectedEntityID && BaldLion::Input::IsKeyPressed(BL_KEY_DELETE))
+			{
+				m_sceneContext->GetECSManager()->RemoveEntity(m_selectedEntityID);
+				m_selectedEntityID = 0;
+			}
 		}
 
 	}

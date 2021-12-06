@@ -27,6 +27,8 @@
     </ClInclude>
     <ClInclude Include="src\Panels\ViewportPanel.h" />
     <ClInclude Include="src\Panels\EditorViewportPanel.h" />
+    <ClInclude Include="src\Panels\MemoryAllocationPanel.h" />
+    <ClInclude Include="src\Panels\RenderingDataPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp" />
@@ -38,5 +40,7 @@
       <Filter>Panels</Filter>
     </ClCompile>
     <ClCompile Include="src\Panels\EditorViewportPanel.cpp" />
+    <ClCompile Include="src\Panels\MemoryAllocationPanel.cpp" />
+    <ClCompile Include="src\Panels\RenderingDataPanel.cpp" />
   </ItemGroup>
 </Project>

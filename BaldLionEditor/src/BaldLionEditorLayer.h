@@ -3,6 +3,8 @@
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/EntityPropertiesPanel.h"
 #include "Panels/EditorViewportPanel.h"
+#include "Panels/MemoryAllocationPanel.h"
+#include "Panels/RenderingDataPanel.h"
 
 namespace BaldLion
 {
@@ -34,6 +36,8 @@ namespace BaldLion
 			SceneHierarchyPanel m_sceneHierarchyPanel;
 			EntityPropertiesPanel m_entityPropertiesPanel;
 			EditorViewportPanel m_editorViewportPanel;
+			RenderingDataPanel m_renderingDataPanel;
+			MemoryAllocationPanel m_memoryAllocationPanel;
 		};
 	}
 }

@@ -11,7 +11,7 @@ namespace BaldLion {
 		public:
 
 			ECSAnimationComponent() :
-				ECSComponent(ECSComponentID::Animation)
+				ECSComponent(ECSComponentType::Animation)
 			{
 			}
 

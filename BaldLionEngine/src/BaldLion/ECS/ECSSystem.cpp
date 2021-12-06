@@ -13,7 +13,8 @@ namespace BaldLion {
 			m_signature(signature), 
 			m_ecsManager(ecsManager),
 			m_parallelize(parallelize),
-			m_waitForUpdatesOperationsToFinish(waitForUpdateOperationsToFinish)
+			m_waitForUpdatesOperationsToFinish(waitForUpdateOperationsToFinish),
+			m_refreshComponentLookUps(false)
 		{
 			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_ECS, 100);
 			
@@ -63,7 +64,7 @@ namespace BaldLion {
 			}
 		}
 
-		void ECSSystem::OnEndOfFrame()
+		void ECSSystem::OnFrameStart()
 		{
 			if (m_refreshComponentLookUps) {
 
@@ -80,6 +81,11 @@ namespace BaldLion {
 
 				m_refreshComponentLookUps = false;
 			}
+		}
+
+		void ECSSystem::OnFrameEnd()
+		{
+			
 		}
 
 		void ECSSystem::OnEntityModified(ECSSignature entitySignature)

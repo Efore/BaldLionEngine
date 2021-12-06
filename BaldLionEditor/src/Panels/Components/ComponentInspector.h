@@ -2,6 +2,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <glm/glm.hpp>
+#include "SceneHierarchyPanel.h"
 
 namespace BaldLion {
 
@@ -11,7 +12,7 @@ namespace BaldLion {
 
 		public:
 
-			static void BeginComponentRender(const char* componentName, float childHeight) {
+			static void BeginComponentRender(const char* componentName, ECS::ECSComponentType componentID, SceneHierarchyPanel* sceneHierarchyPanel, float childHeight) {
 
 				ImGui::BeginChild(componentName, ImVec2(0, childHeight), true, ImGuiWindowFlags_MenuBar);
 
@@ -21,7 +22,7 @@ namespace BaldLion {
 					{
 						if (ImGui::MenuItem("Remove component"))
 						{
-
+							sceneHierarchyPanel->GetSceneContext()->GetECSManager()->RemoveComponentFromEntity(componentID, sceneHierarchyPanel->GetSelectedEntityID());
 						}
 
 						ImGui::EndMenu();

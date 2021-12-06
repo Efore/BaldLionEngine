@@ -18,7 +18,8 @@ namespace BaldLion
 			virtual void OnStart() = 0;
 			virtual void OnUpdate(TimeStep timeStep);
 			virtual void OnStop() = 0;
-			virtual void OnEndOfFrame();
+			virtual void OnFrameStart();
+			virtual void OnFrameEnd();
 
 			virtual void UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp) = 0;
 

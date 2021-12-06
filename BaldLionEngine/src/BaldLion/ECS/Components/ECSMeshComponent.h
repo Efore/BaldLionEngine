@@ -16,7 +16,7 @@ namespace BaldLion {
 
 		public:
 			ECSMeshComponent(bool isStatic) : 
-				ECSComponent(ECSComponentID::Mesh),
+				ECSComponent(ECSComponentType::Mesh),
 				isStatic(isStatic)
 			{
 

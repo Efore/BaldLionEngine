@@ -14,8 +14,9 @@ namespace BaldLion {
 			Scene(const char* sceneName, ECS::ECSManager* ecsManager);
 			~Scene();
 
+			void FrameStart();
 			void Update(TimeStep timeStep);
-			void EndOfFrame();
+			void FrameEnd();
 
 			const StringId GetSceneID() const { return m_sceneID; }
 

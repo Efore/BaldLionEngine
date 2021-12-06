@@ -25,6 +25,13 @@ namespace BaldLion {
 			}
 		}
 
+		void Scene::FrameStart()
+		{
+			if (m_ecsManager != nullptr) {
+				m_ecsManager->FrameStart();
+			}
+		}
+
 		void Scene::Update(TimeStep timeStep)
 		{
 			if (m_ecsManager != nullptr) {
@@ -32,10 +39,10 @@ namespace BaldLion {
 			}
 		}
 
-		void Scene::EndOfFrame()
+		void Scene::FrameEnd()
 		{
 			if (m_ecsManager != nullptr) {
-				m_ecsManager->EndOfFrame();
+				m_ecsManager->FrameEnd();
 			}
 		}
 

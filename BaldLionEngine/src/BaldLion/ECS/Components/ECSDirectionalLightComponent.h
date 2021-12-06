@@ -11,7 +11,7 @@ namespace BaldLion {
 		public:
 
 			ECSDirectionalLightComponent(const glm::vec3& ambientColor, const glm::vec3& diffuseColor, const glm::vec3& specularColor, const glm::vec3& lightDirection) :
-				ECSComponent(ECSComponentID::DirectionalLight),
+				ECSComponent(ECSComponentType::DirectionalLight),
 				ambientColor(ambientColor),
 				diffuseColor(diffuseColor),
 				specularColor(specularColor),

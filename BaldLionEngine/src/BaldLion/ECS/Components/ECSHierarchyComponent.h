@@ -12,7 +12,7 @@ namespace BaldLion {
 		public:
 
 			ECSHierarchyComponent() :
-				ECSComponent(ECSComponentID::Hierarchy), hasParent(false)
+				ECSComponent(ECSComponentType::Hierarchy), hasParent(false)
 			{
 				childEntitiesIDs = DynamicArray<ECSEntityID>(AllocationType::FreeList_ECS, 10);
 			}

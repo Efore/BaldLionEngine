@@ -417,7 +417,8 @@ namespace BaldLion
 		}
 		else
 		{
-			T* newLocation = MemoryManager::NewArray<T>("Dynamic Array", m_allocationType, m_capacity);
+			const ui32 capacity = m_capacity;
+			T* newLocation = MemoryManager::NewArray<T>("Dynamic Array", m_allocationType, capacity);
 			const ui32 newSize = m_size - 1;
 
 			if (index - 1 >= 0)
@@ -431,6 +432,7 @@ namespace BaldLion
 
 			m_elements = newLocation;
 			m_size = newSize;
+			m_capacity = capacity;
 		}
 	}
 

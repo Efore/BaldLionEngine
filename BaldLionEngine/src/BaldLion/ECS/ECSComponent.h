@@ -9,12 +9,12 @@ namespace BaldLion
 		class ECSComponent {
 
 		public:
-			ECSComponent(ECSComponentID componentID) : m_componentID(componentID){}
+			ECSComponent(ECSComponentType componentType) : m_componentType(componentType){}
 
-			const ECSComponentID GetComponentID() const { return m_componentID; }
+			const ECSComponentType GetComponentType() const { return m_componentType; }
 
 		protected:
-			ECSComponentID m_componentID;
+			ECSComponentType m_componentType;
 		};
 
 	}

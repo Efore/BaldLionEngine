@@ -10,11 +10,11 @@ namespace BaldLion
 
 		public:
 
-			static void OnImGuiRender(ECS::ECSComponent* component) {
+			static void OnImGuiRender(ECS::ECSComponent* component, SceneHierarchyPanel* sceneHierarchyPanel) {
+
+				ComponentInspector::BeginComponentRender("Transform Component", component->GetComponentType(), sceneHierarchyPanel, (GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f) * 5.0f);
 
 				ECS::ECSTransformComponent* componentTransform = (ECS::ECSTransformComponent*)component;
-
-				ComponentInspector::BeginComponentRender("Transform Component", (GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f) * 5.0f);
 
 				DrawVec3Handler("Position", componentTransform->position);
 

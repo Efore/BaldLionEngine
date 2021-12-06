@@ -30,18 +30,19 @@ namespace BaldLion {
 			void AddComponentToEntity(ECSEntityID entityID, ECSComponent* component);
 			void AddSystem(ECSSystem* system);			
 			
-			template <typename ECSComponentType, typename... Args >
-			ECSComponentType* AddComponent(ECSComponentID componentID, Args&&... args);
+			template <typename T, typename... Args >
+			T* AddComponent(ECSComponentType componentID, Args&&... args);
 
 			//Main loop
 			void StartSystems();
+			void FrameStart();
 			void UpdateSystems(TimeStep timeStep);
-			void EndOfFrame();
+			void FrameEnd();
 			void StopSystems();
 
 			//Remove elements
 			void RemoveEntity(ECSEntityID entityID);			
-			void RemoveComponentFromEntity(ECSComponentID componentID, ECSEntityID entityID);
+			void RemoveComponentFromEntity(ECSComponentType componentID, ECSEntityID entityID);
 			void RemoveSystem(ECSSystem* system);
 
 			HashMap<ECSEntityID, ECSComponentLookUp>& GetEntityComponents() { return m_entityComponents; }
@@ -59,21 +60,20 @@ namespace BaldLion {
 
 		private:
 
-			template<typename ECSComponentType>
-			void CleanComponentPool(ECSComponentID componentID);			
+			template<typename T>
+			void CleanComponentPool(ECSComponentType componentType);			
 
 		private:
 
 			HashMap<ECSEntityID, ECSComponentLookUp> m_entityComponents;
 			HashMap<ECSEntityID, ECSSignature> m_entitySignatures;
-
 			HashMap<ECSEntityID, ECSEntity*> m_entitiyMap;
 
 			DynamicArray<ECSEntity> m_entities;
 			DynamicArray<ECSSystem*> m_systems;
 
 			//Pools
-			HashTable<ECSComponentID, void*> m_componentsPool;
+			HashTable<ECSComponentType, void*> m_componentsPool;
 			DynamicArray<class ECSTransformComponent> m_transformComponentPool;
 			DynamicArray<class ECSProjectionCameraComponent> m_projectionCameraComponentPool;			
 			DynamicArray<class ECSDirectionalLightComponent> m_directionalLightComponentPool;
@@ -82,19 +82,19 @@ namespace BaldLion {
 			DynamicArray<class ECSSkeletonComponent> m_skeletonComponentPool;
 			DynamicArray<class ECSHierarchyComponent> m_hierarchyComponentPool;
 
-			ui32 m_entityIDProvider;
+			ui32 m_entityIDProvider = 1;
 		};
 
-		template<typename ECSComponentType>
-		void BaldLion::ECS::ECSManager::CleanComponentPool(ECSComponentID componentID)
+		template<typename T>
+		void BaldLion::ECS::ECSManager::CleanComponentPool(ECSComponentType componentType)
 		{
-			((DynamicArray<ECSComponentType>*)m_componentsPool.Get(componentID))->Delete();
+			((DynamicArray<T>*)m_componentsPool.Get(componentType))->Delete();
 		}
 
-		template <typename ECSComponentType, typename...Args >
-		ECSComponentType* BaldLion::ECS::ECSManager::AddComponent(ECSComponentID componentID, Args&&... args)
+		template <typename T, typename...Args >
+		T* BaldLion::ECS::ECSManager::AddComponent(ECSComponentType componentID, Args&&... args)
 		{
-			DynamicArray<ECSComponentType>* componentPool = static_cast<DynamicArray<ECSComponentType>*>(m_componentsPool.Get(componentID));
+			DynamicArray<T>* componentPool = static_cast<DynamicArray<T>*>(m_componentsPool.Get(componentID));
 			return componentPool->EmplaceBack(std::forward<Args>(args)...);
 		}
 

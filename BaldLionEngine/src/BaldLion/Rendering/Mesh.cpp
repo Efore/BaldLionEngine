@@ -82,7 +82,7 @@ namespace BaldLion
 
 		ECS::ECSMeshComponent* Mesh::GenerateMeshComponent(ECS::ECSManager* ecsManager, bool isStatic)
 		{
-			ECS::ECSMeshComponent* meshComponent = ecsManager->AddComponent<ECS::ECSMeshComponent>(ECS::ECSComponentID::Mesh, isStatic);
+			ECS::ECSMeshComponent* meshComponent = ecsManager->AddComponent<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh, isStatic);
 
 			meshComponent->material = m_material;
 			meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices);
@@ -113,7 +113,7 @@ namespace BaldLion
 
 		BaldLion::ECS::ECSSkeletonComponent* Mesh::GenerateSkeletonComponent(ECS::ECSManager* ecsManager)
 		{
-			ECS::ECSSkeletonComponent* skeletonComponent = ecsManager->AddComponent<ECS::ECSSkeletonComponent>(ECS::ECSComponentID::Skeleton);
+			ECS::ECSSkeletonComponent* skeletonComponent = ecsManager->AddComponent<ECS::ECSSkeletonComponent>(ECS::ECSComponentType::Skeleton);
 
 			skeletonComponent->joints = DynamicArray<Animation::Joint>(AllocationType::FreeList_ECS, m_skeleton->GetJoints());
 			skeletonComponent->boneData = DynamicArray<VertexBone>(AllocationType::FreeList_ECS, m_vertexBones);

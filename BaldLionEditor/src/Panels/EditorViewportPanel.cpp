@@ -24,18 +24,20 @@ namespace BaldLion {
 
 		void EditorViewportPanel::OnImGuiRender()
 		{
-
-			if (BaldLion::Input::IsKeyPressed(BL_KEY_Q)) 
+			if (!BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2)) 
 			{
-				m_imGuizmoOperation = 0;
-			} 
-			else if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
-			{
-				m_imGuizmoOperation = 1;
-			}
-			else if (BaldLion::Input::IsKeyPressed(BL_KEY_E)) 
-			{
-				m_imGuizmoOperation = 2;
+				if (BaldLion::Input::IsKeyPressed(BL_KEY_Q))
+				{
+					m_imGuizmoOperation = 0;
+				}
+				else if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
+				{
+					m_imGuizmoOperation = 1;
+				}
+				else if (BaldLion::Input::IsKeyPressed(BL_KEY_E))
+				{
+					m_imGuizmoOperation = 2;
+				}
 			}
 
 			ImGui::Begin("Viewport");
@@ -102,7 +104,7 @@ namespace BaldLion {
 
 			if (SceneManager::GetECSManager()->GetEntityComponents().TryGet(selectedEntityID, selectedEntityComponents))
 			{
-				ECS::ECSTransformComponent* entityTransformComponent = selectedEntityComponents.Write<ECS::ECSTransformComponent>(ECS::ECSComponentID::Transform);
+				ECS::ECSTransformComponent* entityTransformComponent = selectedEntityComponents.Write<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
 				if (entityTransformComponent)
 				{
 					glm::mat4 entityTransformMat = entityTransformComponent->GetTransformMatrix();
@@ -125,7 +127,7 @@ namespace BaldLion {
 				}
 			}
 			
-			ImGuizmo::ViewManipulate((float*)&cameraView, 1.0f, ImVec2{ ImGui::GetWindowPos().x + ImGui::GetWindowWidth() - 128, ImGui::GetWindowPos().y + 10 }, ImVec2(128, 128), 0x10101010);
+			//ImGuizmo::ViewManipulate((float*)&cameraView, 1.0f, ImVec2{ ImGui::GetWindowPos().x + ImGui::GetWindowWidth() - 128, ImGui::GetWindowPos().y + 10 }, ImVec2(128, 128), 0x10101010);
 			
 			
 

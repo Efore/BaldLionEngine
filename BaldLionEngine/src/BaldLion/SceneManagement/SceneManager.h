@@ -11,8 +11,9 @@ namespace BaldLion
 		public:
 
 			static void Init();
+			static void FrameStart();
 			static void Update(TimeStep timeStep);
-			static void EndOfFrame();
+			static void FrameEnd();
 			static void Stop();
 
 			static void SetMainScene(StringId sceneID);

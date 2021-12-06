@@ -137,6 +137,8 @@
     <ClInclude Include="src\Panels\Components\TransformComponentInspector.h" />
     <ClInclude Include="src\Panels\EditorViewportPanel.h" />
     <ClInclude Include="src\Panels\EntityPropertiesPanel.h" />
+    <ClInclude Include="src\Panels\MemoryAllocationPanel.h" />
+    <ClInclude Include="src\Panels\RenderingDataPanel.h" />
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
     <ClInclude Include="src\Panels\ViewportPanel.h" />
   </ItemGroup>
@@ -145,6 +147,8 @@
     <ClCompile Include="src\BaldLionEditorLayer.cpp" />
     <ClCompile Include="src\Panels\EditorViewportPanel.cpp" />
     <ClCompile Include="src\Panels\EntityPropertiesPanel.cpp" />
+    <ClCompile Include="src\Panels\MemoryAllocationPanel.cpp" />
+    <ClCompile Include="src\Panels\RenderingDataPanel.cpp" />
     <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
   </ItemGroup>
   <ItemGroup>

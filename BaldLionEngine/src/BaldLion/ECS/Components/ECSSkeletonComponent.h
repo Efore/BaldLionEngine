@@ -15,7 +15,7 @@ namespace BaldLion {
 		public:
 
 			ECSSkeletonComponent() :
-				ECSComponent(ECSComponentID::Skeleton)
+				ECSComponent(ECSComponentType::Skeleton)
 			{
 
 			}

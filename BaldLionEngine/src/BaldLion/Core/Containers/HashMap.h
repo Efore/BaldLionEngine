@@ -351,7 +351,7 @@ namespace BaldLion
 
 		if (m_table[tableIndex] == node)
 		{
-			m_table[tableIndex]->nextNode = node->nextNode;
+			m_table[tableIndex] = node->nextNode;
 		}
 		else
 		{

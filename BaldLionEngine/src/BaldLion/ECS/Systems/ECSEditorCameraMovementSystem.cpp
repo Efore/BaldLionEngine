@@ -18,8 +18,8 @@ namespace BaldLion {
 		{
 			for (ui32 i = 0; i < m_componentLookUps.Size(); ++i)
 			{
-				const ECSTransformComponent* cameraTransform = m_componentLookUps[i]->Read<ECSTransformComponent>(ECSComponentID::Transform);
-				ECSProjectionCameraComponent* projectionCamera = m_componentLookUps[i]->Write<ECSProjectionCameraComponent>(ECSComponentID::ProjectionCamera);
+				const ECSTransformComponent* cameraTransform = m_componentLookUps[i]->Read<ECSTransformComponent>(ECSComponentType::Transform);
+				ECSProjectionCameraComponent* projectionCamera = m_componentLookUps[i]->Write<ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera);
 
 				projectionCamera->cameraPitch = glm::degrees(cameraTransform->rotation.x);
 				projectionCamera->cameraYaw = glm::degrees(cameraTransform->rotation.y);
@@ -30,8 +30,8 @@ namespace BaldLion {
 		{	
 			BL_PROFILE_FUNCTION();
 
-			ECSTransformComponent* cameraTransform = componentLookUp->Write<ECSTransformComponent>(ECSComponentID::Transform);
-			ECSProjectionCameraComponent* projectionCamera = componentLookUp->Write<ECSProjectionCameraComponent>(ECSComponentID::ProjectionCamera);
+			ECSTransformComponent* cameraTransform = componentLookUp->Write<ECSTransformComponent>(ECSComponentType::Transform);
+			ECSProjectionCameraComponent* projectionCamera = componentLookUp->Write<ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera);
 
 			glm::mat4 cameraMatrixTransform = cameraTransform->GetTransformMatrix();
 

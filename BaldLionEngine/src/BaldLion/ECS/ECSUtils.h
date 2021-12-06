@@ -7,9 +7,8 @@ namespace BaldLion
 {
 	namespace ECS {
 
-		enum class ECSComponentID : ui32
+		enum class ECSComponentType : ui32
 		{
-			None,
 			Transform,
 			ProjectionCamera,
 			Mesh,
@@ -17,15 +16,16 @@ namespace BaldLion
 			DirectionalLight,
 			PointLight,
 			Animation,
-			Hierarchy,
 
+
+			Hierarchy,
 			Count
 		};
 
 		//---------------------------------------------------------------------------------------------------
 
 		using ECSEntityID = ui32;
-		using ECSSignature = std::bitset<(ui32)ECSComponentID::Count>;
+		using ECSSignature = std::bitset<(ui32)ECSComponentType::Count>;
 
 		//---------------------------------------------------------------------------------------------------
 
@@ -34,15 +34,15 @@ namespace BaldLion
 			std::va_list argsComponents;
 			va_start(argsComponents, count);
 
-			ECSComponentID componentID = va_arg(argsComponents, ECSComponentID);
+			ECSComponentType componentType = va_arg(argsComponents, ECSComponentType);
 
 			ECSSignature result;
-			result.set((ui32)componentID);
+			result.set((ui32)componentType);
 
 			for (ui32 i = 1; i < count; ++i)
 			{
-				componentID = va_arg(argsComponents, ECSComponentID);
-				result.set((ui32)componentID);
+				componentType = va_arg(argsComponents, ECSComponentType);
+				result.set((ui32)componentType);
 			}
 
 			return result;

@@ -12,7 +12,7 @@ namespace BaldLion {
 		public:
 
 			ECSProjectionCameraComponent(float fov, float width, float height, float nearPlane, float farPlane, float cameraMovementSpeed, float cameraRotationSpeed) :
-				ECSComponent(ECSComponentID::ProjectionCamera),
+				ECSComponent(ECSComponentType::ProjectionCamera),
 				fov(fov),
 				width(width),
 				height(height),

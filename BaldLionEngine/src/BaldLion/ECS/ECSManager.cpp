@@ -23,29 +23,29 @@ namespace BaldLion {
 			m_entities = DynamicArray<ECSEntity>(AllocationType::FreeList_ECS,100);			
 			m_systems = DynamicArray<ECSSystem*>(AllocationType::FreeList_ECS,100);
 
-			m_componentsPool = HashTable<ECSComponentID, void*>(AllocationType::FreeList_ECS, 100);
+			m_componentsPool = HashTable<ECSComponentType, void*>(AllocationType::FreeList_ECS, 100);
 
 			//Pools initialization
 			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_ECS, 1000);
-			m_componentsPool.Emplace(ECSComponentID::Transform, std::move(&m_transformComponentPool));
+			m_componentsPool.Emplace(ECSComponentType::Transform, std::move(&m_transformComponentPool));
 
 			m_projectionCameraComponentPool = DynamicArray<ECSProjectionCameraComponent>(AllocationType::FreeList_ECS, 10);
-			m_componentsPool.Emplace(ECSComponentID::ProjectionCamera, std::move(&m_projectionCameraComponentPool));
+			m_componentsPool.Emplace(ECSComponentType::ProjectionCamera, std::move(&m_projectionCameraComponentPool));
 
 			m_directionalLightComponentPool = DynamicArray<ECSDirectionalLightComponent>(AllocationType::FreeList_ECS, 10);
-			m_componentsPool.Emplace(ECSComponentID::DirectionalLight, std::move(&m_directionalLightComponentPool));
+			m_componentsPool.Emplace(ECSComponentType::DirectionalLight, std::move(&m_directionalLightComponentPool));
 
 			m_meshComponentPool = DynamicArray<ECSMeshComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.Emplace(ECSComponentID::Mesh, std::move(&m_meshComponentPool));
+			m_componentsPool.Emplace(ECSComponentType::Mesh, std::move(&m_meshComponentPool));
 
 			m_animationComponentPool = DynamicArray<ECSAnimationComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.Emplace(ECSComponentID::Animation, std::move(&m_animationComponentPool));
+			m_componentsPool.Emplace(ECSComponentType::Animation, std::move(&m_animationComponentPool));
 
 			m_skeletonComponentPool = DynamicArray<ECSSkeletonComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.Emplace(ECSComponentID::Skeleton, std::move(&m_skeletonComponentPool));
+			m_componentsPool.Emplace(ECSComponentType::Skeleton, std::move(&m_skeletonComponentPool));
 
 			m_hierarchyComponentPool = DynamicArray<ECSHierarchyComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.Emplace(ECSComponentID::Hierarchy, std::move(&m_hierarchyComponentPool));
+			m_componentsPool.Emplace(ECSComponentType::Hierarchy, std::move(&m_hierarchyComponentPool));
 
 			m_entityIDProvider = 0;
 		}
@@ -63,13 +63,13 @@ namespace BaldLion {
 
 			m_systems.Delete();			
 
-			CleanComponentPool<ECSTransformComponent>(ECSComponentID::Transform);
-			CleanComponentPool<ECSProjectionCameraComponent>(ECSComponentID::ProjectionCamera);
-			CleanComponentPool<ECSDirectionalLightComponent>(ECSComponentID::DirectionalLight);
-			CleanComponentPool<ECSMeshComponent>(ECSComponentID::Mesh);
-			CleanComponentPool<ECSAnimationComponent>(ECSComponentID::Animation);
-			CleanComponentPool<ECSSkeletonComponent>(ECSComponentID::Skeleton);
-			CleanComponentPool<ECSHierarchyComponent>(ECSComponentID::Hierarchy);
+			CleanComponentPool<ECSTransformComponent>(ECSComponentType::Transform);
+			CleanComponentPool<ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera);
+			CleanComponentPool<ECSDirectionalLightComponent>(ECSComponentType::DirectionalLight);
+			CleanComponentPool<ECSMeshComponent>(ECSComponentType::Mesh);
+			CleanComponentPool<ECSAnimationComponent>(ECSComponentType::Animation);
+			CleanComponentPool<ECSSkeletonComponent>(ECSComponentType::Skeleton);
+			CleanComponentPool<ECSHierarchyComponent>(ECSComponentType::Hierarchy);
 
 			m_componentsPool.Delete();
 		}
@@ -101,7 +101,7 @@ namespace BaldLion {
 
 		void ECSManager::AddComponentToEntity(ECSEntityID entityID, ECSComponent* component)
 		{
-			const ECSComponentID componentID = component->GetComponentID();
+			const ECSComponentType componentID = component->GetComponentType();
 
 			ECSSignature componentSignature;
 			componentSignature.set((ui32)componentID);
@@ -123,6 +123,14 @@ namespace BaldLion {
 			}
 		}
 
+		void ECSManager::FrameStart()
+		{
+			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			{
+				m_systems[i]->OnFrameStart();
+			}
+		}
+
 		void ECSManager::UpdateSystems(TimeStep timeStep)
 		{
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
@@ -131,11 +139,11 @@ namespace BaldLion {
 			}
 		}
 
-		void ECSManager::EndOfFrame()
+		void ECSManager::FrameEnd()
 		{
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
 			{
-				m_systems[i]->OnEndOfFrame();
+				m_systems[i]->OnFrameEnd();
 			}
 		}
 
@@ -154,30 +162,33 @@ namespace BaldLion {
 				m_systems[i]->OnEntityModified(m_entitySignatures.Get(entityID));
 			}
 
-			for (ui32 i = 0; i < m_systems.Size(); ++i)
-			{
+			for (ui32 i = 0; i < m_entities.Size(); ++i)
+			{				
 				if (m_entities[i].GetEntityID() == entityID) {
-					m_entities.RemoveAtFast(i);
+					m_entities.RemoveAt(i);
 					break;
 				}				
 			}
 			
+			m_entitiyMap.Remove(entityID);
 			m_entityComponents.Remove(entityID);
 			m_entitySignatures.Remove(entityID);
 		}
 
-		void ECSManager::RemoveComponentFromEntity(ECSComponentID componentID, ECSEntityID entityID)
+		void ECSManager::RemoveComponentFromEntity(ECSComponentType componentID, ECSEntityID entityID)
 		{
 			ECSSignature signatureToRemove;
 			signatureToRemove.set((ui32)componentID);
 			signatureToRemove.flip();
 
-			m_entitySignatures.Get(entityID) &= signatureToRemove;			
+			ECSSignature oldSignature = m_entitySignatures.Get(entityID);
+			ECSSignature newSignature = oldSignature & signatureToRemove;
+			m_entitySignatures.Set(entityID, newSignature);
 			m_entityComponents.Get(entityID).Set(componentID, nullptr);
 
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
 			{
-				m_systems[i]->OnEntityModified(m_entitySignatures.Get(entityID));
+				m_systems[i]->OnEntityModified(oldSignature);
 			}
 		}
 
