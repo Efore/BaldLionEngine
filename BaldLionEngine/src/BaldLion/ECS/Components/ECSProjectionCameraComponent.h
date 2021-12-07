@@ -19,7 +19,11 @@ namespace BaldLion {
 				nearPlane(nearPlane),
 				farPlane(farPlane),
 				cameraMovementSpeed(cameraMovementSpeed),
-				cameraRotationSpeed(cameraRotationSpeed)
+				cameraRotationSpeed(cameraRotationSpeed),
+				prevX(0.0f),
+				prevY(0.0f),
+				cameraYaw(0.0f),
+				cameraPitch(0.0f)
 			{ 
 			}
 			

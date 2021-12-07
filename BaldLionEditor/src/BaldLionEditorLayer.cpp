@@ -27,7 +27,6 @@ namespace BaldLion
 			SceneManagement::SceneManager::Init();
 			SceneManagement::SceneManager::AddScene("EditorScene", true);
 
-
 			m_ecsManager = SceneManagement::SceneManager::GetECSManager();
 
 			{//Camera setup
@@ -50,9 +49,6 @@ namespace BaldLion
 
 				m_ecsManager->AddComponentToEntity(cameraEntity, cameraTransformComponent);
 				m_ecsManager->AddComponentToEntity(cameraEntity, projectionCameraComponent);
-
-				ECS::SingletonComponents::ECSProjectionCameraSingleton::Init();
-				ECS::SingletonComponents::ECSProjectionCameraSingleton::SetMainCamera(projectionCameraComponent, cameraTransformComponent);
 			}
 
 			{//Directional Light setup
@@ -175,11 +171,6 @@ namespace BaldLion
 			}
 
 			{//Systems
-				const ECS::ECSSignature cameraMovementSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentType::ProjectionCamera, ECS::ECSComponentType::Transform);
-
-				ECS::ECSEditorCameraMovementSystem* cameraMovementSystem = MemoryManager::New<ECS::ECSEditorCameraMovementSystem>("ECS CameraMovementSystem", AllocationType::FreeList_ECS,
-					"ECS CameraMovementSystem", cameraMovementSystemSignature, m_ecsManager);
-
 				const ECS::ECSSignature renderSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentType::Mesh, ECS::ECSComponentType::Transform);
 
 				ECS::ECSRenderSystem* renderSystem = MemoryManager::New<ECS::ECSRenderSystem>("ECS RenderSystem", AllocationType::FreeList_ECS,
@@ -189,7 +180,6 @@ namespace BaldLion
 
 				ECS::ECSAnimationSystem* animationSystem = MemoryManager::New<ECS::ECSAnimationSystem>("ECS AnimationSystem", AllocationType::FreeList_ECS, "ECS AnimationSystem", animationSystemSignature, m_ecsManager);
 
-				m_ecsManager->AddSystem(cameraMovementSystem);
 				m_ecsManager->AddSystem(animationSystem);
 				m_ecsManager->AddSystem(renderSystem);
 			}
@@ -197,10 +187,11 @@ namespace BaldLion
 			m_ecsManager->StartSystems();
 
 			//END ECS setup			
-
+			
 			m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
-			m_entityPropertiesPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);			
+			m_entityPropertiesPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);						
 			m_editorViewportPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);
+			m_editorViewportPanel.SetupViewportCamera();
 		}
 
 		void BaldLionEditorLayer::OnDetach()
@@ -230,7 +221,7 @@ namespace BaldLion
 			RenderDockSpace();			
 
 			m_sceneHierarchyPanel.OnImGuiRender();
-			m_editorViewportPanel.OnImGuiRender();
+			m_editorViewportPanel.OnImGuiRender(timeStep);
 			m_entityPropertiesPanel.OnImGuiRender(); 
 			m_memoryAllocationPanel.OnImGuiRender();
 			m_renderingDataPanel.OnImGuiRender(timeStep);

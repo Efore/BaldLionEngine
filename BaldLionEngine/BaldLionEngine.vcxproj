@@ -190,7 +190,6 @@
     <ClInclude Include="src\BaldLion\ECS\ECSSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSUtils.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.h" />
-    <ClInclude Include="src\BaldLion\ECS\Systems\ECSEditorCameraMovementSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSRenderSystem.h" />
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h" />
     <ClInclude Include="src\BaldLion\Events\Event.h" />
@@ -618,7 +617,6 @@
     <ClCompile Include="src\BaldLion\ECS\ECSManager.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ECSSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.cpp" />
-    <ClCompile Include="src\BaldLion\ECS\Systems\ECSEditorCameraMovementSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSRenderSystem.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp" />

@@ -11,13 +11,22 @@ namespace BaldLion {
 		public:
 			EditorViewportPanel();
 			EditorViewportPanel(SceneHierarchyPanel* sceneHierarchyPanel);
+			~EditorViewportPanel();
 
-			virtual void OnImGuiRender() override;			
+			virtual void SetupViewportCamera() override;
+
+			virtual void OnImGuiRender(TimeStep timeStep) override;
+
+		private:
+			void HandleInput(TimeStep timeStep);
+			void MoveViewportCamera(TimeStep timeStep);
+			void CalculateCameraMovement(const float deltaTime, const float cameraMovementSpeed, const glm::mat4& cameraTransform, glm::vec3& cameraMovement);
+			void CalculateCameraRotation(const float deltaTime, const float cameraRotationSpeed, float& prevX, float& prevY, float& cameraYaw, float& cameraPitch);
 
 		private:
 
 			glm::vec2 m_viewportSize;
-			bool m_viewPortFocused;
+			bool m_viewportFocused;
 			ui32 m_imGuizmoOperation;
 
 		};
