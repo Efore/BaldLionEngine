@@ -15,13 +15,13 @@ namespace BaldLion {
 
 			virtual void SetupViewportCamera() override;
 
-			virtual void OnImGuiRender(TimeStep timeStep) override;
+			virtual void OnImGuiRender() override;
 
 		private:
-			void HandleInput(TimeStep timeStep);
-			void MoveViewportCamera(TimeStep timeStep);
-			void CalculateCameraMovement(const float deltaTime, const float cameraMovementSpeed, const glm::mat4& cameraTransform, glm::vec3& cameraMovement);
-			void CalculateCameraRotation(const float deltaTime, const float cameraRotationSpeed, float& prevX, float& prevY, float& cameraYaw, float& cameraPitch);
+			void HandleInput();
+			void MoveViewportCamera();
+			void CalculateCameraMovement(const float cameraMovementSpeed, const glm::mat4& cameraTransform, glm::vec3& cameraMovement);
+			void CalculateCameraRotation(const float cameraRotationSpeed, float& prevX, float& prevY, float& cameraYaw, float& cameraPitch);
 
 		private:
 

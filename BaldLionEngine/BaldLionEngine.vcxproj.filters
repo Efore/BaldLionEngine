@@ -70,6 +70,9 @@
     <Filter Include="vendor\ImGuizmo">
       <UniqueIdentifier>{73BF7F4C-DF4A-ED10-E85B-700554664911}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\debug-draw">
+      <UniqueIdentifier>{A41C7815-1033-76AB-59AA-01CDC5FF4633}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor\glm">
       <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
     </Filter>
@@ -180,9 +183,6 @@
     <ClInclude Include="src\BaldLion\Core\StringId.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\TimeStep.h">
-      <Filter>src\BaldLion\Core</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Window.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
@@ -253,6 +253,9 @@
       <Filter>src\BaldLion\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\DebugDrawRender.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Framebuffer.h">
@@ -356,6 +359,9 @@
     </ClInclude>
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
       <Filter>vendor\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\debug-draw\debug_draw.hpp">
+      <Filter>vendor\debug-draw</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -1446,6 +1452,9 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Time.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1610,5 +1619,6 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Time.cpp" />
   </ItemGroup>
 </Project>

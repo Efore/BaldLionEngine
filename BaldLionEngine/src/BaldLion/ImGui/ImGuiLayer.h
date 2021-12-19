@@ -16,7 +16,7 @@ namespace BaldLion
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		virtual void OnImGuiRender(TimeStep timeStep) override;
+		virtual void OnImGuiRender() override;
 
 		void Begin();
 		void End();

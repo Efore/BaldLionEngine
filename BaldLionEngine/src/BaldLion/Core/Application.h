@@ -6,7 +6,6 @@
 #include "BaldLion/Events/ApplicationEvent.h"
 #include "BaldLion/Core/LayerStack.h"
 
-#include "BaldLion/Core/TimeStep.h"
 #include "BaldLion/ImGui/ImGuiLayer.h"
 
 namespace BaldLion 
@@ -43,7 +42,6 @@ namespace BaldLion
 		bool m_minimized = false;
 
 		LayerStack m_layerStack;
-		float m_lastFrameTime;		
 
 		static Application* s_instance;
 	};

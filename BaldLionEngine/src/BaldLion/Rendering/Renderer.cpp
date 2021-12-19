@@ -7,6 +7,8 @@
 #include "BaldLion/ECS/ComponentsSingleton/ECSProjectionCameraSingleton.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
 
+#include "DebugDrawRender.h"
+
 const ui32 maxMeshesToProcess = 5u;
 
 namespace BaldLion
@@ -20,11 +22,14 @@ namespace BaldLion
 		RendererPlatformInterface* Renderer::s_rendererPlatformInterface;
 		SkyboxPlatformInterface* Renderer::s_skyboxPlatformInterface;
 		
+		DebugDrawRender Renderer::s_debugDrawRender;
+
 		HashTable<Material*, GeometryData*> Renderer::s_geometryToBatch;
 
-		DynamicArray<RenderMeshData> Renderer::s_shadowCastingMeshes;	
+		DynamicArray<RenderMeshData> Renderer::s_shadowCastingMeshes;
 		DynamicArray<RenderMeshData> Renderer::s_dynamicMeshes;
 		DynamicArray<VertexArray*> Renderer::s_disposableVertexArrays;
+		DynamicArray<std::function<void()>> Renderer::s_scheduledDebugDrawCommands;
 
 		Framebuffer* Renderer::s_framebuffer;
 
@@ -81,6 +86,10 @@ namespace BaldLion
 			s_shadowCastingMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
 			s_disposableVertexArrays = DynamicArray<VertexArray*>(AllocationType::FreeList_Renderer, 100);
 			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::FreeList_Renderer, 10);
+			s_scheduledDebugDrawCommands = DynamicArray<std::function<void()>>(AllocationType::FreeList_Renderer, 100);			
+
+			s_debugDrawRender.Init();
+			dd::initialize(&s_debugDrawRender);
 		}
 
 		void Renderer::Stop()
@@ -94,6 +103,8 @@ namespace BaldLion
 			
 			Framebuffer::Destroy(s_framebuffer);
 			Framebuffer::Destroy(s_shadowFramebuffer);
+
+			s_debugDrawRender.Stop();
 		}
 
 		void Renderer::OnWindowResize(ui32 width, ui32 height)
@@ -124,6 +135,9 @@ namespace BaldLion
 
 			DrawBatchedMeshes();
 			DrawDynamicMeshes();
+			s_skyboxPlatformInterface->Draw();
+
+			DrawDebugCommands();
 		}
 
 		void Renderer::EndScene()
@@ -139,9 +153,6 @@ namespace BaldLion
 			s_dynamicMeshes.Clear();
 			s_shadowCastingMeshes.Clear();
 			s_geometryToBatch.Clear();
-
-			s_skyboxPlatformInterface->Draw();
-
 			s_framebuffer->Unbind();
 		}
 
@@ -355,6 +366,19 @@ namespace BaldLion
 			}
 		}
 
+		void Renderer::DrawDebugCommands()
+		{
+			s_debugDrawRender.setMvpMatrix(s_sceneData.viewProjectionMatrix);
+
+			for (ui32 i = 0; i < s_scheduledDebugDrawCommands.Size(); ++i) 
+			{
+				s_scheduledDebugDrawCommands[i]();
+			}
+
+			dd::flush((int)Time::GetCurrentTimeInMilliseconds());
+			s_scheduledDebugDrawCommands.ClearNoDestructor();
+		}
+
 		void Renderer::AddStaticMeshToBatch(const ECS::ECSMeshComponent* staticMeshComponent, const ECS::ECSTransformComponent* staticMeshTransform)
 		{
 			BL_PROFILE_FUNCTION();	
@@ -395,6 +419,50 @@ namespace BaldLion
 			std::lock_guard<std::mutex> frustrumCullingGuard(s_shadowCastingMeshesMutex);
 			s_shadowCastingMeshes.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
 		}		
+
+		void Renderer::DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::vec3& color, float duration /*= 0.0f*/, bool depthEnabled /*= true*/)
+		{
+			ScheduleDebugDrawCommand([center, color, size, duration, depthEnabled] 
+			{
+				dd::box((float*)&center, (float*)&color, size[0], size[1], size[2], duration, depthEnabled);
+			});
+		}
+
+		void Renderer::DrawDebugSphere(const glm::vec3& center, float radius, const glm::vec3& color, float duration /*= 0.0f*/, bool depthEnabled /*= true*/)
+		{
+			ScheduleDebugDrawCommand([center, radius, color, duration, depthEnabled]
+			{
+				dd::sphere((float*)&center, (float*)&color, radius, duration, depthEnabled);
+			});
+		}
+
+		void Renderer::DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, bool arrow /*= false*/, float duration /*= 0.0f*/, bool depthEnabled /*= true*/)
+		{
+			ScheduleDebugDrawCommand([from, to, color, arrow, duration, depthEnabled]
+			{
+				if (arrow) 
+				{
+					dd::line((float*)&from, (float*)&to, (float*)&color, duration, depthEnabled);
+				}
+				else 
+				{
+					dd::arrow((float*)&from, (float*)&to, (float*)&color, duration, depthEnabled);
+				}				
+			});
+		}
+
+		void Renderer::DrawDebugFrustrum(const glm::mat4& invClipMatrix, const glm::vec3& color, float duration /*= 0.0f*/, bool depthEnabled /*= true*/)
+		{
+			ScheduleDebugDrawCommand([invClipMatrix, color, duration, depthEnabled]
+			{
+				dd::frustum((float*)&invClipMatrix, (float*)&color, duration, depthEnabled);
+			});
+		}
+
+		void Renderer::ScheduleDebugDrawCommand(std::function<void()> debugDrawCommand)
+		{
+			s_scheduledDebugDrawCommands.EmplaceBack(debugDrawCommand);
+		}
 
 		void Renderer::AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
 		{

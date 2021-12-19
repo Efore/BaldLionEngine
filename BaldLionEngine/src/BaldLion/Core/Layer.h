@@ -1,7 +1,6 @@
 #pragma once
 
 #include "BaldLion/Events/Event.h"
-#include "BaldLion/Core/TimeStep.h"
 
 namespace BaldLion
 {
@@ -13,8 +12,8 @@ namespace BaldLion
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate(TimeStep timeStep) {}
-		virtual void OnImGuiRender(TimeStep timeStep) {}
+		virtual void OnUpdate() {}
+		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& e) {}
 	};
 }

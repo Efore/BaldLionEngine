@@ -2,6 +2,7 @@
 #include "EntityPropertiesPanel.h"
 #include "Components/TransformComponentInspector.h"
 #include "Components/DirectionalLightComponentInspector.h"
+#include "Components/ProjectionCameraComponentInspector.h"
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/Utils/MathUtils.h"
 
@@ -151,8 +152,7 @@ namespace BaldLion {
 					break;
 
 				case ECS::ECSComponentType::ProjectionCamera:
-					ComponentInspector::BeginComponentRender("Projection Camera Component", ECS::ECSComponentType::ProjectionCamera, m_sceneHierarchyPanel, GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f);
-					ComponentInspector::EndComponentRender();
+					ProjectionCameraComponentInspector::OnImGuiRender(component, m_sceneHierarchyPanel);
 					break;
 
 				case ECS::ECSComponentType::Mesh:

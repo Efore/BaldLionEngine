@@ -33,7 +33,7 @@ namespace BaldLion {
 			m_componentLookUps.Delete();
 		}
 
-		void ECSSystem::OnUpdate(TimeStep timeStep)
+		void ECSSystem::OnUpdate()
 		{	
 			for (ui32 i = 0; i < m_componentLookUps.Size(); ++i)
 			{
@@ -45,16 +45,16 @@ namespace BaldLion {
 
 					JobManagement::Job systemUpdateJob(systemOperation.c_str());
 
-					systemUpdateJob.Task = [this, timeStep, componentLookUp] {
+					systemUpdateJob.Task = [this, componentLookUp] {
 
-						this->UpdateOperation(timeStep, componentLookUp);
+						this->UpdateOperation(componentLookUp);
 					};
 
 					JobManagement::JobManager::QueueJob(systemUpdateJob);
 				}
 				else 
 				{
-					this->UpdateOperation(timeStep, componentLookUp);
+					this->UpdateOperation(componentLookUp);
 				}
 			}
 

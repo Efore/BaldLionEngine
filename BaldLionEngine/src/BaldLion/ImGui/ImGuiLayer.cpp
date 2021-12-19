@@ -77,7 +77,7 @@ namespace BaldLion
 		ImGui::NewFrame();
 	}
 
-	void ImGuiLayer::OnImGuiRender(TimeStep timeStep)
+	void ImGuiLayer::OnImGuiRender()
 	{
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);

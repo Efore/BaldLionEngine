@@ -22,9 +22,6 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();		
 
-			//ECS setup
-
-			SceneManagement::SceneManager::Init();
 			SceneManagement::SceneManager::AddScene("EditorScene", true);
 
 			m_ecsManager = SceneManagement::SceneManager::GetECSManager();
@@ -65,7 +62,6 @@ namespace BaldLion
 
 				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
 			}
-
 			
 			{//Plane setup
 				ECS::ECSEntityID planeEntity = m_ecsManager->AddEntity("Plane");
@@ -199,13 +195,13 @@ namespace BaldLion
 			SceneManagement::SceneManager::Stop();			
 		}
 
-		void BaldLionEditorLayer::OnUpdate(TimeStep timeStep)
+		void BaldLionEditorLayer::OnUpdate()
 		{
 			BL_PROFILE_FUNCTION();
 
 			SceneManagement::SceneManager::FrameStart();
 
-			SceneManagement::SceneManager::Update(timeStep);
+			SceneManagement::SceneManager::Update();
 				
 			Renderer::BeginScene();			
 			Renderer::DrawScene();
@@ -214,17 +210,17 @@ namespace BaldLion
 			SceneManagement::SceneManager::FrameEnd();
 		}
 
-		void BaldLionEditorLayer::OnImGuiRender(TimeStep timeStep)
+		void BaldLionEditorLayer::OnImGuiRender()
 		{
 			BL_PROFILE_FUNCTION();
 
 			RenderDockSpace();			
 
 			m_sceneHierarchyPanel.OnImGuiRender();
-			m_editorViewportPanel.OnImGuiRender(timeStep);
+			m_editorViewportPanel.OnImGuiRender();
 			m_entityPropertiesPanel.OnImGuiRender(); 
 			m_memoryAllocationPanel.OnImGuiRender();
-			m_renderingDataPanel.OnImGuiRender(timeStep);
+			m_renderingDataPanel.OnImGuiRender();
 		}
 
 		void BaldLionEditorLayer::OnEvent(Event& e)

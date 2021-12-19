@@ -1,8 +1,10 @@
 #include "blpch.h"
 #include "Application.h"
 #include "BaldLion/Rendering/Renderer.h"
-#include "BaldLion/Core/Memory/MemoryManager.h"
 #include "BaldLion/Core/JobManagement/JobManager.h"
+#include "BaldLion/Animation/AnimationManager.h"
+#include "BaldLion/SceneManagement/SceneManager.h"
+
 #include <GLFW/glfw3.h>
 
 
@@ -26,11 +28,12 @@ namespace BaldLion
 		m_window = Window::Create(WindowProps(applicationName));
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
+		Time::Init();
+		Animation::AnimationManager::Init();
+		SceneManagement::SceneManager::Init();
 		Rendering::Renderer::Init(m_window->GetWidth(), m_window->GetHeight());
 
 		m_layerStack.Init();
-
-		m_lastFrameTime = 0.0f;
 
 		m_imGuiLayer = MemoryManager::New<ImGuiLayer>("ImGuiLayer",Memory::AllocationType::FreeList_Main);
 		PushOverlay(m_imGuiLayer);
@@ -41,7 +44,12 @@ namespace BaldLion
 		m_layerStack.PopOverlay(m_imGuiLayer);
 		m_layerStack.Delete();
 		Window::Destroy(m_window);
+
 		Rendering::Renderer::Stop();
+		SceneManagement::SceneManager::Stop	();
+		Animation::AnimationManager::Stop();
+		Time::Stop();
+
 		JobManagement::JobManager::Stop();
 		Memory::MemoryManager::Stop();
 	}
@@ -75,31 +83,22 @@ namespace BaldLion
 
 	void Application::Run()
 	{		
-		m_lastFrameTime = (float)glfwGetTime();
-
 		while (m_running)
 		{	
 			BL_PROFILE_FRAME();
 
-			float time = (float)glfwGetTime(); // Platform::GetTime
-
-			const float maxFPS = 30.0f;
-			const float maxPeriod = 1.0f / maxFPS;
-
-			TimeStep timeStep = time - m_lastFrameTime;
-
-			if (timeStep.GetSeconds() < maxPeriod)
+			if (!Time::SetCurrentTime(glfwGetTime()))// Platform::GetTime
+			{
 				continue;
-
-			m_lastFrameTime = time;
-
+			}
+	
 			if (!m_minimized)
 			{
 				{
 					BL_PROFILE_SCOPE("LayerStack OnUpdates", Optick::Category::GameLogic);
 
 					for (ui32 i = 0; i < m_layerStack.Size(); ++i)
-						m_layerStack[i]->OnUpdate(timeStep);
+						m_layerStack[i]->OnUpdate();
 				}
 
 				m_imGuiLayer->Begin();
@@ -107,7 +106,7 @@ namespace BaldLion
 				{
 					BL_PROFILE_SCOPE("LayerStack OnUpdates", Optick::Category::Type::GameLogic);
 					for (ui32 i = 0; i < m_layerStack.Size(); ++i)
-						m_layerStack[i]->OnImGuiRender(timeStep);
+						m_layerStack[i]->OnImGuiRender();
 				}
 
 				m_imGuiLayer->End();

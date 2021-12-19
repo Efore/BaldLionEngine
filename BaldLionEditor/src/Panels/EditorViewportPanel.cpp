@@ -56,7 +56,7 @@ namespace BaldLion {
 			ECS::SingletonComponents::ECSProjectionCameraSingleton::SetMainCamera(m_viewportCamera, m_viewportCameraTransform);
 		}
 
-		void EditorViewportPanel::OnImGuiRender(TimeStep timeStep)
+		void EditorViewportPanel::OnImGuiRender()
 		{
 			ImGui::Begin("Viewport");
 
@@ -107,12 +107,9 @@ namespace BaldLion {
 			//Gizmos
 			ECS::ECSEntityID selectedEntityID = m_sceneHierarchyPanel->GetSelectedEntityID();
 			ECS::ECSComponentLookUp selectedEntityComponents;
-
-			ECS::ECSTransformComponent*  cameraTransformComponent = ECS::SingletonComponents::ECSProjectionCameraSingleton::GetMainCameraTransform();
-			const ECS::ECSProjectionCameraComponent* cameraComponent = ECS::SingletonComponents::ECSProjectionCameraSingleton::GetMainCamera();
-
-			glm::mat4 cameraView = glm::inverse(cameraTransformComponent->GetTransformMatrix());
-			const glm::mat4 cameraProjection = glm::perspective(glm::radians(cameraComponent->fov), cameraComponent->width / cameraComponent->height, cameraComponent->nearPlane, cameraComponent->farPlane);
+			
+			glm::mat4 cameraView = glm::inverse(m_viewportCameraTransform->GetTransformMatrix());
+			const glm::mat4 cameraProjection = glm::perspective(glm::radians(m_viewportCamera->fov), m_viewportCamera->width / m_viewportCamera->height, m_viewportCamera->nearPlane, m_viewportCamera->farPlane);
 
 			ImGuizmo::SetOrthographic(false);
 
@@ -126,32 +123,42 @@ namespace BaldLion {
 				if (entityTransformComponent)
 				{
 					glm::mat4 entityTransformMat = entityTransformComponent->GetTransformMatrix();
+					
+					ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), (ImGuizmo::OPERATION)m_imGuizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(entityTransformMat));
 
-					if (cameraTransformComponent != entityTransformComponent)
+					if (ImGuizmo::IsUsing())
 					{
-						ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), (ImGuizmo::OPERATION)m_imGuizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(entityTransformMat));
+						glm::vec3 translation, rotation, scale;
+						MathUtils::DecomposeTransformMatrix(entityTransformMat, translation, rotation, scale);
+						glm::vec deltaRotation = rotation - entityTransformComponent->rotation;
 
-						if (ImGuizmo::IsUsing())
-						{
-							glm::vec3 translation, rotation, scale;
-							MathUtils::DecomposeTransformMatrix(entityTransformMat, translation, rotation, scale);
-							glm::vec deltaRotation = rotation - entityTransformComponent->rotation;
+						entityTransformComponent->position = translation;
+						entityTransformComponent->rotation += deltaRotation;
+						entityTransformComponent->scale = scale;
+					}					
 
-							entityTransformComponent->position = translation;
-							entityTransformComponent->rotation += deltaRotation;
-							entityTransformComponent->scale = scale;
-						}						
+					const ECS::ECSProjectionCameraComponent* projectionCameraComponent = selectedEntityComponents.Read<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentType::ProjectionCamera);
+					if (projectionCameraComponent)
+					{
+						const glm::mat4 viewMatrix = glm::inverse(entityTransformComponent->GetTransformMatrix());
+
+						const glm::mat4 projectionMatrix = glm::perspective(glm::radians(projectionCameraComponent->fov), projectionCameraComponent->width / projectionCameraComponent->height, projectionCameraComponent->nearPlane, projectionCameraComponent->farPlane);
+
+						const glm::mat4 frustrum = glm::inverse(projectionMatrix * viewMatrix);
+
+						Renderer::DrawDebugFrustrum(frustrum, glm::vec3(0.3f, 1.0f, 0.3f), 0.0f, false);
 					}
 				}
+
 			}
 			
 			//ImGuizmo::ViewManipulate((float*)&cameraView, 1.0f, ImVec2{ ImGui::GetWindowPos().x + ImGui::GetWindowWidth() - 128, ImGui::GetWindowPos().y + 10 }, ImVec2(128, 128), 0x10101010);
-			ImGui::End();
+			ImGui::End();			
 		
-			HandleInput(timeStep);			
+			HandleInput();			
 		}
 
-		void EditorViewportPanel::HandleInput(TimeStep timeStep)
+		void EditorViewportPanel::HandleInput()
 		{
 			if (!BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 			{
@@ -171,11 +178,11 @@ namespace BaldLion {
 
 			if (m_viewportFocused)
 			{
-				MoveViewportCamera(timeStep);
+				MoveViewportCamera();
 			}
 		}
 
-		void EditorViewportPanel::MoveViewportCamera(TimeStep timeStep)
+		void EditorViewportPanel::MoveViewportCamera()
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -183,8 +190,8 @@ namespace BaldLion {
 
 			glm::vec3 cameraMovement;
 
-			CalculateCameraMovement(timeStep, m_viewportCamera->cameraMovementSpeed, cameraMatrixTransform, cameraMovement);
-			CalculateCameraRotation(timeStep, m_viewportCamera->cameraRotationSpeed, m_viewportCamera->prevX, m_viewportCamera->prevY, m_viewportCamera->cameraYaw, m_viewportCamera->cameraPitch);
+			CalculateCameraMovement( m_viewportCamera->cameraMovementSpeed, cameraMatrixTransform, cameraMovement);
+			CalculateCameraRotation( m_viewportCamera->cameraRotationSpeed, m_viewportCamera->prevX, m_viewportCamera->prevY, m_viewportCamera->cameraYaw, m_viewportCamera->cameraPitch);
 
 			m_viewportCameraTransform->position += cameraMovement;
 			m_viewportCameraTransform->rotation = glm::vec3(glm::radians(m_viewportCamera->cameraPitch), glm::radians(m_viewportCamera->cameraYaw), 0.0f);
@@ -197,36 +204,36 @@ namespace BaldLion {
 			m_viewportCamera->viewProjectionMatrix = projectionMatrix * viewMatrix;
 		}
 
-		void EditorViewportPanel::CalculateCameraMovement(const float deltaTime, const float cameraMovementSpeed, const glm::mat4& cameraTransform, glm::vec3& cameraMovement)
+		void EditorViewportPanel::CalculateCameraMovement(const float cameraMovementSpeed, const glm::mat4& cameraTransform, glm::vec3& cameraMovement)
 		{
 			cameraMovement = glm::vec3(0, 0, 0);
 
 			if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 			{
 				if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
-					cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * deltaTime * cameraMovementSpeed;
+					cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * Time::GetDeltaTime() * cameraMovementSpeed;
 				else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
-					cameraMovement += MathUtils::GetTransformForwardDirection(cameraTransform) * deltaTime * cameraMovementSpeed;
+					cameraMovement += MathUtils::GetTransformForwardDirection(cameraTransform) * Time::GetDeltaTime() * cameraMovementSpeed;
 
 				if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
-					cameraMovement -= MathUtils::GetTransformRightDirection(cameraTransform) * deltaTime * cameraMovementSpeed;
+					cameraMovement -= MathUtils::GetTransformRightDirection(cameraTransform) * Time::GetDeltaTime() * cameraMovementSpeed;
 				else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
-					cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * deltaTime * cameraMovementSpeed;
+					cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * Time::GetDeltaTime() * cameraMovementSpeed;
 
 				if (BaldLion::Input::IsKeyPressed(BL_KEY_LEFT_SHIFT))
 					cameraMovement *= 2;
 			}
 		}
 
-		void EditorViewportPanel::CalculateCameraRotation(const float deltaTime, const float cameraRotationSpeed, float& prevX, float& prevY, float& cameraYaw, float& cameraPitch)
+		void EditorViewportPanel::CalculateCameraRotation( const float cameraRotationSpeed, float& prevX, float& prevY, float& cameraYaw, float& cameraPitch)
 		{
 			if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 			{
 				float deltaX = BaldLion::Input::GetMouseX() - prevX;
 				float deltaY = BaldLion::Input::GetMouseY() - prevY;
 
-				cameraYaw -= deltaX * cameraRotationSpeed * deltaTime;
-				cameraPitch -= deltaY * cameraRotationSpeed * deltaTime;
+				cameraYaw -= deltaX * cameraRotationSpeed * Time::GetDeltaTime();
+				cameraPitch -= deltaY * cameraRotationSpeed * Time::GetDeltaTime();
 			}
 
 			prevX = BaldLion::Input::GetMouseX();

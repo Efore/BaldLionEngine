@@ -32,10 +32,10 @@ namespace BaldLion {
 			}
 		}
 
-		void Scene::Update(TimeStep timeStep)
+		void Scene::Update()
 		{
 			if (m_ecsManager != nullptr) {
-				m_ecsManager->UpdateSystems(timeStep);
+				m_ecsManager->UpdateSystems();
 			}
 		}
 

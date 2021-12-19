@@ -1,7 +1,6 @@
 #pragma once
 #include "BaldLion/Core/StringId.h"
 #include "BaldLion/ECS/ECSManager.h"
-#include "BaldLion/Core/TimeStep.h"
 
 namespace BaldLion {
 
@@ -15,7 +14,7 @@ namespace BaldLion {
 			~Scene();
 
 			void FrameStart();
-			void Update(TimeStep timeStep);
+			void Update();
 			void FrameEnd();
 
 			const StringId GetSceneID() const { return m_sceneID; }

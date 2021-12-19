@@ -19,6 +19,7 @@ IncludeDir["stb_image"] = "BaldLionEngine/vendor/stb_image/"
 IncludeDir["assimp"] = "BaldLionEngine/vendor/assimp/include"
 IncludeDir["optick"] = "BaldLionEngine/vendor/optick/include"
 IncludeDir["ImGuizmo"] = "BaldLionEngine/vendor/ImGuizmo"
+IncludeDir["debug_draw"] = "BaldLionEngine/vendor/debug-draw"
 
 group "Dependencies"
 	include "BaldLionEngine/vendor/GLFW"
@@ -48,7 +49,8 @@ project "BaldLionEngine"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",		
 		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
-		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",		
+		"%{prj.name}/vendor/debug-draw/**.hpp"		
 	}
 
 	defines
@@ -67,7 +69,8 @@ project "BaldLionEngine"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.assimp}",
-		"%{IncludeDir.optick}"	
+		"%{IncludeDir.optick}",
+		"%{IncludeDir.debug_draw}",
 	}	
 	
 	libdirs 
@@ -140,7 +143,8 @@ project "BaldLionEditor"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.optick}",	
-		"%{IncludeDir.ImGuizmo}"
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.debug_draw}"	
 	}
 
 	links

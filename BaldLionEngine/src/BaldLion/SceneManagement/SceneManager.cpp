@@ -21,11 +21,11 @@ namespace BaldLion
 			}
 		}
 
-		void SceneManager::Update(TimeStep timeStep)
+		void SceneManager::Update()
 		{
 			if (m_mainScene != nullptr)
 			{
-				m_mainScene->Update(timeStep);
+				m_mainScene->Update();
 			}
 		}
 

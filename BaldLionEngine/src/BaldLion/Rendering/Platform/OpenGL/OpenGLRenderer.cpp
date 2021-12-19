@@ -31,6 +31,7 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
+			glEnable(GL_DEPTH_TEST);
 			glDepthMask(GL_TRUE);
 			glClearDepth(1.0f);
 			glClearColor(color.r, color.g, color.b, color.a);

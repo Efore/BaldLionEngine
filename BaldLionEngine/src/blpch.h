@@ -17,6 +17,7 @@
 #include "BaldLion/Core/Profiling.h"
 #include "BaldLion/Core/Memory/MemoryManager.h"
 #include "BaldLion/Core/StringId.h"
+#include "BaldLion/Core/Time.h"
 
 #ifdef BL_PLATFORM_WINDOWS
 	#include <Windows.h>

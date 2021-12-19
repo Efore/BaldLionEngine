@@ -12,7 +12,7 @@ namespace BaldLion
 
 			static void Init();
 			static void FrameStart();
-			static void Update(TimeStep timeStep);
+			static void Update();
 			static void FrameEnd();
 			static void Stop();
 

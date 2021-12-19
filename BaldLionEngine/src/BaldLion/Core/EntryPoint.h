@@ -6,6 +6,7 @@
 #include <stdlib.h>  
 #include <crtdbg.h>  
 
+#include "Application.h"
 
 extern BaldLion::Application& BaldLion::CreateApplication(const std::string& applicationName);
 

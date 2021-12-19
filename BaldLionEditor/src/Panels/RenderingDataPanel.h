@@ -8,7 +8,7 @@ namespace BaldLion {
 
 		public:
 			RenderingDataPanel() = default;
-			void OnImGuiRender(TimeStep timeStep);
+			void OnImGuiRender();
 		};
 	}
 }

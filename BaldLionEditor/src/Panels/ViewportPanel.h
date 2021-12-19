@@ -14,7 +14,7 @@ namespace BaldLion {
 
 			virtual void SetupViewportCamera() = 0;
 
-			virtual void OnImGuiRender(TimeStep timeStep) = 0;
+			virtual void OnImGuiRender() = 0;
 			void SetHierarchyPanel(SceneHierarchyPanel* sceneHierarchyPanel) { m_sceneHierarchyPanel = sceneHierarchyPanel; }
 
 		protected:

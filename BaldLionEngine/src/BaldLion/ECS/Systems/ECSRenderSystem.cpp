@@ -14,13 +14,13 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		void ECSRenderSystem::OnUpdate(TimeStep timeStep)
+		void ECSRenderSystem::OnUpdate()
 		{
 			ECS::SingletonComponents::ECSProjectionCameraSingleton::UpdateFrustrumPlanes();
-			ECSSystem::OnUpdate(timeStep);
+			ECSSystem::OnUpdate();
 		}
 
-		void ECSRenderSystem::UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp)
+		void ECSRenderSystem::UpdateOperation(ECSComponentLookUp* componentLookUp)
 		{
 			BL_PROFILE_FUNCTION();
 

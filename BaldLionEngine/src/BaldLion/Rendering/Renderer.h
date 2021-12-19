@@ -11,6 +11,7 @@
 #include "BaldLion/ECS/Components/ECSTransformComponent.h"
 #include "BaldLion/ECS/Components/ECSSkeletonComponent.h"
 
+
 namespace BaldLion
 {
 	namespace Rendering
@@ -23,6 +24,7 @@ namespace BaldLion
 			UI,
 			Particles,
 
+			Debug,
 			Count
 		};	
 
@@ -72,11 +74,21 @@ namespace BaldLion
 			static void AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
 			static void AddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
 
+			static void DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::vec3& color, float duration = 0.0f, bool depthEnabled = true);
+
+			static void DrawDebugSphere(const glm::vec3& center, float radius, const glm::vec3& color, float duration = 0.0f, bool depthEnabled = true);
+
+			static void DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, bool arrow = false, float duration = 0.0f, bool depthEnabled = true);
+
+			static void DrawDebugFrustrum(const glm::mat4& invClipMatrix, const glm::vec3& color, float duration = 0.0f, bool depthEnabled = true);
+
 		private:
 			
 			static void DrawShadowMap();
 			static void DrawDynamicMeshes();
 			static void DrawBatchedMeshes();
+			static void DrawDebugCommands();
+			static void ScheduleDebugDrawCommand(std::function<void()> debugDrawCommand);			
 
 		private:
 
@@ -85,11 +97,13 @@ namespace BaldLion
 			static ShaderLibrary s_shaderLibrary;
 			static TextureLibrary s_textureLibrary;
 			static RendererPlatformInterface* s_rendererPlatformInterface;
-			static SkyboxPlatformInterface* s_skyboxPlatformInterface;						
+			static SkyboxPlatformInterface* s_skyboxPlatformInterface;			
+			static class DebugDrawRender s_debugDrawRender;
 
 			static DynamicArray<RenderMeshData> s_shadowCastingMeshes;
 			static DynamicArray<RenderMeshData> s_dynamicMeshes;
 			static HashTable<Material*, GeometryData*> s_geometryToBatch;
+			static DynamicArray<std::function<void()>> s_scheduledDebugDrawCommands;
 
 			static DynamicArray<VertexArray*> s_disposableVertexArrays;	 
 

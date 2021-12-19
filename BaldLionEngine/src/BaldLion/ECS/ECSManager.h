@@ -4,7 +4,6 @@
 #include "ECSSystem.h"
 #include "ECSUtils.h"
 #include "ECSEntity.h"
-#include "BaldLion/Core/TimeStep.h"
 #include "BaldLion/Core/Containers/HashMap.h"
 #include "BaldLion/Core/Containers/HashTable.h"
 
@@ -36,7 +35,7 @@ namespace BaldLion {
 			//Main loop
 			void StartSystems();
 			void FrameStart();
-			void UpdateSystems(TimeStep timeStep);
+			void UpdateSystems();
 			void FrameEnd();
 			void StopSystems();
 

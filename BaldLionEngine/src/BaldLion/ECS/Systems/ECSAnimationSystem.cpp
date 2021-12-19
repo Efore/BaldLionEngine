@@ -14,7 +14,7 @@ namespace BaldLion {
 
 	namespace ECS {
 		
-		void ECSAnimationSystem::UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp)
+		void ECSAnimationSystem::UpdateOperation(ECSComponentLookUp* componentLookUp)
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -24,7 +24,7 @@ namespace BaldLion {
 			const Animator* entityAnimator = AnimationManager::GetAnimator(entityAnimation->animatorID);
 			const AnimationData* currentAnimation = entityAnimator->GetAnimation(entityAnimation->currentAnimationID);
 
-			entityAnimation->currentAnimationProgress = glm::mod(entityAnimation->currentAnimationProgress + timeStep, currentAnimation->AnimationLength);			
+			entityAnimation->currentAnimationProgress = glm::mod(entityAnimation->currentAnimationProgress + Time::GetDeltaTime(), currentAnimation->AnimationLength);
 
 			DynamicArray<JointTransform> transforms;
 			CalculateInterpolatedTransforms(entityAnimation->currentAnimationProgress, currentAnimation, transforms);

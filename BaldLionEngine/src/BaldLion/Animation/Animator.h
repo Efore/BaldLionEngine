@@ -1,7 +1,6 @@
 #pragma once
 #include "AnimationData.h"
 #include "BaldLion/Core/Core.h"
-#include "BaldLion/Core/TimeStep.h"
 #include "BaldLion/Core/Containers/HashTable.h"
 #include "Skeleton.h"
 

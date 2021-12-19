@@ -131,11 +131,11 @@ namespace BaldLion {
 			}
 		}
 
-		void ECSManager::UpdateSystems(TimeStep timeStep)
+		void ECSManager::UpdateSystems()
 		{
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
 			{
-				m_systems[i]->OnUpdate(timeStep);
+				m_systems[i]->OnUpdate();
 			}
 		}
 

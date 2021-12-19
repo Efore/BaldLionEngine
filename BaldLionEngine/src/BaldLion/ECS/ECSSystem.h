@@ -1,7 +1,6 @@
 #pragma once
 #include "ECSUtils.h"
 #include "ECSComponentLookUp.h"
-#include "BaldLion/Core/TimeStep.h"
 #include "BaldLion/Core/Containers/DynamicArray.h"
 
 namespace BaldLion
@@ -16,12 +15,12 @@ namespace BaldLion
 			virtual ~ECSSystem();
 
 			virtual void OnStart() = 0;
-			virtual void OnUpdate(TimeStep timeStep);
+			virtual void OnUpdate();
 			virtual void OnStop() = 0;
 			virtual void OnFrameStart();
 			virtual void OnFrameEnd();
 
-			virtual void UpdateOperation(TimeStep timeStep, ECSComponentLookUp* componentLookUp) = 0;
+			virtual void UpdateOperation(ECSComponentLookUp* componentLookUp) = 0;
 
 			void OnEntityModified(ECSSignature entitySignature);					
 
