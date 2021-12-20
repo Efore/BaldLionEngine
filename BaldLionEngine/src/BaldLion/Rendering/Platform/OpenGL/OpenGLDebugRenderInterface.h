@@ -1,30 +1,28 @@
 #pragma once
 
 #include <glad/glad.h>
-#include <glm/glm.hpp>
-
-#define DEBUG_DRAW_IMPLEMENTATION
-#include "debug_draw.hpp"     
+#include "BaldLion/Rendering/DebugDrawRenderInterface.h"
+#include "BaldLion/Core/Core.h"
 
 namespace BaldLion {
 
 	namespace Rendering {
 
-		class DebugDrawRender : public dd::RenderInterface
+		class OpenGLDebugRenderInterface : public DebugDrawRenderInterface
 		{
 		public:
 
-			DebugDrawRender() 
-			{
-				
-			}
-
-			~DebugDrawRender() 
+			OpenGLDebugRenderInterface()
 			{
 
 			}
 
-			void Init() 
+			~OpenGLDebugRenderInterface()
+			{
+
+			}
+
+			void Init() override
 			{
 				// This has to be enabled since the point drawing shader will use gl_PointSize.
 				glEnable(GL_PROGRAM_POINT_SIZE);
@@ -33,7 +31,7 @@ namespace BaldLion {
 				setupVertexBuffers();
 			}
 
-			void Stop()
+			void Stop() override
 			{
 				glDeleteProgram(m_linePointProgram);
 				glDeleteProgram(m_textProgram);
@@ -45,12 +43,7 @@ namespace BaldLion {
 				glDeleteBuffers(1, &m_textVBO);
 			}
 
-			void setMvpMatrix(const glm::mat4& mvpMatrix) 
-			{
-				m_mvpMatrix = mvpMatrix;
-			}
-
-			void drawPointList(const dd::DrawVertex * points, int count, bool depthEnabled) override 
+			void drawPointList(const dd::DrawVertex * points, int count, bool depthEnabled) override
 			{
 				assert(points != nullptr);
 				assert(count > 0 && count <= DEBUG_DRAW_VERTEX_BUFFER_SIZE);
@@ -84,7 +77,7 @@ namespace BaldLion {
 				checkGLError(__FILE__, __LINE__);
 			}
 
-			void drawLineList(const dd::DrawVertex * lines, int count, bool depthEnabled) override 
+			void drawLineList(const dd::DrawVertex * lines, int count, bool depthEnabled) override
 			{
 				assert(lines != nullptr);
 				assert(count > 0 && count <= DEBUG_DRAW_VERTEX_BUFFER_SIZE);
@@ -114,11 +107,11 @@ namespace BaldLion {
 				glUseProgram(0);
 				glBindVertexArray(0);
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
-								
+
 				checkGLError(__FILE__, __LINE__);
 			}
 
-			void drawGlyphList(const dd::DrawVertex * glyphs, int count, dd::GlyphTextureHandle glyphTex) override 
+			void drawGlyphList(const dd::DrawVertex * glyphs, int count, dd::GlyphTextureHandle glyphTex) override
 			{
 				assert(glyphs != nullptr);
 				assert(count > 0 && count <= DEBUG_DRAW_VERTEX_BUFFER_SIZE);
@@ -129,7 +122,7 @@ namespace BaldLion {
 				// These doesn't have to be reset every draw call, I'm just being lazy ;)
 				glUniform1i(m_textProgram_GlyphTextureLocation, 0);
 				glUniform2f(m_textProgram_ScreenDimensions,
-					static_cast<GLfloat>(m_windowHeight),
+					static_cast<GLfloat>(m_windowWidth),
 					static_cast<GLfloat>(m_windowHeight));
 
 				if (glyphTex != nullptr)
@@ -156,7 +149,7 @@ namespace BaldLion {
 				checkGLError(__FILE__, __LINE__);
 			}
 
-			dd::GlyphTextureHandle createGlyphTexture(int width, int height, const void * pixels) override 
+			dd::GlyphTextureHandle createGlyphTexture(int width, int height, const void * pixels) override
 			{
 				assert(width > 0 && height > 0);
 				assert(pixels != nullptr);
@@ -181,7 +174,7 @@ namespace BaldLion {
 				return GLToHandle(textureId);
 			}
 
-			void destroyGlyphTexture(dd::GlyphTextureHandle glyphTex) override 
+			void destroyGlyphTexture(dd::GlyphTextureHandle glyphTex) override
 			{
 				if (glyphTex == nullptr)
 				{
@@ -193,7 +186,7 @@ namespace BaldLion {
 				glDeleteTextures(1, &textureId);
 			}
 
-			void setupShaderPrograms() 
+			void setupShaderPrograms()
 			{
 				//
 			// Line/point drawing shader:
@@ -246,7 +239,7 @@ namespace BaldLion {
 				}
 			}
 
-			void setupVertexBuffers() 
+			void setupVertexBuffers()
 			{
 				// Lines/points vertex buffer:
 			//
@@ -354,7 +347,7 @@ namespace BaldLion {
 				return static_cast<GLuint>(temp);
 			}
 
-			static dd::GlyphTextureHandle GLToHandle(const GLuint id) 
+			static dd::GlyphTextureHandle GLToHandle(const GLuint id)
 			{
 				const std::size_t temp = static_cast<std::size_t>(id);
 				return reinterpret_cast<dd::GlyphTextureHandle>(temp);
@@ -403,8 +396,6 @@ namespace BaldLion {
 
 		private:
 
-			glm::mat4 m_mvpMatrix;
-
 			GLuint m_linePointProgram;
 			GLint  m_linePointProgram_MvpMatrixLocation;
 
@@ -424,12 +415,9 @@ namespace BaldLion {
 			static const char * textVertShaderSrc;
 			static const char * textFragShaderSrc;
 
-			float m_windowHeight;
-			float m_windowWidth;
+		};
 
-		}; 
-		
-		const char * DebugDrawRender::linePointVertShaderSrc = "\n"
+		const char * OpenGLDebugRenderInterface::linePointVertShaderSrc = "\n"
 			"#version 150\n"
 			"\n"
 			"in vec3 in_Position;\n"
@@ -445,8 +433,8 @@ namespace BaldLion {
 			"    v_Color      = vec4(in_ColorPointSize.xyz, 1.0);\n"
 			"}\n";
 
-		const char * DebugDrawRender::linePointFragShaderSrc = "\n"
-			"#version 150\n" 
+		const char * OpenGLDebugRenderInterface::linePointFragShaderSrc = "\n"
+			"#version 150\n"
 			"\n"
 			"in  vec4 v_Color;\n"
 			"out vec4 out_FragColor;\n"
@@ -456,7 +444,7 @@ namespace BaldLion {
 			"    out_FragColor = v_Color;\n"
 			"}\n";
 
-		const char * DebugDrawRender::textVertShaderSrc = "\n"
+		const char * OpenGLDebugRenderInterface::textVertShaderSrc = "\n"
 			"#version 150\n"
 			"\n"
 			"in vec2 in_Position;\n"
@@ -479,7 +467,7 @@ namespace BaldLion {
 			"    v_Color     = vec4(in_Color, 1.0);\n"
 			"}\n";
 
-		const char * DebugDrawRender::textFragShaderSrc = "\n"
+		const char * OpenGLDebugRenderInterface::textFragShaderSrc = "\n"
 			"#version 150\n"
 			"\n"
 			"in vec2 v_TexCoords;\n"

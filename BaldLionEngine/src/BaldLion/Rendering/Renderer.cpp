@@ -7,7 +7,8 @@
 #include "BaldLion/ECS/ComponentsSingleton/ECSProjectionCameraSingleton.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
 
-#include "DebugDrawRender.h"
+#include "DebugDrawRenderInterface.h"
+#include "DebugDrawRenderProvider.h"
 
 const ui32 maxMeshesToProcess = 5u;
 
@@ -22,7 +23,7 @@ namespace BaldLion
 		RendererPlatformInterface* Renderer::s_rendererPlatformInterface;
 		SkyboxPlatformInterface* Renderer::s_skyboxPlatformInterface;
 		
-		DebugDrawRender Renderer::s_debugDrawRender;
+		DebugDrawRenderInterface* Renderer::s_debugDrawRender;
 
 		HashTable<Material*, GeometryData*> Renderer::s_geometryToBatch;
 
@@ -88,8 +89,11 @@ namespace BaldLion
 			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::FreeList_Renderer, 10);
 			s_scheduledDebugDrawCommands = DynamicArray<std::function<void()>>(AllocationType::FreeList_Renderer, 100);			
 
-			s_debugDrawRender.Init();
-			dd::initialize(&s_debugDrawRender);
+			s_debugDrawRender = DebugDrawRenderProvider::Create();
+			s_debugDrawRender->Init();
+			s_debugDrawRender->SetScreenDimensions((float)width, (float)height);
+
+			dd::initialize(s_debugDrawRender);
 		}
 
 		void Renderer::Stop()
@@ -104,7 +108,8 @@ namespace BaldLion
 			Framebuffer::Destroy(s_framebuffer);
 			Framebuffer::Destroy(s_shadowFramebuffer);
 
-			s_debugDrawRender.Stop();
+			s_debugDrawRender->Stop();
+			DebugDrawRenderProvider::Destroy(s_debugDrawRender);
 		}
 
 		void Renderer::OnWindowResize(ui32 width, ui32 height)
@@ -368,7 +373,7 @@ namespace BaldLion
 
 		void Renderer::DrawDebugCommands()
 		{
-			s_debugDrawRender.setMvpMatrix(s_sceneData.viewProjectionMatrix);
+			s_debugDrawRender->SetMvpMatrix(s_sceneData.viewProjectionMatrix);
 
 			for (ui32 i = 0; i < s_scheduledDebugDrawCommands.Size(); ++i) 
 			{
@@ -420,42 +425,42 @@ namespace BaldLion
 			s_shadowCastingMeshes.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
 		}		
 
-		void Renderer::DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::vec3& color, float duration /*= 0.0f*/, bool depthEnabled /*= true*/)
+		void Renderer::DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::vec3& color, int durationMs, bool depthEnabled /*= true*/)
 		{
-			ScheduleDebugDrawCommand([center, color, size, duration, depthEnabled] 
+			ScheduleDebugDrawCommand([center, color, size, durationMs, depthEnabled]
 			{
-				dd::box((float*)&center, (float*)&color, size[0], size[1], size[2], duration, depthEnabled);
+				dd::box((float*)&center, (float*)&color, size[0], size[1], size[2], durationMs, depthEnabled);
 			});
 		}
 
-		void Renderer::DrawDebugSphere(const glm::vec3& center, float radius, const glm::vec3& color, float duration /*= 0.0f*/, bool depthEnabled /*= true*/)
+		void Renderer::DrawDebugSphere(const glm::vec3& center, float radius, const glm::vec3& color, int durationMs, bool depthEnabled /*= true*/)
 		{
-			ScheduleDebugDrawCommand([center, radius, color, duration, depthEnabled]
+			ScheduleDebugDrawCommand([center, radius, color, durationMs, depthEnabled]
 			{
-				dd::sphere((float*)&center, (float*)&color, radius, duration, depthEnabled);
+				dd::sphere((float*)&center, (float*)&color, radius, durationMs, depthEnabled);
 			});
 		}
 
-		void Renderer::DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, bool arrow /*= false*/, float duration /*= 0.0f*/, bool depthEnabled /*= true*/)
+		void Renderer::DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, bool arrow, int durationMs, bool depthEnabled /*= true*/)
 		{
-			ScheduleDebugDrawCommand([from, to, color, arrow, duration, depthEnabled]
+			ScheduleDebugDrawCommand([from, to, color, arrow, durationMs, depthEnabled]
 			{
 				if (arrow) 
 				{
-					dd::line((float*)&from, (float*)&to, (float*)&color, duration, depthEnabled);
+					dd::line((float*)&from, (float*)&to, (float*)&color, durationMs, depthEnabled);
 				}
 				else 
 				{
-					dd::arrow((float*)&from, (float*)&to, (float*)&color, duration, depthEnabled);
+					dd::arrow((float*)&from, (float*)&to, (float*)&color, 1.0f, durationMs, depthEnabled);
 				}				
 			});
 		}
 
-		void Renderer::DrawDebugFrustrum(const glm::mat4& invClipMatrix, const glm::vec3& color, float duration /*= 0.0f*/, bool depthEnabled /*= true*/)
+		void Renderer::DrawDebugFrustrum(const glm::mat4& invClipMatrix, const glm::vec3& color, int durationMs, bool depthEnabled /*= true*/)
 		{
-			ScheduleDebugDrawCommand([invClipMatrix, color, duration, depthEnabled]
+			ScheduleDebugDrawCommand([invClipMatrix, color, durationMs, depthEnabled]
 			{
-				dd::frustum((float*)&invClipMatrix, (float*)&color, duration, depthEnabled);
+				dd::frustum((float*)&invClipMatrix, (float*)&color, durationMs, depthEnabled);
 			});
 		}
 

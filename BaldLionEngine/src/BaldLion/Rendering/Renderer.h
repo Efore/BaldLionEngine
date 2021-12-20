@@ -74,13 +74,13 @@ namespace BaldLion
 			static void AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
 			static void AddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
 
-			static void DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::vec3& color, float duration = 0.0f, bool depthEnabled = true);
+			static void DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 
-			static void DrawDebugSphere(const glm::vec3& center, float radius, const glm::vec3& color, float duration = 0.0f, bool depthEnabled = true);
+			static void DrawDebugSphere(const glm::vec3& center, float radius, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 
-			static void DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, bool arrow = false, float duration = 0.0f, bool depthEnabled = true);
+			static void DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, bool arrow = false, int durationMs = 0, bool depthEnabled = true);
 
-			static void DrawDebugFrustrum(const glm::mat4& invClipMatrix, const glm::vec3& color, float duration = 0.0f, bool depthEnabled = true);
+			static void DrawDebugFrustrum(const glm::mat4& invClipMatrix, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 
 		private:
 			
@@ -98,7 +98,7 @@ namespace BaldLion
 			static TextureLibrary s_textureLibrary;
 			static RendererPlatformInterface* s_rendererPlatformInterface;
 			static SkyboxPlatformInterface* s_skyboxPlatformInterface;			
-			static class DebugDrawRender s_debugDrawRender;
+			static class DebugDrawRenderInterface* s_debugDrawRender;
 
 			static DynamicArray<RenderMeshData> s_shadowCastingMeshes;
 			static DynamicArray<RenderMeshData> s_dynamicMeshes;

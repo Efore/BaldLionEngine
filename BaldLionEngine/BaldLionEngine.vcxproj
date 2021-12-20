@@ -197,7 +197,8 @@
     <ClInclude Include="src\BaldLion\Events\MouseEvent.h" />
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h" />
-    <ClInclude Include="src\BaldLion\Rendering\DebugDrawRender.h" />
+    <ClInclude Include="src\BaldLion\Rendering\DebugDrawRenderInterface.h" />
+    <ClInclude Include="src\BaldLion\Rendering\DebugDrawRenderProvider.h" />
     <ClInclude Include="src\BaldLion\Rendering\Framebuffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\GeometryData.h" />
     <ClInclude Include="src\BaldLion\Rendering\GraphicsContext.h" />
@@ -206,6 +207,7 @@
     <ClInclude Include="src\BaldLion\Rendering\Model.h" />
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLDebugRenderInterface.h" />
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLMaterial.h" />
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLRenderer.h" />
