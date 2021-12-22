@@ -42,6 +42,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\BaldLionEditorApp.cpp" />
     <ClCompile Include="src\BaldLionEditorLayer.cpp" />
     <ClCompile Include="src\Panels\EditorViewportPanel.cpp">
       <Filter>Panels</Filter>
@@ -58,6 +59,5 @@
     <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLionEditorApp.h" />
   </ItemGroup>
 </Project>

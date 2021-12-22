@@ -183,6 +183,9 @@
     <ClInclude Include="src\BaldLion\Core\StringId.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Time.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Window.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
@@ -255,6 +258,12 @@
     <ClInclude Include="src\BaldLion\Rendering\Buffer.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\DebugDrawRenderInterface.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\DebugDrawRenderProvider.h">
+      <Filter>src\BaldLion\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Framebuffer.h">
       <Filter>src\BaldLion\Rendering</Filter>
     </ClInclude>
@@ -277,6 +286,9 @@
       <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLDebugRenderInterface.h">
       <Filter>src\BaldLion\Rendering\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLFramebuffer.h">
@@ -1449,14 +1461,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\Time.h">
-      <Filter>src\BaldLion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Rendering\Platform\OpenGL\OpenGLDebugRenderInterface.h" />
-    <ClInclude Include="src\BaldLion\Rendering\DebugDrawRenderProvider.h" />
-    <ClInclude Include="src\BaldLion\Rendering\DebugDrawRenderInterface.h">
-      <Filter>src\BaldLion\Rendering</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1502,6 +1506,9 @@
       <Filter>src\BaldLion\Core\Memory</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\StringId.cpp">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Time.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Window.cpp">
@@ -1621,6 +1628,5 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\Time.cpp" />
   </ItemGroup>
 </Project>

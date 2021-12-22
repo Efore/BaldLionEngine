@@ -19,7 +19,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BaldLionEditor</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -144,7 +144,7 @@
     <ClInclude Include="src\Panels\ViewportPanel.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\BaldLionEditorApp.h" />
+    <ClCompile Include="src\BaldLionEditorApp.cpp" />
     <ClCompile Include="src\BaldLionEditorLayer.cpp" />
     <ClCompile Include="src\Panels\EditorViewportPanel.cpp" />
     <ClCompile Include="src\Panels\EntityPropertiesPanel.cpp" />
