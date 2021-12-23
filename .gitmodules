@@ -12,6 +12,9 @@
 [submodule "BaldLionEngine/vendor/glm"]
 	path = BaldLionEngine/vendor/glm
 	url = https://github.com/Efore/glm
-[submodule "BaldLionEngine/vendor/ImGuizmo"]
-	path = BaldLionEngine/vendor/ImGuizmo
+[submodule "BaldLionEngine/vendor/yaml"]
+	path = BaldLionEngine/vendor/yaml
+	url = https://github.com/Efore/yaml-cpp
+[submodule "BaldLionEditor/vendor/ImGuizmo"]
+	path = BaldLionEditor/vendor/ImGuizmo
 	url = https://github.com/Efore/ImGuizmo
