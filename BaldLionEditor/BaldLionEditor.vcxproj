@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;..\BaldLionEngine\vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;..\BaldLionEngine\vendor\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -95,7 +95,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;..\BaldLionEngine\vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;..\BaldLionEngine\vendor\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -115,7 +115,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;..\BaldLionEngine\vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;..\BaldLionEngine\vendor\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -142,6 +142,7 @@
     <ClInclude Include="src\Panels\RenderingDataPanel.h" />
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
     <ClInclude Include="src\Panels\ViewportPanel.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp" />
@@ -151,6 +152,7 @@
     <ClCompile Include="src\Panels\MemoryAllocationPanel.cpp" />
     <ClCompile Include="src\Panels\RenderingDataPanel.cpp" />
     <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaldLionEngine\BaldLionEngine.vcxproj">

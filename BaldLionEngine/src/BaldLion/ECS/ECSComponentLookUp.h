@@ -32,6 +32,10 @@ namespace BaldLion
 				return m_components[index];
 			}
 
+			const ECSComponent* operator[] (ui32 index) const {
+				return m_components[index];
+			}
+
 		private:
 			ECSComponent* m_components[(ui32)ECSComponentType::Count];
 		};

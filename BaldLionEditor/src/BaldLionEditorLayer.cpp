@@ -7,7 +7,7 @@
 
 #include "BaldLion/Rendering/Platform/OpenGL/OpenGLShader.h"
 #include "ImGui/imgui.h"
-#include "ImGuizmo/ImGuizmo.h"
+#include "ImGuizmo.h"
 
 namespace BaldLion
 {

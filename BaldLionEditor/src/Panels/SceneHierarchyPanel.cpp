@@ -66,7 +66,7 @@ namespace BaldLion {
 
 			const ECS::ECSHierarchyComponent* hierarchyComponent = m_sceneContext->GetECSManager()->GetEntityComponents().Get(entity.GetEntityID()).Read<ECS::ECSHierarchyComponent>(ECS::ECSComponentType::Hierarchy);
 
-			if (hierarchyComponent != nullptr && hierarchyComponent->hasParent && firstCall) 
+			if (hierarchyComponent != nullptr && hierarchyComponent->parentEntityID > 0 && firstCall) 
 			{
 				return;
 			}

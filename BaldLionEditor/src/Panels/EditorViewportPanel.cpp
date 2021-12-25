@@ -2,7 +2,7 @@
 #include "EditorViewportPanel.h"
 #include <BaldLion.h>
 #include <imgui/imgui.h>
-#include <ImGuizmo/ImGuizmo.h>
+#include "ImGuizmo.h"
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>

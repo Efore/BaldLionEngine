@@ -18,13 +18,15 @@ IncludeDir["glm"] = "BaldLionEngine/vendor/glm/"
 IncludeDir["stb_image"] = "BaldLionEngine/vendor/stb_image/"
 IncludeDir["assimp"] = "BaldLionEngine/vendor/assimp/include"
 IncludeDir["optick"] = "BaldLionEngine/vendor/optick/include"
-IncludeDir["ImGuizmo"] = "BaldLionEngine/vendor/ImGuizmo"
+IncludeDir["ImGuizmo"] = "BaldLionEditor/vendor/ImGuizmo"
 IncludeDir["debug_draw"] = "BaldLionEngine/vendor/debug-draw"
+IncludeDir["yaml"] = "BaldLionEngine/vendor/yaml/include"
 
 group "Dependencies"
 	include "BaldLionEngine/vendor/GLFW"
 	include "BaldLionEngine/vendor/Glad"
 	include "BaldLionEngine/vendor/imgui"
+	include "BaldLionEngine/vendor/yaml"
 group ""
 
 project "BaldLionEngine"
@@ -48,8 +50,6 @@ project "BaldLionEngine"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",		
-		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
-		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",		
 		"%{prj.name}/vendor/debug-draw/**.hpp"		
 	}
 
@@ -70,7 +70,8 @@ project "BaldLionEngine"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.optick}",
-		"%{IncludeDir.debug_draw}",
+		"%{IncludeDir.debug_draw}",		
+		"%{IncludeDir.yaml}"
 	}	
 	
 	libdirs 
@@ -84,12 +85,10 @@ project "BaldLionEngine"
 		"GLFW",
 		"Glad",
 		"ImGui",
+		"yaml-cpp",
 		"assimp-vc141-mtd.lib",
 		"OptickCore.lib"
 	}
-	
-	filter "files:BaldLionEngine/vendor/ImGuizmo/**.cpp"
-		flags {"NoPCH"}
 
 	filter "system:windows"		
 		systemversion "latest"
@@ -132,7 +131,9 @@ project "BaldLionEditor"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"
 	}
 
 	includedirs
@@ -144,7 +145,8 @@ project "BaldLionEditor"
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.optick}",	
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.debug_draw}"	
+		"%{IncludeDir.debug_draw}",		
+		"%{IncludeDir.ImGui}"
 	}
 
 	links
@@ -152,6 +154,10 @@ project "BaldLionEditor"
 		"BaldLionEngine"
 	}
 
+	
+	filter "files:BaldLionEngine/vendor/ImGuizmo/**.cpp"
+		flags {"NoPCH"}
+		
 	filter "system:windows"	
 		systemversion "latest"
 
@@ -202,7 +208,8 @@ project "BaldLionSandbox"
 		"BaldLionEngine/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.assimp}",
-		"%{IncludeDir.optick}"
+		"%{IncludeDir.optick}",
+		"%{IncludeDir.ImGui}"
 	}
 
 	links
