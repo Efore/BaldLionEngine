@@ -36,8 +36,10 @@ namespace std
 namespace BaldLion {
 	extern StringId StringToStringId(const char* str);
 	extern StringId StringToStringId(const std::string& str);
-	extern const char* StringIdToString(StringId sid);
+	extern const char* StringIdToStrC(StringId sid);
+	extern std::string StringIdToString(StringId sid);
 }
 
 #define STRING_TO_STRINGID(x) ::BaldLion::StringToStringId(x)
+#define STRINGID_TO_STR_C(x) ::BaldLion::StringIdToStrC(x)
 #define STRINGID_TO_STRING(x) ::BaldLion::StringIdToString(x)

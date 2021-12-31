@@ -50,8 +50,7 @@ namespace BaldLion
 		template<typename T>
 		const T* BaldLion::ECS::ECSComponentLookUp::Read(ECSComponentType componentType) const
 		{
-			static_assert(std::is_base_of<ECSComponent, T>::value, "T must inherit from ECSComponent");
-			
+			static_assert(std::is_base_of<ECSComponent, T>::value, "T must inherit from ECSComponent");		
 			return (T*)m_components[(ui32)componentType];
 		}
 	}

@@ -26,7 +26,7 @@ namespace BaldLion {
 			if (m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityMap().TryGet(selectedEntityID, entity)) {
 
 				ImGui::SameLine();
-				ImGui::Text(STRINGID_TO_STRING(entity->GetEntityName()));
+				ImGui::Text(STRINGID_TO_STR_C(entity->GetEntityName()));
 
 				const char* names[] = { 
 										"Transform",

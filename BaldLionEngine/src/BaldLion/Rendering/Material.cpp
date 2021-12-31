@@ -11,7 +11,9 @@ namespace BaldLion
 		{
 			switch (RendererPlatformInterface::GetAPI())
 			{
-				case RendererPlatformInterface::RendererPlatform::None:		BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+				case RendererPlatformInterface::RendererPlatform::None:		
+					BL_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); 
+					return nullptr;
 				case RendererPlatformInterface::RendererPlatform::OpenGL:	
 					return MemoryManager::New<OpenGLMaterial>(std::string("Material " + matName).c_str(),AllocationType::FreeList_Renderer, matName, materialProperties);
 			}
@@ -19,47 +21,5 @@ namespace BaldLion
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
 			return nullptr;
 		}		
-
-		//
-		//MATERIAL LIBRARY
-		//
-
-		std::mutex MaterialLibrary::s_materialLibraryMutex;
-		BaldLion::HashTable<StringId, Material*> MaterialLibrary::s_materials;
-
-		void MaterialLibrary::Init()
-		{
-			s_materials = HashTable<StringId, Material*>(BaldLion::Memory::AllocationType::FreeList_Renderer, 10);
-		}
-
-		void MaterialLibrary::Add(Material* material)
-		{
-			auto name = material->GetMaterialName();
-			BL_CORE_ASSERT(!s_materials.Contains(name), "Shader already exists!");
-			s_materials.Emplace(name, std::move(material));
-		}
-
-		Material* MaterialLibrary::Load(const std::string& matName, Material::MaterialProperties* materialProperties)
-		{
-			std::lock_guard<std::mutex> lockGuard(s_materialLibraryMutex);
-
-			StringId name = STRING_TO_STRINGID(matName);
-
-			Material* material = nullptr;
-
-			if (s_materials.TryGet(name, material))
-				return material;
-
-			material = Material::Create(matName, *materialProperties);
-
-			Add(material);
-
-			return material;
-		}
-
-		void MaterialLibrary::Delete()
-		{
-			s_materials.Delete();
-		}
 	}
 }

@@ -227,12 +227,15 @@
     <ClInclude Include="src\BaldLion\Rendering\Texture.h" />
     <ClInclude Include="src\BaldLion\Rendering\Vertex.h" />
     <ClInclude Include="src\BaldLion\Rendering\VertexArray.h" />
+    <ClInclude Include="src\BaldLion\ResourceManagement\Resource.h" />
+    <ClInclude Include="src\BaldLion\ResourceManagement\ResourceManager.h" />
     <ClInclude Include="src\BaldLion\SceneManagement\Scene.h" />
     <ClInclude Include="src\BaldLion\SceneManagement\SceneManager.h" />
     <ClInclude Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.h" />
     <ClInclude Include="src\BaldLion\Utils\Compression.h" />
     <ClInclude Include="src\BaldLion\Utils\GeometryUtils.h" />
     <ClInclude Include="src\BaldLion\Utils\MathUtils.h" />
+    <ClInclude Include="src\BaldLion\Utils\StringUtils.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\blpch.h" />
     <ClInclude Include="vendor\debug-draw\debug_draw.hpp" />
@@ -649,6 +652,7 @@
     <ClCompile Include="src\BaldLion\Rendering\SkyboxPlatformInterface.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Texture.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\VertexArray.cpp" />
+    <ClCompile Include="src\BaldLion\ResourceManagement\ResourceManager.cpp" />
     <ClCompile Include="src\BaldLion\SceneManagement\Scene.cpp" />
     <ClCompile Include="src\BaldLion\SceneManagement\SceneManager.cpp" />
     <ClCompile Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.cpp" />

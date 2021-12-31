@@ -18,8 +18,6 @@ namespace BaldLion
 	{
 		Renderer::RendererStats Renderer::s_renderStats;
 		Renderer::SceneData Renderer::s_sceneData;
-		ShaderLibrary Renderer::s_shaderLibrary;
-		TextureLibrary Renderer::s_textureLibrary;
 		RendererPlatformInterface* Renderer::s_rendererPlatformInterface;
 		SkyboxPlatformInterface* Renderer::s_skyboxPlatformInterface;
 		
@@ -51,10 +49,6 @@ namespace BaldLion
 		void Renderer::Init(ui32 width, ui32 height)
 		{
 			BL_PROFILE_FUNCTION();
-
-			MaterialLibrary::Init();
-			s_textureLibrary.Init();
-			s_shaderLibrary.Init();
 
 			s_rendererPlatformInterface = RendererPlatformInterface::Create();
 			s_rendererPlatformInterface->Init();
@@ -101,10 +95,6 @@ namespace BaldLion
 			MemoryManager::Delete(s_rendererPlatformInterface);
 			MemoryManager::Delete(s_skyboxPlatformInterface);
 
-			MaterialLibrary::Delete();
-			s_shaderLibrary.Delete();
-			s_textureLibrary.Delete();
-			
 			Framebuffer::Destroy(s_framebuffer);
 			Framebuffer::Destroy(s_shadowFramebuffer);
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <type_traits>
 #include "ECSComponent.h"
 #include "ECSSystem.h"
 #include "ECSUtils.h"
@@ -87,12 +88,14 @@ namespace BaldLion {
 		template<typename T>
 		void BaldLion::ECS::ECSManager::CleanComponentPool(ECSComponentType componentType)
 		{
+			static_assert(std::is_base_of<ECSComponent, T>::value, "T must inherit from Component");
 			((DynamicArray<T>*)m_componentsPool.Get(componentType))->Delete();
 		}
 
 		template <typename T, typename...Args >
 		T* BaldLion::ECS::ECSManager::AddComponent(ECSComponentType componentID, Args&&... args)
 		{
+			static_assert(std::is_base_of<ECSComponent, T>::value, "T must inherit from Component");
 			DynamicArray<T>* componentPool = static_cast<DynamicArray<T>*>(m_componentsPool.Get(componentID));
 			return componentPool->EmplaceBack(std::forward<Args>(args)...);
 		}

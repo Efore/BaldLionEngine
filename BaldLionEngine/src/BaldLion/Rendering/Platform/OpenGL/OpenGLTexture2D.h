@@ -25,15 +25,11 @@ namespace BaldLion
 			virtual void Bind(ui32 slot) const override;
 			virtual void Bind() const override;
 
-			virtual StringId GetName() const override { return m_name; }
-
 			virtual int GetTextureType() const override { return TextureType::Texture2d; }
 
 			virtual void SetWrapMode(WrapMode xCoord, WrapMode yCoord) const;
 
 		private:
-			StringId m_name;
-
 			ui32 m_width, m_height;
 			ui32 m_rendererID;
 		};

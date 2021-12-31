@@ -33,16 +33,10 @@ namespace BaldLion
 		void AnimationManager::Stop()
 		{	
 			s_initialized = false;
-
-			for (HashTable<StringId, Animator*>::Iterator it = s_registeredAnimators.Begin(); it != s_registeredAnimators.End(); ++it)
-			{
-				MemoryManager::DeleteNoDestructor(it.GetValue());
-			}
-
-			s_registeredAnimators.Delete();
+			s_registeredAnimators.DeleteNoDestructor();
 		}
 
-		void AnimationManager::GenerateAnimator(const aiScene *scene, const HashTable<StringId, ui32>& jointMapping)
+		void AnimationManager::GenerateAnimator(const aiScene *scene, const std::string& animatorName, const HashTable<StringId, ui32>& jointMapping)
 		{
 			if (scene->HasAnimations())
 			{
@@ -81,9 +75,10 @@ namespace BaldLion
 					animations.EmplaceBack(std::move(animationData));
 				}				
 
-				if (!s_registeredAnimators.Contains(STRING_TO_STRINGID("Animator"))) {
+				if (!s_registeredAnimators.Contains(STRING_TO_STRINGID(animatorName))) {
 
-					Animator* animator = MemoryManager::New<Animator>("Animator", AllocationType::FreeList_Main, animations, STRING_TO_STRINGID("Animator"));
+					Animator* animator = MemoryManager::New<Animator>("Animator", AllocationType::FreeList_Main, animations, STRING_TO_STRINGID(animatorName));		
+
 					RegisterAnimator(animator);
 				}
 			}

@@ -60,8 +60,6 @@ namespace BaldLion
 			static void DrawScene();
 			static void EndScene();
 
-			static ShaderLibrary& GetShaderLibrary() { return s_shaderLibrary; }
-			static TextureLibrary& GetTextureLibrary() { return s_textureLibrary; }
 			static SceneData& GetSceneData() { return s_sceneData; }
 			static RendererStats& GetRenderStats() { return s_renderStats; }
 			static Framebuffer* GetFrameBuffer() { return s_framebuffer; }
@@ -94,8 +92,6 @@ namespace BaldLion
 
 			static RendererStats s_renderStats;
 			static SceneData s_sceneData;
-			static ShaderLibrary s_shaderLibrary;
-			static TextureLibrary s_textureLibrary;
 			static RendererPlatformInterface* s_rendererPlatformInterface;
 			static SkyboxPlatformInterface* s_skyboxPlatformInterface;			
 			static class DebugDrawRenderInterface* s_debugDrawRender;

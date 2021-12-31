@@ -3,7 +3,8 @@
 #include <string>
 #include "BaldLion/Core/Containers/HashTable.h"
 #include "BaldLion/Core/Core.h"
-
+#include "BaldLion/ResourceManagement/Resource.h"
+#include "BaldLion/Utils/StringUtils.h"
 
 #define UNIFORM_AMBIENT_COLOR			STRING_TO_STRINGID("u_material.ambientColor")
 #define UNIFORM_DIFFUSE_COLOR			STRING_TO_STRINGID("u_material.diffuseColor" )
@@ -66,7 +67,7 @@ namespace BaldLion
 			return 0;
 		}
 
-		class Shader
+		class Shader : public ResourceManagement::Resource
 		{
 		public:
 			virtual ~Shader() = default;
@@ -75,33 +76,10 @@ namespace BaldLion
 			virtual void Unbind() const = 0;
 			virtual void SetUniform(StringId uniformName, ShaderDataType dataType, const void* uniformIndex) = 0;
 
-			virtual StringId GetName() const = 0;
-
 			static Shader* Create(const std::string& filepath);
-		};
+		protected:
 
-		class ShaderLibrary
-		{
-		public:
-
-			virtual ~ShaderLibrary();
-
-			void Init();
-
-			void Add(Shader* shader);
-			void Add(StringId name, Shader* shader);
-
-			Shader* Load(const std::string& filepath);
-			Shader* Load(StringId name, const std::string& filepath);
-			
-			void Delete();
-			bool Exists(StringId name) const;
-
-			static void GetNameFromPath(const std::string& path, StringId& name);
-
-		private:
-			HashTable<StringId, Shader*> m_shaders;
-			std::mutex m_shaderLibraryMutex;
+			Shader(const std::string& filepath) : ResourceManagement::Resource(STRING_TO_STRINGID(filepath), StringUtils::GetFileNameFromPath(filepath), ResourceManagement::ResourceType::Shader){}
 		};
 	}
 }

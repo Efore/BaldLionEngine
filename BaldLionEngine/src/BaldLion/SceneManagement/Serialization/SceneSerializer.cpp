@@ -15,7 +15,7 @@ namespace BaldLion
 		{
 			YAML::Emitter out;
 			out << YAML::BeginMap;
-			out << YAML::Key << "Scene" << YAML::Value << STRINGID_TO_STRING(scene->GetSceneID());
+			out << YAML::Key << "Scene" << YAML::Value << STRINGID_TO_STR_C(scene->GetSceneID());
 			out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
 			for (ui32 i = 0; i < scene->GetECSManager()->GetEntities().Size(); ++i) 
@@ -62,7 +62,7 @@ namespace BaldLion
 		void SceneSerializer::SerializeEntity(const Scene* scene, YAML::Emitter &out, const ECS::ECSEntity* entity)
 		{
 			out << YAML::BeginMap;
-			out << YAML::Key << "Entity" << YAML::Value << STRINGID_TO_STRING(entity->GetEntityName());
+			out << YAML::Key << "Entity" << YAML::Value << STRINGID_TO_STR_C(entity->GetEntityName());
 			out << YAML::Key << "Components" << YAML::Value << YAML::BeginSeq;
 
 			const ECS::ECSComponentLookUp* entityComponentLookUp = &scene->GetECSManager()->GetEntityComponents().Get(entity->GetEntityID());
@@ -206,9 +206,7 @@ namespace BaldLion
 					width,
 					height,
 					nearPlane,
-					farPlane,
-					50.0f,
-					10.f);
+					farPlane);
 			}
 				break;
 

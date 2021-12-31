@@ -4,6 +4,7 @@
 #include "BaldLion/Core/JobManagement/JobManager.h"
 #include "BaldLion/Animation/AnimationManager.h"
 #include "BaldLion/SceneManagement/SceneManager.h"
+#include "BaldLion/ResourceManagement/ResourceManager.h"
 
 #include <GLFW/glfw3.h>
 
@@ -24,6 +25,7 @@ namespace BaldLion
 
 		Memory::MemoryManager::Init(0);
 		JobManagement::JobManager::Init();
+		ResourceManagement::ResourceManager::Init();
 
 		m_window = Window::Create(WindowProps(applicationName));
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
@@ -50,6 +52,7 @@ namespace BaldLion
 		Animation::AnimationManager::Stop();
 		Time::Stop();
 
+		ResourceManagement::ResourceManager::Stop();
 		JobManagement::JobManager::Stop();
 		Memory::MemoryManager::Stop();
 	}

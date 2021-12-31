@@ -2,6 +2,8 @@
 
 #include "BaldLion/Core/Core.h"
 #include "BaldLion/Core/Containers/HashTable.h"
+#include "BaldLion/ResourceManagement/Resource.h"
+#include "BaldLion/Utils/StringUtils.h"
 
 namespace BaldLion 
 {
@@ -20,10 +22,11 @@ namespace BaldLion
 			ClampToBorder
 		};
 
-		class Texture
+		class Texture : public ResourceManagement::Resource
 		{
 
 		public:			
+
 
 			virtual ~Texture() = default;
 
@@ -39,19 +42,25 @@ namespace BaldLion
 			virtual void Bind(ui32 slot) const = 0;
 			virtual void Bind() const = 0;
 
-			virtual StringId GetName() const = 0;
-
 			virtual int GetTextureType() const = 0;
 
 			virtual void SetWrapMode(WrapMode xCoord, WrapMode yCoord) const = 0;
-			
+
+		protected:
+
+			Texture(const std::string& path) : ResourceManagement::Resource(STRING_TO_STRINGID(path), StringUtils::GetFileNameFromPath(path), ResourceManagement::ResourceType::Texture) {}
 		};
 
 		class Texture2D : public Texture
 		{
-		public:
+		public:		
+
 			static Texture2D* Create(const std::string& path, bool emptyTexture = false);
 			static Texture2D* Create(const std::string& path, const unsigned char* textureData, int size);
+
+		protected:
+
+			Texture2D(const std::string& path) : Texture(path) {}
 		};
 
 		class TextureCubeMap : public Texture
@@ -60,34 +69,10 @@ namespace BaldLion
 			static TextureCubeMap* Create(const std::string& path);
 
 		protected:
+			TextureCubeMap(const std::string& path) : Texture(path) {}
 			static const std::string GetSkyboxTexturePath(const std::string& path, size_t index);
-		};
+		};		
 
-		
 
-		class TextureLibrary
-		{
-		public:
-
-			virtual ~TextureLibrary();
-
-			void Init();
-
-			void Add(Texture* texture);
-			void Add(StringId name, Texture* texture);
-
-			Texture* Load(const std::string& filepath, TextureType textureType);
-			Texture* Load(const std::string& filepath,const unsigned char* textureData, int size, TextureType textureType);
-			Texture* Load(StringId name, const std::string& filepath, TextureType textureType);
-
-			void Delete();
-			bool Exists(StringId name) const;
-
-			static void GetNameFromPath(const std::string &path, StringId& name);
-
-		private:
-			HashTable<StringId, Texture*> m_textures;
-			std::mutex m_textureLibraryMutex;
-		};
 	}
 }

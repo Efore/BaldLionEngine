@@ -1457,6 +1457,9 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSComponentsInclude.h" />
+    <ClInclude Include="src\BaldLion\ResourceManagement\ResourceManager.h" />
+    <ClInclude Include="src\BaldLion\ResourceManagement\Resource.h" />
+    <ClInclude Include="src\BaldLion\Utils\StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1622,5 +1625,6 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.cpp" />
+    <ClCompile Include="src\BaldLion\ResourceManagement\ResourceManager.cpp" />
   </ItemGroup>
 </Project>

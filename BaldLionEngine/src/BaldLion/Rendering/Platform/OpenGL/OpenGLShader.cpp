@@ -20,7 +20,7 @@ namespace BaldLion
 			return GL_FALSE;
 		}
 
-		OpenGLShader::OpenGLShader(const std::string & filepath)
+		OpenGLShader::OpenGLShader(const std::string & filepath) : Shader(filepath)
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -28,7 +28,6 @@ namespace BaldLion
 			auto shaderSources = PreProcess(source);
 			Compile(shaderSources);
 
-			ShaderLibrary::GetNameFromPath(filepath, m_name);
 			m_uniformLocationCache = HashTable<StringId, int>(BaldLion::Memory::AllocationType::FreeList_Renderer, 120);
 		}
 
@@ -249,11 +248,11 @@ namespace BaldLion
 			if (m_uniformLocationCache.TryGet(name, location))
 				return location;
 
-			location = glGetUniformLocation(m_rendererID, STRINGID_TO_STRING(name));
+			location = glGetUniformLocation(m_rendererID, STRINGID_TO_STR_C(name));
 
 			if (location == -1)
 			{
-				BL_LOG_CORE_WARN("Uniform '{0}' not found!", STRINGID_TO_STRING(name));
+				BL_LOG_CORE_WARN("Uniform '{0}' not found!", STRINGID_TO_STR_C(name));
 				return location;
 			}
 

@@ -6,6 +6,7 @@
 #include "GeometryData.h"
 #include "BaldLion/ECS/Components/ECSMeshComponent.h"
 #include "BaldLion/ECS/ECSManager.h"
+#include "BaldLion/ResourceManagement/ResourceManager.h"
 #include "BaldLion/Animation/Skeleton.h"
 
 namespace BaldLion
@@ -15,10 +16,10 @@ namespace BaldLion
 
 	namespace Rendering
 	{
-		class Mesh {
+		class Mesh : public ResourceManagement::Resource{
 
 		public:
-			Mesh(Material* material);
+			Mesh(Material* material, const std::string& meshPath);
 			~Mesh();
 
 			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);

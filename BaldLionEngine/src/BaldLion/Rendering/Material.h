@@ -2,6 +2,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "BaldLion/Core/Core.h"
+#include "BaldLion/ResourceManagement/Resource.h"
 #include <glm/glm.hpp>
 
 namespace BaldLion
@@ -9,7 +10,7 @@ namespace BaldLion
 	namespace Rendering
 	{
 
-		class Material {
+		class Material : public ResourceManagement::Resource {
 		public:
 			enum class BlendMode {
 				None,
@@ -148,25 +149,12 @@ namespace BaldLion
 		protected:
 
 			Material(){}
-			Material::Material(const MaterialProperties& materialProperties) : m_materialProperties(materialProperties){}
+			Material::Material(const std::string& matName, const MaterialProperties& materialProperties) : 
+				ResourceManagement::Resource(STRING_TO_STRINGID(matName), StringUtils::GetFileNameFromPath(matName), ResourceManagement::ResourceType::Material),
+				m_materialProperties(materialProperties){}
 
 			StringId m_materialName;
 			MaterialProperties m_materialProperties;
 		};
-
-		class MaterialLibrary
-		{
-		public:
-			
-			static void Init();
-			static void Add(Material* shader);
-			static Material* Load(const std::string& name, Material::MaterialProperties* materialProperties);
-			static void Delete();
-
-		private:
-			static HashTable<StringId, Material*> s_materials;
-			static std::mutex s_materialLibraryMutex;
-		};
-		
 	}
 }

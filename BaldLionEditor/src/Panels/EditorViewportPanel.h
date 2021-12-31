@@ -29,6 +29,12 @@ namespace BaldLion {
 			bool m_viewportFocused;
 			ui32 m_imGuizmoOperation;
 
+			float m_cameraMovementSpeed;
+			float m_cameraRotationSpeed;
+			float m_prevX;
+			float m_prevY;
+			float m_cameraYaw;
+			float m_cameraPitch;
 		};
 	}
 }

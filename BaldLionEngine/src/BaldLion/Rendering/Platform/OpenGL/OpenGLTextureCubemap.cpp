@@ -9,10 +9,8 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		OpenGLTextureCubemap::OpenGLTextureCubemap(const std::string& path)
-		{
-			TextureLibrary::GetNameFromPath(path, m_name);
-
+		OpenGLTextureCubemap::OpenGLTextureCubemap(const std::string& path) : TextureCubeMap(path)
+		{			
 			BL_PROFILE_FUNCTION();
 
 			glGenTextures(1, &m_rendererID);

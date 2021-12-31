@@ -9,7 +9,7 @@ namespace BaldLion
 		class CubeMesh : public Mesh {
 
 		public:
-			CubeMesh(Material* material, float size);
+			CubeMesh(Material* material, float size, const std::string& meshName);
 
 			void SetUpCube();
 

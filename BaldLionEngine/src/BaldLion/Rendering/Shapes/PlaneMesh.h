@@ -9,7 +9,7 @@ namespace BaldLion
 		class PlaneMesh : public Mesh {
 
 		public:
-			PlaneMesh(Material* material, float size);
+			PlaneMesh(Material* material, float size, const std::string& meshName);
 
 			void SetUpPlane();
 

@@ -48,9 +48,15 @@ namespace BaldLion {
 				(float)Application::GetInstance().GetWindow().GetWidth(),
 				(float)Application::GetInstance().GetWindow().GetHeight(),
 				0.1f,
-				50000.0f,
-				50.0f,
-				10.f);
+				50000.0f);
+
+			m_cameraMovementSpeed = 50.0f;
+			m_cameraRotationSpeed = 1.0f;
+
+			m_prevX = 0.0f;
+			m_prevY = 0.0f;
+			m_cameraYaw = 0.0f;
+			m_cameraPitch = 0.0f;
 
 			ECS::SingletonComponents::ECSProjectionCameraSingleton::Init();
 			ECS::SingletonComponents::ECSProjectionCameraSingleton::SetMainCamera(m_viewportCamera, m_viewportCameraTransform);
@@ -138,6 +144,7 @@ namespace BaldLion {
 					}					
 
 					const ECS::ECSProjectionCameraComponent* projectionCameraComponent = selectedEntityComponents.Read<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentType::ProjectionCamera);
+
 					if (projectionCameraComponent)
 					{
 						const glm::mat4 viewMatrix = glm::inverse(entityTransformComponent->GetTransformMatrix());
@@ -190,11 +197,11 @@ namespace BaldLion {
 
 			glm::vec3 cameraMovement;
 
-			CalculateCameraMovement( m_viewportCamera->cameraMovementSpeed, cameraMatrixTransform, cameraMovement);
-			CalculateCameraRotation( m_viewportCamera->cameraRotationSpeed, m_viewportCamera->prevX, m_viewportCamera->prevY, m_viewportCamera->cameraYaw, m_viewportCamera->cameraPitch);
+			CalculateCameraMovement(m_cameraMovementSpeed, cameraMatrixTransform, cameraMovement);
+			CalculateCameraRotation(m_cameraMovementSpeed,m_prevX, m_prevY, m_cameraYaw, m_cameraPitch);
 
 			m_viewportCameraTransform->position += cameraMovement;
-			m_viewportCameraTransform->rotation = glm::vec3(glm::radians(m_viewportCamera->cameraPitch), glm::radians(m_viewportCamera->cameraYaw), 0.0f);
+			m_viewportCameraTransform->rotation = glm::vec3(glm::radians(m_cameraPitch), glm::radians(m_cameraYaw), 0.0f);
 
 			cameraMatrixTransform = m_viewportCameraTransform->GetTransformMatrix();
 

@@ -3,13 +3,14 @@
 #include "BaldLion/Core/Containers/DynamicArray.h"
 #include "Mesh.h"
 #include "BaldLion/Animation/Joint.h"
+
 #include <assimp/scene.h>
 
 namespace BaldLion
 {
 	namespace Rendering
 	{
-		class Model {
+		class Model : public ResourceManagement::Resource {
 
 		public:
 
@@ -18,6 +19,8 @@ namespace BaldLion
 
 			void SetUpModel();
 			virtual void Draw() const;
+
+			StringId GetModelFolderPath() const { return m_modelFolderPath; }
 
 			inline const DynamicArray<Mesh*>& GetSubMeshes() const { return m_subMeshes; }
 			inline DynamicArray<Mesh*>& GetSubMeshes() { return m_subMeshes; }

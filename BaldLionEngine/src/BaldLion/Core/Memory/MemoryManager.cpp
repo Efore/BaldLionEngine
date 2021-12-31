@@ -8,6 +8,8 @@ namespace BaldLion
 		FreeListAllocator* MemoryManager::s_freeListMainAllocator;
 		FreeListAllocator* MemoryManager::s_freeListRendererAllocator;		
 		FreeListAllocator* MemoryManager::s_freeListECSAllocator;
+		FreeListAllocator* MemoryManager::s_freeListResourcesAllocator;
+
 		LinearAllocator* MemoryManager::s_linearFrameAllocator;
 		StackAllocator* MemoryManager::s_stackAllocator;
 		
@@ -46,10 +48,14 @@ namespace BaldLion
 			void *ecsAllocatorStart = s_freeListMainAllocator->Allocate(ecsSize, __alignof(FreeListAllocator));
 			s_freeListECSAllocator = new (ecsAllocatorStart) FreeListAllocator("Renderer FreeList Allocator", ecsSize - sizeof(FreeListAllocator), AddPointerOffset(ecsAllocatorStart, sizeof(FreeListAllocator)));
 
-			const size_t rendererSize = 1024ULL * 1024 * 1024; //1GB
+			const size_t rendererSize = 700 * 1024 * 1024; //700MB
 			void *rendererAllocatorStart = s_freeListMainAllocator->Allocate(rendererSize, __alignof(FreeListAllocator));
 			s_freeListRendererAllocator = new (rendererAllocatorStart) FreeListAllocator("Renderer FreeList Allocator", rendererSize - sizeof(FreeListAllocator), AddPointerOffset(rendererAllocatorStart, sizeof(FreeListAllocator)));
-			
+
+
+			const size_t resourcesSize = 300 * 1024 * 1024; //300MB
+			void *resourcesAllocatorStart = s_freeListMainAllocator->Allocate(resourcesSize, __alignof(FreeListAllocator));
+			s_freeListResourcesAllocator = new (resourcesAllocatorStart) FreeListAllocator("Renderer FreeList Allocator", resourcesSize - sizeof(FreeListAllocator), AddPointerOffset(resourcesAllocatorStart, sizeof(FreeListAllocator)));			
 		}
 
 		void MemoryManager::Delete(AllocationType allocationType)
@@ -73,6 +79,9 @@ namespace BaldLion
 				break;
 
 			case BaldLion::Memory::AllocationType::FreeList_ECS:
+				break;
+
+			case BaldLion::Memory::AllocationType::FreeList_Resources:
 				break;
 
 			default:
@@ -103,13 +112,16 @@ namespace BaldLion
 				case AllocationType::Stack:
 					BL_LOG_CORE_INFO("Stack Allocator");
 					break;
+				case AllocationType::FreeList_Resources:
+					BL_LOG_CORE_INFO("Resources Allocator");
+					break;
 
 				default:
 					break;
 				}
 
 
-				BL_LOG_CORE_INFO(STRINGID_TO_STRING(it->second.allocationDescription));				
+				BL_LOG_CORE_INFO(STRINGID_TO_STR_C(it->second.allocationDescription));				
 				BL_LOG_CORE_INFO("Size: {0}",(it->second.allocationSize));
 				BL_LOG_CORE_INFO("---------------");
 			}
@@ -138,6 +150,12 @@ namespace BaldLion
 				Delete(s_freeListECSAllocator);
 			}
 
+			if(s_freeListResourcesAllocator != nullptr)
+			{
+				s_freeListResourcesAllocator->Delete();
+				Delete(s_freeListResourcesAllocator);
+			}
+
 			s_freeListMainAllocator->Delete();
 			s_freeListMainAllocator->~FreeListAllocator();
 
@@ -162,6 +180,9 @@ namespace BaldLion
 
 			case BaldLion::Memory::AllocationType::FreeList_ECS:
 				return s_freeListECSAllocator;
+
+			case BaldLion::Memory::AllocationType::FreeList_Resources:
+				return s_freeListResourcesAllocator;
 
 			default:
 				break;
@@ -189,6 +210,9 @@ namespace BaldLion
 			case BaldLion::Memory::AllocationType::FreeList_ECS:
 				return s_freeListECSAllocator->Size();
 
+			case BaldLion::Memory::AllocationType::FreeList_Resources:
+				return s_freeListResourcesAllocator->Size();
+
 			default:
 				break;
 			}
@@ -215,6 +239,9 @@ namespace BaldLion
 
 			case BaldLion::Memory::AllocationType::FreeList_ECS:
 				return s_freeListECSAllocator->GetUsedMemory();
+
+			case BaldLion::Memory::AllocationType::FreeList_Resources:
+				return s_freeListResourcesAllocator->GetUsedMemory();
 
 			default:
 				break;

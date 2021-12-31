@@ -19,7 +19,6 @@ namespace BaldLion
 
 			virtual void Bind() const override;
 			virtual void Unbind() const override;
-			virtual StringId GetName() const override { return m_name; }
 
 			virtual void SetUniform(StringId uniformName, ShaderDataType dataType, const void* uniformIndex) override;
 
@@ -33,7 +32,6 @@ namespace BaldLion
 		private:
 
 			ui32 m_rendererID;
-			StringId m_name;
 			mutable HashTable<StringId, int> m_uniformLocationCache;
 		};
 	}

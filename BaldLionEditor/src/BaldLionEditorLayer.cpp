@@ -40,9 +40,7 @@ namespace BaldLion
 					(float)Application::GetInstance().GetWindow().GetWidth(),
 					(float)Application::GetInstance().GetWindow().GetHeight(),
 					0.1f,
-					50000.0f,
-					50.0f,
-					10.f);
+					50000.0f);
 
 				m_ecsManager->AddComponentToEntity(cameraEntity, cameraTransformComponent);
 				m_ecsManager->AddComponentToEntity(cameraEntity, projectionCameraComponent);
@@ -70,7 +68,14 @@ namespace BaldLion
 					MathUtils::Vector3Zero,
 					glm::vec3(10.0f, 1.0f, 10.0f));
 
-				Texture* gridTexture = Renderer::GetTextureLibrary().Load("assets/textures/TextureGrid.png", TextureType::Texture2d);
+				Texture* gridTexture = ResourceManagement::ResourceManager::LoadResource<Texture>("assets/textures/TextureGrid.png");
+
+				if (!gridTexture)
+				{
+					gridTexture = Texture2D::Create("assets/textures/TextureGrid.png");
+					ResourceManagement::ResourceManager::AddResource(gridTexture);
+				}
+
 				gridTexture->SetWrapMode(WrapMode::Repeat, WrapMode::Repeat);
 
 				Rendering::Material::MaterialProperties shapeMaterialProperties{
@@ -91,13 +96,19 @@ namespace BaldLion
 						(ui8)Material::ShadowsSettingsBitMask::ReceiveShadows
 				};
 
-				Rendering::Material* shapeMaterial = Rendering::MaterialLibrary::Load("PlaneMaterial", &shapeMaterialProperties);
-				shapeMaterial->AssignShader();
+				Rendering::Material* planeMaterial = Rendering::Material::Create("PlaneMaterial", shapeMaterialProperties);
+
+				ResourceManagement::ResourceManager::AddResource(planeMaterial);
+
+				planeMaterial->AssignShader();
 				
-				Rendering::PlaneMesh* plane = MemoryManager::New<Rendering::PlaneMesh>("Plane", AllocationType::FreeList_Renderer, shapeMaterial, 100.0f);
+				Rendering::PlaneMesh* plane = MemoryManager::New<Rendering::PlaneMesh>("Plane", AllocationType::FreeList_Renderer, planeMaterial, 100.0f, "Editor/PlaneMesh.mesh");
+
+				ResourceManagement::ResourceManager::AddResource(plane);
+
 				plane->SetUpPlane();
 
-				ECS::ECSMeshComponent* planeMeshComponent = plane->GenerateMeshComponent(m_ecsManager, true);				
+				ECS::ECSMeshComponent* planeMeshComponent = plane->GenerateMeshComponent(m_ecsManager, true);
 
 				m_ecsManager->AddComponentToEntity(planeEntity, planeMeshComponent);
 				m_ecsManager->AddComponentToEntity(planeEntity, planeTransformComponent);				
@@ -105,12 +116,21 @@ namespace BaldLion
 
 			{//Trees setup	
 
-				Model* treeModel = MemoryManager::New<Rendering::Model>("Tree Model ", AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj");
+				Model* treeModel = ResourceManagement::ResourceManager::LoadResource<Rendering::Model>("assets/models/tree/Lowpoly_tree_sample.obj");
+
+				if(!treeModel)
+				{
+					treeModel = MemoryManager::New<Rendering::Model>("Tree Model", AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj");
+
+					ResourceManagement::ResourceManager::AddResource(treeModel);
+				}
+
+				treeModel->SetUpModel();
+
 				glm::vec3 position = glm::vec3(0.0f);
+
 				for (ui32 i = 0; i < 2; ++i)
 				{
-					treeModel->SetUpModel();
-
 					for (ui32 j = 0; j < treeModel->GetSubMeshes().Size(); ++j)
 					{					
 						ECS::ECSEntityID treeEntity = m_ecsManager->AddEntity(("Tree" + std::to_string(i) + std::to_string(j)).c_str());
@@ -132,7 +152,14 @@ namespace BaldLion
 
 			{//Characters setup	
 
-				Model* character = MemoryManager::New<Rendering::Model>("Character Model", AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx");
+				Model* character = ResourceManagement::ResourceManager::LoadResource<Rendering::Model>("assets/models/creature/creature.fbx");
+
+				if (!character)
+				{
+					character = MemoryManager::New<Rendering::Model>("Character Model", AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx");
+
+					ResourceManagement::ResourceManager::AddResource(character);
+				}
 
 				character->SetUpModel();
 
@@ -153,7 +180,10 @@ namespace BaldLion
 						ECS::ECSSkeletonComponent* characterSkeletonComponent = character->GetSubMeshes()[j]->GenerateSkeletonComponent(m_ecsManager);
 						ECS::ECSAnimationComponent* characterAnimationComponent = m_ecsManager->AddComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentType::Animation);
 
-						characterAnimationComponent->animatorID = STRING_TO_STRINGID("Animator");
+						const std::string animatorName = STRINGID_TO_STRING(character->GetModelFolderPath()) + "Animator.anim";
+						characterAnimationComponent->animatorID =
+							STRING_TO_STRINGID(animatorName);
+
 						characterAnimationComponent->currentAnimationID = STRING_TO_STRINGID("mixamo.com");
 
 						m_ecsManager->AddComponentToEntity(characterEntity, characterTransformComponent);

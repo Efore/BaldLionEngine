@@ -6,8 +6,8 @@ namespace BaldLion
 	namespace Rendering
 	{
 
-		PlaneMesh::PlaneMesh(Material* material, float size) :
-			Mesh(material),
+		PlaneMesh::PlaneMesh(Material* material, float size, const std::string& meshName) :
+			Mesh(material, meshName),
 			m_size(size)			
 		{
 		}		

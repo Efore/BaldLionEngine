@@ -10,8 +10,10 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Mesh::Mesh(Material* material) :
-			m_material(material), m_skeleton(nullptr)
+		Mesh::Mesh(Material* material, const std::string& meshPath) :
+			ResourceManagement::Resource(STRING_TO_STRINGID(meshPath), StringUtils::GetFileNameFromPath(meshPath), ResourceManagement::ResourceType::Mesh),
+			m_material(material), 
+			m_skeleton(nullptr)
 		{	
 		}
 

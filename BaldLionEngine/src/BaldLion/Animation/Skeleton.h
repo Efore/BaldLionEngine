@@ -1,17 +1,18 @@
 #pragma once
 #include "BaldLion/Core/Containers/DynamicArray.h"
 #include "Joint.h"
+#include "BaldLion/ResourceManagement/Resource.h"
 
 namespace BaldLion {
 
 	namespace Animation {
 
-		class Skeleton {
+		class Skeleton : public ResourceManagement::Resource {
 
 		public:
 			Skeleton() = default;
 
-			Skeleton(const DynamicArray<Animation::Joint>& joints);
+			Skeleton(const DynamicArray<Animation::Joint>& joints, const std::string& resourceName);
 
 			~Skeleton();
 

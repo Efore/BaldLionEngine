@@ -9,7 +9,7 @@ namespace BaldLion
 	namespace Animation
 	{
 
-		class Animator {
+		class Animator{
 			
 		public:
 			Animator(DynamicArray<AnimationData>& animations, const StringId animatorID);

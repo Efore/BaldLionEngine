@@ -17,7 +17,8 @@ namespace BaldLion
 			Linear_Frame,
 			Stack,
 			FreeList_Renderer,
-			FreeList_ECS
+			FreeList_ECS,
+			FreeList_Resources
 		};
 
 		struct AllocationInfo {
@@ -63,6 +64,7 @@ namespace BaldLion
 			static FreeListAllocator* s_freeListMainAllocator;
 			static FreeListAllocator* s_freeListRendererAllocator;
 			static FreeListAllocator* s_freeListECSAllocator;
+			static FreeListAllocator* s_freeListResourcesAllocator;
 			static LinearAllocator* s_linearFrameAllocator;
 			static StackAllocator* s_stackAllocator;
 
@@ -102,6 +104,9 @@ namespace BaldLion
 			case AllocationType::FreeList_ECS:
 				result = new (s_freeListECSAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
 				break;
+			case AllocationType::FreeList_Resources:
+				result = new (s_freeListResourcesAllocator->Allocate(sizeof(T), __alignof(T))) T(std::forward<Args>(args)...);
+				break;
 			}		
 
 			s_allocationMap.emplace((void*)result, AllocationInfo(STRING_TO_STRINGID(allocationName), allocationType, sizeof(T)));
@@ -136,6 +141,9 @@ namespace BaldLion
 				break;
 			case AllocationType::FreeList_ECS:
 				result = (T*)s_freeListECSAllocator->Allocate(size * sizeof(T), __alignof(T));
+				break;
+			case AllocationType::FreeList_Resources:
+				result = (T*)s_freeListResourcesAllocator->Allocate(size * sizeof(T), __alignof(T));
 				break;
 			}
 
@@ -177,6 +185,10 @@ namespace BaldLion
 			case AllocationType::FreeList_ECS:
 				if (s_freeListECSAllocator != nullptr)
 					s_freeListECSAllocator->Deallocate(element);
+				break;
+			case AllocationType::FreeList_Resources:
+				if (s_freeListResourcesAllocator != nullptr)
+					s_freeListResourcesAllocator->Deallocate(element);
 				break;
 			}
 
