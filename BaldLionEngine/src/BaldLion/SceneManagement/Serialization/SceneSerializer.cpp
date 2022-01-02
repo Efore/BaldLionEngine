@@ -4,8 +4,51 @@
 
 #include "BaldLion/ECS/ECSComponentsInclude.h"
 #include "BaldLion/SceneManagement/SceneManager.h"
+#include "BaldLion/ResourceManagement/ResourceManager.h"
+#include "BaldLion/Rendering/Mesh.h"
+#include "BaldLion/Animation/Skeleton.h"
+#include "BaldLion/Animation/AnimationManager.h"
 
 using namespace BaldLion::ECS;
+
+#define YAML_KEY_SCENE				"Scene"
+#define YAML_KEY_ENTITIES			"Entities"
+#define YAML_KEY_ENTITYNAME			"EntityName"
+#define YAML_KEY_COMPONENTS			"Components"
+#define YAML_KEY_COMPONENTTYPE		"ComponentType"
+
+//Transform
+#define YAML_KEY_POSITION			"Position"
+#define YAML_KEY_ROTATION			"Rotation"
+#define YAML_KEY_SCALE				"Scale"
+
+//Projection camera
+#define YAML_KEY_CAMERAFOV			"CameraFov"
+#define YAML_KEY_CAMERAWIDTH		"CameraWidth"
+#define YAML_KEY_CAMERAHEIGHT		"CameraHeight"
+#define YAML_KEY_CAMERANEARPLANE	"CameraNearPlane"
+#define YAML_KEY_CAMERAFARPLANE		"CameraFarPlane"
+
+//Mesh
+#define YAML_KEY_MESHRESOURCEID		"MeshResourceID"
+#define YAML_KEY_MESHISSTATIC		"MeshIsStatic"
+
+//Light
+#define YAML_KEY_AMBIENTCOLOR		"AmbientColor"
+#define YAML_KEY_DIFFUSECOLOR		"DiffuseColor"
+#define YAML_KEY_SPECULARCOLOR		"SpecularColor"
+#define YAML_KEY_LIGHTDIRECTION		"LightDirection"
+
+//Animation
+#define YAML_KEY_ANIMATORID			"AnimatorID"
+
+//Hierarchy
+#define YAML_KEY_PARENTID			"ParentEntityID"
+#define YAML_KEY_CHILDENTITIES		"ChildEntities"
+#define YAML_KEY_CHILDENTITY		"ChildEntity"
+
+
+
 
 namespace BaldLion
 {
@@ -15,8 +58,8 @@ namespace BaldLion
 		{
 			YAML::Emitter out;
 			out << YAML::BeginMap;
-			out << YAML::Key << "Scene" << YAML::Value << STRINGID_TO_STR_C(scene->GetSceneID());
-			out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+			out << YAML::Key << YAML_KEY_SCENE << YAML::Value << STRINGID_TO_STR_C(scene->GetSceneID());
+			out << YAML::Key << YAML_KEY_ENTITIES << YAML::Value << YAML::BeginSeq;
 
 			for (ui32 i = 0; i < scene->GetECSManager()->GetEntities().Size(); ++i) 
 			{
@@ -39,14 +82,14 @@ namespace BaldLion
 
 			YAML::Node data = YAML::Load(strStream.str());
 
-			if (!data["Scene"])
+			if (!data[YAML_KEY_SCENE])
 				return false;
 
-			std::string sceneName = data["Scene"].as<std::string>();
+			std::string sceneName = data[YAML_KEY_SCENE].as<std::string>();
 
 			SceneManager::AddScene(sceneName.c_str(), true);
 
-			auto entities = data["Entities"];
+			auto entities = data[YAML_KEY_ENTITIES];
 
 			if (entities)
 			{
@@ -62,8 +105,8 @@ namespace BaldLion
 		void SceneSerializer::SerializeEntity(const Scene* scene, YAML::Emitter &out, const ECS::ECSEntity* entity)
 		{
 			out << YAML::BeginMap;
-			out << YAML::Key << "Entity" << YAML::Value << STRINGID_TO_STR_C(entity->GetEntityName());
-			out << YAML::Key << "Components" << YAML::Value << YAML::BeginSeq;
+			out << YAML::Key << YAML_KEY_ENTITYNAME << YAML::Value << STRINGID_TO_STR_C(entity->GetEntityName());
+			out << YAML::Key << YAML_KEY_COMPONENTS << YAML::Value << YAML::BeginSeq;
 
 			const ECS::ECSComponentLookUp* entityComponentLookUp = &scene->GetECSManager()->GetEntityComponents().Get(entity->GetEntityID());
 			for (ui32 i = 0; i < (ui32)ECS::ECSComponentType::Count; ++i) 
@@ -76,11 +119,11 @@ namespace BaldLion
 
 		void SceneSerializer::DeserializeEntity(const YAML::detail::iterator_value& yamlEntity)
 		{
-			std::string entityName = yamlEntity["Entity"].as<std::string>();
+			std::string entityName = yamlEntity[YAML_KEY_ENTITYNAME].as<std::string>();
 
 			ECS::ECSEntityID entityID = SceneManager::GetECSManager()->AddEntity(entityName.c_str());
 
-			auto components = yamlEntity["components"];
+			auto components = yamlEntity[YAML_KEY_COMPONENTS];
 
 			if (components)
 			{
@@ -94,7 +137,7 @@ namespace BaldLion
 		void SceneSerializer::SerializeComponent(YAML::Emitter &out, const ECS::ECSComponent* component)
 		{
 			out << YAML::BeginMap;
-			out << YAML::Key << "Component" << YAML::Value << (ui32)component->GetComponentType();
+			out << YAML::Key << YAML_KEY_COMPONENTTYPE << YAML::Value << (ui32)component->GetComponentType();
 
 			switch (component->GetComponentType())
 			{
@@ -106,9 +149,9 @@ namespace BaldLion
 			{
 				ECSTransformComponent* transformComponent = (ECSTransformComponent*)component;
 
-				SerializeVec3(out, "Position", transformComponent->position);
-				SerializeVec3(out, "Rotation", transformComponent->rotation);
-				SerializeVec3(out, "Scale", transformComponent->scale);
+				SerializeVec3(out, YAML_KEY_POSITION, transformComponent->position);
+				SerializeVec3(out, YAML_KEY_ROTATION, transformComponent->rotation);
+				SerializeVec3(out, YAML_KEY_SCALE, transformComponent->scale);
 			}
 				break;
 
@@ -116,47 +159,61 @@ namespace BaldLion
 			{
 				ECSProjectionCameraComponent* cameraComponent = (ECSProjectionCameraComponent*)component;
 
-				out << YAML::Key << "Fov" << YAML::Value << cameraComponent->fov;
+				out << YAML::Key << YAML_KEY_CAMERAFOV << YAML::Value << cameraComponent->fov;
 
-				out << YAML::Key << "Width" << YAML::Value << cameraComponent->width;
-				out << YAML::Key << "Height" << YAML::Value << cameraComponent->height;
+				out << YAML::Key << YAML_KEY_CAMERAWIDTH << YAML::Value << cameraComponent->width;
+				out << YAML::Key << YAML_KEY_CAMERAHEIGHT << YAML::Value << cameraComponent->height;
 
-				out << YAML::Key << "NearPlane" << YAML::Value << cameraComponent->nearPlane;
-				out << YAML::Key << "FarPlane" << YAML::Value << cameraComponent->farPlane;
+				out << YAML::Key << YAML_KEY_CAMERANEARPLANE << YAML::Value << cameraComponent->nearPlane;
+				out << YAML::Key << YAML_KEY_CAMERAFARPLANE << YAML::Value << cameraComponent->farPlane;
 			}
 				break;
 
 			case ECS::ECSComponentType::Mesh:
+			{
+				ECSMeshComponent* meshComponent = (ECSMeshComponent*)component;
+				out << YAML::Key << YAML_KEY_MESHRESOURCEID << YAML::Value << meshComponent->meshResourceID;
+				out << YAML::Key << YAML_KEY_MESHISSTATIC << YAML::Value << meshComponent->isStatic;
+			}
 				break;
 
 			case ECS::ECSComponentType::Skeleton:
+			{
+				ECSSkeletonComponent* skeletonComponent = (ECSSkeletonComponent*)component;
+				out << YAML::Key << YAML_KEY_MESHRESOURCEID << YAML::Value << skeletonComponent->skeletonResourceID;
+			}
 				break;
 
 			case ECS::ECSComponentType::DirectionalLight:
 			{
 				ECSDirectionalLightComponent* directionalLightComponent = (ECSDirectionalLightComponent*)component;
 
-				SerializeVec3(out, "AmbientColor", directionalLightComponent->ambientColor);
-				SerializeVec3(out, "DiffuseColor", directionalLightComponent->diffuseColor);
-				SerializeVec3(out, "SpecularColor", directionalLightComponent->specularColor);
-				SerializeVec3(out, "Direction", directionalLightComponent->direction);
+				SerializeVec3(out, YAML_KEY_AMBIENTCOLOR, directionalLightComponent->ambientColor);
+				SerializeVec3(out, YAML_KEY_DIFFUSECOLOR, directionalLightComponent->diffuseColor);
+				SerializeVec3(out, YAML_KEY_SPECULARCOLOR, directionalLightComponent->specularColor);
+				SerializeVec3(out, YAML_KEY_LIGHTDIRECTION, directionalLightComponent->direction);
 			}
 				break;
 
 			case ECS::ECSComponentType::PointLight:
 				break;
+
 			case ECS::ECSComponentType::Animation:
+			{
+				ECSAnimationComponent* animationComponent = (ECSAnimationComponent*)component;
+				out << YAML::Key << YAML_KEY_ANIMATORID << YAML::Value << animationComponent->animatorID;
+			}
 				break;
 			case ECS::ECSComponentType::Hierarchy:
 			{
 				ECSHierarchyComponent* hierarchyComponent = (ECSHierarchyComponent*)component;
 
-				out << YAML::Key << "ParentEntityID" << YAML::Value << hierarchyComponent->parentEntityID;
-				out << YAML::Key << "ChildEntitiesIDs" << YAML::Value << YAML::BeginSeq;
+				out << YAML::Key << YAML_KEY_PARENTID << YAML::Value << hierarchyComponent->parentEntityID;
+				out << YAML::Key << YAML_KEY_CHILDENTITIES << YAML::Value << YAML::BeginSeq;
 
 				for (ui32 i = 0; i < hierarchyComponent->childEntitiesIDs.Size(); ++i)
 				{
-					out << YAML::Key << "ChildEntity" + std::to_string(i) << YAML::Value << hierarchyComponent->childEntitiesIDs[i];
+					out << YAML::Key << YAML_KEY_CHILDENTITY + std::to_string(i) << YAML::Value << hierarchyComponent->childEntitiesIDs[i];
 				}
 
 				out << YAML::EndSeq;
@@ -169,7 +226,7 @@ namespace BaldLion
 
 		void SceneSerializer::DeserializeComponent(ECS::ECSEntityID entityID, const YAML::detail::iterator_value& yamlComponent)
 		{
-			ECS::ECSComponentType componentType = (ECS::ECSComponentType)yamlComponent["Component"].as<ui32>();
+			ECS::ECSComponentType componentType = (ECS::ECSComponentType)yamlComponent[YAML_KEY_COMPONENTTYPE].as<ui32>();
 
 			ECSComponent* component = nullptr;
 
@@ -178,9 +235,9 @@ namespace BaldLion
 
 			case BaldLion::ECS::ECSComponentType::Transform:
 			{
-				glm::vec3 position = DeserializeVec3(yamlComponent, "Position");
-				glm::vec3 rotation = DeserializeVec3(yamlComponent, "Rotation");
-				glm::vec3 scale = DeserializeVec3(yamlComponent, "Scale");
+				glm::vec3 position = DeserializeVec3(yamlComponent, YAML_KEY_POSITION);
+				glm::vec3 rotation = DeserializeVec3(yamlComponent, YAML_KEY_ROTATION);
+				glm::vec3 scale = DeserializeVec3(yamlComponent, YAML_KEY_SCALE);
 
 				component = SceneManager::GetECSManager()->AddComponent<ECSTransformComponent>(
 					ECSComponentType::Transform,
@@ -192,13 +249,13 @@ namespace BaldLion
 
 			case BaldLion::ECS::ECSComponentType::ProjectionCamera:			
 			{
-				float fov = yamlComponent["Fov"].as<float>();
+				float fov = yamlComponent[YAML_KEY_CAMERAFOV].as<float>();
 
-				float width = yamlComponent["Width"].as<float>();
-				float height = yamlComponent["Height"].as<float>();
+				float width = yamlComponent[YAML_KEY_CAMERAWIDTH].as<float>();
+				float height = yamlComponent[YAML_KEY_CAMERAHEIGHT].as<float>();
 
-				float nearPlane = yamlComponent["NearPlane"].as<float>();
-				float farPlane = yamlComponent["FarPlane"].as<float>();
+				float nearPlane = yamlComponent[YAML_KEY_CAMERANEARPLANE].as<float>();
+				float farPlane = yamlComponent[YAML_KEY_CAMERAFARPLANE].as<float>();
 
 				component = SceneManager::GetECSManager()->AddComponent<ECSProjectionCameraComponent>(
 					ECSComponentType::ProjectionCamera,
@@ -211,17 +268,29 @@ namespace BaldLion
 				break;
 
 			case BaldLion::ECS::ECSComponentType::Mesh:
+			{
+				ui32 meshResourceID = yamlComponent[YAML_KEY_MESHRESOURCEID].as<ui32>();
+				bool isStatic = yamlComponent[YAML_KEY_MESHISSTATIC].as<bool>();
+
+				Mesh* mesh = ResourceManagement::ResourceManager::LoadResource<Mesh>(STRINGID_TO_STRING(meshResourceID));
+				component = mesh->GenerateMeshComponent(SceneManager::GetECSManager(), isStatic);
+			}
 				break;
 
 			case BaldLion::ECS::ECSComponentType::Skeleton:
+			{
+				ui32 meshResourceID = yamlComponent[YAML_KEY_MESHRESOURCEID].as<ui32>();
+				Mesh* mesh = ResourceManagement::ResourceManager::LoadResource<Mesh>(STRINGID_TO_STRING(meshResourceID));
+				component = mesh->GenerateSkeletonComponent(SceneManager::GetECSManager());
+			}
 				break;
 
 			case BaldLion::ECS::ECSComponentType::DirectionalLight:
 			{
-				glm::vec3 ambientColor = DeserializeVec3(yamlComponent, "AmbientColor");
-				glm::vec3 diffuseColor = DeserializeVec3(yamlComponent, "DiffuseColor");
-				glm::vec3 specularColor = DeserializeVec3(yamlComponent, "SpecularColor");
-				glm::vec3 direction = DeserializeVec3(yamlComponent, "Direction");
+				glm::vec3 ambientColor = DeserializeVec3(yamlComponent, YAML_KEY_AMBIENTCOLOR);
+				glm::vec3 diffuseColor = DeserializeVec3(yamlComponent, YAML_KEY_DIFFUSECOLOR);
+				glm::vec3 specularColor = DeserializeVec3(yamlComponent, YAML_KEY_SPECULARCOLOR);
+				glm::vec3 direction = DeserializeVec3(yamlComponent, YAML_KEY_LIGHTDIRECTION);
 
 				component = SceneManager::GetECSManager()->AddComponent<ECS::ECSDirectionalLightComponent>(
 					ECS::ECSComponentType::DirectionalLight,
@@ -236,20 +305,28 @@ namespace BaldLion
 				break;
 
 			case BaldLion::ECS::ECSComponentType::Animation:
+			{
+				StringId animatorID = yamlComponent[YAML_KEY_ANIMATORID].as<StringId>();
+
+				StringId initAnimationID = Animation::AnimationManager::GetAnimator(animatorID)->GetInitialAnimationID();
+
+				component = SceneManager::GetECSManager()->AddComponent<ECS::ECSAnimationComponent>(
+					ECS::ECSComponentType::Animation, animatorID, initAnimationID);					
+			}
 				break;
 
 			case BaldLion::ECS::ECSComponentType::Hierarchy:
 			{
-				ECSEntityID parentEntityID = yamlComponent["ParentEntityID"].as<ECSEntityID>();
+				ECSEntityID parentEntityID = yamlComponent[YAML_KEY_PARENTID].as<ECSEntityID>();
 
-				auto children = yamlComponent["ChildEntitiesIDs"];
+				auto children = yamlComponent[YAML_KEY_CHILDENTITIES];
 
 				DynamicArray<ECSEntityID> childEntitiesIDs(AllocationType::Linear_Frame, 10);
 				ui32 i = 0;
 
 				for (auto child : children)
 				{
-					childEntitiesIDs.EmplaceBack(child["ChildEntity" + std::to_string(i)].as<ECSEntityID>());
+					childEntitiesIDs.EmplaceBack(child[YAML_KEY_CHILDENTITY + std::to_string(i)].as<ECSEntityID>());
 					++i;
 				}
 

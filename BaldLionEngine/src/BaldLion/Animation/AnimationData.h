@@ -66,7 +66,7 @@ namespace BaldLion
 		struct AnimationData {
 
 			glm::mat4 InverseRootTransform;
-			StringId AnimationName;
+			StringId AnimationID;
 			DynamicArray<KeyFrame> AnimationFrames;
 			float AnimationLength;
 
@@ -76,9 +76,9 @@ namespace BaldLion
 			
 			//---------------------------------------------------------------------------------------
 
-			AnimationData(const glm::mat4& inverseRootTransform, const StringId animationName, const DynamicArray<KeyFrame>& animationFrames, const float animationLenght) :
+			AnimationData(const glm::mat4& inverseRootTransform, const std::string& animationID, const DynamicArray<KeyFrame>& animationFrames, const float animationLenght) :
 				InverseRootTransform(inverseRootTransform),
-				AnimationName(animationName), 
+				AnimationID(STRING_TO_STRINGID(animationID)), 
 				AnimationFrames(animationFrames), 
 				AnimationLength(animationLenght)
 			{}
@@ -87,7 +87,7 @@ namespace BaldLion
 
 			AnimationData(AnimationData&& other) : 
 				InverseRootTransform(other.InverseRootTransform),
-				AnimationName(other.AnimationName), 
+				AnimationID(other.AnimationID), 
 				AnimationLength(other.AnimationLength),
 				AnimationFrames(std::move(other.AnimationFrames))
 			{
@@ -98,7 +98,7 @@ namespace BaldLion
 			AnimationData& operator=(const AnimationData& other)
 			{
 				InverseRootTransform = other.InverseRootTransform;
-				AnimationName = other.AnimationName;
+				AnimationID = other.AnimationID;
 				AnimationLength = other.AnimationLength;
 				AnimationFrames = other.AnimationFrames;
 
@@ -110,7 +110,7 @@ namespace BaldLion
 			AnimationData& operator=(AnimationData&& other)
 			{
 				InverseRootTransform = other.InverseRootTransform;
-				AnimationName  = other.AnimationName;
+				AnimationID  = other.AnimationID;
 				AnimationLength = other.AnimationLength;
 				AnimationFrames = std::move(other.AnimationFrames);				
 

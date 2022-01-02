@@ -7,14 +7,13 @@ namespace BaldLion
 	namespace ResourceManagement
 	{
 		enum class ResourceType {
+			None,
 			Texture,
 			Model,
 			Mesh,
 			Skeleton,
 			Material,
-			Shader,
-
-			Count
+			Shader
 		};
 		
 		class Resource

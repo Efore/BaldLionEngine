@@ -17,10 +17,12 @@ namespace BaldLion
 
 			const AnimationData* GetAnimation(const StringId animationID) const;
 			const StringId GetAnimatorID() const { return m_animatorID; } ;
+			const StringId GetInitialAnimationID() const { return m_initAnimationID; }
 
 		private:	
 
 			StringId m_animatorID;
+			StringId m_initAnimationID;
 			DynamicArray<AnimationData>* m_animationDataContainer;
 			HashTable<StringId,AnimationData*> m_animations;
 		};

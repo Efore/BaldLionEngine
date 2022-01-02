@@ -23,12 +23,7 @@ namespace BaldLion
 
 		void OpenGLMaterial::AssignShader()
 		{
-			m_shader = ResourceManagement::ResourceManager::LoadResource<OpenGLShader>(STRINGID_TO_STRING(m_materialProperties.shaderPath));
-				
-			if (!m_shader)
-			{
-				m_shader = ResourceManagement::ResourceManager::AddResource<OpenGLShader>(STRINGID_TO_STRING(m_materialProperties.shaderPath), ResourceManagement::ResourceType::Shader);
-			}
+			m_shader = ResourceManagement::ResourceManager::AddResource<OpenGLShader>(STRINGID_TO_STRING(m_materialProperties.shaderPath), ResourceManagement::ResourceType::Shader);			
 
 			if (m_materialProperties.ambientTex != nullptr)
 			{

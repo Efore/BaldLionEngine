@@ -89,6 +89,7 @@ namespace BaldLion
 			meshComponent->material = m_material;
 			meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices);
 			meshComponent->indices = DynamicArray<ui32>(AllocationType::FreeList_ECS, m_geometryData->indices);
+			meshComponent->meshResourceID = m_resourceID;
 
 			glm::vec3 minPointInLocalSpace = meshComponent->vertices[0].position;
 			glm::vec3 maxPointInLocalSpace = meshComponent->vertices[0].position;
@@ -119,6 +120,7 @@ namespace BaldLion
 
 			skeletonComponent->joints = DynamicArray<Animation::Joint>(AllocationType::FreeList_ECS, m_skeleton->GetJoints());
 			skeletonComponent->boneData = DynamicArray<VertexBone>(AllocationType::FreeList_ECS, m_vertexBones);
+			skeletonComponent->skeletonResourceID = m_resourceID;
 		
 			return skeletonComponent;
 		}

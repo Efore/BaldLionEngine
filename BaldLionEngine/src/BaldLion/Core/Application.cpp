@@ -34,6 +34,8 @@ namespace BaldLion
 		Animation::AnimationManager::Init();
 		SceneManagement::SceneManager::Init();
 		Rendering::Renderer::Init(m_window->GetWidth(), m_window->GetHeight());
+		ResourceManagement::ResourceManager::LoadAssets();
+
 
 		m_layerStack.Init();
 

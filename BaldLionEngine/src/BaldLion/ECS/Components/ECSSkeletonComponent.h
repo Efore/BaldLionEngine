@@ -28,6 +28,7 @@ namespace BaldLion {
 		public:
 			DynamicArray<Rendering::VertexBone> boneData;
 			DynamicArray<Joint> joints;
+			ui32 skeletonResourceID;
 		};
 
 	}

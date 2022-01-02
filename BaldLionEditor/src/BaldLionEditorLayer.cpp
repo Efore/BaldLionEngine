@@ -68,13 +68,7 @@ namespace BaldLion
 					MathUtils::Vector3Zero,
 					glm::vec3(10.0f, 1.0f, 10.0f));
 
-				Texture* gridTexture = ResourceManagement::ResourceManager::LoadResource<Texture>("assets/textures/TextureGrid.png");
-
-				if (!gridTexture)
-				{
-					gridTexture = Texture2D::Create("assets/textures/TextureGrid.png");
-					ResourceManagement::ResourceManager::AddResource(gridTexture);
-				}
+				Texture* gridTexture =  ResourceManagement::ResourceManager::AddResource<Texture>("assets/textures/TextureGrid.png", ResourceManagement::ResourceType::Texture);				
 
 				gridTexture->SetWrapMode(WrapMode::Repeat, WrapMode::Repeat);
 
@@ -116,14 +110,7 @@ namespace BaldLion
 
 			{//Trees setup	
 
-				Model* treeModel = ResourceManagement::ResourceManager::LoadResource<Rendering::Model>("assets/models/tree/Lowpoly_tree_sample.obj");
-
-				if(!treeModel)
-				{
-					treeModel = MemoryManager::New<Rendering::Model>("Tree Model", AllocationType::FreeList_Renderer, "assets/models/tree/Lowpoly_tree_sample.obj");
-
-					ResourceManagement::ResourceManager::AddResource(treeModel);
-				}
+				Model* treeModel = ResourceManagement::ResourceManager::AddResource<Model>("assets/models/tree/Lowpoly_tree_sample.obj", ResourceManagement::ResourceType::Model);				
 
 				treeModel->SetUpModel();
 
@@ -152,14 +139,7 @@ namespace BaldLion
 
 			{//Characters setup	
 
-				Model* character = ResourceManagement::ResourceManager::LoadResource<Rendering::Model>("assets/models/creature/creature.fbx");
-
-				if (!character)
-				{
-					character = MemoryManager::New<Rendering::Model>("Character Model", AllocationType::FreeList_Renderer, "assets/models/creature/creature.fbx");
-
-					ResourceManagement::ResourceManager::AddResource(character);
-				}
+				Model* character =  ResourceManagement::ResourceManager::AddResource<Model>("assets/models/creature/creature.fbx", ResourceManagement::ResourceType::Model);				
 
 				character->SetUpModel();
 
@@ -178,13 +158,13 @@ namespace BaldLion
 
 						ECS::ECSMeshComponent* characterMeshComponent = character->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager,false);
 						ECS::ECSSkeletonComponent* characterSkeletonComponent = character->GetSubMeshes()[j]->GenerateSkeletonComponent(m_ecsManager);
-						ECS::ECSAnimationComponent* characterAnimationComponent = m_ecsManager->AddComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentType::Animation);
 
 						const std::string animatorName = STRINGID_TO_STRING(character->GetModelFolderPath()) + "Animator.anim";
-						characterAnimationComponent->animatorID =
-							STRING_TO_STRINGID(animatorName);
 
-						characterAnimationComponent->currentAnimationID = STRING_TO_STRINGID("mixamo.com");
+						StringId animatorID = STRING_TO_STRINGID(animatorName);
+						StringId initialAnimation = Animation::AnimationManager::GetAnimator(animatorID)->GetInitialAnimationID();
+
+						ECS::ECSAnimationComponent* characterAnimationComponent = m_ecsManager->AddComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentType::Animation, animatorID, initialAnimation);
 
 						m_ecsManager->AddComponentToEntity(characterEntity, characterTransformComponent);
 						m_ecsManager->AddComponentToEntity(characterEntity, characterSkeletonComponent);

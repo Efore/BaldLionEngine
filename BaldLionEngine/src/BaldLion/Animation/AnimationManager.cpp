@@ -48,7 +48,7 @@ namespace BaldLion
 				{
 					AnimationData animationData(
 						glm::inverse(rootTransform),
-						STRING_TO_STRINGID(scene->mAnimations[i]->mName.data), 
+						scene->mAnimations[i]->mName.data, 
 						DynamicArray<KeyFrame>(AllocationType::FreeList_Main, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys),
 						(float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond)
 					);

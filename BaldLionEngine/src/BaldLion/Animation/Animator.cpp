@@ -11,12 +11,12 @@ namespace BaldLion
 			m_animations = HashTable<StringId, AnimationData*>(AllocationType::FreeList_Renderer, animations.Size() * 2);
 			for (ui32 i = 0; i < animations.Size(); ++i)
 			{
-				if (!m_animations.Contains(animations[i].AnimationName))
+				if (!m_animations.Contains(animations[i].AnimationID))
 				{
-					m_animations.Emplace(animations[i].AnimationName, &animations[i]);
+					m_animations.Emplace(animations[i].AnimationID, &animations[i]);
 				}
 			}
-
+			m_initAnimationID = animations[0].AnimationID;
 			m_animationDataContainer = &animations;
 		}
 

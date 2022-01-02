@@ -64,6 +64,7 @@ namespace BaldLion
 			});
 
 			s_shadowMapTex = Texture2D::Create("ShadowMapTex",true);
+			ResourceManagement::ResourceManager::AddResource(s_shadowMapTex);
 
 			s_shadowFramebuffer = Framebuffer::Create({
 				1024,
@@ -74,9 +75,10 @@ namespace BaldLion
 				s_shadowMapTex
 			});
 
-			s_depthMapShader = Shader::Create("assets/shaders/depthMap.glsl");
-			s_depthMapSkinnedShader = Shader::Create("assets/shaders/depthMapSkinned.glsl");
-			
+			s_depthMapShader = ResourceManagement::ResourceManager::AddResource<Shader>("assets/shaders/depthMap.glsl",ResourceManagement::ResourceType::Shader);
+
+			s_depthMapSkinnedShader = ResourceManagement::ResourceManager::AddResource<Shader>("assets/shaders/depthMapSkinned.glsl", ResourceManagement::ResourceType::Shader);
+
 			s_dynamicMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
 			s_shadowCastingMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
 			s_disposableVertexArrays = DynamicArray<VertexArray*>(AllocationType::FreeList_Renderer, 100);

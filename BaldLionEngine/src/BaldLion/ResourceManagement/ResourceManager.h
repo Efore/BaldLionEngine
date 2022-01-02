@@ -2,6 +2,7 @@
 
 #include "BaldLion/Core/Containers/HashMap.h"
 #include "Resource.h"
+#include <filesystem>
 
 namespace BaldLion
 {
@@ -16,12 +17,13 @@ namespace BaldLion
 			template <typename T>
 			static T* LoadResource(const std::string &path);
 
-			static bool Exists(const std::string &path);
 
 			template <typename T>
 			static T* AddResource(const std::string &path, ResourceType resourceType);
 
+			static bool Exists(const std::string &path);
 			static void AddResource(Resource* resource);
+			static void LoadAssets();
 
 		private:
 
@@ -34,36 +36,44 @@ namespace BaldLion
 		template <typename T>
 		T* ResourceManager::LoadResource(const std::string &path)
 		{
+			auto resourcePath = std::filesystem::path(path);
+
 			static_assert(std::is_base_of<Resource, T>::value, "T must inherit from Resource");
 
 			std::lock_guard<std::mutex> lockGuard(s_resourceManagerMutex);
 
 			Resource* result = nullptr;
 
-			s_resourceMap.TryGet(STRING_TO_STRINGID(path), result);
+			s_resourceMap.TryGet(STRING_TO_STRINGID(resourcePath.make_preferred().string()), result);
 
 			return (T*)result;
 		}		
 
 		template <typename T>
 		T* ResourceManager::AddResource(const std::string &path, ResourceType resourceType)
-		{
-			static_assert(std::is_base_of<Resource, T>::value, "T must inherit from Resource");
+		{			
+			Resource* result = LoadResource<T>(path);
 
-			std::lock_guard<std::mutex> lockGuard(s_resourceManagerMutex);
+			if (result)
+			{
+				return (T*)result;
+			}
 
-			Resource* result = nullptr;
+			auto resourcePath = std::filesystem::path(path);
+			const std::string formatedPath = resourcePath.make_preferred().string();
+
+			static_assert(std::is_base_of<Resource, T>::value, "T must inherit from Resource");		
 
 			switch (resourceType)
 			{
 			case ResourceType::Texture:
 
-				result = Rendering::Texture2D::Create(path);
+				result = Rendering::Texture2D::Create(formatedPath);
 				break;
 
 			case ResourceType::Model:
 
-				result = MemoryManager::New<Rendering::Model>(path.c_str(), AllocationType::FreeList_Renderer, path);
+				result = MemoryManager::New<Rendering::Model>(formatedPath.c_str(), AllocationType::FreeList_Renderer, formatedPath);
 
 				((Rendering::Model*)result)->SetUpModel();
 
@@ -93,19 +103,21 @@ namespace BaldLion
 					(ui8)Material::ShadowsSettingsBitMask::CastShadows
 				};
 
-				result = Material::Create(path, materialProperties);
+				result = Material::Create(formatedPath, materialProperties);
 				((Material*)result)->AssignShader();
 			}
 			break;
 
 			case ResourceType::Shader:
 
-				result = Shader::Create(path);
+				result = Shader::Create(formatedPath);
 				break;
 
 			default:
 				break;
 			}
+
+			std::lock_guard<std::mutex> lockGuard(s_resourceManagerMutex);
 
 			if (result)
 			{

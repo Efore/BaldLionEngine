@@ -10,8 +10,8 @@ namespace BaldLion {
 		{
 		public:
 
-			ECSAnimationComponent() :
-				ECSComponent(ECSComponentType::Animation)
+			ECSAnimationComponent(StringId animatorID, StringId initAnimationId) :
+				ECSComponent(ECSComponentType::Animation), animatorID(animatorID), currentAnimationID(initAnimationId), currentAnimationProgress(0.0f)
 			{
 			}
 

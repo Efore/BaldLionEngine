@@ -32,8 +32,9 @@ namespace BaldLion {
 			DynamicArray<Vertex> vertices;
 			DynamicArray<ui32> indices;
 			AABB localAABB;
-			bool isStatic;
 			Material* material;
+			ui32 meshResourceID;
+			bool isStatic;
 		};
 
 	}

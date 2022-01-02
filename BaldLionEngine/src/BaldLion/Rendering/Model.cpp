@@ -166,11 +166,12 @@ namespace BaldLion
 					if (!ambientTex) 
 					{
 						ambientTex = Texture2D::Create(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size);
+						ResourceManager::AddResource(ambientTex);
 					}
 				}
 				else
 				{
-					ambientTex = Texture2D::Create(completeTexPath);
+					ambientTex = ResourceManager::AddResource<Texture>(completeTexPath, ResourceType::Texture);
 				}
 			}
 
@@ -188,11 +189,12 @@ namespace BaldLion
 					if (!diffuseTex)
 					{
 						diffuseTex = Texture2D::Create(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size);
+						ResourceManager::AddResource(diffuseTex);
 					}
 				}
 				else
 				{
-					diffuseTex = Texture2D::Create(completeTexPath);
+					diffuseTex = ResourceManager::AddResource<Texture>(completeTexPath, ResourceType::Texture);
 				}
 			}
 
@@ -210,11 +212,12 @@ namespace BaldLion
 					if (!specularTex)
 					{
 						specularTex = Texture2D::Create(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size);
+						ResourceManager::AddResource(specularTex);
 					}
 				}
 				else
 				{
-					specularTex = Texture2D::Create(completeTexPath);
+					specularTex = ResourceManager::AddResource<Texture>(completeTexPath, ResourceType::Texture);
 				}
 			}
 
@@ -233,11 +236,12 @@ namespace BaldLion
 					if (!emissiveTex)
 					{
 						emissiveTex = Texture2D::Create(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size);
+						ResourceManager::AddResource(emissiveTex);
 					}
 				}
 				else
 				{
-					emissiveTex = Texture2D::Create(completeTexPath);
+					emissiveTex = ResourceManager::AddResource<Texture>(completeTexPath, ResourceType::Texture);
 				}
 			}
 
@@ -255,11 +259,12 @@ namespace BaldLion
 					if (!normalTex)
 					{
 						normalTex = Texture2D::Create(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size);
+						ResourceManager::AddResource(normalTex);
 					}
 				}
 				else
 				{
-					normalTex = Texture2D::Create(completeTexPath);
+					normalTex = ResourceManager::AddResource<Texture>(completeTexPath, ResourceType::Texture);
 				}
 			}
 		}
@@ -407,7 +412,6 @@ namespace BaldLion
 			if (!mesh) 
 			{
 				mesh = MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer, meshMaterial, meshName);
-
 				ResourceManagement::ResourceManager::AddResource(mesh);
 			}
 
@@ -436,7 +440,6 @@ namespace BaldLion
 				if (!skeleton) 
 				{
 					skeleton = MemoryManager::New<Animation::Skeleton>("Skeleton", AllocationType::FreeList_Renderer, jointsData, skeletonName);
-
 					ResourceManagement::ResourceManager::AddResource(skeleton);
 				}
 
