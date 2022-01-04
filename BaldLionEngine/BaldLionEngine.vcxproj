@@ -189,6 +189,7 @@
     <ClInclude Include="src\BaldLion\ECS\ECSEntity.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSManager.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSSystem.h" />
+    <ClInclude Include="src\BaldLion\ECS\ECSSystemsInclude.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSUtils.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSRenderSystem.h" />
@@ -235,6 +236,7 @@
     <ClInclude Include="src\BaldLion\Utils\Compression.h" />
     <ClInclude Include="src\BaldLion\Utils\GeometryUtils.h" />
     <ClInclude Include="src\BaldLion\Utils\MathUtils.h" />
+    <ClInclude Include="src\BaldLion\Utils\PlatformUtils.h" />
     <ClInclude Include="src\BaldLion\Utils\StringUtils.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\blpch.h" />
@@ -657,6 +659,7 @@
     <ClCompile Include="src\BaldLion\SceneManagement\SceneManager.cpp" />
     <ClCompile Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\blpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

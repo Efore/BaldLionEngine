@@ -5,9 +5,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/random.hpp>
 
-#include "BaldLion/Rendering/Platform/OpenGL/OpenGLShader.h"
 #include "ImGui/imgui.h"
 #include "ImGuizmo.h"
+#include "BaldLion/Utils/PlatformUtils.h"
+#include "BaldLion/SceneManagement/Serialization/SceneSerializer.h"
 
 namespace BaldLion
 {
@@ -22,175 +23,159 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();		
 
-			SceneManagement::SceneManager::AddScene("EditorScene", true);
-
+			SceneManagement::SceneManager::AddScene("UnNamed Scene");
+			m_currentScenePathFile = "";
 			m_ecsManager = SceneManagement::SceneManager::GetECSManager();
 
-			{//Camera setup
-				
-				ECS::ECSEntityID cameraEntity = m_ecsManager->AddEntity("Main Camera");
+			//{//Camera setup
+			//	
+			//	ECS::ECSEntityID cameraEntity = m_ecsManager->AddEntity("Main Camera");
 
-				ECS::ECSTransformComponent* cameraTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
-					glm::vec3(0, 5, 180),
-					MathUtils::Vector3Zero,
-					glm::vec3(1.0f));
+			//	ECS::ECSTransformComponent* cameraTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
+			//		glm::vec3(0, 5, 180),
+			//		MathUtils::Vector3Zero,
+			//		glm::vec3(1.0f));
 
-				ECS::ECSProjectionCameraComponent* projectionCameraComponent = m_ecsManager->AddComponent<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentType::ProjectionCamera,
-					45.0f,
-					(float)Application::GetInstance().GetWindow().GetWidth(),
-					(float)Application::GetInstance().GetWindow().GetHeight(),
-					0.1f,
-					50000.0f);
+			//	ECS::ECSProjectionCameraComponent* projectionCameraComponent = m_ecsManager->AddComponent<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentType::ProjectionCamera,
+			//		45.0f,
+			//		(float)Application::GetInstance().GetWindow().GetWidth(),
+			//		(float)Application::GetInstance().GetWindow().GetHeight(),
+			//		0.1f,
+			//		50000.0f);
 
-				m_ecsManager->AddComponentToEntity(cameraEntity, cameraTransformComponent);
-				m_ecsManager->AddComponentToEntity(cameraEntity, projectionCameraComponent);
-			}
+			//	m_ecsManager->AddComponentToEntity(cameraEntity, cameraTransformComponent);
+			//	m_ecsManager->AddComponentToEntity(cameraEntity, projectionCameraComponent);
+			//}
 
-			{//Directional Light setup
+			//{//Directional Light setup
 
-				ECS::ECSEntityID directionalLight = m_ecsManager->AddEntity("Directional Light");
-				ECS::ECSDirectionalLightComponent* directionalLightComponent = m_ecsManager->AddComponent<ECS::ECSDirectionalLightComponent>(
-					ECS::ECSComponentType::DirectionalLight,
-					glm::vec3(0.0f),
-					glm::vec3(1.0f),
-					glm::vec3(0.2f),
-					glm::vec3(-1.0f, -1.0f, -1.0f));
+			//	ECS::ECSEntityID directionalLight = m_ecsManager->AddEntity("Directional Light");
+			//	ECS::ECSDirectionalLightComponent* directionalLightComponent = m_ecsManager->AddComponent<ECS::ECSDirectionalLightComponent>(
+			//		ECS::ECSComponentType::DirectionalLight,
+			//		glm::vec3(0.0f),
+			//		glm::vec3(1.0f),
+			//		glm::vec3(0.2f),
+			//		glm::vec3(-1.0f, -1.0f, -1.0f));
 
-				m_ecsManager->AddComponentToEntity(directionalLight, directionalLightComponent);
+			//	m_ecsManager->AddComponentToEntity(directionalLight, directionalLightComponent);
 
-				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
-			}
+			//	ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
+			//}
 			
-			{//Plane setup
-				ECS::ECSEntityID planeEntity = m_ecsManager->AddEntity("Plane");
-				ECS::ECSTransformComponent* planeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
-					glm::vec3(0, 0, 0),
-					MathUtils::Vector3Zero,
-					glm::vec3(10.0f, 1.0f, 10.0f));
+			//{//Plane setup
+			//	ECS::ECSEntityID planeEntity = m_ecsManager->AddEntity("Plane");
+			//	ECS::ECSTransformComponent* planeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
+			//		glm::vec3(0, 0, 0),
+			//		MathUtils::Vector3Zero,
+			//		glm::vec3(10.0f, 1.0f, 10.0f));
 
-				Texture* gridTexture =  ResourceManagement::ResourceManager::AddResource<Texture>("assets/textures/TextureGrid.png", ResourceManagement::ResourceType::Texture);				
+			//	Texture* gridTexture =  ResourceManagement::ResourceManager::AddResource<Texture>("assets/textures/TextureGrid.png", ResourceManagement::ResourceType::Texture);				
 
-				gridTexture->SetWrapMode(WrapMode::Repeat, WrapMode::Repeat);
+			//	gridTexture->SetWrapMode(WrapMode::Repeat, WrapMode::Repeat);
 
-				Rendering::Material::MaterialProperties shapeMaterialProperties{
-						STRING_TO_STRINGID("assets/shaders/baseLit.glsl"),
-						glm::vec3(1.0f),
-						glm::vec3(1.0f),
-						glm::vec3(1.0f),
-						glm::vec3(1.0f),
-						32.0f,
-						nullptr,
-						gridTexture,
-						nullptr,
-						nullptr,
-						nullptr,
-						Material::BlendMode::None,
-						Material::DepthBufferMode::TestAndWrite,
-						Material::CullingMode::Back,
-						(ui8)Material::ShadowsSettingsBitMask::ReceiveShadows
-				};
+			//	Rendering::Material::MaterialProperties shapeMaterialProperties{
+			//			STRING_TO_STRINGID("assets/shaders/baseLit.glsl"),
+			//			glm::vec3(1.0f),
+			//			glm::vec3(1.0f),
+			//			glm::vec3(1.0f),
+			//			glm::vec3(1.0f),
+			//			32.0f,
+			//			nullptr,
+			//			gridTexture,
+			//			nullptr,
+			//			nullptr,
+			//			nullptr,
+			//			Material::BlendMode::None,
+			//			Material::DepthBufferMode::TestAndWrite,
+			//			Material::CullingMode::Back,
+			//			(ui8)Material::ShadowsSettingsBitMask::ReceiveShadows
+			//	};
 
-				Rendering::Material* planeMaterial = Rendering::Material::Create("PlaneMaterial", shapeMaterialProperties);
+			//	Rendering::Material* planeMaterial = Rendering::Material::Create("PlaneMaterial", shapeMaterialProperties);
 
-				ResourceManagement::ResourceManager::AddResource(planeMaterial);
+			//	ResourceManagement::ResourceManager::AddResource(planeMaterial);
 
-				planeMaterial->AssignShader();
-				
-				Rendering::PlaneMesh* plane = MemoryManager::New<Rendering::PlaneMesh>("Plane", AllocationType::FreeList_Renderer, planeMaterial, 100.0f, "Editor/PlaneMesh.mesh");
+			//	planeMaterial->AssignShader();
+			//	
+			//	Rendering::PlaneMesh* plane = MemoryManager::New<Rendering::PlaneMesh>("Plane", AllocationType::FreeList_Renderer, planeMaterial, 100.0f, "Editor/PlaneMesh.mesh");
 
-				ResourceManagement::ResourceManager::AddResource(plane);
+			//	ResourceManagement::ResourceManager::AddResource(plane);
 
-				plane->SetUpPlane();
+			//	plane->SetUpPlane();
 
-				ECS::ECSMeshComponent* planeMeshComponent = plane->GenerateMeshComponent(m_ecsManager, true);
+			//	ECS::ECSMeshComponent* planeMeshComponent = plane->GenerateMeshComponent(m_ecsManager, true);
 
-				m_ecsManager->AddComponentToEntity(planeEntity, planeMeshComponent);
-				m_ecsManager->AddComponentToEntity(planeEntity, planeTransformComponent);				
-			}
+			//	m_ecsManager->AddComponentToEntity(planeEntity, planeMeshComponent);
+			//	m_ecsManager->AddComponentToEntity(planeEntity, planeTransformComponent);				
+			//}
 
-			{//Trees setup	
+			//{//Trees setup	
 
-				Model* treeModel = ResourceManagement::ResourceManager::AddResource<Model>("assets/models/tree/Lowpoly_tree_sample.obj", ResourceManagement::ResourceType::Model);				
+			//	Model* treeModel = ResourceManagement::ResourceManager::AddResource<Model>("assets/models/tree/Lowpoly_tree_sample.obj", ResourceManagement::ResourceType::Model);				
 
-				treeModel->SetUpModel();
+			//	treeModel->SetUpModel();
 
-				glm::vec3 position = glm::vec3(0.0f);
+			//	glm::vec3 position = glm::vec3(0.0f);
 
-				for (ui32 i = 0; i < 2; ++i)
-				{
-					for (ui32 j = 0; j < treeModel->GetSubMeshes().Size(); ++j)
-					{					
-						ECS::ECSEntityID treeEntity = m_ecsManager->AddEntity(("Tree" + std::to_string(i) + std::to_string(j)).c_str());
+			//	for (ui32 i = 0; i < 2; ++i)
+			//	{
+			//		for (ui32 j = 0; j < treeModel->GetSubMeshes().Size(); ++j)
+			//		{					
+			//			ECS::ECSEntityID treeEntity = m_ecsManager->AddEntity(("Tree" + std::to_string(i) + std::to_string(j)).c_str());
 
-						ECS::ECSTransformComponent* treeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
-							position,
-							MathUtils::Vector3Zero,
-							glm::vec3(5.0f));
-					
-						ECS::ECSMeshComponent* treeMeshComponent = treeModel->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager, true);
-						
-						m_ecsManager->AddComponentToEntity(treeEntity, treeMeshComponent);
-						m_ecsManager->AddComponentToEntity(treeEntity, treeTransformComponent);
-					}
+			//			ECS::ECSTransformComponent* treeTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
+			//				position,
+			//				MathUtils::Vector3Zero,
+			//				glm::vec3(5.0f));
+			//		
+			//			ECS::ECSMeshComponent* treeMeshComponent = treeModel->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager, true);
+			//			
+			//			m_ecsManager->AddComponentToEntity(treeEntity, treeMeshComponent);
+			//			m_ecsManager->AddComponentToEntity(treeEntity, treeTransformComponent);
+			//		}
 
-					position += glm::vec3(-15.0f, 0, 15.0f);
-				}
-			}
+			//		position += glm::vec3(-15.0f, 0, 15.0f);
+			//	}
+			//}
 
-			{//Characters setup	
+			//{//Characters setup	
 
-				Model* character =  ResourceManagement::ResourceManager::AddResource<Model>("assets/models/creature/creature.fbx", ResourceManagement::ResourceType::Model);				
+			//	Model* character =  ResourceManagement::ResourceManager::AddResource<Model>("assets/models/creature/creature.fbx", ResourceManagement::ResourceType::Model);				
 
-				character->SetUpModel();
+			//	character->SetUpModel();
 
-				glm::vec3 position = glm::vec3(0.0f);
+			//	glm::vec3 position = glm::vec3(0.0f);
 
-				for (ui32 i = 0; i < 2; ++i)
-				{
-					for (ui32 j = 0; j < character->GetSubMeshes().Size(); ++j)
-					{	
-						ECS::ECSEntityID characterEntity = m_ecsManager->AddEntity(("Character" + std::to_string(i) + std::to_string(j)).c_str());
+			//	for (ui32 i = 0; i < 2; ++i)
+			//	{
+			//		for (ui32 j = 0; j < character->GetSubMeshes().Size(); ++j)
+			//		{	
+			//			ECS::ECSEntityID characterEntity = m_ecsManager->AddEntity(("Character" + std::to_string(i) + std::to_string(j)).c_str());
 
-						ECS::ECSTransformComponent* characterTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
-							position,
-							MathUtils::Vector3Zero,
-							glm::vec3(0.5f));
+			//			ECS::ECSTransformComponent* characterTransformComponent = m_ecsManager->AddComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
+			//				position,
+			//				MathUtils::Vector3Zero,
+			//				glm::vec3(0.5f));
 
-						ECS::ECSMeshComponent* characterMeshComponent = character->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager,false);
-						ECS::ECSSkeletonComponent* characterSkeletonComponent = character->GetSubMeshes()[j]->GenerateSkeletonComponent(m_ecsManager);
+			//			ECS::ECSMeshComponent* characterMeshComponent = character->GetSubMeshes()[j]->GenerateMeshComponent(m_ecsManager,false);
+			//			ECS::ECSSkeletonComponent* characterSkeletonComponent = character->GetSubMeshes()[j]->GenerateSkeletonComponent(m_ecsManager);
 
-						const std::string animatorName = STRINGID_TO_STRING(character->GetModelFolderPath()) + "Animator.anim";
+			//			const std::string animatorName = STRINGID_TO_STRING(character->GetModelFolderPath()) + "Animator.anim";
 
-						StringId animatorID = STRING_TO_STRINGID(animatorName);
-						StringId initialAnimation = Animation::AnimationManager::GetAnimator(animatorID)->GetInitialAnimationID();
+			//			StringId animatorID = STRING_TO_STRINGID(animatorName);
+			//			StringId initialAnimation = Animation::AnimationManager::GetAnimator(animatorID)->GetInitialAnimationID();
 
-						ECS::ECSAnimationComponent* characterAnimationComponent = m_ecsManager->AddComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentType::Animation, animatorID, initialAnimation);
+			//			ECS::ECSAnimationComponent* characterAnimationComponent = m_ecsManager->AddComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentType::Animation, animatorID, initialAnimation);
 
-						m_ecsManager->AddComponentToEntity(characterEntity, characterTransformComponent);
-						m_ecsManager->AddComponentToEntity(characterEntity, characterSkeletonComponent);
-						m_ecsManager->AddComponentToEntity(characterEntity, characterMeshComponent);
-						m_ecsManager->AddComponentToEntity(characterEntity, characterAnimationComponent);
-					}
+			//			m_ecsManager->AddComponentToEntity(characterEntity, characterTransformComponent);
+			//			m_ecsManager->AddComponentToEntity(characterEntity, characterSkeletonComponent);
+			//			m_ecsManager->AddComponentToEntity(characterEntity, characterMeshComponent);
+			//			m_ecsManager->AddComponentToEntity(characterEntity, characterAnimationComponent);
+			//		}
 
-					position += glm::vec3(-150.0f, 0, 0.0f);
-				}
-			}
-
-			{//Systems
-				const ECS::ECSSignature renderSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentType::Mesh, ECS::ECSComponentType::Transform);
-
-				ECS::ECSRenderSystem* renderSystem = MemoryManager::New<ECS::ECSRenderSystem>("ECS RenderSystem", AllocationType::FreeList_ECS,
-					"ECS RenderSystem", renderSystemSignature, m_ecsManager);
-
-				const ECS::ECSSignature animationSystemSignature = ECS::GenerateSignature(2, ECS::ECSComponentType::Animation, ECS::ECSComponentType::Skeleton);
-
-				ECS::ECSAnimationSystem* animationSystem = MemoryManager::New<ECS::ECSAnimationSystem>("ECS AnimationSystem", AllocationType::FreeList_ECS, "ECS AnimationSystem", animationSystemSignature, m_ecsManager);
-
-				m_ecsManager->AddSystem(animationSystem);
-				m_ecsManager->AddSystem(renderSystem);
-			}
-
-			m_ecsManager->StartSystems();
+			//		position += glm::vec3(-150.0f, 0, 0.0f);
+			//	}
+			//}
 
 			//END ECS setup			
 			
@@ -236,7 +221,9 @@ namespace BaldLion
 		void BaldLionEditorLayer::OnEvent(Event& e)
 		{
 			BaldLion::EventDispatcher dispatcher(e);
-			dispatcher.Dispatch<BaldLion::WindowResizeEvent>(std::bind(&BaldLionEditorLayer::OnWindowResizeEvent, this, std::placeholders::_1));
+			
+			dispatcher.Dispatch<BaldLion::WindowResizeEvent>(BL_BIND_FUNCTION(BaldLionEditorLayer::OnWindowResizeEvent));
+			dispatcher.Dispatch<BaldLion::KeyPressedEvent>(BL_BIND_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
 		}
 
 		void BaldLionEditorLayer::RenderDockSpace()
@@ -288,12 +275,30 @@ namespace BaldLion
 			{
 				if (ImGui::BeginMenu("File"))
 				{
-					// Disabling fullscreen would allow the window to be moved to the front of other windows, 
-					// which we can't undo at the moment without finer window depth/z control.
-					//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
+					if (ImGui::MenuItem("New scene", "Ctrl+N"))
+					{
+						NewScene();
+					}
+
+					if (ImGui::MenuItem("Open scene", "Ctrl+O"))
+					{
+						OpenScene();
+					}
+
+					if (ImGui::MenuItem("Save scene","Ctrl+Shift+S"))
+					{
+						SaveScene();
+					}
+
+					if (ImGui::MenuItem("Save scene as..", "Ctrl+S"))
+					{
+						SaveSceneAs();
+					}
 
 					if (ImGui::MenuItem("Exit"))
+					{
 						BaldLion::Application::GetInstance().Close();
+					}
 
 					ImGui::EndMenu();
 				}
@@ -314,6 +319,101 @@ namespace BaldLion
 			Renderer::OnWindowResize(width, height);
 
 			return true;
+		}
+		
+		bool BaldLionEditorLayer::OnKeyPressedEvent(KeyPressedEvent& e)
+		{
+			if (e.GetRepeatCount() > 0)
+				return false;
+
+			switch (e.GetKeyCode())
+			{
+			case BL_KEY_S:
+				if (Input::IsKeyPressed(BL_KEY_LEFT_CONTROL) || Input::IsKeyPressed(BL_KEY_RIGHT_CONTROL))
+				{
+					if (Input::IsKeyPressed(BL_KEY_LEFT_SHIFT) || Input::IsKeyPressed(BL_KEY_RIGHT_SHIFT)) 
+					{
+						SaveSceneAs();
+						return true;
+					}
+					else 
+					{
+						SaveScene();
+						return true;
+					}
+				}
+				break;
+			case BL_KEY_N:
+				if (Input::IsKeyPressed(BL_KEY_LEFT_CONTROL) || Input::IsKeyPressed(BL_KEY_RIGHT_CONTROL))
+				{
+					NewScene();
+					return true;
+				}
+				break;
+			case BL_KEY_O:
+				if (Input::IsKeyPressed(BL_KEY_LEFT_CONTROL) || Input::IsKeyPressed(BL_KEY_RIGHT_CONTROL))
+				{
+					OpenScene();
+					return true;
+				}
+				break;
+			default:
+				break;
+			}
+
+
+			m_sceneHierarchyPanel.OnKeyPressed(e.GetKeyCode());
+			m_editorViewportPanel.OnKeyPressed(e.GetKeyCode());
+			m_entityPropertiesPanel.OnKeyPressed(e.GetKeyCode());
+			m_memoryAllocationPanel.OnKeyPressed(e.GetKeyCode());
+			m_renderingDataPanel.OnKeyPressed(e.GetKeyCode());
+
+			return false;
+		}
+
+		void BaldLionEditorLayer::OpenScene()
+		{
+			std::string filepath = FileDialogs::OpenFile("BaldLion Scene (*.scene)\0*.scene\0");
+
+			if (!filepath.empty())
+			{
+				SceneManagement::SceneManager::OpenScene(filepath.c_str());
+				m_ecsManager = SceneManagement::SceneManager::GetECSManager();
+				m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
+				m_currentScenePathFile = filepath;
+			}
+		}
+
+		void BaldLionEditorLayer::SaveScene()
+		{
+			if (!m_currentScenePathFile.empty())
+			{
+				SceneManagement::SceneManager::SaveScene(m_currentScenePathFile.c_str());
+			}
+			else
+			{
+				SaveSceneAs();
+			}
+		}
+
+		void BaldLionEditorLayer::SaveSceneAs()
+		{
+			std::string filepath = FileDialogs::SaveFile("BaldLion Scene (*.scene)\0*.scene\0");
+			if (!filepath.empty())
+			{
+				SceneManagement::SceneManager::GetMainScene()->SetSceneName(StringUtils::GetFileNameFromPath(filepath).c_str());
+				SceneManagement::SceneManager::SaveScene(filepath.c_str());
+				m_currentScenePathFile = filepath;
+			}
+		}
+
+		void BaldLionEditorLayer::NewScene()
+		{
+			m_currentScenePathFile = "";
+
+			SceneManagement::SceneManager::AddScene("UnNamed Scene");
+			m_ecsManager = SceneManagement::SceneManager::GetECSManager();
+			m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
 		}
 
 	}

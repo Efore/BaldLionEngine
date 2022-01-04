@@ -22,6 +22,8 @@ namespace BaldLion {
 		{
 			ImGui::Begin("Scene Hierarchy");
 			
+			m_viewportFocused = ImGui::IsWindowFocused();
+
 			if (ImGui::Button("Add Entity"))
 			{
 				ImGui::OpenPopup("Create Entity");
@@ -58,6 +60,27 @@ namespace BaldLion {
 			ImGui::End();
 
 			HandleInput();
+		}
+
+		void SceneHierarchyPanel::OnKeyPressed(int keyCode)
+		{
+			if (m_viewportFocused) {
+
+				switch (keyCode)
+				{
+
+				case BL_KEY_DELETE:
+
+					if (m_selectedEntityID > 0)
+					{
+						m_sceneContext->GetECSManager()->RemoveEntity(m_selectedEntityID);
+						m_selectedEntityID = 0;
+					}
+					break;
+				default:
+					break;
+				}
+			}
 		}
 
 		void SceneHierarchyPanel::DrawEntityElement(const ECS::ECSEntity& entity, bool firstCall)

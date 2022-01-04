@@ -1,16 +1,17 @@
 #include "blpch.h"
 #include "SceneManager.h"
+#include "Serialization/SceneSerializer.h"
 
 namespace BaldLion
 {
 	namespace SceneManagement {
 		
-		HashMap<StringId, Scene> SceneManager::m_scenes;
+		HashMap<StringId, Scene*> SceneManager::m_activeScenes;
 		Scene* SceneManager::m_mainScene;
 
 		void SceneManager::Init()
 		{
-			m_scenes = HashMap<StringId, Scene>(AllocationType::FreeList_ECS, 10);
+			m_activeScenes = HashMap<StringId, Scene*>(AllocationType::FreeList_ECS, 10);
 		}
 
 		void SceneManager::FrameStart()
@@ -39,14 +40,15 @@ namespace BaldLion
 
 		void SceneManager::Stop()
 		{
-			m_scenes.Delete();
+			m_activeScenes.Delete();
 		}
 
 		void SceneManager::SetMainScene(StringId sceneID)
 		{
 			Scene* result = nullptr;
 
-			if (m_scenes.TryGet(sceneID, *result)) {
+			if (m_activeScenes.TryGet(sceneID, result))
+			{
 				m_mainScene = result;
 			}			
 		}
@@ -61,28 +63,52 @@ namespace BaldLion
 			return m_mainScene->GetECSManager();
 		}
 
-		void SceneManager::AddScene(const char* sceneID, bool setAsMainScene)
+		void SceneManager::OpenScene(const char* filepath)
 		{
-			AddScene(sceneID, nullptr, setAsMainScene);
+			SceneSerializer::DeserializeScene(filepath);
 		}
 
-		void SceneManager::AddScene(const char* sceneID, ECS::ECSManager* ecsManager, bool setAsMainScene)
+		void SceneManager::SaveScene(const char* filepath)
+		{
+			SceneSerializer::SerializeScene(m_mainScene, filepath);
+		}
+
+		void SceneManager::AddScene(const char* sceneID, bool openAdditive, bool setAsMainScene)
+		{
+			AddScene(sceneID, nullptr, openAdditive, setAsMainScene);
+		}
+
+		void SceneManager::AddScene(const char* sceneID, ECS::ECSManager* ecsManager, bool openAdditive, bool setAsMainScene)
 		{
 			StringId sceneid = STRING_TO_STRINGID(sceneID);
 
-			if (!m_scenes.Contains(sceneid))
-			{
-				m_scenes.Emplace(sceneid, sceneID, ecsManager);
+			Scene* newScene = MemoryManager::New<Scene>(sceneID, AllocationType::FreeList_Main, sceneID, ecsManager);
+			newScene->Init();
 
-				if (setAsMainScene) {
-					m_mainScene = &m_scenes.Get(sceneid);
+			if (openAdditive)
+			{
+				if (!m_activeScenes.Contains(sceneid))
+				{
+					m_activeScenes.Emplace(sceneid, newScene);
 				}
+				if (setAsMainScene)
+				{
+					m_mainScene = newScene;
+				}
+			}
+			else
+			{
+				if (m_mainScene)
+				{
+					MemoryManager::Delete(m_mainScene);
+				}
+				m_mainScene = newScene;
 			}
 		}
 
-		void SceneManager::RemoveScene(StringId sceneID)
+		void SceneManager::RemoveActiveScene(StringId sceneID)
 		{
-			m_scenes.Remove(sceneID);
+			m_activeScenes.Remove(sceneID);
 		}
 	}
 }

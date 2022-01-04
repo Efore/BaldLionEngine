@@ -6,7 +6,7 @@ namespace BaldLion {
 
 	namespace Editor {
 
-		class ViewportPanel {
+		class ViewportPanel : public EditorPanel {
 
 		public:
 			ViewportPanel() = default;
@@ -14,7 +14,6 @@ namespace BaldLion {
 
 			virtual void SetupViewportCamera() = 0;
 
-			virtual void OnImGuiRender() = 0;
 			void SetHierarchyPanel(SceneHierarchyPanel* sceneHierarchyPanel) { m_sceneHierarchyPanel = sceneHierarchyPanel; }
 
 		protected:

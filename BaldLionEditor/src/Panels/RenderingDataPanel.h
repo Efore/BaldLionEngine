@@ -1,14 +1,15 @@
 #pragma once
+#include "EditorPanel.h"
 
 namespace BaldLion {
 
 	namespace Editor {
 
-		class RenderingDataPanel {
+		class RenderingDataPanel : public EditorPanel {
 
 		public:
 			RenderingDataPanel() = default;
-			void OnImGuiRender();
+			virtual void OnImGuiRender() override;
 		};
 	}
 }

@@ -1,0 +1,232 @@
+SceneID: EditorScene
+SceneName: EditorScene
+Entities:
+  - EntityName: Main Camera
+    Components:
+      - ComponentType: 0
+        PositionX: 0
+        PositionY: 5
+        PositionZ: 180
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 1
+        ScaleY: 1
+        ScaleZ: 1
+      - ComponentType: 1
+        CameraFov: 45
+        CameraWidth: 1366
+        CameraHeight: 768
+        CameraNearPlane: 0.100000001
+        CameraFarPlane: 50000
+  - EntityName: Directional Light
+    Components:
+      - ComponentType: 4
+        AmbientColorX: 0
+        AmbientColorY: 0
+        AmbientColorZ: 0
+        DiffuseColorX: 1
+        DiffuseColorY: 1
+        DiffuseColorZ: 1
+        SpecularColorX: 0.200000003
+        SpecularColorY: 0.200000003
+        SpecularColorZ: 0.200000003
+        LightDirectionX: -1
+        LightDirectionY: -1
+        LightDirectionZ: -1
+  - EntityName: Tree00
+    Components:
+      - ComponentType: 0
+        PositionX: 0
+        PositionY: 0
+        PositionZ: 0
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 5
+        ScaleY: 5
+        ScaleZ: 5
+      - ComponentType: 2
+        MeshResourceID: 3859661088
+        MeshIsStatic: true
+  - EntityName: Tree01
+    Components:
+      - ComponentType: 0
+        PositionX: 0
+        PositionY: 0
+        PositionZ: 0
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 5
+        ScaleY: 5
+        ScaleZ: 5
+      - ComponentType: 2
+        MeshResourceID: 656751403
+        MeshIsStatic: true
+  - EntityName: Tree02
+    Components:
+      - ComponentType: 0
+        PositionX: 0
+        PositionY: 0
+        PositionZ: 0
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 5
+        ScaleY: 5
+        ScaleZ: 5
+      - ComponentType: 2
+        MeshResourceID: 3859661088
+        MeshIsStatic: true
+  - EntityName: Tree03
+    Components:
+      - ComponentType: 0
+        PositionX: 0
+        PositionY: 0
+        PositionZ: 0
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 5
+        ScaleY: 5
+        ScaleZ: 5
+      - ComponentType: 2
+        MeshResourceID: 656751403
+        MeshIsStatic: true
+  - EntityName: Tree10
+    Components:
+      - ComponentType: 0
+        PositionX: -15
+        PositionY: 0
+        PositionZ: 15
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 5
+        ScaleY: 5
+        ScaleZ: 5
+      - ComponentType: 2
+        MeshResourceID: 3859661088
+        MeshIsStatic: true
+  - EntityName: Tree11
+    Components:
+      - ComponentType: 0
+        PositionX: -15
+        PositionY: 0
+        PositionZ: 15
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 5
+        ScaleY: 5
+        ScaleZ: 5
+      - ComponentType: 2
+        MeshResourceID: 656751403
+        MeshIsStatic: true
+  - EntityName: Tree12
+    Components:
+      - ComponentType: 0
+        PositionX: -15
+        PositionY: 0
+        PositionZ: 15
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 5
+        ScaleY: 5
+        ScaleZ: 5
+      - ComponentType: 2
+        MeshResourceID: 3859661088
+        MeshIsStatic: true
+  - EntityName: Tree13
+    Components:
+      - ComponentType: 0
+        PositionX: -15
+        PositionY: 0
+        PositionZ: 15
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 5
+        ScaleY: 5
+        ScaleZ: 5
+      - ComponentType: 2
+        MeshResourceID: 656751403
+        MeshIsStatic: true
+  - EntityName: Character00
+    Components:
+      - ComponentType: 0
+        PositionX: 0
+        PositionY: 0
+        PositionZ: 0
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 0.5
+        ScaleY: 0.5
+        ScaleZ: 0.5
+      - ComponentType: 2
+        MeshResourceID: 4059535276
+        MeshIsStatic: false
+      - ComponentType: 3
+        MeshResourceID: 4059535276
+      - ComponentType: 6
+        AnimatorID: 3819552601
+  - EntityName: Character01
+    Components:
+      - ComponentType: 0
+        PositionX: 0
+        PositionY: 0
+        PositionZ: 0
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 0.5
+        ScaleY: 0.5
+        ScaleZ: 0.5
+      - ComponentType: 2
+        MeshResourceID: 4059535276
+        MeshIsStatic: false
+      - ComponentType: 3
+        MeshResourceID: 4059535276
+      - ComponentType: 6
+        AnimatorID: 3819552601
+  - EntityName: Character10
+    Components:
+      - ComponentType: 0
+        PositionX: -150
+        PositionY: 0
+        PositionZ: 0
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 0.5
+        ScaleY: 0.5
+        ScaleZ: 0.5
+      - ComponentType: 2
+        MeshResourceID: 4059535276
+        MeshIsStatic: false
+      - ComponentType: 3
+        MeshResourceID: 4059535276
+      - ComponentType: 6
+        AnimatorID: 3819552601
+  - EntityName: Character11
+    Components:
+      - ComponentType: 0
+        PositionX: -150
+        PositionY: 0
+        PositionZ: 0
+        RotationX: 0
+        RotationY: 0
+        RotationZ: 0
+        ScaleX: 0.5
+        ScaleY: 0.5
+        ScaleZ: 0.5
+      - ComponentType: 2
+        MeshResourceID: 4059535276
+        MeshIsStatic: false
+      - ComponentType: 3
+        MeshResourceID: 4059535276
+      - ComponentType: 6
+        AnimatorID: 3819552601

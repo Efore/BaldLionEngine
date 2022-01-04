@@ -471,7 +471,7 @@ namespace BaldLion
 	template <typename K, typename V>
 	typename BaldLion::HashMap<K, V>::Iterator BaldLion::HashMap<K, V>::Begin()
 	{
-		return HashMap<K, V>::Iterator(this, m_firstElementIndex, m_table[m_firstElementIndex]);
+		return HashMap<K, V>::Iterator(this, m_firstElementIndex, m_firstElementIndex < m_table.Size() ? m_table[m_firstElementIndex] : nullptr);
 	}
 
 	template <typename K, typename V>

@@ -20,14 +20,18 @@ namespace BaldLion
 			static Scene* GetMainScene();
 			static ECS::ECSManager* GetECSManager();
 
-			static void AddScene(const char* sceneID, bool setAsMainScene);
-			static void AddScene(const char* sceneID, ECS::ECSManager* ecsManager, bool setAsMainScene);
+			static void OpenScene(const char* filepath);
+			static void SaveScene(const char* filepath);
 
-			static void RemoveScene(StringId sceneID);
+			static void AddScene(const char* sceneID, bool openAdditive = false, bool setAsMainScene = false);
+			static void AddScene(const char* sceneID, ECS::ECSManager* ecsManager, bool openAdditive = false, bool setAsMainScene = false);
+
+			static void RemoveActiveScene(StringId sceneID);
 
 		private:
-			static HashMap<StringId,Scene> m_scenes;
+			static HashMap<StringId,Scene*> m_activeScenes;
 			static Scene* m_mainScene;
+
 		};
 
 	}

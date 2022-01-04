@@ -10,12 +10,10 @@ namespace BaldLion
 	{
 		class SceneSerializer 
 		{
-
-		public:
-			static void SerializeScene(const Scene* scene, const char* filepath);
-			static bool DeserializeScene(Scene* scene, const char* filepath);
-
+			
 		private:
+			static void SerializeScene(const Scene* scene, const char* filepath);
+			static bool DeserializeScene(const char* filepath);
 
 			static void SerializeEntity(const Scene* scene, YAML::Emitter &out, const ECS::ECSEntity* entity);
 			static void DeserializeEntity(const YAML::detail::iterator_value& yamlEntity);
@@ -25,6 +23,8 @@ namespace BaldLion
 
 			static void SerializeVec3(YAML::Emitter &out, const std::string& key, const glm::vec3& vec);
 			static glm::vec3 DeserializeVec3(const YAML::Node& node, const std::string& key);
+
+			friend class SceneManager;
 		};
 	}
 }

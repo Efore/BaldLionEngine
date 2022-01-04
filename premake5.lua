@@ -50,7 +50,8 @@ project "BaldLionEngine"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",		
-		"%{prj.name}/vendor/debug-draw/**.hpp"		
+		"%{prj.name}/vendor/debug-draw/**.hpp",
+		"%{prj.name}/vendor/debug-draw/**.hpp"
 	}
 
 	defines
@@ -146,7 +147,8 @@ project "BaldLionEditor"
 		"%{IncludeDir.optick}",	
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.debug_draw}",		
-		"%{IncludeDir.ImGui}"
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.yaml}"
 	}
 
 	links

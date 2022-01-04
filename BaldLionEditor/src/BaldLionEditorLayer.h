@@ -27,6 +27,12 @@ namespace BaldLion
 		private:
 			void RenderDockSpace();
 			bool OnWindowResizeEvent(WindowResizeEvent& e);
+			bool OnKeyPressedEvent(KeyPressedEvent& e);
+
+			void OpenScene();
+			void SaveScene();
+			void SaveSceneAs();
+			void NewScene();
 
 		private:
 
@@ -38,6 +44,8 @@ namespace BaldLion
 			EditorViewportPanel m_editorViewportPanel;
 			RenderingDataPanel m_renderingDataPanel;
 			MemoryAllocationPanel m_memoryAllocationPanel;
+
+			std::string m_currentScenePathFile;
 		};
 	}
 }

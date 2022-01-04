@@ -5,7 +5,7 @@ namespace BaldLion
 {
 	namespace StringUtils 
 	{
-		static std::string GetFileNameFromPath(const std::string &path, bool includeExt = true)
+		static std::string GetFileNameFromPath(const std::string &path, bool includeExt = false)
 		{
 			// Extracting name from last path
 			auto lastSlash = path.find_last_of("/\\");

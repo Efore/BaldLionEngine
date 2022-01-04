@@ -41,7 +41,7 @@ namespace BaldLion {
 			m_hierarchyComponentPool = DynamicArray<ECSHierarchyComponent>(AllocationType::FreeList_ECS, 40);
 			m_componentsPool.Emplace(ECSComponentType::Hierarchy, std::move(&m_hierarchyComponentPool));
 
-			m_entityIDProvider = 0;
+			m_entityIDProvider = 1;
 		}
 
 		ECSManager::~ECSManager()
@@ -102,6 +102,11 @@ namespace BaldLion {
 
 			m_entitySignatures.Get(entityID) |= componentSignature;
 			m_entityComponents.Get(entityID).Set(componentID, component);
+
+			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			{
+				m_systems[i]->OnEntityModified(m_entitySignatures.Get(entityID));
+			}
 		}
 
 		void ECSManager::AddSystem(ECSSystem* system)

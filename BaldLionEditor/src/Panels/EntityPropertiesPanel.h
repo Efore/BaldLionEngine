@@ -6,13 +6,13 @@ namespace BaldLion {
 
 	namespace Editor {
 
-		class EntityPropertiesPanel {
+		class EntityPropertiesPanel : public EditorPanel {
 
 		public:
 			EntityPropertiesPanel() = default;
 			EntityPropertiesPanel(SceneHierarchyPanel* sceneHierarchyPanel);			
 
-			void OnImGuiRender();
+			virtual void OnImGuiRender() override;
 			void SetHierarchyPanel(SceneHierarchyPanel* sceneHierarchyPanel);
 
 		private:

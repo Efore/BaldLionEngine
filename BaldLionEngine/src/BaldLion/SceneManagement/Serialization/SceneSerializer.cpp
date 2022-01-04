@@ -1,8 +1,9 @@
 #include "blpch.h"
 #include "SceneSerializer.h"
-#include <fstream>
+
 
 #include "BaldLion/ECS/ECSComponentsInclude.h"
+#include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
 #include "BaldLion/SceneManagement/SceneManager.h"
 #include "BaldLion/ResourceManagement/ResourceManager.h"
 #include "BaldLion/Rendering/Mesh.h"
@@ -11,7 +12,8 @@
 
 using namespace BaldLion::ECS;
 
-#define YAML_KEY_SCENE				"Scene"
+#define YAML_KEY_SCENENAME			"SceneName"
+#define YAML_KEY_SCENEID			"SceneID"
 #define YAML_KEY_ENTITIES			"Entities"
 #define YAML_KEY_ENTITYNAME			"EntityName"
 #define YAML_KEY_COMPONENTS			"Components"
@@ -58,7 +60,8 @@ namespace BaldLion
 		{
 			YAML::Emitter out;
 			out << YAML::BeginMap;
-			out << YAML::Key << YAML_KEY_SCENE << YAML::Value << STRINGID_TO_STR_C(scene->GetSceneID());
+			out << YAML::Key << YAML_KEY_SCENEID << YAML::Value << STRINGID_TO_STR_C(scene->GetSceneID());
+			out << YAML::Key << YAML_KEY_SCENENAME << YAML::Value << STRINGID_TO_STR_C(scene->GetSceneName());
 			out << YAML::Key << YAML_KEY_ENTITIES << YAML::Value << YAML::BeginSeq;
 
 			for (ui32 i = 0; i < scene->GetECSManager()->GetEntities().Size(); ++i) 
@@ -73,7 +76,7 @@ namespace BaldLion
 			fout << out.c_str();
 		}
 
-		bool SceneSerializer::DeserializeScene(Scene* scene, const char* filepath)
+		bool SceneSerializer::DeserializeScene(const char* filepath)
 		{
 			std::ifstream stream(filepath);
 			std::stringstream strStream;
@@ -82,12 +85,14 @@ namespace BaldLion
 
 			YAML::Node data = YAML::Load(strStream.str());
 
-			if (!data[YAML_KEY_SCENE])
+			if (!data[YAML_KEY_SCENEID])
 				return false;
 
-			std::string sceneName = data[YAML_KEY_SCENE].as<std::string>();
+			std::string sceneID = data[YAML_KEY_SCENEID].as<std::string>();
+			std::string sceneName = data[YAML_KEY_SCENENAME].as<std::string>();
 
-			SceneManager::AddScene(sceneName.c_str(), true);
+			SceneManager::AddScene(sceneName.c_str());
+			SceneManager::GetMainScene()->SetSceneName(sceneName.c_str());
 
 			auto entities = data[YAML_KEY_ENTITIES];
 
@@ -109,9 +114,13 @@ namespace BaldLion
 			out << YAML::Key << YAML_KEY_COMPONENTS << YAML::Value << YAML::BeginSeq;
 
 			const ECS::ECSComponentLookUp* entityComponentLookUp = &scene->GetECSManager()->GetEntityComponents().Get(entity->GetEntityID());
+
 			for (ui32 i = 0; i < (ui32)ECS::ECSComponentType::Count; ++i) 
 			{
-				SerializeComponent(out, (*entityComponentLookUp)[i]);
+				if ((*entityComponentLookUp)[i])
+				{
+					SerializeComponent(out, (*entityComponentLookUp)[i]);
+				}
 			}
 			out << YAML::EndSeq;
 			out << YAML::EndMap;			
@@ -298,6 +307,8 @@ namespace BaldLion
 					diffuseColor,
 					specularColor,
 					direction);
+
+				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight((ECS::ECSDirectionalLightComponent*)component);
 			}
 				break;
 
