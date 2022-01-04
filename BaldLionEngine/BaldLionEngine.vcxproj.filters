@@ -237,6 +237,9 @@
     <ClInclude Include="src\BaldLion\ECS\ECSSystem.h">
       <Filter>src\BaldLion\ECS</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\ECSSystemsInclude.h">
+      <Filter>src\BaldLion\ECS</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\ECSUtils.h">
       <Filter>src\BaldLion\ECS</Filter>
     </ClInclude>
@@ -1479,7 +1482,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\ECSSystemsInclude.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">

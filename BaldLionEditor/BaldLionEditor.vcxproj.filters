@@ -33,6 +33,9 @@
     <ClInclude Include="src\Panels\Components\TransformComponentInspector.h">
       <Filter>src\Panels\Components</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\EditorPanel.h">
+      <Filter>src\Panels</Filter>
+    </ClInclude>
     <ClInclude Include="src\Panels\EditorViewportPanel.h">
       <Filter>src\Panels</Filter>
     </ClInclude>
@@ -54,7 +57,6 @@
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
       <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panels\EditorPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp">
