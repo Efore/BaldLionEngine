@@ -8,6 +8,9 @@ namespace BaldLion {
 
 		//---------------------------------------------------------------------------------------------------
 
+		ui32 ECSManager::m_entityIDProvider = 1;
+		ui32 ECSManager::m_componentIDProvider = 1;
+
 		ECSManager::ECSManager()
 		{
 			m_entityComponents = HashMap<ECSEntityID, ECSComponentLookUp>(AllocationType::FreeList_ECS,100);
@@ -42,6 +45,7 @@ namespace BaldLion {
 			m_componentsPool.Emplace(ECSComponentType::Hierarchy, std::move(&m_hierarchyComponentPool));
 
 			m_entityIDProvider = 1;
+			m_componentIDProvider = 1;
 		}
 
 		ECSManager::~ECSManager()
@@ -70,7 +74,7 @@ namespace BaldLion {
 
 		ECSEntityID ECSManager::AddEntity(const char* entityName)
 		{
-			ECSEntityID entityID = m_entityIDProvider++;
+			ECSEntityID entityID = ECSManager::GetNextEntityID();
 
 			ECSEntity newEntity(entityName, entityID);
 
@@ -83,11 +87,12 @@ namespace BaldLion {
 			m_entitySignatures.Emplace(entityID, std::move(newSignature));
 
 			ECSComponentLookUp newComponentLookUp;
-			m_entityComponents.Emplace(entityID, std::move(newComponentLookUp));			
+			m_entityComponents.Emplace(entityID, std::move(newComponentLookUp));		
 
+			ECSSignature signature = m_entitySignatures.Get(entityID);
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
 			{
-				m_systems[i]->OnEntityModified(m_entitySignatures.Get(entityID));
+				m_systems[i]->OnEntityModified(signature);
 			}
 
 			return entityID;
@@ -95,17 +100,19 @@ namespace BaldLion {
 
 		void ECSManager::AddComponentToEntity(ECSEntityID entityID, ECSComponent* component)
 		{
-			const ECSComponentType componentID = component->GetComponentType();
+			const ECSComponentType componentType = component->GetComponentType();
+			component->SetComponentID(ECSManager::GetNextComponentID());
 
 			ECSSignature componentSignature;
-			componentSignature.set((ui32)componentID);
+			componentSignature.set((ui32)componentType);
 
 			m_entitySignatures.Get(entityID) |= componentSignature;
-			m_entityComponents.Get(entityID).Set(componentID, component);
+			m_entityComponents.Get(entityID).Set(componentType, component);
 
+			ECSSignature signature = m_entitySignatures.Get(entityID);
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
 			{
-				m_systems[i]->OnEntityModified(m_entitySignatures.Get(entityID));
+				m_systems[i]->OnEntityModified(signature);
 			}
 		}
 
@@ -156,9 +163,10 @@ namespace BaldLion {
 
 		void ECSManager::RemoveEntity(ECSEntityID entityID)
 		{
+			ECSSignature oldSignature = m_entitySignatures.Get(entityID);
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
 			{
-				m_systems[i]->OnEntityModified(m_entitySignatures.Get(entityID));
+				m_systems[i]->OnEntityModified(oldSignature);
 			}
 
 			for (ui32 i = 0; i < m_entities.Size(); ++i)
@@ -168,23 +176,40 @@ namespace BaldLion {
 					break;
 				}				
 			}
+
+			ECSComponentLookUp* components = &m_entityComponents.Get(entityID);
+
+			for (ui32 i = 0; i < (ui32)ECSComponentType::Count; ++i) 
+			{
+				const ECSComponent* componentToRemove = (*components)[i];
+				if (componentToRemove != nullptr) 
+				{
+					RemoveComponentFromPool((ECSComponentType)i, componentToRemove);
+					components->Set((ECSComponentType)i, nullptr);
+				}
+			}
 			
 			m_entitiyMap.Remove(entityID);
 			m_entityComponents.Remove(entityID);
 			m_entitySignatures.Remove(entityID);
 		}
 
-		void ECSManager::RemoveComponentFromEntity(ECSComponentType componentID, ECSEntityID entityID)
+		void ECSManager::RemoveComponentFromEntity(ECSComponentType componentType, ECSEntityID entityID)
 		{
 			ECSSignature signatureToRemove;
-			signatureToRemove.set((ui32)componentID);
+			signatureToRemove.set((ui32)componentType);
 			signatureToRemove.flip();
 
 			ECSSignature oldSignature = m_entitySignatures.Get(entityID);
 			ECSSignature newSignature = oldSignature & signatureToRemove;
 			m_entitySignatures.Set(entityID, newSignature);
-			m_entityComponents.Get(entityID).Set(componentID, nullptr);
 
+			ECSComponent* componentToRemove = m_entityComponents.Get(entityID)[(ui32)componentType];
+		
+			RemoveComponentFromPool(componentType, componentToRemove);
+
+			m_entityComponents.Get(entityID).Set(componentType, nullptr);
+			
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
 			{
 				m_systems[i]->OnEntityModified(oldSignature);
@@ -195,5 +220,14 @@ namespace BaldLion {
 		{
 			m_systems.RemoveFast(system);
 		}
+
+		void ECSManager::RemoveComponentFromPool(ECSComponentType componentType, const ECSComponent* componentToRemove)
+		{
+			DynamicArray<ECSComponent>* componentPool = (DynamicArray<ECSComponent>*)m_componentsPool.Get(componentType);
+			componentPool->Remove(*componentToRemove);
+
+			m_componentsPool.Set(componentType, componentPool);
+		}
+
 	}
 }

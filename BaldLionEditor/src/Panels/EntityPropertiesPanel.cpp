@@ -75,6 +75,12 @@ namespace BaldLion {
 										break;
 
 									case ECS::ECSComponentType::ProjectionCamera:
+										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECS::ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera,
+											45.0f,
+											600.0f,
+											480.0f,
+											0.1f,
+											50000.0f);
 										break;
 
 									case ECS::ECSComponentType::Mesh:

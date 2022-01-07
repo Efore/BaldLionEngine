@@ -303,7 +303,7 @@ namespace BaldLion
 			T* newLocation = MemoryManager::NewArray<T>("Dynamic Array", m_allocationType, m_size == m_capacity ? (ui32)(m_capacity * 1.5f) : m_capacity);
 			const ui32 newSize = m_size + 1;
 
-			if (index - 1 >= 0)
+			if (index > 0)
 			{
 				memcpy(newLocation, m_elements, index * sizeof(T));
 			}
@@ -339,7 +339,7 @@ namespace BaldLion
 			T* newLocation = MemoryManager::NewArray<T>("Dynamic Array", m_allocationType, m_size == m_capacity ? (ui32)(m_capacity * 1.5f) : m_capacity);
 			const ui32 newSize = m_size + 1;
 
-			if (index - 1 >= 0)
+			if (index > 0)
 			{
 				memcpy(newLocation, m_elements, index * sizeof(T));
 			}
@@ -421,7 +421,7 @@ namespace BaldLion
 			T* newLocation = MemoryManager::NewArray<T>("Dynamic Array", m_allocationType, capacity);
 			const ui32 newSize = m_size - 1;
 
-			if (index - 1 >= 0)
+			if (index > 0)
 			{
 				memcpy(newLocation, m_elements, index * sizeof(T));
 			}
@@ -439,9 +439,9 @@ namespace BaldLion
 	template <typename T>
 	void BaldLion::DynamicArray<T>::RemoveAtFast(ui32 index)
 	{		
-		BL_ASSERT(index < m_size, "Index can't be bigger than or equal to  m_size");
+		BL_ASSERT(index < m_size, "Index can't be bigger than or equal to m_size");
 
-		if (index == m_size - 1)
+		if (index == (m_size - 1))
 		{			
 			PopBack();
 		}

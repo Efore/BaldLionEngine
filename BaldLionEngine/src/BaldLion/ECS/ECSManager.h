@@ -57,11 +57,15 @@ namespace BaldLion {
 			DynamicArray<ECSEntity>& GetEntities() { return m_entities; }
 			const DynamicArray<ECSEntity>& GetEntities() const { return m_entities; }
 
+			static ui32 GetNextEntityID() { return m_entityIDProvider++; }
+			static ui32 GetNextComponentID() { return m_componentIDProvider++; }
 
 		private:
 
 			template<typename T>
-			void CleanComponentPool(ECSComponentType componentType);			
+			void CleanComponentPool(ECSComponentType componentType);	
+
+			void RemoveComponentFromPool(ECSComponentType componentType, const ECSComponent* componentToRemove);
 
 		private:
 
@@ -82,9 +86,10 @@ namespace BaldLion {
 			DynamicArray<class ECSSkeletonComponent> m_skeletonComponentPool;
 			DynamicArray<class ECSHierarchyComponent> m_hierarchyComponentPool;
 
-			ui32 m_entityIDProvider = 1;
+			static ui32 m_entityIDProvider;
+			static ui32 m_componentIDProvider;
 		};
-
+	
 		template<typename T>
 		void BaldLion::ECS::ECSManager::CleanComponentPool(ECSComponentType componentType)
 		{
