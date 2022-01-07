@@ -21,6 +21,8 @@ namespace BaldLion
 			template <typename T>
 			static T* AddResource(const std::string &path, ResourceType resourceType);
 
+			static HashMap<ui32, Resource*>& GetResourceMap() { return s_resourceMap; }
+
 			static bool Exists(const std::string &path);
 			static void AddResource(Resource* resource);
 			static void LoadAssets();

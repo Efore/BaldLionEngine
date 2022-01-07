@@ -31,6 +31,7 @@ namespace BaldLion
 
 			const ui32 GetResourceID() const { return m_resourceID; }
 			const StringId GetResourceName() const { return m_resourceName; }
+			const ResourceType GetResourceType() const { return m_resourceType; }
 
 		protected:
 

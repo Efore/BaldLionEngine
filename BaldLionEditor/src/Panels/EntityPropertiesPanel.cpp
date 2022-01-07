@@ -5,6 +5,9 @@
 #include "Components/ProjectionCameraComponentInspector.h"
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/Utils/MathUtils.h"
+#include "BaldLion/ResourceManagement/ResourceManager.h"
+#include "BaldLion/Rendering/Mesh.h"
+
 
 namespace BaldLion {
 	
@@ -84,6 +87,35 @@ namespace BaldLion {
 										break;
 
 									case ECS::ECSComponentType::Mesh:
+									{
+										ImGui::OpenPopup("Choose Mesh");
+
+										if (ImGui::BeginPopupModal("Choose Mesh", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+										{		
+											if (ImGui::Button("Close"))
+											{
+												ImGui::CloseCurrentPopup();
+											}
+
+											ImGui::Separator();
+
+											for (auto hashMapIterator = ResourceManagement::ResourceManager::GetResourceMap().Begin(); hashMapIterator != ResourceManagement::ResourceManager::GetResourceMap().End(); ++hashMapIterator)
+											{
+												if (hashMapIterator.GetValue()->GetResourceType() != ResourceManagement::ResourceType::Mesh)
+												{
+													continue;
+												}
+
+												if (ImGui::Selectable(STRINGID_TO_STR_C(hashMapIterator.GetValue()->GetResourceName())))
+												{
+													Rendering::Mesh* meshToLoad = (Rendering::Mesh*)hashMapIterator.GetValue();
+													newComponent = meshToLoad->GenerateMeshComponent(m_sceneHierarchyPanel->GetSceneContext()->GetECSManager(), false);
+												}
+											}
+
+											ImGui::EndPopup();
+										}
+									}
 										break;
 
 									case ECS::ECSComponentType::Skeleton:
@@ -119,6 +151,8 @@ namespace BaldLion {
 				}
 
 				ImGui::Separator();
+				
+				
 
 				ECS::ECSComponentLookUp selectedEntityComponents;
 
