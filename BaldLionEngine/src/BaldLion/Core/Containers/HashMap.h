@@ -63,7 +63,9 @@ namespace BaldLion
 			}
 
 			friend bool operator == (const Iterator& a, const Iterator& b) { return a.m_tableToIterate == b.m_tableToIterate && a.m_tableIndex == b.m_tableIndex && a.m_currentNode == b.m_currentNode; }
-			friend bool operator != (const Iterator& a, const Iterator& b) { return a.m_tableToIterate != b.m_tableToIterate || a.m_tableIndex != b.m_tableIndex || a.m_currentNode != b.m_currentNode; }
+			friend bool operator != (const Iterator& a, const Iterator& b) { 
+				return a.m_tableToIterate != b.m_tableToIterate || a.m_tableIndex != b.m_tableIndex || a.m_currentNode != b.m_currentNode; 
+			}
 
 			Iterator& operator= (const Iterator& other)
 			{
@@ -81,6 +83,7 @@ namespace BaldLion
 			V& GetValue() { return m_currentNode->nodeValue; }
 
 			const K& GetKey() const { return m_currentNode->nodeKey; }
+			ui32 GetTableIndex() const { return m_tableIndex; }
 
 		private:
 
@@ -102,6 +105,8 @@ namespace BaldLion
 			void Emplace(const K& key, Args&&... args) noexcept;
 
 			bool TryGet(const K& key, V& result);
+			bool TryGet(const K& key, V& result) const;
+
 			const V& Get(const K& key) const;
 			V& Get(const K& key);
 
@@ -119,8 +124,13 @@ namespace BaldLion
 			HashMap<K,V>& operator= (const HashMap<K, V>& other);
 			HashMap<K,V>& operator= (HashMap<K, V>&& other) noexcept;
 
+			const Iterator& Begin() const;
 			Iterator Begin();
+
+			const Iterator& End() const;
 			Iterator End();
+
+			void Print();
 
 		private:						
 			void Reallocate(ui32 capacity);
@@ -130,11 +140,11 @@ namespace BaldLion
 
 		private:
 
+			HashMap<K, V>::Iterator m_beginIterator;
+			HashMap<K, V>::Iterator m_endIterator;
+
 			ui32 m_capacity = 0;
 			ui32 m_size = 0;
-
-			ui32 m_firstElementIndex = 0;
-			ui32 m_lastElementIndex = 0;
 
 			DynamicArray<HashMapNode<K,V>*> m_table;
 			AllocationType m_allocationType;	
@@ -152,8 +162,8 @@ namespace BaldLion
 		m_table = DynamicArray<HashMapNode<K, V>*>(m_allocationType, capacity);
 		m_table.Populate(nullptr);
 
-		m_firstElementIndex = capacity;
-		m_lastElementIndex = capacity;
+		m_beginIterator = HashMap<K, V>::Iterator(this, capacity, nullptr);
+		m_endIterator = HashMap<K, V>::Iterator(this, capacity, nullptr);		
 	}
 
 	template <typename K, typename V>
@@ -219,6 +229,21 @@ namespace BaldLion
 	}
 
 	template <typename K, typename V>
+	bool BaldLion::HashMap<K, V>::TryGet(const K& key, V& result) const
+	{
+		const hashType hashedMapKey = std::hash<K>()(key);
+		const HashMapNode<K, V>* node = FindNode(hashedMapKey);
+
+		if (node != nullptr)
+		{
+			result = node->nodeValue;
+			return true;
+		}
+
+		return false;
+	}
+
+	template <typename K, typename V>
 	V& BaldLion::HashMap<K, V>::Get(const K& key)
 	{
 		const hashType hashedMapKey = std::hash<K>()(key);
@@ -266,8 +291,7 @@ namespace BaldLion
 		if (ratio > 0.75f)
 		{
 			//BL_LOG_CORE_INFO("Need reallocation");
-			Reallocate((ui32)(m_capacity * 1.5f));
-			m_lastElementIndex = m_table.Capacity();
+			Reallocate((ui32)(m_capacity * 1.5f));			
 		}
 
 		const hashType hashedMapKey = std::hash<K>()(key);
@@ -292,8 +316,12 @@ namespace BaldLion
 			nodeIterator->nextNode = newNode;
 		}
 
-		if (m_firstElementIndex == -1 || tableIndex < m_firstElementIndex)
-			m_firstElementIndex = (i32)tableIndex;
+		if (tableIndex < m_beginIterator.GetTableIndex())
+		{
+			m_beginIterator = HashMap<K, V>::Iterator(this, (ui32)tableIndex, m_table[tableIndex]);
+		}	
+		
+		m_endIterator = HashMap<K, V>::Iterator(this, m_capacity, nullptr);
 	}
 
 	template <typename K, typename V>
@@ -304,9 +332,7 @@ namespace BaldLion
 
 		if (ratio > 0.75f)
 		{
-			//BL_LOG_CORE_INFO("Need reallocation");
-			Reallocate((ui32)(m_capacity * 1.5f));
-			m_lastElementIndex = m_table.Capacity();
+			Reallocate((ui32)(m_capacity * 1.5f));			
 		}
 
 		const hashType hashedMapKey = std::hash<K>()(key);
@@ -332,10 +358,13 @@ namespace BaldLion
 			nodeIterator->nextNode = newNode;
 		}
 
-		if (m_firstElementIndex == -1 || tableIndex < m_firstElementIndex)
-			m_firstElementIndex = (i32)tableIndex;
-	}
+		if (tableIndex < m_beginIterator.GetTableIndex())
+		{
+			m_beginIterator = HashMap<K, V>::Iterator(this, (ui32)tableIndex, m_table[tableIndex]);
+		}
 
+		m_endIterator = HashMap<K, V>::Iterator(this, m_capacity, nullptr);
+	}
 
 	template <typename K, typename V>
 	bool BaldLion::HashMap<K, V>::Remove(const K& key)
@@ -369,12 +398,13 @@ namespace BaldLion
 
 		--m_size;
 
-		if (tableIndex == m_firstElementIndex)
+		if (tableIndex == m_beginIterator.GetTableIndex())
 		{
-			m_firstElementIndex = FindFirstElementIndex();
+			ui32 firstElement = FindFirstElementIndex();
+			m_beginIterator = HashMap<K, V>::Iterator(this, firstElement, m_table[firstElement]);
 		}
 
-		m_lastElementIndex = m_table.Capacity();
+		m_endIterator = HashMap<K, V>::Iterator(this, m_capacity, nullptr);
 
 		return true;
 	}
@@ -446,8 +476,10 @@ namespace BaldLion
 		m_size = other.m_size;
 		m_capacity = other.m_capacity;
 		m_table = std::move(other.m_table);		
-		m_firstElementIndex = other.m_firstElementIndex;
-		m_lastElementIndex = other.m_lastElementIndex;
+
+		ui32 firstElement = FindFirstElementIndex();
+		m_beginIterator = HashMap<K, V>::Iterator(this, firstElement, firstElement >= m_table.Size() ? nullptr : m_table[firstElement]);
+		m_endIterator = HashMap<K, V>::Iterator(this, m_capacity, nullptr);
 
 		return *this;
 	}
@@ -462,34 +494,49 @@ namespace BaldLion
 		m_size = other.m_size;
 		m_capacity = other.m_capacity;
 		m_table = DynamicArray<HashMapNode<K, V>*>(other.m_table);
-		m_firstElementIndex = other.m_firstElementIndex;
-		m_lastElementIndex = other.m_lastElementIndex;
+
+		ui32 firstElement = FindFirstElementIndex();
+		m_beginIterator = HashMap<K, V>::Iterator(this, firstElement, firstElement >= m_table.Size() ? nullptr : m_table[firstElement]);
+		m_endIterator = HashMap<K, V>::Iterator(this, m_capacity, nullptr);
 
 		return *this;
 	}
 
 	template <typename K, typename V>
+	typename const BaldLion::HashMap<K, V>::Iterator& BaldLion::HashMap<K, V>::Begin() const
+	{
+		return m_beginIterator;
+	}
+
+	template <typename K, typename V>
 	typename BaldLion::HashMap<K, V>::Iterator BaldLion::HashMap<K, V>::Begin()
 	{
-		return HashMap<K, V>::Iterator(this, m_firstElementIndex, m_firstElementIndex < m_table.Size() ? m_table[m_firstElementIndex] : nullptr);
+		return m_beginIterator;
+	}
+
+	template <typename K, typename V>
+	typename const BaldLion::HashMap<K, V>::Iterator& BaldLion::HashMap<K, V>::End() const
+	{
+		return m_endIterator;
 	}
 
 	template <typename K, typename V>
 	typename BaldLion::HashMap<K, V> ::Iterator BaldLion::HashMap<K, V>::End()
 	{
-		return HashMap<K,V>::Iterator(this, m_lastElementIndex, nullptr);
+		return m_endIterator;
 	}
 
 	template <typename K, typename V>
 	void BaldLion::HashMap<K, V>::Reallocate(ui32 capacity)
 	{
 		DynamicArray<HashMapNode<K, V>*> newTable = DynamicArray<HashMapNode<K, V>*>(m_allocationType, capacity);		
-
+		newTable.Populate(nullptr);
+		
 		for (ui32 i = 0; i < m_table.Size(); ++i)
 		{
 			HashMapNode<K, V>* nodeIterator = m_table[i];
 			
-			while (nodeIterator != nullptr)
+			while(nodeIterator != nullptr)
 			{
 				const hashType newIndex = nodeIterator->hashedMapKey % capacity;
 
@@ -497,8 +544,8 @@ namespace BaldLion
 				{
 					newTable[newIndex] = nodeIterator;
 				}
-				else {
-
+				else 
+				{
 					HashMapNode<K, V>* newTableIterator = newTable[newIndex];
 
 					while (newTableIterator->nextNode != nullptr)
@@ -506,18 +553,21 @@ namespace BaldLion
 						newTableIterator = newTableIterator->nextNode;
 					}
 
-					newTableIterator->nextNode = nodeIterator;
-				}
+					newTableIterator->nextNode = nodeIterator;		
+				}	
 
-				nodeIterator = nodeIterator->nextNode;
+				HashMapNode<K, V>* nextNode = nodeIterator->nextNode;
+				nodeIterator->nextNode = nullptr;
+
+				nodeIterator = nextNode;
 			}
 		}
 
-		m_table.Delete();
+		m_table.DeleteNoDestructor();
 		m_table = std::move(newTable);
 		m_capacity = capacity;
 
-		newTable.Delete();
+		newTable.DeleteNoDestructor();
 	}
 
 	template <typename K, typename V>
@@ -532,5 +582,29 @@ namespace BaldLion
 		}
 
 		return m_capacity;
+	}
+
+
+	template <typename K, typename V>
+	void BaldLion::HashMap<K, V>::Print()
+	{
+		BL_LOG_CORE_INFO("\nHashMap");
+		for (ui32 i = 0; i < m_table.Size(); ++i)
+		{
+			if (m_table[i] == nullptr) {
+				BL_LOG_CORE_INFO("Null");
+			}
+			else {
+				BL_LOG_CORE_INFO("Value: {0}", m_table[i]->nodeKey);
+
+				HashMapNode<K, V>* nodeIterator = m_table[i]->nextNode;
+
+				while (nodeIterator != nullptr)
+				{
+					BL_LOG_CORE_INFO("\tNext: {0}", nodeIterator->nodeKey);
+					nodeIterator = nodeIterator->nextNode;
+				}
+			}
+		}
 	}
 }

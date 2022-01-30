@@ -52,7 +52,7 @@ namespace BaldLion
 
 			Vertex& operator* (const glm::mat4& transform)
 			{
-				position = glm::vec3(transform * glm::vec4(position, 1.0f));
+				position = (glm::mat3)transform * position;
 				return *this;
 			}
 
@@ -60,7 +60,7 @@ namespace BaldLion
 			{
 				BL_DEEP_PROFILE_SCOPE("Vertex operator*", Optick::Category::Rendering);
 				Vertex result = vertex;
-				result.position = glm::vec3(transform * glm::vec4(vertex.position, 1.0f));
+				result.position = (glm::mat3)transform *  vertex.position;
 				return result;
 			}
 		};	

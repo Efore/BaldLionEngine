@@ -47,20 +47,20 @@ namespace BaldLion
 			//	m_ecsManager->AddComponentToEntity(cameraEntity, projectionCameraComponent);
 			//}
 
-			//{//Directional Light setup
+			{//Directional Light setup
 
-			//	ECS::ECSEntityID directionalLight = m_ecsManager->AddEntity("Directional Light");
-			//	ECS::ECSDirectionalLightComponent* directionalLightComponent = m_ecsManager->AddComponent<ECS::ECSDirectionalLightComponent>(
-			//		ECS::ECSComponentType::DirectionalLight,
-			//		glm::vec3(0.0f),
-			//		glm::vec3(1.0f),
-			//		glm::vec3(0.2f),
-			//		glm::vec3(-1.0f, -1.0f, -1.0f));
+				ECS::ECSEntityID directionalLight = m_ecsManager->AddEntity("Directional Light");
+				ECS::ECSDirectionalLightComponent* directionalLightComponent = m_ecsManager->AddComponent<ECS::ECSDirectionalLightComponent>(
+					ECS::ECSComponentType::DirectionalLight,
+					glm::vec3(0.0f),
+					glm::vec3(1.0f),
+					glm::vec3(0.2f),
+					glm::vec3(-1.0f, -1.0f, -1.0f));
 
-			//	m_ecsManager->AddComponentToEntity(directionalLight, directionalLightComponent);
+				m_ecsManager->AddComponentToEntity(directionalLight, directionalLightComponent);
 
-			//	ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
-			//}
+				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
+			}
 			
 			//{//Plane setup
 			//	ECS::ECSEntityID planeEntity = m_ecsManager->AddEntity("Plane");
@@ -195,7 +195,6 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 
 			SceneManagement::SceneManager::FrameStart();
-
 			SceneManagement::SceneManager::Update();
 				
 			Renderer::BeginScene();			

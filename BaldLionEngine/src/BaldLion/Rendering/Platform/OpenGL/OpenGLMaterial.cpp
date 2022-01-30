@@ -48,7 +48,7 @@ namespace BaldLion
 			if (m_materialProperties.normalTex != nullptr)
 			{
 				m_useNormalTex = 1;
-			}
+			}			
 		}
 
 		void OpenGLMaterial::SetAmbientColor(const glm::vec3 & ambient)
@@ -157,7 +157,7 @@ namespace BaldLion
 				break;
 			}
 
-			m_shader->Bind();
+			m_shader->Bind();		
 
 			m_shader->SetUniform(UNIFORM_AMBIENT_COLOR, ShaderDataType::Float3, &m_materialProperties.ambientColor);
 			m_shader->SetUniform(UNIFORM_DIFFUSE_COLOR, ShaderDataType::Float3, &m_materialProperties.diffuseColor);

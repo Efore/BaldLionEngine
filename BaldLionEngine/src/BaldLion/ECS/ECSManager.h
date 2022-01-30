@@ -77,7 +77,7 @@ namespace BaldLion {
 			DynamicArray<ECSSystem*> m_systems;
 
 			//Pools
-			HashTable<ECSComponentType, void*> m_componentsPool;
+			DynamicArray<void*> m_componentsPool;
 			DynamicArray<class ECSTransformComponent> m_transformComponentPool;
 			DynamicArray<class ECSProjectionCameraComponent> m_projectionCameraComponentPool;			
 			DynamicArray<class ECSDirectionalLightComponent> m_directionalLightComponentPool;
@@ -94,14 +94,14 @@ namespace BaldLion {
 		void BaldLion::ECS::ECSManager::CleanComponentPool(ECSComponentType componentType)
 		{
 			static_assert(std::is_base_of<ECSComponent, T>::value, "T must inherit from Component");
-			((DynamicArray<T>*)m_componentsPool.Get(componentType))->Delete();
+			((DynamicArray<T>*)m_componentsPool[(ui32)componentType])->Delete();
 		}
 
 		template <typename T, typename...Args >
-		T* BaldLion::ECS::ECSManager::AddComponent(ECSComponentType componentID, Args&&... args)
+		T* BaldLion::ECS::ECSManager::AddComponent(ECSComponentType componentType, Args&&... args)
 		{
 			static_assert(std::is_base_of<ECSComponent, T>::value, "T must inherit from Component");
-			DynamicArray<T>* componentPool = static_cast<DynamicArray<T>*>(m_componentsPool.Get(componentID));
+			DynamicArray<T>* componentPool = static_cast<DynamicArray<T>*>(m_componentsPool[(ui32)componentType]);
 			return componentPool->EmplaceBack(std::forward<Args>(args)...);
 		}
 

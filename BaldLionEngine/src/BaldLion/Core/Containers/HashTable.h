@@ -64,7 +64,9 @@ namespace BaldLion
 			const V& GetValue() const { return (*m_tableToIterate)[m_tableIndex].nodeValue; }
 			V& GetValue() { return (*m_tableToIterate)[m_tableIndex].nodeValue; }
 
-			const K& GetKey() const { return (*m_tableToIterate)[m_tableIndex].nodeKey; }			
+			const K& GetKey() const { return (*m_tableToIterate)[m_tableIndex].nodeKey; }		
+
+			const ui32 GetTableIndex() const { return m_tableIndex; }
 
 		private:
 
@@ -96,7 +98,6 @@ namespace BaldLion
 			bool Remove(const K& key);
 
 			void Clear();
-			void ClearNoDestructor();
 
 			void Delete();
 			void DeleteNoDestructor();
@@ -107,8 +108,10 @@ namespace BaldLion
 			HashTable<K,V>& operator= (const HashTable<K, V>& other);
 			HashTable<K,V>& operator= (HashTable<K, V>&& other) noexcept;
 
+			const Iterator& Begin() const;
 			Iterator Begin();
 
+			const Iterator& End() const;
 			Iterator End();
 
 		private:						
@@ -121,10 +124,11 @@ namespace BaldLion
 			ui32 m_capacity = 0;
 			ui32 m_size = 0;
 
-			ui32 m_firstElementIndex = 0;
-
 			DynamicArray<HashTableNode<K,V>> m_table;
 			AllocationType m_allocationType;	
+
+			HashTable<K, V>::Iterator m_beginIterator;
+			HashTable<K, V>::Iterator m_endIterator;
 	};
 
 	template <typename K, typename V>
@@ -138,8 +142,9 @@ namespace BaldLion
 	{
 		m_table = DynamicArray<HashTableNode<K, V>>(m_allocationType, capacity);
 		m_table.Populate();
-
-		m_firstElementIndex = capacity;
+		
+		m_beginIterator = HashTable<K, V>::Iterator(this, capacity);
+		m_endIterator = HashTable<K, V>::Iterator(this, capacity);
 	}
 
 	template <typename K, typename V>
@@ -187,6 +192,8 @@ namespace BaldLion
 	template <typename K, typename V>
 	bool BaldLion::HashTable<K, V>::TryGet(const K& key, V& result)
 	{
+		BL_DEEP_PROFILE_FUNCTION();
+
 		const hashType hashedKey = std::hash<K>()(key);
 		const i32 tableIndex = FindIndex(hashedKey);
 
@@ -202,6 +209,8 @@ namespace BaldLion
 	template <typename K, typename V>
 	bool BaldLion::HashTable<K, V>::TryGet(const K& key, V& result) const
 	{
+		BL_DEEP_PROFILE_FUNCTION();
+
 		const hashType hashedKey = std::hash<K>()(key);
 		const i32 tableIndex = FindIndex(hashedKey);
 
@@ -261,6 +270,8 @@ namespace BaldLion
 	template <typename K, typename V>
 	void BaldLion::HashTable<K, V>::Emplace(const K& key, V&& value) noexcept
 	{
+		BL_DEEP_PROFILE_FUNCTION();
+
 		const float ratio = (float)(++m_size) / (float)(m_capacity);
 
 		if (ratio > 0.75f)
@@ -285,14 +296,18 @@ namespace BaldLion
 		node.nodeKey = key;
 		node.nodeValue = std::move(value);
 
-		if (m_firstElementIndex == -1 || tableIndex < m_firstElementIndex)
-			m_firstElementIndex = (i32)tableIndex;
+		if (tableIndex < m_beginIterator.GetTableIndex())
+			m_beginIterator = HashTable<K, V>::Iterator(this, (ui32)tableIndex); 
+
+		m_endIterator = HashTable<K, V>::Iterator(this, m_capacity);
 	}
 
 	template <typename K, typename V>
 	template <typename... Args >
 	void BaldLion::HashTable<K, V>::Emplace(const K& key, Args&&... args) noexcept
 	{
+		BL_DEEP_PROFILE_FUNCTION();
+
 		const float ratio = (float)(++m_size) / (float)(m_capacity);
 
 		if (ratio > 0.75f)
@@ -318,8 +333,10 @@ namespace BaldLion
 
 		new (&node.nodeValue) V(std::forward<Args>(args)...);
 
-		if (m_firstElementIndex == -1 || tableIndex < m_firstElementIndex)
-			m_firstElementIndex = (i32)tableIndex;
+		if (tableIndex < m_beginIterator.GetTableIndex())
+			m_beginIterator = HashTable<K, V>::Iterator(this, (ui32)tableIndex);
+
+		m_endIterator = HashTable<K, V>::Iterator(this, m_capacity);
 	}
 
 	template <typename K, typename V>
@@ -335,9 +352,9 @@ namespace BaldLion
 		m_table[tableIndex].nodeValue.~V();
 		--m_size;
 
-		if (tableIndex == m_firstElementIndex)
+		if (tableIndex == m_beginIterator.GetTableIndex())
 		{
-			m_firstElementIndex = FindFirstElementIndex();
+			m_beginIterator = HashTable<K, V>::Iterator(this, FindFirstElementIndex());
 		}
 
 		return true;
@@ -346,20 +363,8 @@ namespace BaldLion
 	template <typename K, typename V>
 	void BaldLion::HashTable<K, V>::Clear()
 	{
-		for (ui32 i = 0; i < m_table.Size(); ++i)
-		{
-			m_table[i].used = false;
-			m_table[i].nodeValue.~V();
-		}
+		BL_DEEP_PROFILE_FUNCTION();
 
-		m_size = 0;
-
-		m_firstElementIndex = m_capacity;
-	}
-
-	template <typename K, typename V>
-	void BaldLion::HashTable<K, V>::ClearNoDestructor()
-	{
 		for (ui32 i = 0; i < m_table.Size(); ++i)
 		{
 			m_table[i].used = false;
@@ -367,7 +372,7 @@ namespace BaldLion
 
 		m_size = 0;
 
-		m_firstElementIndex = m_capacity;
+		m_beginIterator = HashTable<K, V>::Iterator(this, m_capacity);
 	}
 
 	template <typename K, typename V>
@@ -408,8 +413,9 @@ namespace BaldLion
 		m_allocationType = other.m_allocationType;
 		m_size = other.m_size;
 		m_capacity = other.m_capacity;
-		m_table = std::move(other.m_table);		
-		m_firstElementIndex = other.m_firstElementIndex;
+		m_table = std::move(other.m_table);
+		m_beginIterator = HashTable<K, V>::Iterator(this, FindFirstElementIndex());;
+		m_endIterator = HashTable<K, V>::Iterator(this, m_capacity);
 
 		return *this;
 	}
@@ -424,21 +430,34 @@ namespace BaldLion
 		m_size = other.m_size;
 		m_capacity = other.m_capacity;
 		m_table = DynamicArray<HashTableNode<K, V>>(other.m_table);
-		m_firstElementIndex = other.m_firstElementIndex;
+		m_beginIterator = HashTable<K, V>::Iterator(this, FindFirstElementIndex());;
+		m_endIterator = HashTable<K, V>::Iterator(this, m_capacity);
 
 		return *this;
 	}
 
 	template <typename K, typename V>
-	typename BaldLion::HashTable<K, V>::Iterator BaldLion::HashTable<K, V>::Begin()
+	typename const BaldLion::HashTable<K, V>::Iterator& BaldLion::HashTable<K, V>::Begin() const
 	{
-		return HashTable<K, V>::Iterator(this, m_firstElementIndex);
+		return m_beginIterator;
 	}
 
 	template <typename K, typename V>
-	typename BaldLion::HashTable<K, V> ::Iterator BaldLion::HashTable<K, V>::End()
+	typename BaldLion::HashTable<K, V>::Iterator BaldLion::HashTable<K, V>::Begin()
 	{
-		return HashTable<K,V>::Iterator(this, m_capacity);
+		return m_beginIterator;
+	}
+
+	template <typename K, typename V>
+	typename const BaldLion::HashTable<K, V> ::Iterator& BaldLion::HashTable<K, V>::End() const
+	{
+		return m_endIterator;
+	}
+
+	template <typename K, typename V>
+	typename BaldLion::HashTable<K, V>::Iterator BaldLion::HashTable<K, V>::End()
+	{
+		return m_endIterator;
 	}
 
 	template <typename K, typename V>
@@ -465,8 +484,6 @@ namespace BaldLion
 		m_table.Delete();
 		m_table = std::move(newTable);
 		m_capacity = capacity;
-		m_firstElementIndex = FindFirstElementIndex();
-
 		newTable.Delete();
 	}
 

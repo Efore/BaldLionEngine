@@ -13,10 +13,10 @@ namespace BaldLion {
 
 			public:
 
-				static const glm::vec3& GetDirectionaLightAmbientColor() { return s_directionalLight->ambientColor; }
-				static const glm::vec3& GetDirectionaLightDiffuseColor() { return s_directionalLight->diffuseColor; }
-				static const glm::vec3& GetDirectionaLightSpecularColor() { return s_directionalLight->specularColor; }
-				static const glm::vec3& GetDirectionaLightDirection() { return s_directionalLight->direction; }
+				static const glm::vec3& GetDirectionaLightAmbientColor()	{	return s_directionalLight->ambientColor;	}
+				static const glm::vec3& GetDirectionaLightDiffuseColor()	{	return s_directionalLight->diffuseColor;	}
+				static const glm::vec3& GetDirectionaLightSpecularColor()	{	return s_directionalLight->specularColor;	}
+				static const glm::vec3& GetDirectionaLightDirection()		{	return s_directionalLight->direction;		}
 
 				static void SetDirectionaLightAmbientColor(const glm::vec3& ambientColor) { s_directionalLight->ambientColor = ambientColor; }
 				static void SetDirectionaLightDiffuseColor(const glm::vec3& diffuseColor) { s_directionalLight->diffuseColor = diffuseColor; }

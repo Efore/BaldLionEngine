@@ -25,6 +25,8 @@ namespace BaldLion
 			inline const DynamicArray<Mesh*>& GetSubMeshes() const { return m_subMeshes; }
 			inline DynamicArray<Mesh*>& GetSubMeshes() { return m_subMeshes; }
 
+			void GenerateEntities(ECS::ECSManager* ecsManager, bool isStatic) const;
+
 		protected:
 
 			virtual void ProcessNode(const aiNode *node, const aiScene *scene);
@@ -59,6 +61,8 @@ namespace BaldLion
 			static void FillVertexWeightData(const aiMesh* aimesh,
 				const HashTable<StringId, ui32>& jointMapping,
 				DynamicArray<VertexBone>& verticesBoneData);
+
+			
 
 		protected:
 			StringId m_modelPath;

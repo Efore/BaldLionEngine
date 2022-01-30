@@ -54,7 +54,7 @@ namespace BaldLion
 			s_rendererPlatformInterface->Init();
 
 			s_skyboxPlatformInterface = SkyboxPlatformInterface::Create();
-			s_skyboxPlatformInterface->Init("assets/textures/skybox/skybox.jpg");
+			s_skyboxPlatformInterface->Init("assets/editorAssets/textures/skybox/skybox.jpg");
 
 			s_framebuffer = Framebuffer::Create({
 				width,
@@ -75,14 +75,14 @@ namespace BaldLion
 				s_shadowMapTex
 			});
 
-			s_depthMapShader = ResourceManagement::ResourceManager::AddResource<Shader>("assets/shaders/depthMap.glsl",ResourceManagement::ResourceType::Shader);
+			s_depthMapShader = ResourceManagement::ResourceManager::AddResource<Shader>("assets/editorAssets/shaders/depthMap.glsl",ResourceManagement::ResourceType::Shader);
 
-			s_depthMapSkinnedShader = ResourceManagement::ResourceManager::AddResource<Shader>("assets/shaders/depthMapSkinned.glsl", ResourceManagement::ResourceType::Shader);
+			s_depthMapSkinnedShader = ResourceManagement::ResourceManager::AddResource<Shader>("assets/editorAssets/shaders/depthMapSkinned.glsl", ResourceManagement::ResourceType::Shader);
 
 			s_dynamicMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
 			s_shadowCastingMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
 			s_disposableVertexArrays = DynamicArray<VertexArray*>(AllocationType::FreeList_Renderer, 100);
-			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::FreeList_Renderer, 10);
+			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::FreeList_Renderer, 100);
 			s_scheduledDebugDrawCommands = DynamicArray<std::function<void()>>(AllocationType::FreeList_Renderer, 100);			
 
 			s_debugDrawRender = DebugDrawRenderProvider::Create();
@@ -145,11 +145,16 @@ namespace BaldLion
 				VertexArray::Destroy(s_disposableVertexArrays[i]);
 			}
 
-			s_disposableVertexArrays.ClearNoDestructor();
+			s_disposableVertexArrays.Clear();
 
 			s_dynamicMeshes.Clear();
-			s_shadowCastingMeshes.Clear();
-			s_geometryToBatch.Clear();
+			s_shadowCastingMeshes.Clear();			
+
+			for (auto it = s_geometryToBatch.Begin(); it != s_geometryToBatch.End(); ++it)
+			{
+				it.GetValue()->ClearGeometryData();
+			}
+
 			s_framebuffer->Unbind();
 		}
 
@@ -187,7 +192,6 @@ namespace BaldLion
 
 		void Renderer::DrawShadowMap()
 		{
-
 			BL_PROFILE_FUNCTION();
 
 			if (s_shadowCastingMeshes.Size() == 0)
@@ -336,6 +340,9 @@ namespace BaldLion
 				//Draw batches
 				for (HashTable<Material*, GeometryData*>::Iterator iterator = s_geometryToBatch.Begin(); iterator != s_geometryToBatch.End(); ++iterator)
 				{
+					if(iterator.GetValue()->vertices.Size() == 0)
+						continue;
+
 					VertexArray* vertexArray = VertexArray::Create();
 
 					IndexBuffer* indexBuffer = IndexBuffer::Create(&iterator.GetValue()->indices[0], (ui32)iterator.GetValue()->indices.Size());
@@ -373,50 +380,89 @@ namespace BaldLion
 			}
 
 			dd::flush((int)Time::GetCurrentTimeInMilliseconds());
-			s_scheduledDebugDrawCommands.ClearNoDestructor();
+			s_scheduledDebugDrawCommands.Clear();
 		}
 
-		void Renderer::AddStaticMeshToBatch(const ECS::ECSMeshComponent* staticMeshComponent, const ECS::ECSTransformComponent* staticMeshTransform)
+		void Renderer::ParallelAddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
+		{
+			std::lock_guard<std::mutex> addDynamicMeshesGuard(s_dynamicMeshesToRenderMutex);
+
+			AddDynamicMesh(meshComponent, meshTransform, skeletonComponent);
+		}
+
+		void Renderer::ParallelAddStaticMeshToBatch(Material* material, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices)
+		{
+			std::lock_guard<std::mutex> addStaticMeshGuard(s_geometryToBatchMutex);
+
+			AddStaticMeshToBatch(material, vertices, indices);
+		}
+
+		void Renderer::ParallelAddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
+		{
+			std::lock_guard<std::mutex> shadowCastingGuard(s_shadowCastingMeshesMutex);
+			
+			AddShadowCastingMesh(meshComponent, meshTransform, skeletonComponent);
+		}
+
+		void Renderer::AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
+		{
+			BL_PROFILE_FUNCTION();
+			s_dynamicMeshes.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
+		}
+
+		void Renderer::AddStaticMeshToBatch(Material* material, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices)
 		{
 			BL_PROFILE_FUNCTION();	
 
-			std::lock_guard<std::mutex> frustrumCullingGuard(s_geometryToBatchMutex);
+			const ui32 numVertices = vertices.Size();
 
-			GeometryData* batch = nullptr;		
+			if (numVertices == 0)
+				return;
 
-			const ui32 numVertices = staticMeshComponent->vertices.Size();
-			const glm::mat4 staticMeshTransformMatrix = staticMeshTransform->GetTransformMatrix();
-			const ui32 numIndices = staticMeshComponent->indices.Size();
+			const ui32 numIndices = indices.Size();
 
-			if (!s_geometryToBatch.TryGet(staticMeshComponent->material, batch))
-			{	
-				batch = MemoryManager::New<GeometryData>("Batch", AllocationType::Linear_Frame);
-				batch->vertices = DynamicArray<Vertex>(AllocationType::Linear_Frame, staticMeshComponent->vertices.Size() * 100);
-				batch->indices = DynamicArray<ui32>(AllocationType::Linear_Frame, batch->vertices.Capacity() * 2);
+			GeometryData* batch = nullptr;			
 
-				s_geometryToBatch.Emplace(staticMeshComponent->material, std::move(batch));
-			}	
-
-			const ui32 verticesInBatch = batch->vertices.Size();
-
-			for (ui32 i = 0; i < numVertices; ++i)
+			if (s_geometryToBatch.TryGet(material, batch))
 			{
-				batch->vertices.EmplaceBack(staticMeshComponent->vertices[i] * staticMeshTransformMatrix);
+				BL_PROFILE_SCOPE("Emplace vertices and indices", Optick::Category::Rendering);
+				const ui32 verticesInBatch = batch->vertices.Size();
+
+				batch->vertices.PushBackRange(vertices);				
+
+				for (ui32 i = 0; i < numIndices; ++i)
+				{
+					batch->indices.EmplaceBack(indices[i] + verticesInBatch);
+				}
 			}
-
-			for (ui32 i = 0; i < numIndices; ++i)
-			{
-				batch->indices.EmplaceBack(staticMeshComponent->indices[i] + verticesInBatch);
-			}			
 		}
 
 		void Renderer::AddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
 		{
-			BL_PROFILE_FUNCTION();
-			std::lock_guard<std::mutex> frustrumCullingGuard(s_shadowCastingMeshesMutex);
-			s_shadowCastingMeshes.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
-		}		
+			if (meshComponent->vertices.Size() == 0)
+				return;
 
+			BL_PROFILE_FUNCTION();
+			s_shadowCastingMeshes.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
+		}	
+
+		void Renderer::RegisterMaterial(Material* material)
+		{
+			std::lock_guard<std::mutex> addStaticMeshGuard(s_geometryToBatchMutex);
+
+			GeometryData* batch = nullptr;
+
+			if (!s_geometryToBatch.TryGet(material, batch))
+			{
+				BL_PROFILE_SCOPE("Try get batch", Optick::Category::Rendering);
+				batch = MemoryManager::New<GeometryData>("Batch", AllocationType::FreeList_Renderer);
+				batch->vertices = DynamicArray<Vertex>(AllocationType::FreeList_Renderer, 100);
+				batch->indices = DynamicArray<ui32>(AllocationType::FreeList_Renderer, 150);
+
+				s_geometryToBatch.Emplace(material, std::move(batch));
+			}
+		}
+		
 		void Renderer::DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::vec3& color, int durationMs, bool depthEnabled /*= true*/)
 		{
 			ScheduleDebugDrawCommand([center, color, size, durationMs, depthEnabled]
@@ -459,13 +505,6 @@ namespace BaldLion
 		void Renderer::ScheduleDebugDrawCommand(std::function<void()> debugDrawCommand)
 		{
 			s_scheduledDebugDrawCommands.EmplaceBack(debugDrawCommand);
-		}
-
-		void Renderer::AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
-		{
-			BL_PROFILE_FUNCTION();
-			std::lock_guard<std::mutex> frustrumCullingGuard(s_dynamicMeshesToRenderMutex);
-			s_dynamicMeshes.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
 		}
 	}
 }

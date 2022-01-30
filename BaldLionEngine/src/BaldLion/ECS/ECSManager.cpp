@@ -20,29 +20,29 @@ namespace BaldLion {
 			m_entities = DynamicArray<ECSEntity>(AllocationType::FreeList_ECS,100);			
 			m_systems = DynamicArray<ECSSystem*>(AllocationType::FreeList_ECS,100);
 
-			m_componentsPool = HashTable<ECSComponentType, void*>(AllocationType::FreeList_ECS, 100);
+			m_componentsPool = DynamicArray<void*>(AllocationType::FreeList_ECS, (ui32)ECSComponentType::Count);
 
 			//Pools initialization
 			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_ECS, 1000);
-			m_componentsPool.Emplace(ECSComponentType::Transform, std::move(&m_transformComponentPool));
+			m_componentsPool.EmplaceBack(&m_transformComponentPool);
 
 			m_projectionCameraComponentPool = DynamicArray<ECSProjectionCameraComponent>(AllocationType::FreeList_ECS, 10);
-			m_componentsPool.Emplace(ECSComponentType::ProjectionCamera, std::move(&m_projectionCameraComponentPool));
+			m_componentsPool.EmplaceBack(&m_projectionCameraComponentPool);
 
 			m_directionalLightComponentPool = DynamicArray<ECSDirectionalLightComponent>(AllocationType::FreeList_ECS, 10);
-			m_componentsPool.Emplace(ECSComponentType::DirectionalLight, std::move(&m_directionalLightComponentPool));
+			m_componentsPool.EmplaceBack(&m_directionalLightComponentPool);
 
-			m_meshComponentPool = DynamicArray<ECSMeshComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.Emplace(ECSComponentType::Mesh, std::move(&m_meshComponentPool));
+			m_meshComponentPool = DynamicArray<ECSMeshComponent>(AllocationType::FreeList_ECS, 100);
+			m_componentsPool.EmplaceBack(&m_meshComponentPool);
 
 			m_animationComponentPool = DynamicArray<ECSAnimationComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.Emplace(ECSComponentType::Animation, std::move(&m_animationComponentPool));
+			m_componentsPool.EmplaceBack(&m_animationComponentPool);
 
 			m_skeletonComponentPool = DynamicArray<ECSSkeletonComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.Emplace(ECSComponentType::Skeleton, std::move(&m_skeletonComponentPool));
+			m_componentsPool.EmplaceBack(&m_skeletonComponentPool);
 
 			m_hierarchyComponentPool = DynamicArray<ECSHierarchyComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.Emplace(ECSComponentType::Hierarchy, std::move(&m_hierarchyComponentPool));
+			m_componentsPool.EmplaceBack(&m_hierarchyComponentPool);
 
 			m_entityIDProvider = 1;
 			m_componentIDProvider = 1;
@@ -87,7 +87,7 @@ namespace BaldLion {
 			m_entitySignatures.Emplace(entityID, std::move(newSignature));
 
 			ECSComponentLookUp newComponentLookUp;
-			m_entityComponents.Emplace(entityID, std::move(newComponentLookUp));		
+			m_entityComponents.Emplace(entityID, std::move(newComponentLookUp));				
 
 			ECSSignature signature = m_entitySignatures.Get(entityID);
 			for (ui32 i = 0; i < m_systems.Size(); ++i)
@@ -176,16 +176,18 @@ namespace BaldLion {
 					break;
 				}				
 			}
+			ECSComponentLookUp components;
 
-			ECSComponentLookUp* components = &m_entityComponents.Get(entityID);
+			if (m_entityComponents.TryGet(entityID, components)) {
 
-			for (ui32 i = 0; i < (ui32)ECSComponentType::Count; ++i) 
-			{
-				const ECSComponent* componentToRemove = (*components)[i];
-				if (componentToRemove != nullptr) 
+				for (ui32 i = 0; i < (ui32)ECSComponentType::Count; ++i)
 				{
-					RemoveComponentFromPool((ECSComponentType)i, componentToRemove);
-					components->Set((ECSComponentType)i, nullptr);
+					const ECSComponent* componentToRemove = components[i];
+					if (componentToRemove != nullptr)
+					{
+						RemoveComponentFromPool((ECSComponentType)i, componentToRemove);
+						components.Set((ECSComponentType)i, nullptr);
+					}
 				}
 			}
 			
@@ -223,10 +225,10 @@ namespace BaldLion {
 
 		void ECSManager::RemoveComponentFromPool(ECSComponentType componentType, const ECSComponent* componentToRemove)
 		{
-			DynamicArray<ECSComponent>* componentPool = (DynamicArray<ECSComponent>*)m_componentsPool.Get(componentType);
+			DynamicArray<ECSComponent>* componentPool = (DynamicArray<ECSComponent>*)m_componentsPool[(ui32)componentType];
 			componentPool->Remove(*componentToRemove);
 
-			m_componentsPool.Set(componentType, componentPool);
+			m_componentsPool[(ui32)componentType] = componentPool;
 		}
 
 	}

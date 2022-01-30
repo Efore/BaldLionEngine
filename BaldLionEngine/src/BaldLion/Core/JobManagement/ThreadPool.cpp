@@ -20,15 +20,15 @@ namespace BaldLion {
 
 		void ThreadPool::Init(ui32 workersCount /*= std::thread::hardware_concurrency()*/)
 		{
-			s_jobQueue = Queue<Job>(AllocationType::FreeList_Main, 100);
-			s_activeJobs = HashTable<StringId, ui32>(AllocationType::FreeList_Main, 100);
+			s_jobQueue = Queue<Job>(AllocationType::FreeList_Main, 1000);
+			s_activeJobs = HashTable<StringId, ui32>(AllocationType::FreeList_Main, 1000);
 			s_threads = DynamicArray<std::thread>(AllocationType::FreeList_Main, workersCount);
 			s_jobsFinished = true;
 
 			//Starting threads
 			for (ui32 i = 0; i < workersCount; ++i)
 			{
-				s_threads.EmplaceBack(std::thread(ThreadUsage,i));
+				s_threads.EmplaceBack(std::thread(ThreadProcess,i));
 			}		
 		}
 
@@ -54,7 +54,7 @@ namespace BaldLion {
 			s_jobsFinishedMutex.unlock();			
 		}	
 
-		void* ThreadPool::ThreadUsage(ui32 threadIndex)
+		void* ThreadPool::ThreadProcess(ui32 threadIndex)
 		{	
 			while(true)
 			{

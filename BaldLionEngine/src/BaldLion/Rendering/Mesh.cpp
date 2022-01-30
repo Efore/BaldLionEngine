@@ -20,7 +20,7 @@ namespace BaldLion
 		Mesh::~Mesh()
 		{
 			VertexArray::Destroy(m_vertexArray);	
-			m_geometryData->ClearGeometryData();
+			m_geometryData->DeleteGeometryData();
 			MemoryManager::Delete(m_geometryData);
 		}
 
@@ -82,9 +82,15 @@ namespace BaldLion
 			m_vertexBones = DynamicArray<VertexBone>(AllocationType::FreeList_Renderer, vertexBones);
 		}
 
-		ECS::ECSMeshComponent* Mesh::GenerateMeshComponent(ECS::ECSManager* ecsManager, bool isStatic)
+		void Mesh::GenerateMeshComponent(ECS::ECSManager* ecsManager, bool isStatic, ECS::ECSMeshComponent*& meshComponent, ECS::ECSSkeletonComponent*& skeletonComponent) const
 		{
-			ECS::ECSMeshComponent* meshComponent = ecsManager->AddComponent<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh, isStatic);
+			if (m_skeleton != nullptr)
+			{
+				skeletonComponent = GenerateSkeletonComponent(ecsManager);
+				isStatic = false;
+			}
+
+			meshComponent = ecsManager->AddComponent<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh, isStatic);
 
 			meshComponent->material = m_material;
 			meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices);
@@ -110,11 +116,9 @@ namespace BaldLion
 			}
 
 			meshComponent->localAABB = { minPointInLocalSpace , maxPointInLocalSpace };
-
-			return meshComponent;
 		}
 
-		BaldLion::ECS::ECSSkeletonComponent* Mesh::GenerateSkeletonComponent(ECS::ECSManager* ecsManager)
+		BaldLion::ECS::ECSSkeletonComponent* Mesh::GenerateSkeletonComponent(ECS::ECSManager* ecsManager) const
 		{
 			ECS::ECSSkeletonComponent* skeletonComponent = ecsManager->AddComponent<ECS::ECSSkeletonComponent>(ECS::ECSComponentType::Skeleton);
 

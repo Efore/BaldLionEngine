@@ -40,8 +40,7 @@ namespace BaldLion
 
 		void ResourceManager::AddResource(Resource* resource)
 		{
-			std::lock_guard<std::mutex> lockGuard(s_resourceManagerMutex);
-
+			std::lock_guard<std::mutex> lockGuard(s_resourceManagerMutex);			
 			if (resource && !s_resourceMap.Contains(resource->GetResourceID()))
 			{
 				s_resourceMap.Emplace(resource->GetResourceID(), std::move(resource));

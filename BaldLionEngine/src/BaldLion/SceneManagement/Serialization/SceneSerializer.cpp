@@ -113,15 +113,18 @@ namespace BaldLion
 			out << YAML::Key << YAML_KEY_ENTITYNAME << YAML::Value << STRINGID_TO_STR_C(entity->GetEntityName());
 			out << YAML::Key << YAML_KEY_COMPONENTS << YAML::Value << YAML::BeginSeq;
 
-			const ECS::ECSComponentLookUp* entityComponentLookUp = &scene->GetECSManager()->GetEntityComponents().Get(entity->GetEntityID());
-
-			for (ui32 i = 0; i < (ui32)ECS::ECSComponentType::Count; ++i) 
+			ECS::ECSComponentLookUp entityComponentLookUp;
+			if (scene->GetECSManager()->GetEntityComponents().TryGet(entity->GetEntityID(), entityComponentLookUp) )
 			{
-				if ((*entityComponentLookUp)[i])
+				for (ui32 i = 0; i < (ui32)ECS::ECSComponentType::Count; ++i)
 				{
-					SerializeComponent(out, (*entityComponentLookUp)[i]);
+					if (entityComponentLookUp[i])
+					{
+						SerializeComponent(out, entityComponentLookUp[i]);
+					}
 				}
 			}
+
 			out << YAML::EndSeq;
 			out << YAML::EndMap;			
 		}
@@ -282,7 +285,11 @@ namespace BaldLion
 				bool isStatic = yamlComponent[YAML_KEY_MESHISSTATIC].as<bool>();
 
 				Mesh* mesh = ResourceManagement::ResourceManager::LoadResource<Mesh>(STRINGID_TO_STRING(meshResourceID));
-				component = mesh->GenerateMeshComponent(SceneManager::GetECSManager(), isStatic);
+
+				ECSMeshComponent* meshComponent = nullptr;
+				ECSSkeletonComponent* skeletonComponent = nullptr;
+				mesh->GenerateMeshComponent(SceneManager::GetECSManager(), isStatic, meshComponent, skeletonComponent);
+				component = meshComponent;
 			}
 				break;
 

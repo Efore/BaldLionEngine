@@ -22,6 +22,8 @@ namespace BaldLion
 			static void Stop();
 
 			static void GenerateAnimator(const aiScene *scene, const std::string& animatorName, const HashTable<StringId, ui32>& jointMapping);
+			static const HashTable<StringId, Animator*>& GetAnimators() { return s_registeredAnimators; }
+
 			static Animator* GetAnimator(const StringId animatorID);
 
 			static void RegisterAnimator(Animator* animator);

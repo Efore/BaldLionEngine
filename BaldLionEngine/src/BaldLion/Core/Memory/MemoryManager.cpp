@@ -25,7 +25,7 @@ namespace BaldLion
 		{
 			if (s_memorySize > 0) return;
 
-			s_memorySize = 1024 * 1024 * 300; //200mB
+			s_memorySize = 1024 * 1024 * 1024; //1gB
 			s_memory = malloc(s_memorySize);
 
 			if (s_memory == nullptr)
@@ -48,12 +48,11 @@ namespace BaldLion
 			void *ecsAllocatorStart = s_freeListMainAllocator->Allocate(ecsSize, __alignof(FreeListAllocator));
 			s_freeListECSAllocator = new (ecsAllocatorStart) FreeListAllocator("Renderer FreeList Allocator", ecsSize - sizeof(FreeListAllocator), AddPointerOffset(ecsAllocatorStart, sizeof(FreeListAllocator)));
 
-			const size_t rendererSize = 50 * 1024 * 1024; //50MB
+			const size_t rendererSize = 500 * 1024 * 1024; //500MB
 			void *rendererAllocatorStart = s_freeListMainAllocator->Allocate(rendererSize, __alignof(FreeListAllocator));
 			s_freeListRendererAllocator = new (rendererAllocatorStart) FreeListAllocator("Renderer FreeList Allocator", rendererSize - sizeof(FreeListAllocator), AddPointerOffset(rendererAllocatorStart, sizeof(FreeListAllocator)));
 
-
-			const size_t resourcesSize = 5 * 1024 * 1024; //5MB
+			const size_t resourcesSize = 50 * 1024 * 1024; //50MB
 			void *resourcesAllocatorStart = s_freeListMainAllocator->Allocate(resourcesSize, __alignof(FreeListAllocator));
 			s_freeListResourcesAllocator = new (resourcesAllocatorStart) FreeListAllocator("Renderer FreeList Allocator", resourcesSize - sizeof(FreeListAllocator), AddPointerOffset(resourcesAllocatorStart, sizeof(FreeListAllocator)));			
 		}

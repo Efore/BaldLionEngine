@@ -20,7 +20,7 @@ namespace BaldLion
 			m_cubemapTexture = (OpenGLTextureCubemap*)(TextureCubeMap::Create(path));
 			ResourceManagement::ResourceManager::AddResource(m_cubemapTexture);
 
-			m_skyboxShader = (OpenGLShader*)(ResourceManagement::ResourceManager::AddResource<Shader>("assets/shaders/skybox.glsl", ResourceManagement::ResourceType::Shader));
+			m_skyboxShader = (OpenGLShader*)(ResourceManagement::ResourceManager::AddResource<Shader>("assets/editorAssets/shaders/skybox.glsl", ResourceManagement::ResourceType::Shader));
 		}
 
 		void OpenGLSkybox::Draw()

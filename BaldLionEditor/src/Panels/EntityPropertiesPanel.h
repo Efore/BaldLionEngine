@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneHierarchyPanel.h"
 #include "BaldLion/ECS/ECSComponent.h"
+#include "BaldLion/ResourceManagement/ResourceManager.h"
 
 namespace BaldLion {
 
@@ -17,6 +18,7 @@ namespace BaldLion {
 
 		private:
 			void RenderComponentInspector(ECS::ECSComponent* component);
+
 
 		private:
 

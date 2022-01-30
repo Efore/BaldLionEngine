@@ -17,7 +17,6 @@ namespace BaldLion
 			template <typename T>
 			static T* LoadResource(const std::string &path);
 
-
 			template <typename T>
 			static T* AddResource(const std::string &path, ResourceType resourceType);
 
@@ -38,9 +37,9 @@ namespace BaldLion
 		template <typename T>
 		T* ResourceManager::LoadResource(const std::string &path)
 		{
-			auto resourcePath = std::filesystem::path(path);
-
 			static_assert(std::is_base_of<Resource, T>::value, "T must inherit from Resource");
+
+			auto resourcePath = std::filesystem::path(path);
 
 			std::lock_guard<std::mutex> lockGuard(s_resourceManagerMutex);
 
@@ -54,6 +53,8 @@ namespace BaldLion
 		template <typename T>
 		T* ResourceManager::AddResource(const std::string &path, ResourceType resourceType)
 		{			
+			static_assert(std::is_base_of<Resource, T>::value, "T must inherit from Resource");	
+
 			Resource* result = LoadResource<T>(path);
 
 			if (result)
@@ -63,8 +64,6 @@ namespace BaldLion
 
 			auto resourcePath = std::filesystem::path(path);
 			const std::string formatedPath = resourcePath.make_preferred().string();
-
-			static_assert(std::is_base_of<Resource, T>::value, "T must inherit from Resource");		
 
 			switch (resourceType)
 			{

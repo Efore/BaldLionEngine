@@ -48,11 +48,11 @@ namespace BaldLion
 
 			struct MaterialProperties {
 
-				StringId shaderPath;
 				glm::vec3 ambientColor;
 				glm::vec3 diffuseColor;
 				glm::vec3 emissiveColor;
 				glm::vec3 specularColor;
+				StringId shaderPath;
 				float shininess;
 				Texture* ambientTex;
 				Texture* diffuseTex;

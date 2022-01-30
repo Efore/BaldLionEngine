@@ -4,6 +4,8 @@
 #include "BaldLion/Animation/AnimationManager.h"
 #include "BaldLion/Utils/GeometryUtils.h"
 #include "BaldLion/Utils/MathUtils.h"
+#include "BaldLion/ECS/Components/ECSHierarchyComponent.h"
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -376,7 +378,7 @@ namespace BaldLion
 
 			Material::MaterialProperties materialProperties
 			{
-				aimesh->HasBones() ? STRING_TO_STRINGID("assets/shaders/SkinnedLit.glsl") : STRING_TO_STRINGID("assets/shaders/BaseLit.glsl"),
+				aimesh->HasBones() ? STRING_TO_STRINGID("assets/gameAssets/shaders/SkinnedLit.glsl") : STRING_TO_STRINGID("assets/gameAssets/shaders/BaseLit.glsl"),
 				glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 				glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
 				glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
@@ -396,13 +398,15 @@ namespace BaldLion
 			const std::string matName = STRINGID_TO_STRING(modelFolderPath) + (aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data) + (".mat");
 
 			Material* meshMaterial = ResourceManagement::ResourceManager::LoadResource<Material>(matName);
-			
+
 			if (!meshMaterial)
 			{
 				meshMaterial = Material::Create(matName, materialProperties);
 				ResourceManagement::ResourceManager::AddResource(meshMaterial);
 			}
 
+			/*Material* meshMaterial = Material::Create(matName, materialProperties);*/
+			
 			meshMaterial->AssignShader();
 			
 			const std::string meshName = STRINGID_TO_STRING(modelFolderPath) + (aimesh->mName.C_Str()) + ".mesh";
@@ -455,6 +459,60 @@ namespace BaldLion
 			return mesh;
 		}
 
+		void Model::GenerateEntities(ECS::ECSManager* ecsManager, bool isStatic) const
+		{
+			ECS::ECSEntityID rootEntityID = ecsManager->AddEntity(STRINGID_TO_STR_C(m_resourceName));
+
+			ECS::ECSTransformComponent* rootTransformComponent = ecsManager->AddComponent<ECS::ECSTransformComponent>(
+				ECS::ECSComponentType::Transform,
+				glm::vec3(0.0f),
+				glm::vec3(0.0f),
+				glm::vec3(1.0f)
+				);
+
+			ECS::ECSHierarchyComponent* rootHierarchyComponent = ecsManager->AddComponent<ECS::ECSHierarchyComponent>(
+				ECS::ECSComponentType::Hierarchy,
+				0
+				);
+
+			ecsManager->AddComponentToEntity(rootEntityID, rootTransformComponent);
+			ecsManager->AddComponentToEntity(rootEntityID, rootHierarchyComponent);
+
+			for (ui32 i = 0; i < m_subMeshes.Size(); ++i) {
+
+				const Mesh* subMesh = m_subMeshes[i];
+
+				ECS::ECSEntityID childEntityID = ecsManager->AddEntity(STRINGID_TO_STR_C(subMesh->GetResourceName()));
+
+				rootHierarchyComponent->childEntitiesIDs.EmplaceBack(childEntityID);
+
+				ECS::ECSTransformComponent* childTransformComponent = ecsManager->AddComponent<ECS::ECSTransformComponent>(
+					ECS::ECSComponentType::Transform,
+					glm::vec3(0.0f),
+					glm::vec3(0.0f),
+					glm::vec3(1.0f)
+					);
+
+				ECS::ECSHierarchyComponent* childHierarchyComponent = ecsManager->AddComponent<ECS::ECSHierarchyComponent>(
+					ECS::ECSComponentType::Hierarchy,
+					rootEntityID
+					);
+
+				ECS::ECSMeshComponent* childMeshComponent = nullptr;
+				ECS::ECSSkeletonComponent* childSkeletonComponent = nullptr;
+
+				subMesh->GenerateMeshComponent(ecsManager, isStatic, childMeshComponent, childSkeletonComponent);
+
+				ecsManager->AddComponentToEntity(childEntityID, childTransformComponent);
+				ecsManager->AddComponentToEntity(childEntityID, childHierarchyComponent);
+				ecsManager->AddComponentToEntity(childEntityID, childMeshComponent);
+
+				if (childSkeletonComponent != nullptr)
+				{
+					ecsManager->AddComponentToEntity(childEntityID, childSkeletonComponent);
+				}
+			}
+		}
 	} 
 
 }

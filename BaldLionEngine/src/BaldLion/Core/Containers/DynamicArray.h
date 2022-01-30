@@ -21,7 +21,6 @@ namespace BaldLion
 		ui32 Capacity() const { return m_capacity; }
 
 		void Clear();
-		void ClearNoDestructor();
 		void Delete();
 		void DeleteNoDestructor();
 
@@ -174,21 +173,6 @@ namespace BaldLion
 		if (m_elements == nullptr)
 			return;
 
-		for (ui32 i = 0; i < m_size; ++i)
-		{
-			m_elements[i].~T();
-		}
-
-		m_size = 0;
-	}
-
-
-	template <typename T>
-	void BaldLion::DynamicArray<T>::ClearNoDestructor()
-	{
-		if (m_elements == nullptr)
-			return;
-
 		m_size = 0;
 	}
 
@@ -267,7 +251,7 @@ namespace BaldLion
 	{
 		if (size == 0) size = other.m_size;
 
-		if (m_size + size > m_capacity)
+		if ((m_size + size) > m_capacity)
 			Reallocate(m_size + size);
 
 		memcpy(&(m_elements[m_size]), other.m_elements, size * sizeof(T));

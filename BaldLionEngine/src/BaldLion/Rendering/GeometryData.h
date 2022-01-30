@@ -17,10 +17,16 @@ namespace BaldLion {
 
 			~GeometryData(){}
 
-			void ClearGeometryData()
+			void DeleteGeometryData()
 			{
 				vertices.Delete();
 				indices.Delete();
+			}
+
+			void ClearGeometryData()
+			{
+				vertices.Clear();
+				indices.Clear();
 			}
 		};
 

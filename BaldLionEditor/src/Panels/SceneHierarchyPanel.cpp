@@ -1,5 +1,7 @@
 #pragma once
 #include "SceneHierarchyPanel.h"
+#include "UtilsEditor.h"
+
 #include "BaldLion/ECS/Components/ECSHierarchyComponent.h"
 #include <BaldLion.h>
 #include <imgui/imgui.h>
@@ -29,6 +31,13 @@ namespace BaldLion {
 				ImGui::OpenPopup("Create Entity");
 			}
 
+			ImGui::SameLine();
+
+			if (ImGui::Button("Create Entity from Model"))
+			{
+				ImGui::OpenPopup("create_model_entity");
+			}
+
 			ImGui::Separator();			
 
 			if (ImGui::BeginPopupModal("Create Entity", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -40,7 +49,7 @@ namespace BaldLion {
 				{
 					m_sceneContext->GetECSManager()->AddEntity(entityName);
 					ImGui::CloseCurrentPopup();
-				}
+				}				
 
 				ImGui::SameLine();
 
@@ -50,11 +59,19 @@ namespace BaldLion {
 				}
 
 				ImGui::EndPopup();
-			}			
+			}
+
+			Rendering::Model* model = UtilsEditor::RenderResourceInspectorPopup<Rendering::Model>("create_model_entity", ResourceManagement::ResourceType::Model);
+			
+			if (model)
+			{
+				model->GenerateEntities(m_sceneContext->GetECSManager(), true);
+			}
 
 			for (ui32 i = 0; i < m_sceneContext->GetECSManager()->GetEntities().Size(); ++i) 
 			{				
-				DrawEntityElement(m_sceneContext->GetECSManager()->GetEntities()[i], true);
+				bool selectedThisFrame = false;
+				DrawEntityElement(m_sceneContext->GetECSManager()->GetEntities()[i], true, selectedThisFrame);
 			}
 
 			ImGui::End();
@@ -83,7 +100,7 @@ namespace BaldLion {
 			}
 		}
 
-		void SceneHierarchyPanel::DrawEntityElement(const ECS::ECSEntity& entity, bool firstCall)
+		void SceneHierarchyPanel::DrawEntityElement(const ECS::ECSEntity& entity, bool firstCall, bool& selectedThisFrame)
 		{
 			ImGuiTreeNodeFlags flags = (m_selectedEntityID == entity.GetEntityID() ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;			
 
@@ -98,24 +115,33 @@ namespace BaldLion {
 			{
 				flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
 				ImGui::TreeNodeEx((void*)(uint32_t)entity.GetEntityID(), flags, STRINGID_TO_STR_C(entity.GetEntityName()));
+
+				if (ImGui::IsItemClicked())
+				{
+					m_selectedEntityID = entity.GetEntityID();
+					selectedThisFrame = true;
+				}
 			}
 			else 
 			{
 				bool open = ImGui::TreeNodeEx((void*)(uint32_t)entity.GetEntityID(), flags, STRINGID_TO_STR_C(entity.GetEntityName()));
+				bool selectNode = ImGui::IsItemClicked();
+				bool selectedThisFrame = false;
 
 				if (open) 
 				{
 					for (ui32 i = 0; i < hierarchyComponent->childEntitiesIDs.Size(); ++i) 
 					{
-						DrawEntityElement(*m_sceneContext->GetECSManager()->GetEntityMap().Get(hierarchyComponent->childEntitiesIDs[i]), false);
+						DrawEntityElement(*m_sceneContext->GetECSManager()->GetEntityMap().Get(hierarchyComponent->childEntitiesIDs[i]), false, selectedThisFrame);
 					}	
 					ImGui::TreePop();
 				}
-			}
-			
-			if (ImGui::IsItemClicked()) 
-			{
-				m_selectedEntityID = entity.GetEntityID();
+
+				if(!selectedThisFrame && selectNode)
+				{
+					m_selectedEntityID = entity.GetEntityID();
+					selectedThisFrame = true;
+				}
 			}		
 		}
 

@@ -35,6 +35,11 @@ namespace BaldLion {
 
 		void ECSSystem::OnUpdate()
 		{	
+			BL_PROFILE_FUNCTION();
+
+			if (m_componentLookUps.Size() == 0)
+				return;
+
 			for (ui32 i = 0; i < m_componentLookUps.Size(); ++i)
 			{
 				ECSComponentLookUp* componentLookUp = m_componentLookUps[i];
@@ -66,9 +71,11 @@ namespace BaldLion {
 
 		void ECSSystem::OnFrameStart()
 		{
+			BL_PROFILE_FUNCTION();
+
 			if (m_refreshComponentLookUps) {
 
-				m_componentLookUps.ClearNoDestructor();
+				m_componentLookUps.Clear();
 
 				for (HashMap<ECSEntityID, ECSSignature>::Iterator iterator = m_ecsManager->GetEntitySignatures().Begin(); iterator != m_ecsManager->GetEntitySignatures().End(); ++iterator)
 				{
@@ -85,7 +92,7 @@ namespace BaldLion {
 
 		void ECSSystem::OnFrameEnd()
 		{
-			
+			BL_PROFILE_FUNCTION();
 		}
 
 		void ECSSystem::OnEntityModified(ECSSignature entitySignature)

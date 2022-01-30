@@ -1,12 +1,17 @@
 #pragma once
 #include "EntityPropertiesPanel.h"
+#include "UtilsEditor.h"
+
 #include "Components/TransformComponentInspector.h"
 #include "Components/DirectionalLightComponentInspector.h"
 #include "Components/ProjectionCameraComponentInspector.h"
 #include "BaldLion/ECS/ECSManager.h"
+#include "BaldLion/ECS/ECSComponentsInclude.h"
 #include "BaldLion/Utils/MathUtils.h"
 #include "BaldLion/ResourceManagement/ResourceManager.h"
 #include "BaldLion/Rendering/Mesh.h"
+#include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
+#include "BaldLion/Animation/AnimationManager.h"
 
 
 namespace BaldLion {
@@ -36,8 +41,7 @@ namespace BaldLion {
 										"ProjectionCamera",
 										"Mesh",
 										"Skeleton",
-										"DirectionalLight",
-										"PointLight",
+										"DirectionalLight",										
 										"Animation"
 									};
 
@@ -53,17 +57,22 @@ namespace BaldLion {
 					ImGui::Text("Components");
 					ImGui::Separator();
 
-					for (int i = 0; i < IM_ARRAYSIZE(names); i++)
+					ECSComponentLookUp selectedEntityComponents;
+					ECSComponent* newComponent = nullptr;
+
+					const char* meshPopup = "Choose Mesh";
+					const char* animatorPopup = "Choose Animator";
+					
+
+					if (m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityComponents().TryGet(selectedEntityID, selectedEntityComponents)) 
 					{
-						if (ImGui::Selectable(names[i]))
+						for (int i = 0; i < IM_ARRAYSIZE(names); i++)
 						{
-							ECSComponentLookUp selectedEntityComponents;
-							if (m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityComponents().TryGet(selectedEntityID, selectedEntityComponents)) 
+							if (selectedEntityComponents[i] == nullptr)
 							{
-								if (selectedEntityComponents[i] == nullptr) 
-								{		
+								if (ImGui::Button(names[i]))
+								{
 									ECSComponentType chosenType = (ECSComponentType)i;
-									ECSComponent* newComponent = nullptr;
 
 									switch (chosenType)
 									{
@@ -78,48 +87,22 @@ namespace BaldLion {
 										break;
 
 									case ECS::ECSComponentType::ProjectionCamera:
+
 										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECS::ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera,
 											45.0f,
 											600.0f,
 											480.0f,
 											0.1f,
 											50000.0f);
+
 										break;
 
 									case ECS::ECSComponentType::Mesh:
-									{
-										ImGui::OpenPopup("Choose Mesh");
-
-										if (ImGui::BeginPopupModal("Choose Mesh", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-										{		
-											if (ImGui::Button("Close"))
-											{
-												ImGui::CloseCurrentPopup();
-											}
-
-											ImGui::Separator();
-
-											for (auto hashMapIterator = ResourceManagement::ResourceManager::GetResourceMap().Begin(); hashMapIterator != ResourceManagement::ResourceManager::GetResourceMap().End(); ++hashMapIterator)
-											{
-												if (hashMapIterator.GetValue()->GetResourceType() != ResourceManagement::ResourceType::Mesh)
-												{
-													continue;
-												}
-
-												if (ImGui::Selectable(STRINGID_TO_STR_C(hashMapIterator.GetValue()->GetResourceName())))
-												{
-													Rendering::Mesh* meshToLoad = (Rendering::Mesh*)hashMapIterator.GetValue();
-													newComponent = meshToLoad->GenerateMeshComponent(m_sceneHierarchyPanel->GetSceneContext()->GetECSManager(), false);
-												}
-											}
-
-											ImGui::EndPopup();
-										}
-									}
-										break;
-
 									case ECS::ECSComponentType::Skeleton:
-										break;
+									
+										ImGui::OpenPopup(meshPopup);									
+									
+										break;									
 
 									case ECS::ECSComponentType::DirectionalLight:
 
@@ -128,6 +111,8 @@ namespace BaldLion {
 											glm::vec3(1.0f),
 											glm::vec3(0.2f),
 											glm::vec3(-1.0f, -1.0f, -1.0f));
+
+										ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight((ECSDirectionalLightComponent*)newComponent);
 											
 										break;
 
@@ -135,23 +120,67 @@ namespace BaldLion {
 										break;
 
 									case ECS::ECSComponentType::Animation:
+										ImGui::OpenPopup(animatorPopup);
 										break;
 									
 									}
 
-									if (newComponent) {
-										m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponentToEntity(selectedEntityID, newComponent);
-									}
+									break;
 								}
 							}
 						}
+					}
+					
+					Rendering::Mesh* mesh = UtilsEditor::RenderResourceInspectorPopup<Rendering::Mesh>(meshPopup, ResourceManagement::ResourceType::Mesh);
+
+					if (mesh)
+					{						
+						if (selectedEntityComponents[(ui32)ECSComponentType::Transform] == nullptr) 
+						{
+							ECSTransformComponent* transform = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECS::ECSTransformComponent>(ECSComponentType::Transform,
+								MathUtils::Vector3Zero,
+								MathUtils::Vector3Zero,
+								glm::vec3(1.0f));
+
+							m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponentToEntity(selectedEntityID, transform);
+						}
+
+						ECS::ECSSkeletonComponent* skeletonComponent = nullptr;
+						ECS::ECSMeshComponent* meshComponent = nullptr;
+						mesh->GenerateMeshComponent(m_sceneHierarchyPanel->GetSceneContext()->GetECSManager(), false, meshComponent, skeletonComponent);
+
+						newComponent = meshComponent;
+
+						if (skeletonComponent) 
+						{
+							m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponentToEntity(selectedEntityID, skeletonComponent);
+						}
+					}
+
+					if (ImGui::BeginPopupModal(animatorPopup, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+					{
+						for (auto hashMapIterator = Animation::AnimationManager::GetAnimators().Begin(); hashMapIterator != Animation::AnimationManager::GetAnimators().End(); ++hashMapIterator)
+						{
+							if (ImGui::Selectable(STRINGID_TO_STR_C(hashMapIterator.GetValue()->GetAnimatorID())))
+							{
+								newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECS::ECSAnimationComponent>(ECSComponentType::Animation,
+									hashMapIterator.GetValue()->GetAnimatorID(),
+									hashMapIterator.GetValue()->GetInitialAnimationID());
+							}
+							
+						}
+						ImGui::EndPopup();
+					}
+
+					if (newComponent) 
+					{
+						m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponentToEntity(selectedEntityID, newComponent);
 					}
 
 					ImGui::EndPopup();
 				}
 
-				ImGui::Separator();
-				
+				ImGui::Separator();			
 				
 
 				ECS::ECSComponentLookUp selectedEntityComponents;
@@ -220,5 +249,7 @@ namespace BaldLion {
 				
 			}
 		}
+
+
 	}
 }

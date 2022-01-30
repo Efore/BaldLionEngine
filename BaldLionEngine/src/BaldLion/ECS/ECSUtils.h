@@ -14,11 +14,11 @@ namespace BaldLion
 			Mesh,
 			Skeleton,
 			DirectionalLight,
-			PointLight,
 			Animation,
 
-
 			Hierarchy,
+			PointLight,
+
 			Count
 		};
 

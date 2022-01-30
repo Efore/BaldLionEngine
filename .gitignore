@@ -2,6 +2,7 @@
 .vs/
 bin-int/
 bin/
+BaldLionEditor/assets/gameAssets/
 
 # Files
 *.user

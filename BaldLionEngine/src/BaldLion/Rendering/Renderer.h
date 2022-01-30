@@ -68,9 +68,15 @@ namespace BaldLion
 
 			inline static RendererPlatformInterface::RendererPlatform GetAPI() { return RendererPlatformInterface::GetAPI(); }
 
-			static void AddStaticMeshToBatch(const ECS::ECSMeshComponent* staticMeshComponent, const ECS::ECSTransformComponent* staticMeshTransform);
+			static void ParallelAddStaticMeshToBatch(Material* material, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);
+			static void ParallelAddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
+			static void ParallelAddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
+
+			static void AddStaticMeshToBatch(Material* material, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);
 			static void AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
 			static void AddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
+
+			static void RegisterMaterial(Material* material);
 
 			static void DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 

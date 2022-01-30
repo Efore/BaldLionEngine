@@ -24,6 +24,8 @@ namespace BaldLion
 
 		void SceneManager::Update()
 		{
+			BL_PROFILE_FUNCTION();
+
 			if (m_mainScene != nullptr)
 			{
 				m_mainScene->Update();
