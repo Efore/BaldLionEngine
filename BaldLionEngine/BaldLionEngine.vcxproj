@@ -19,7 +19,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BaldLionEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -146,8 +146,11 @@
     <ClInclude Include="src\BaldLion.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationData.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationManager.h" />
+    <ClInclude Include="src\BaldLion\Animation\AnimationUtils.h" />
+    <ClInclude Include="src\BaldLion\Animation\AnimatorTransition.h" />
     <ClInclude Include="src\BaldLion\Animation\Animator.h" />
     <ClInclude Include="src\BaldLion\Animation\Joint.h" />
+    <ClInclude Include="src\BaldLion\Animation\Serialization\AnimatorSerializer.h" />
     <ClInclude Include="src\BaldLion\Animation\Skeleton.h" />
     <ClInclude Include="src\BaldLion\Core\Application.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\DynamicArray.h" />
@@ -607,7 +610,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp" />
+    <ClCompile Include="src\BaldLion\Animation\AnimatorTransition.cpp" />
     <ClCompile Include="src\BaldLion\Animation\Animator.cpp" />
+    <ClCompile Include="src\BaldLion\Animation\Serialization\AnimatorSerializer.cpp" />
     <ClCompile Include="src\BaldLion\Animation\Skeleton.cpp" />
     <ClCompile Include="src\BaldLion\Core\Application.cpp" />
     <ClCompile Include="src\BaldLion\Core\JobManagement\JobManager.cpp" />

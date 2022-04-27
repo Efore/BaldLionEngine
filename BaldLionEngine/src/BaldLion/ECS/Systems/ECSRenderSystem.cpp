@@ -53,7 +53,7 @@ namespace BaldLion {
 					DynamicArray<Vertex> transformedVertices(AllocationType::Linear_Frame, meshComponent->vertices.Size());
 					const glm::mat4 meshTransformMatrix = meshTransform->GetTransformMatrix();
 
-					for (ui32 i = 0; i < meshComponent->vertices.Size(); ++i)
+					BL_DYNAMICARRAY_FOR(i, meshComponent->vertices, 0)					
 					{
 						transformedVertices.EmplaceBack(meshComponent->vertices[i] * meshTransformMatrix);
 					}

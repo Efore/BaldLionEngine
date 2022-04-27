@@ -58,6 +58,8 @@
       <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="src\Panels\UtilsEditor.h" />
+    <ClInclude Include="src\Panels\ResourcesPanel.h" />
+    <ClInclude Include="src\Panels\AnimatorPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp">
@@ -84,5 +86,7 @@
     <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
       <Filter>vendor\ImGuizmo</Filter>
     </ClCompile>
+    <ClCompile Include="src\Panels\ResourcesPanel.cpp" />
+    <ClCompile Include="src\Panels\AnimatorPanel.cpp" />
   </ItemGroup>
 </Project>

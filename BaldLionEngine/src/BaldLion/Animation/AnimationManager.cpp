@@ -8,16 +8,19 @@
 
 #include "blpch.h"
 #include "AnimationManager.h"
-#include "BaldLion/Core/JobManagement/JobManager.h"
 #include "BaldLion/Utils/MathUtils.h"
+#include "BaldLion/ResourceManagement/ResourceManager.h"
+#include "Serialization/AnimatorSerializer.h"
+
 
 namespace BaldLion
 {
+	using namespace ResourceManagement;
+
 	namespace Animation
 	{
-	
-		HashTable<StringId, Animator*> AnimationManager::s_registeredAnimators;
-		std::mutex AnimationManager::s_animationManagerMutex;
+
+		HashTable<ui32, Animator*> AnimationManager::s_registeredAnimators;
 
 		bool AnimationManager::s_initialized = false;
 
@@ -26,7 +29,7 @@ namespace BaldLion
 			if (!s_initialized)
 			{
 				s_initialized = true;
-				s_registeredAnimators = HashTable<StringId, Animator*>(AllocationType::FreeList_Main, 10);
+				s_registeredAnimators = HashTable<ui32, Animator*>(AllocationType::FreeList_Main, 10);
 			}
 		}
 
@@ -36,55 +39,63 @@ namespace BaldLion
 			s_registeredAnimators.DeleteNoDestructor();
 		}
 
-		void AnimationManager::GenerateAnimator(const aiScene *scene, const std::string& animatorName, const HashTable<StringId, ui32>& jointMapping)
+		void AnimationManager::GenerateAnimator(const aiScene *scene, const std::string& animatorPath, const HashTable<StringId, ui32>& jointMapping)
 		{
 			if (scene->HasAnimations())
-			{
-				DynamicArray<AnimationData> animations(AllocationType::FreeList_Main, scene->mNumAnimations);
-
+			{				
 				glm::mat4 rootTransform = MathUtils::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
+
+				Animator* animator = nullptr;
+
+				if (!s_registeredAnimators.TryGet(BL_STRING_TO_STRINGID(animatorPath), animator)) 
+				{
+					animator = MemoryManager::New<Animator>(animatorPath.c_str(), AllocationType::FreeList_Resources, animatorPath);
+
+					ResourceManagement::ResourceManager::AddResource(animator);
+					RegisterAnimator(animator);
+				}
 
 				for (ui32 i = 0; i < scene->mNumAnimations; ++i)
 				{
-					AnimationData animationData(
+					std::string animationPath = scene->mAnimations[i]->mName.C_Str();
+					animationPath.append(ResourceManager::GetResourceSuffixFromType(ResourceType::Animation));
+
+					AnimationData* animationData = MemoryManager::New<AnimationData>(animationPath.c_str(), AllocationType::FreeList_Resources,
 						glm::inverse(rootTransform),
-						scene->mAnimations[i]->mName.data, 
-						DynamicArray<KeyFrame>(AllocationType::FreeList_Main, (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys),
+						animationPath,
+						(ui32)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys,
 						(float)(scene->mAnimations[i]->mDuration / scene->mAnimations[i]->mTicksPerSecond)
 					);
+					ResourceManagement::ResourceManager::AddResource(animationData);
 
 					const float timeStamp = (float)(1.0f / scene->mAnimations[i]->mTicksPerSecond);
 
-					for (size_t j = 0; j < (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys; ++j)
+					for (ui32 j = 0; j < (int)scene->mAnimations[i]->mChannels[0]->mNumPositionKeys; ++j)
 					{
-						KeyFrame keyFrame(DynamicArray<JointTransform>(AllocationType::FreeList_Main, glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.Size())), glm::min(timeStamp * j, animationData.AnimationLength));
+						KeyFrame keyFrame(DynamicArray<JointTransform>(Memory::MemoryManager::GetAllocatorType(animator), glm::max((int)scene->mAnimations[i]->mNumChannels, (int)jointMapping.Size())), glm::min(timeStamp * j, animationData->AnimationLength));
 						keyFrame.JointTranforms.Populate();
 
-						for (size_t k = 0; k < scene->mAnimations[i]->mNumChannels; ++k)
+						for (ui32 k = 0; k < scene->mAnimations[i]->mNumChannels; ++k)
 						{
-							const ui32 jointNodeIndex = jointMapping.Get(STRING_TO_STRINGID(scene->mAnimations[i]->mChannels[k]->mNodeName.data));
+							const ui32 jointNodeIndex = jointMapping.Get(BL_STRING_TO_STRINGID(scene->mAnimations[i]->mChannels[k]->mNodeName.data));
 							keyFrame.JointTranforms[jointNodeIndex] = JointTransform(
 								glm::vec3(scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mPositionKeys[j].mValue.z),
 								glm::quat(scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.w, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.x, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.y, scene->mAnimations[i]->mChannels[k]->mRotationKeys[j].mValue.z)
 							);
 						}
-
-						animationData.AnimationFrames.EmplaceBack(std::move(keyFrame));
+						animationData->AnimationFrames.EmplaceBack(std::move(keyFrame));
 					}
+					animator->AddAnimation(std::move(animationData));
+				}		
 
-					animations.EmplaceBack(std::move(animationData));
-				}				
-
-				if (!s_registeredAnimators.Contains(STRING_TO_STRINGID(animatorName))) {
-
-					Animator* animator = MemoryManager::New<Animator>("Animator", AllocationType::FreeList_Main, animations, STRING_TO_STRINGID(animatorName));		
-
-					RegisterAnimator(animator);
+				if (!ResourceManagement::ResourceManager::HasMetafile(animator))
+				{
+					SerializeAnimator(animator->GetResourceID());
 				}
 			}
 		}
 
-		BaldLion::Animation::Animator* AnimationManager::GetAnimator(const StringId animatorID)
+		BaldLion::Animation::Animator* AnimationManager::GetAnimator(const ui32 animatorID)
 		{
 			Animator* result = nullptr;
 
@@ -97,22 +108,35 @@ namespace BaldLion
 
 		void AnimationManager::RegisterAnimator(Animator* animator)
 		{
-			std::lock_guard<std::mutex> lockGuard(s_animationManagerMutex);
-
-			if (!s_registeredAnimators.Contains(animator->GetAnimatorID()))
+			if (!s_registeredAnimators.Contains(animator->GetResourceID()))
 			{
-				s_registeredAnimators.Emplace(animator->GetAnimatorID(), std::move(animator));
+				s_registeredAnimators.Emplace(animator->GetResourceID(), std::move(animator));
 			}
 		}
 
 		void AnimationManager::UnregisterAnimator(Animator* animator)
-		{			
-			std::lock_guard<std::mutex> lockGuard(s_animationManagerMutex);
-
-			if (!s_registeredAnimators.Contains(animator->GetAnimatorID()))
+		{	
+			if (!s_registeredAnimators.Contains(animator->GetResourceID()))
 			{				
-				s_registeredAnimators.Remove(animator->GetAnimatorID());
+				s_registeredAnimators.Remove(animator->GetResourceID());
 			}
 		}
+
+		void AnimationManager::SerializeAnimator(const ui32 animatorID)
+		{
+			Animator* animatorToSerialize = nullptr;
+
+			if (s_registeredAnimators.TryGet(animatorID, animatorToSerialize)) {
+
+				std::string animatorResourcePath = BL_STRINGID_TO_STRING(animatorToSerialize->GetResourcePath()) + ResourceManager::GetResourceSuffixFromType(ResourceType::Meta);
+				AnimatorSerializer::SerializeAnimator(animatorToSerialize, animatorResourcePath.c_str());
+			}
+		}
+
+		void AnimationManager::DeserializeAnimator(const char* animatorMetaFilePath)
+		{			
+			AnimatorSerializer::DeserializeAnimator(animatorMetaFilePath);			
+		}
+
 	}
 }

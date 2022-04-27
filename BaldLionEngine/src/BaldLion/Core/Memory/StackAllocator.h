@@ -29,6 +29,6 @@ namespace BaldLion
 
 			void* m_prev_position;
 			void* m_current_position;			
-		};
+		};	
 	}
 }

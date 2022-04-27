@@ -19,7 +19,7 @@ namespace BaldLion
 			K nodeKey;
 			V nodeValue;
 
-			HashTableNode() : nodeValue(V()) { }			
+			HashTableNode() = default;
 		};
 
 		struct Iterator
@@ -27,14 +27,14 @@ namespace BaldLion
 
 		public:
 
-			Iterator(){}
+			Iterator() = default;
 
 			Iterator(HashTable<K,V>* hashTable, ui32 tableIndex ) : m_tableToIterate(&(hashTable->m_table)), m_tableIndex(tableIndex){				
 			}
 
 			Iterator& operator++() {
 				
-				for (ui32 i = m_tableIndex + 1; i < m_tableToIterate->Size(); ++i)
+				BL_DYNAMICARRAY_FOR(i, (*m_tableToIterate), m_tableIndex + 1)
 				{					
 					if ((*m_tableToIterate)[i].used)
 					{
@@ -47,8 +47,8 @@ namespace BaldLion
 				return *this;
 			}
 
-			friend bool operator == (const Iterator& a, const Iterator& b) { return a.m_tableToIterate == b.m_tableToIterate && a.m_tableIndex == b.m_tableIndex; }
-			friend bool operator != (const Iterator& a, const Iterator& b) { return a.m_tableToIterate != b.m_tableToIterate || a.m_tableIndex != b.m_tableIndex; }
+			bool operator== (const Iterator& other) const { return m_tableToIterate == other.m_tableToIterate && m_tableIndex == other.m_tableIndex; }
+			bool operator!= (const Iterator& other) const { return m_tableToIterate != other.m_tableToIterate || m_tableIndex != other.m_tableIndex; }
 
 			Iterator& operator= (const Iterator& other)
 			{
@@ -76,7 +76,7 @@ namespace BaldLion
 
 		public:
 
-			HashTable();
+			HashTable() = default;
 			HashTable(Memory::AllocationType allocationType, ui32 capacity);
 
 			bool Contains(const K& key) const;			
@@ -88,6 +88,9 @@ namespace BaldLion
 
 			bool TryGet(const K& key, V& result);
 			bool TryGet(const K& key, V& result) const;
+
+			bool TryGet(const K& key, V* result);
+			bool TryGet(const K& key, V* result) const;
 
 			const V& Get(const K& key) const;
 			V& Get(const K& key);
@@ -125,17 +128,11 @@ namespace BaldLion
 			ui32 m_size = 0;
 
 			DynamicArray<HashTableNode<K,V>> m_table;
-			AllocationType m_allocationType;	
+			AllocationType m_allocationType = AllocationType::FreeList_Main;	
 
 			HashTable<K, V>::Iterator m_beginIterator;
 			HashTable<K, V>::Iterator m_endIterator;
 	};
-
-	template <typename K, typename V>
-	BaldLion::HashTable<K, V>::HashTable()
-	{
-
-	}
 
 	template <typename K, typename V>
 	BaldLion::HashTable<K, V>::HashTable(Memory::AllocationType allocationType, ui32 capacity) : m_size(0), m_capacity(capacity), m_allocationType(allocationType)
@@ -217,6 +214,40 @@ namespace BaldLion
 		if (tableIndex >= 0)
 		{
 			result = m_table[tableIndex].nodeValue;
+			return true;
+		}
+
+		return false;
+	}
+
+	template <typename K, typename V>
+	bool BaldLion::HashTable<K, V>::TryGet(const K& key, V* result)
+	{
+		BL_DEEP_PROFILE_FUNCTION();
+
+		const hashType hashedKey = std::hash<K>()(key);
+		const i32 tableIndex = FindIndex(hashedKey);
+
+		if (tableIndex >= 0)
+		{
+			result = &(m_table[tableIndex].nodeValue);
+			return true;
+		}
+
+		return false;
+	}
+
+	template <typename K, typename V>
+	bool BaldLion::HashTable<K, V>::TryGet(const K& key, V* result) const
+	{
+		BL_DEEP_PROFILE_FUNCTION();
+
+		const hashType hashedKey = std::hash<K>()(key);
+		const i32 tableIndex = FindIndex(hashedKey);
+
+		if (tableIndex >= 0)
+		{
+			result = dynamic_cast<V*>(const_cast<V*>(&(m_table[tableIndex].nodeValue)));
 			return true;
 		}
 
@@ -365,7 +396,7 @@ namespace BaldLion
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
-		for (ui32 i = 0; i < m_table.Size(); ++i)
+		BL_DYNAMICARRAY_FOR(i, m_table, 0)
 		{
 			m_table[i].used = false;
 		}
@@ -490,7 +521,7 @@ namespace BaldLion
 	template <typename K, typename V>
 	ui32 BaldLion::HashTable<K, V>::FindFirstElementIndex()
 	{
-		for (ui32 i = 0; i < m_table.Size(); ++i)
+		BL_DYNAMICARRAY_FOR(i, m_table, 0)
 		{
 			if (m_table[i].used)
 			{
@@ -500,4 +531,6 @@ namespace BaldLion
 
 		return m_capacity;
 	}
+
+	#define BL_HASHTABLE_FOR(tableToIterate, iteratorName) for(auto iteratorName = (tableToIterate).Begin(); iteratorName != (tableToIterate).End(); ++iteratorName)
 }

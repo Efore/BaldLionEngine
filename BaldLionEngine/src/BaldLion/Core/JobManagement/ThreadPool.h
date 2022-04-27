@@ -18,34 +18,34 @@ namespace BaldLion
 
 		struct Job
 		{
-			StringId JobID;
+			StringId JobName;
 			std::function<void()> Task;
-			StringId JobDependencyID;
-			StringId JobParentID;
+			StringId JobDependencyName;
+			StringId JobParentName;
 			ui32 ChildrenCount;
 
 			Job(){}
 
 			Job(const char* cName, StringId jobParentID = 0, ui32 childrenCount = 0)
 			{
-				JobParentID = jobParentID;
-				JobDependencyID = 0;
+				JobParentName = jobParentID;
+				JobDependencyName = 0;
 				ChildrenCount = childrenCount;
-				JobID = STRING_TO_STRINGID(cName);
+				JobName = BL_STRING_TO_STRINGID(cName);
 			}
 
-			Job(const Job& other) : JobID(other.JobID), Task(other.Task), JobDependencyID(other.JobDependencyID), JobParentID(other.JobParentID), ChildrenCount(other.ChildrenCount){}
+			Job(const Job& other) : JobName(other.JobName), Task(other.Task), JobDependencyName(other.JobDependencyName), JobParentName(other.JobParentName), ChildrenCount(other.ChildrenCount){}
 
 			Job& Job::operator=(Job&& other) noexcept
 			{
 				if (&other == this)
 					return *this;
 
-				JobID = other.JobID;
+				JobName = other.JobName;
 				Task = other.Task;
 				other.Task = nullptr;
-				JobDependencyID = other.JobDependencyID;
-				JobParentID = other.JobParentID;
+				JobDependencyName = other.JobDependencyName;
+				JobParentName = other.JobParentName;
 				ChildrenCount = other.ChildrenCount;
 
 				return *this;
@@ -56,10 +56,10 @@ namespace BaldLion
 				if (&other == this)
 					return *this;
 
-				JobID = other.JobID;
+				JobName = other.JobName;
 				Task = other.Task;
-				JobDependencyID = other.JobDependencyID;
-				JobParentID = other.JobParentID;
+				JobDependencyName = other.JobDependencyName;
+				JobParentName = other.JobParentName;
 				ChildrenCount = other.ChildrenCount;
 
 				return *this;

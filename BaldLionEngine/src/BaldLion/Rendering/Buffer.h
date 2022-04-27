@@ -18,7 +18,7 @@ namespace BaldLion
 			BufferElement() { }
 
 			BufferElement(ShaderDataType type, const char* name, bool normalized = false)
-				: Type(type), Name(STRING_TO_STRINGID(name)), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
+				: Type(type), Name(BL_STRING_TO_STRINGID(name)), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
 			{
 			}
 
@@ -76,7 +76,8 @@ namespace BaldLion
 			{
 				ui32 offset = 0;
 				m_stride = 0;
-				for (ui32 i = 0; i < m_elements.Size(); ++i)
+
+				BL_DYNAMICARRAY_FOR(i, m_elements, 0)				
 				{
 					m_elements[i].Offset = offset;
 					offset += m_elements[i].Size;

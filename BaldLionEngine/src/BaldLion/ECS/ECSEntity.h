@@ -10,13 +10,13 @@ namespace BaldLion {
 
 		public:
 			StringId GetEntityName() const { return m_entityName; }			
-			void SetEntityName(const char* name) { m_entityName = STRING_TO_STRINGID(name); }
+			void SetEntityName(const char* name) { m_entityName = BL_STRING_TO_STRINGID(name); }
 
 			ECSEntityID GetEntityID() const { return m_entityID; } 
 
 		private:
 
-			ECSEntity(const char* entityName, ECSEntityID entityID) : m_entityName(STRING_TO_STRINGID(entityName)), m_entityID(entityID) {}
+			ECSEntity(const char* entityName, ECSEntityID entityID) : m_entityName(BL_STRING_TO_STRINGID(entityName)), m_entityID(entityID) {}
 
 		private: 
 			StringId m_entityName;

@@ -5,6 +5,8 @@
 #include "Panels/EditorViewportPanel.h"
 #include "Panels/MemoryAllocationPanel.h"
 #include "Panels/RenderingDataPanel.h"
+#include "Panels/ResourcesPanel.h"
+#include "Panels/AnimatorPanel.h"
 
 namespace BaldLion
 {
@@ -44,6 +46,8 @@ namespace BaldLion
 			EditorViewportPanel m_editorViewportPanel;
 			RenderingDataPanel m_renderingDataPanel;
 			MemoryAllocationPanel m_memoryAllocationPanel;
+			ResourcesPanel m_resourcesPanel;
+			AnimatorPanel m_animatorPanel;
 
 			std::string m_currentScenePathFile;
 		};

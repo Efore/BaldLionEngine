@@ -21,18 +21,21 @@ namespace BaldLion
 			static void Init();
 			static void Stop();
 
-			static void GenerateAnimator(const aiScene *scene, const std::string& animatorName, const HashTable<StringId, ui32>& jointMapping);
-			static const HashTable<StringId, Animator*>& GetAnimators() { return s_registeredAnimators; }
+			static void GenerateAnimator(const aiScene *scene, const std::string& animatorPath, const HashTable<StringId, ui32>& jointMapping);
+			static const HashTable<ui32, Animator*>& GetAnimators() { return s_registeredAnimators; }
 
-			static Animator* GetAnimator(const StringId animatorID);
+			static Animator* GetAnimator(const ui32 animatorID);
 
 			static void RegisterAnimator(Animator* animator);
 			static void UnregisterAnimator(Animator* animator);
 
+			static void SerializeAnimator(const ui32 animatorID);
+			static void DeserializeAnimator(const char* animatorMetaFilePath);
+
+
 		private:			
 			static bool s_initialized;
-			static HashTable<StringId,Animator*> s_registeredAnimators;			
-			static std::mutex s_animationManagerMutex;
+			static HashTable<ui32,Animator*> s_registeredAnimators;
 		};
 	}
 }

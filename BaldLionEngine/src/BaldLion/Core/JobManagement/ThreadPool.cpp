@@ -78,17 +78,17 @@ namespace BaldLion {
 				}
 				else
 				{
-					const hashType hashedKey = std::hash<StringId>()(job.JobID);
+					const hashType hashedKey = std::hash<StringId>()(job.JobName);
 
 					//Adding JobID and its number off children to the active Job map
-					s_activeJobs.Emplace(job.JobID, std::move(job.ChildrenCount));
+					s_activeJobs.Emplace(job.JobName, std::move(job.ChildrenCount));
 					s_queueMutex.unlock();
 
 					//IF this job depends on another to start, wait until the other job is no longer active
-					if (job.JobDependencyID > 0)
+					if (job.JobDependencyName > 0)
 					{
 						std::unique_lock<std::mutex> dependencyLock(s_queueMutex);
-						const StringId jobDependencyID = job.JobDependencyID;
+						const StringId jobDependencyID = job.JobDependencyName;
 						s_cvDependencyFinished.wait(dependencyLock, [jobDependencyID] { return !s_activeJobs.Contains(jobDependencyID); });
 					}
 
@@ -98,7 +98,7 @@ namespace BaldLion {
 					if (job.ChildrenCount > 0)
 					{
 						std::unique_lock<std::mutex> checkChildrenLock(s_queueMutex);
-						s_cvChildrenFinished.wait(checkChildrenLock, [job] { return s_activeJobs.Get(job.JobID) == 0; });
+						s_cvChildrenFinished.wait(checkChildrenLock, [job] { return s_activeJobs.Get(job.JobName) == 0; });
 					}
 
 					//Closure of the job logic, making sure that only one thread closes its job at the same time
@@ -109,12 +109,12 @@ namespace BaldLion {
 					
 					bool jobQueueEmpty = s_jobQueue.IsEmpty();										
 					
-					s_activeJobs.Remove(job.JobID);
+					s_activeJobs.Remove(job.JobName);
 
 					//If this job has a parent, reduce its pending children in one
-					if (job.JobParentID > 0) {
-						ui32 children = s_activeJobs.Get(job.JobParentID) - 1;
-						s_activeJobs.Set(job.JobParentID, children);
+					if (job.JobParentName > 0) {
+						ui32 children = s_activeJobs.Get(job.JobParentName) - 1;
+						s_activeJobs.Set(job.JobParentName, children);
 					}
 
 					bool activeJobsEmpty = s_activeJobs.Size() == 0;

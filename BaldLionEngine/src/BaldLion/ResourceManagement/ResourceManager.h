@@ -26,10 +26,16 @@ namespace BaldLion
 			static void AddResource(Resource* resource);
 			static void LoadAssets();
 
+			static bool HasMetafile(const Resource* resource);			
+
+			static const char* GetResourceSuffixFromType(ResourceType type);
+
 		private:
 
 			static ResourceType GetResourceTypeFromPath(const std::string &path);
+			static void LoadMetaFile(const std::string &path);
 
+		private:
 			static HashMap<ui32, Resource*> s_resourceMap;
 			static std::mutex s_resourceManagerMutex;
 		};
@@ -45,7 +51,7 @@ namespace BaldLion
 
 			Resource* result = nullptr;
 
-			s_resourceMap.TryGet(STRING_TO_STRINGID(resourcePath.make_preferred().string()), result);
+			s_resourceMap.TryGet(BL_STRING_TO_STRINGID(resourcePath.make_preferred().string()), result);
 
 			return (T*)result;
 		}		
@@ -87,7 +93,7 @@ namespace BaldLion
 			{
 				Rendering::Material::MaterialProperties materialProperties
 				{
-					STRING_TO_STRINGID(path),
+					BL_STRING_TO_STRINGID(path),
 					glm::vec3(1.0f),
 					glm::vec3(1.0f),
 					glm::vec3(1.0f),

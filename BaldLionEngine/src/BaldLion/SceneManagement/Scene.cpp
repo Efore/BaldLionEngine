@@ -6,7 +6,7 @@ namespace BaldLion {
 
 	namespace SceneManagement {
 
-		Scene::Scene(const char* sceneName, ECS::ECSManager* ecsManager) : m_sceneName(STRING_TO_STRINGID(sceneName)), m_sceneID(STRING_TO_STRINGID(sceneName)), m_ecsManager(ecsManager)
+		Scene::Scene(const char* sceneName, ECS::ECSManager* ecsManager) : m_sceneName(BL_STRING_TO_STRINGID(sceneName)), m_sceneID(BL_STRING_TO_STRINGID(sceneName)), m_ecsManager(ecsManager)
 		{
 			
 		}

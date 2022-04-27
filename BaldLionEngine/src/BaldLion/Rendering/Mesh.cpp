@@ -11,7 +11,7 @@ namespace BaldLion
 	namespace Rendering
 	{
 		Mesh::Mesh(Material* material, const std::string& meshPath) :
-			ResourceManagement::Resource(STRING_TO_STRINGID(meshPath), StringUtils::GetFileNameFromPath(meshPath), ResourceManagement::ResourceType::Mesh),
+			ResourceManagement::Resource(BL_STRING_TO_STRINGID(meshPath), StringUtils::GetFileNameFromPath(meshPath), ResourceManagement::ResourceType::Mesh),
 			m_material(material), 
 			m_skeleton(nullptr)
 		{	
@@ -67,9 +67,9 @@ namespace BaldLion
 
 			if (m_skeleton != nullptr)
 			{
-				for (ui32 i = 0; i < m_skeleton->GetJoints().Size(); ++i)
+				BL_DYNAMICARRAY_FOR(i, m_skeleton->GetJoints(), 0)				
 				{
-					m_material->GetShader()->SetUniform(STRING_TO_STRINGID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &(m_skeleton->GetJoints()[i].jointAnimationTransform));
+					m_material->GetShader()->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &(m_skeleton->GetJoints()[i].jointAnimationTransform));
 				}
 			}
 
@@ -101,7 +101,7 @@ namespace BaldLion
 			glm::vec3 maxPointInLocalSpace = meshComponent->vertices[0].position;
 
 			{				
-				for (ui32 i = 0; i < meshComponent->vertices.Size(); ++i)
+				BL_DYNAMICARRAY_FOR(i, meshComponent->vertices, 0)				
 				{
 					const glm::vec3 vertexPosInWorldSpace = meshComponent->vertices[i].position;
 

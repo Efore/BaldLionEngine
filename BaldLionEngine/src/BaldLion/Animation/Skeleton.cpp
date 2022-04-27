@@ -8,7 +8,7 @@ namespace BaldLion {
 
 
 		Skeleton::Skeleton(const DynamicArray<Animation::Joint>& joints, const std::string& resourceName) : 
-			ResourceManagement::Resource(STRING_TO_STRINGID(resourceName), resourceName, ResourceManagement::ResourceType::Skeleton),
+			ResourceManagement::Resource(BL_STRING_TO_STRINGID(resourceName), resourceName, ResourceManagement::ResourceType::Skeleton),
 			m_joints(std::move(joints))
 		{
 

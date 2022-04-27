@@ -18,16 +18,15 @@ namespace BaldLion
 
 		void* StackAllocator::Allocate(size_t size, uint8_t alignment)
 		{
-			BL_ASSERT(size != 0 && alignment != 0, "Size and alignment must be bigger than 0");			
-
 			const std::lock_guard<std::mutex> lock(m_mutex);
+			BL_ASSERT(size != 0 && alignment != 0, "Size and alignment must be bigger than 0");	
 
 			uint8_t adjustment = AlignForwardAdjustmentWithHeader<AllocationHeader>(m_current_position, alignment);
 			size_t totalSize = adjustment + size;
 
 			if (m_used_memory + totalSize > m_size)
 			{
-				BL_LOG_CORE_ERROR("{0}: Not enough memory", STRINGID_TO_STR_C(m_allocatorName));
+				BL_LOG_CORE_ERROR("{0}: Not enough memory", BL_STRINGID_TO_STR_C(m_allocatorName));
 				return nullptr;
 			}
 
@@ -48,9 +47,8 @@ namespace BaldLion
 
 		void StackAllocator::Deallocate(void* p)
 		{
-			BL_ASSERT(p != nullptr, "p cannot be null");
-
 			const std::lock_guard<std::mutex> lock(m_mutex);
+			BL_ASSERT(p != nullptr, "p cannot be null");
 
 			AllocationHeader* header = (AllocationHeader*)(SubstractPointerOffset(p, sizeof(AllocationHeader)));
 			m_used_memory -= (uintptr_t)m_current_position - (uintptr_t)p + header->adjustment;
@@ -65,7 +63,6 @@ namespace BaldLion
 		void StackAllocator::Delete()
 		{
 			const std::lock_guard<std::mutex> lock(m_mutex);
-
 			Allocator::Delete();
 			m_current_position = m_start;
 		}

@@ -215,6 +215,8 @@ namespace BaldLion
 			m_entityPropertiesPanel.OnImGuiRender(); 
 			m_memoryAllocationPanel.OnImGuiRender();
 			m_renderingDataPanel.OnImGuiRender();
+			m_resourcesPanel.OnImGuiRender();
+			m_animatorPanel.OnImGuiRender();
 		}
 
 		void BaldLionEditorLayer::OnEvent(Event& e)

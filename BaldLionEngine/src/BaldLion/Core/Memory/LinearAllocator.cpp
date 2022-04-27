@@ -27,7 +27,7 @@ namespace BaldLion
 
 			if (m_used_memory + totalSize > m_size)
 			{
-				BL_LOG_CORE_ERROR("{0}: Not enough memory", STRINGID_TO_STR_C(m_allocatorName));
+				BL_LOG_CORE_ERROR("{0}: Not enough memory", BL_STRINGID_TO_STR_C(m_allocatorName));
 				return nullptr;
 			}
 

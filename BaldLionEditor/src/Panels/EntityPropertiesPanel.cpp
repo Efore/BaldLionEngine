@@ -34,9 +34,9 @@ namespace BaldLion {
 			if (m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityMap().TryGet(selectedEntityID, entity)) {
 
 				ImGui::SameLine();
-				ImGui::Text(STRINGID_TO_STR_C(entity->GetEntityName()));
+				ImGui::Text(BL_STRINGID_TO_STR_C(entity->GetEntityName()));
 
-				const char* names[] = { 
+				const char* componentTypeNames[] = { 
 										"Transform",
 										"ProjectionCamera",
 										"Mesh",
@@ -66,11 +66,11 @@ namespace BaldLion {
 
 					if (m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityComponents().TryGet(selectedEntityID, selectedEntityComponents)) 
 					{
-						for (int i = 0; i < IM_ARRAYSIZE(names); i++)
+						for (int i = 0; i < IM_ARRAYSIZE(componentTypeNames); i++)
 						{
 							if (selectedEntityComponents[i] == nullptr)
 							{
-								if (ImGui::Button(names[i]))
+								if (ImGui::Button(componentTypeNames[i]))
 								{
 									ECSComponentType chosenType = (ECSComponentType)i;
 
@@ -159,12 +159,12 @@ namespace BaldLion {
 
 					if (ImGui::BeginPopupModal(animatorPopup, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 					{
-						for (auto hashMapIterator = Animation::AnimationManager::GetAnimators().Begin(); hashMapIterator != Animation::AnimationManager::GetAnimators().End(); ++hashMapIterator)
+						BL_HASHTABLE_FOR(Animation::AnimationManager::GetAnimators(), hashMapIterator)
 						{
-							if (ImGui::Selectable(STRINGID_TO_STR_C(hashMapIterator.GetValue()->GetAnimatorID())))
+							if (ImGui::Selectable(BL_STRINGID_TO_STR_C(hashMapIterator.GetValue()->GetResourcePath())))
 							{
 								newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECS::ECSAnimationComponent>(ECSComponentType::Animation,
-									hashMapIterator.GetValue()->GetAnimatorID(),
+									hashMapIterator.GetValue()->GetResourceID(),
 									hashMapIterator.GetValue()->GetInitialAnimationID());
 							}
 							

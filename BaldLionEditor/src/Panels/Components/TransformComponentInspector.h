@@ -16,13 +16,13 @@ namespace BaldLion
 
 				ECS::ECSTransformComponent* componentTransform = (ECS::ECSTransformComponent*)component;
 
-				DrawVec3Handler("Position", componentTransform->position);
+				UtilsEditor::DrawVec3Handler("Position", componentTransform->position);
 
 				glm::vec3 rotation = glm::degrees(componentTransform->rotation);
-				DrawVec3Handler("Rotation", rotation);
+				UtilsEditor::DrawVec3Handler("Rotation", rotation);
 				componentTransform->rotation = glm::radians(glm::vec3(rotation.x, rotation.y, rotation.z));
 
-				DrawVec3Handler("Scale", componentTransform->scale, 1.0f);
+				UtilsEditor::DrawVec3Handler("Scale", componentTransform->scale, 1.0f);
 
 				ComponentInspector::EndComponentRender();
 			}

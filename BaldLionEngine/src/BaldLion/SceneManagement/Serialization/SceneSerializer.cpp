@@ -42,15 +42,12 @@ using namespace BaldLion::ECS;
 #define YAML_KEY_LIGHTDIRECTION		"LightDirection"
 
 //Animation
-#define YAML_KEY_ANIMATORID			"AnimatorID"
+#define YAML_KEY_ANIMATOR_PATH			"AnimatorID"
 
 //Hierarchy
 #define YAML_KEY_PARENTID			"ParentEntityID"
 #define YAML_KEY_CHILDENTITIES		"ChildEntities"
 #define YAML_KEY_CHILDENTITY		"ChildEntity"
-
-
-
 
 namespace BaldLion
 {
@@ -60,11 +57,11 @@ namespace BaldLion
 		{
 			YAML::Emitter out;
 			out << YAML::BeginMap;
-			out << YAML::Key << YAML_KEY_SCENEID << YAML::Value << STRINGID_TO_STR_C(scene->GetSceneID());
-			out << YAML::Key << YAML_KEY_SCENENAME << YAML::Value << STRINGID_TO_STR_C(scene->GetSceneName());
+			out << YAML::Key << YAML_KEY_SCENEID << YAML::Value << BL_STRINGID_TO_STR_C(scene->GetSceneID());
+			out << YAML::Key << YAML_KEY_SCENENAME << YAML::Value << BL_STRINGID_TO_STR_C(scene->GetSceneName());
 			out << YAML::Key << YAML_KEY_ENTITIES << YAML::Value << YAML::BeginSeq;
 
-			for (ui32 i = 0; i < scene->GetECSManager()->GetEntities().Size(); ++i) 
+			BL_DYNAMICARRAY_FOR(i, scene->GetECSManager()->GetEntities(), 0)			
 			{
 				SerializeEntity(scene, out, &scene->GetECSManager()->GetEntities()[i]);
 			}
@@ -72,8 +69,9 @@ namespace BaldLion
 			out << YAML::EndSeq;
 			out << YAML::EndMap;
 
-			std::ofstream fout(filepath);
+			std::ofstream fout(filepath);			
 			fout << out.c_str();
+			fout.close();
 		}
 
 		bool SceneSerializer::DeserializeScene(const char* filepath)
@@ -110,7 +108,7 @@ namespace BaldLion
 		void SceneSerializer::SerializeEntity(const Scene* scene, YAML::Emitter &out, const ECS::ECSEntity* entity)
 		{
 			out << YAML::BeginMap;
-			out << YAML::Key << YAML_KEY_ENTITYNAME << YAML::Value << STRINGID_TO_STR_C(entity->GetEntityName());
+			out << YAML::Key << YAML_KEY_ENTITYNAME << YAML::Value << BL_STRINGID_TO_STR_C(entity->GetEntityName());
 			out << YAML::Key << YAML_KEY_COMPONENTS << YAML::Value << YAML::BeginSeq;
 
 			ECS::ECSComponentLookUp entityComponentLookUp;
@@ -213,7 +211,7 @@ namespace BaldLion
 			case ECS::ECSComponentType::Animation:
 			{
 				ECSAnimationComponent* animationComponent = (ECSAnimationComponent*)component;
-				out << YAML::Key << YAML_KEY_ANIMATORID << YAML::Value << animationComponent->animatorID;
+				out << YAML::Key << YAML_KEY_ANIMATOR_PATH << YAML::Value << animationComponent->animatorID;
 			}
 				break;
 			case ECS::ECSComponentType::Hierarchy:
@@ -223,7 +221,7 @@ namespace BaldLion
 				out << YAML::Key << YAML_KEY_PARENTID << YAML::Value << hierarchyComponent->parentEntityID;
 				out << YAML::Key << YAML_KEY_CHILDENTITIES << YAML::Value << YAML::BeginSeq;
 
-				for (ui32 i = 0; i < hierarchyComponent->childEntitiesIDs.Size(); ++i)
+				BL_DYNAMICARRAY_FOR(i, hierarchyComponent->childEntitiesIDs, 0)				
 				{
 					out << YAML::Key << YAML_KEY_CHILDENTITY + std::to_string(i) << YAML::Value << hierarchyComponent->childEntitiesIDs[i];
 				}
@@ -284,7 +282,7 @@ namespace BaldLion
 				ui32 meshResourceID = yamlComponent[YAML_KEY_MESHRESOURCEID].as<ui32>();
 				bool isStatic = yamlComponent[YAML_KEY_MESHISSTATIC].as<bool>();
 
-				Mesh* mesh = ResourceManagement::ResourceManager::LoadResource<Mesh>(STRINGID_TO_STRING(meshResourceID));
+				Mesh* mesh = ResourceManagement::ResourceManager::LoadResource<Mesh>(BL_STRINGID_TO_STRING(meshResourceID));
 
 				ECSMeshComponent* meshComponent = nullptr;
 				ECSSkeletonComponent* skeletonComponent = nullptr;
@@ -296,7 +294,7 @@ namespace BaldLion
 			case BaldLion::ECS::ECSComponentType::Skeleton:
 			{
 				ui32 meshResourceID = yamlComponent[YAML_KEY_MESHRESOURCEID].as<ui32>();
-				Mesh* mesh = ResourceManagement::ResourceManager::LoadResource<Mesh>(STRINGID_TO_STRING(meshResourceID));
+				Mesh* mesh = ResourceManagement::ResourceManager::LoadResource<Mesh>(BL_STRINGID_TO_STRING(meshResourceID));
 				component = mesh->GenerateSkeletonComponent(SceneManager::GetECSManager());
 			}
 				break;
@@ -324,7 +322,7 @@ namespace BaldLion
 
 			case BaldLion::ECS::ECSComponentType::Animation:
 			{
-				StringId animatorID = yamlComponent[YAML_KEY_ANIMATORID].as<StringId>();
+				StringId animatorID = yamlComponent[YAML_KEY_ANIMATOR_PATH].as<StringId>();
 
 				StringId initAnimationID = Animation::AnimationManager::GetAnimator(animatorID)->GetInitialAnimationID();
 

@@ -23,13 +23,30 @@ namespace BaldLion {
 			
 			const Animator* entityAnimator = AnimationManager::GetAnimator(entityAnimation->animatorID);
 			const AnimationData* currentAnimation = entityAnimator->GetAnimation(entityAnimation->currentAnimationID);
+			 
+			entityAnimation->currentAnimationTime = glm::mod(entityAnimation->currentAnimationTime + entityAnimation->timer->GetDeltaTime(), currentAnimation->AnimationLength);
 
-			entityAnimation->currentAnimationProgress = glm::mod(entityAnimation->currentAnimationProgress + Time::GetDeltaTime(), currentAnimation->AnimationLength);
+			const AnimatorTransition* currentTransition = entityAnimator->CheckConditions(entityAnimation->currentAnimationID);
+
+			if (currentTransition != nullptr)
+			{
+				entityAnimation->currentTransitionTime += entityAnimation->timer->GetDeltaTime();
+
+				if (entityAnimation->currentTransitionTime >= currentTransition->GetTransitionTime())
+				{
+					entityAnimation->currentAnimationTime = entityAnimation->currentTransitionTime;
+					entityAnimation->currentTransitionTime = -1.0f;
+					entityAnimation->currentAnimationID = currentTransition->GetFinalAnimationID();					
+				}
+			}
+			else {
+				entityAnimation->currentTransitionTime = -1.0f;
+			}
 
 			DynamicArray<JointTransform> transforms;
-			CalculateInterpolatedTransforms(entityAnimation->currentAnimationProgress, currentAnimation, transforms);
+			entityAnimator->CalculateInterpolatedTransforms(entityAnimation->currentAnimationTime, entityAnimation->currentTransitionTime, currentAnimation, currentTransition, transforms);
 
-			for (ui32 i = 0; i < transforms.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, transforms, 0)			
 			{
 				const i32 parentID = entitySkeleton->joints[i].parentID;
 
@@ -39,35 +56,6 @@ namespace BaldLion {
 
 				entitySkeleton->joints[i].UpdateJointTransforms(currentAnimation->InverseRootTransform, parentTransform, animationTransform);
 			}
-		}
-
-		void ECSAnimationSystem::CalculateInterpolatedTransforms(float progress, const AnimationData* animation, DynamicArray<JointTransform>& result)
-		{
-			BL_PROFILE_FUNCTION();
-
-			int prevFrameIndex = 0;
-			int nextFrameIndex = 0;
-
-			for (ui32 i = 1; i < animation->AnimationFrames.Size(); ++i)
-			{
-				if (progress > animation->AnimationFrames[i].TimeStamp)
-					continue;
-
-				prevFrameIndex = i - 1;
-				nextFrameIndex = i;
-
-				break;
-			}
-
-			const float interpolant = (progress - animation->AnimationFrames[prevFrameIndex].TimeStamp) / (animation->AnimationFrames[nextFrameIndex].TimeStamp - animation->AnimationFrames[prevFrameIndex].TimeStamp);
-
-			result = DynamicArray<JointTransform>(AllocationType::Linear_Frame, animation->AnimationFrames[prevFrameIndex].JointTranforms);
-
-			for (ui32 i = 0; i < result.Size(); ++i)
-			{
-				result[i].SetPosition(glm::mix(animation->AnimationFrames[prevFrameIndex].JointTranforms[i].GetDecompressedPosition(), animation->AnimationFrames[nextFrameIndex].JointTranforms[i].GetDecompressedPosition(), interpolant));
-				result[i].SetRotation(glm::mix(animation->AnimationFrames[prevFrameIndex].JointTranforms[i].GetDecompressedRotation(), animation->AnimationFrames[nextFrameIndex].JointTranforms[i].GetDecompressedRotation(), interpolant));
-			}
-		}
+		}	
 	}
 }

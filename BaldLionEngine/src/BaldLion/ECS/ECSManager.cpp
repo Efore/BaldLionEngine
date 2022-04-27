@@ -54,7 +54,7 @@ namespace BaldLion {
 			m_entitySignatures.Delete();
 			m_entities.Delete();
 
-			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, m_systems, 0)			
 			{
 				MemoryManager::Delete(m_systems[i]);
 			}
@@ -90,7 +90,8 @@ namespace BaldLion {
 			m_entityComponents.Emplace(entityID, std::move(newComponentLookUp));				
 
 			ECSSignature signature = m_entitySignatures.Get(entityID);
-			for (ui32 i = 0; i < m_systems.Size(); ++i)
+
+			BL_DYNAMICARRAY_FOR(i, m_systems, 0)			
 			{
 				m_systems[i]->OnEntityModified(signature);
 			}
@@ -110,7 +111,8 @@ namespace BaldLion {
 			m_entityComponents.Get(entityID).Set(componentType, component);
 
 			ECSSignature signature = m_entitySignatures.Get(entityID);
-			for (ui32 i = 0; i < m_systems.Size(); ++i)
+
+			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
 			{
 				m_systems[i]->OnEntityModified(signature);
 			}
@@ -123,7 +125,7 @@ namespace BaldLion {
 
 		void ECSManager::StartSystems()
 		{
-			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
 			{
 				m_systems[i]->OnStart();
 			}
@@ -131,7 +133,7 @@ namespace BaldLion {
 
 		void ECSManager::FrameStart()
 		{
-			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
 			{
 				m_systems[i]->OnFrameStart();
 			}
@@ -139,7 +141,7 @@ namespace BaldLion {
 
 		void ECSManager::UpdateSystems()
 		{
-			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
 			{
 				m_systems[i]->OnUpdate();
 			}
@@ -147,7 +149,7 @@ namespace BaldLion {
 
 		void ECSManager::FrameEnd()
 		{
-			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
 			{
 				m_systems[i]->OnFrameEnd();
 			}
@@ -155,7 +157,7 @@ namespace BaldLion {
 
 		void ECSManager::StopSystems()
 		{
-			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
 			{
 				m_systems[i]->OnStop();
 			}
@@ -164,12 +166,12 @@ namespace BaldLion {
 		void ECSManager::RemoveEntity(ECSEntityID entityID)
 		{
 			ECSSignature oldSignature = m_entitySignatures.Get(entityID);
-			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
 			{
 				m_systems[i]->OnEntityModified(oldSignature);
 			}
 
-			for (ui32 i = 0; i < m_entities.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, m_entities, 0)
 			{				
 				if (m_entities[i].GetEntityID() == entityID) {
 					m_entities.RemoveAt(i);
@@ -212,7 +214,7 @@ namespace BaldLion {
 
 			m_entityComponents.Get(entityID).Set(componentType, nullptr);
 			
-			for (ui32 i = 0; i < m_systems.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
 			{
 				m_systems[i]->OnEntityModified(oldSignature);
 			}

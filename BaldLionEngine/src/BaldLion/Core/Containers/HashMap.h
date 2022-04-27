@@ -30,7 +30,7 @@ namespace BaldLion
 
 		public:
 
-			Iterator(){}
+			Iterator() = default;
 
 			Iterator(HashMap<K,V>* hashTable, ui32 tableIndex, HashMapNode<K, V>* currentNode) : m_tableToIterate(&(hashTable->m_table)), m_tableIndex(tableIndex), m_currentNode(currentNode) {}
 
@@ -62,9 +62,9 @@ namespace BaldLion
 				return *this;
 			}
 
-			friend bool operator == (const Iterator& a, const Iterator& b) { return a.m_tableToIterate == b.m_tableToIterate && a.m_tableIndex == b.m_tableIndex && a.m_currentNode == b.m_currentNode; }
-			friend bool operator != (const Iterator& a, const Iterator& b) { 
-				return a.m_tableToIterate != b.m_tableToIterate || a.m_tableIndex != b.m_tableIndex || a.m_currentNode != b.m_currentNode; 
+			bool operator== (const Iterator& other) const { return m_tableToIterate == other.m_tableToIterate && m_tableIndex == other.m_tableIndex && m_currentNode == other.m_currentNode; }
+			bool operator!= (const Iterator& other) const {
+				return m_tableToIterate != other.m_tableToIterate || m_tableIndex != other.m_tableIndex || m_currentNode != other.m_currentNode;
 			}
 
 			Iterator& operator= (const Iterator& other)
@@ -94,7 +94,7 @@ namespace BaldLion
 
 		public:
 
-			HashMap();
+			HashMap() = default;
 			HashMap(Memory::AllocationType allocationType, ui32 capacity);
 
 			bool Contains(const K& key) const;			
@@ -147,14 +147,8 @@ namespace BaldLion
 			ui32 m_size = 0;
 
 			DynamicArray<HashMapNode<K,V>*> m_table;
-			AllocationType m_allocationType;	
+			AllocationType m_allocationType = AllocationType::FreeList_Main;	
 	};
-
-	template <typename K, typename V>
-	BaldLion::HashMap<K, V>::HashMap()
-	{
-
-	}
 
 	template <typename K, typename V>
 	BaldLion::HashMap<K, V>::HashMap(Memory::AllocationType allocationType, ui32 capacity) : m_size(0), m_capacity(capacity), m_allocationType(allocationType)
@@ -412,7 +406,7 @@ namespace BaldLion
 	template <typename K, typename V>
 	void BaldLion::HashMap<K, V>::DeleteNoDestructor()
 	{
-		for (ui32 i = 0; i < m_table.Size(); ++i)
+		BL_DYNAMICARRAY_FOR(i, m_table, 0)		
 		{
 			HashMapNode<K, V>* nodeIterator = m_table[i];
 
@@ -434,7 +428,7 @@ namespace BaldLion
 	template <typename K, typename V>
 	void BaldLion::HashMap<K, V>::Delete()
 	{
-		for (ui32 i = 0; i < m_table.Size(); ++i)
+		BL_DYNAMICARRAY_FOR(i, m_table, 0)		
 		{
 			HashMapNode<K, V>* nodeIterator = m_table[i];
 
@@ -573,7 +567,7 @@ namespace BaldLion
 	template <typename K, typename V>
 	ui32 BaldLion::HashMap<K, V>::FindFirstElementIndex()
 	{
-		for (ui32 i = 0; i < m_table.Size(); ++i)
+		BL_DYNAMICARRAY_FOR(i, m_table, 0)		
 		{
 			if (m_table[i] != nullptr)
 			{
@@ -589,7 +583,7 @@ namespace BaldLion
 	void BaldLion::HashMap<K, V>::Print()
 	{
 		BL_LOG_CORE_INFO("\nHashMap");
-		for (ui32 i = 0; i < m_table.Size(); ++i)
+		BL_DYNAMICARRAY_FOR(i, m_table, 0)
 		{
 			if (m_table[i] == nullptr) {
 				BL_LOG_CORE_INFO("Null");
@@ -607,4 +601,6 @@ namespace BaldLion
 			}
 		}
 	}
+
+	#define BL_HASHMAP_FOR(mapToIterate, iteratorName) for(auto iteratorName = (mapToIterate).Begin(); iteratorName != (mapToIterate).End(); ++iteratorName)
 }

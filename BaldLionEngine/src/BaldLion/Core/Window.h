@@ -16,7 +16,7 @@ namespace BaldLion
 		WindowProps(const std::string& title = "",
 			ui32 width = 1366,
 			ui32 height = 768)
-			: Title(STRING_TO_STRINGID(title)), Width(width), Height(height)
+			: Title(BL_STRING_TO_STRINGID(title)), Width(width), Height(height)
 		{
 
 		}

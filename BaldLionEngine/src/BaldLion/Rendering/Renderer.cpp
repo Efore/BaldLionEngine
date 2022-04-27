@@ -140,7 +140,7 @@ namespace BaldLion
 		void Renderer::EndScene()
 		{
 			BL_PROFILE_FUNCTION();
-			for (ui32 i = 0; i < s_disposableVertexArrays.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, s_disposableVertexArrays, 0)			
 			{
 				VertexArray::Destroy(s_disposableVertexArrays[i]);
 			}
@@ -150,7 +150,7 @@ namespace BaldLion
 			s_dynamicMeshes.Clear();
 			s_shadowCastingMeshes.Clear();			
 
-			for (auto it = s_geometryToBatch.Begin(); it != s_geometryToBatch.End(); ++it)
+			BL_HASHTABLE_FOR(s_geometryToBatch, it)
 			{
 				it.GetValue()->ClearGeometryData();
 			}
@@ -213,7 +213,7 @@ namespace BaldLion
 			s_rendererPlatformInterface->SetClearColor(glm::vec4(1.0f));
 			s_rendererPlatformInterface->SetFaceCulling(RendererPlatformInterface::FaceCulling::Front);
 
-			for (ui32 i = 0; i < s_shadowCastingMeshes.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, s_shadowCastingMeshes, 0)			
 			{
 				VertexArray* vertexArray = VertexArray::Create();
 
@@ -249,9 +249,9 @@ namespace BaldLion
 
 					const DynamicArray<Animation::Joint>* joints = &(s_shadowCastingMeshes[i].skeletonComponent->joints);
 					
-					for (ui32 j = 0; j < joints->Size(); ++j)
+					BL_DYNAMICARRAY_FOR(j, (*joints), 0)
 					{
-						s_depthMapSkinnedShader->SetUniform(STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &((*joints)[j].jointAnimationTransform));
+						s_depthMapSkinnedShader->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &((*joints)[j].jointAnimationTransform));
 					}
 
 					s_rendererPlatformInterface->DrawVertexArray(vertexArray);
@@ -280,7 +280,7 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			for (ui32 i = 0; i < s_dynamicMeshes.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, s_dynamicMeshes, 0)			
 			{
 				VertexArray* vertexArray = VertexArray::Create();
 
@@ -317,9 +317,9 @@ namespace BaldLion
 
 					const DynamicArray<Animation::Joint>* joints = &(s_dynamicMeshes[i].skeletonComponent->joints);
 
-					for (ui32 j = 0; j < joints->Size(); ++j)
+					BL_DYNAMICARRAY_FOR(j, (*joints), 0)
 					{
-						s_dynamicMeshes[i].meshComponent->material->GetShader()->SetUniform(STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &((*joints)[j].jointAnimationTransform));
+						s_dynamicMeshes[i].meshComponent->material->GetShader()->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &((*joints)[j].jointAnimationTransform));
 					}
 				}					
 				
@@ -338,7 +338,7 @@ namespace BaldLion
 			if (s_geometryToBatch.Size() > 0)
 			{
 				//Draw batches
-				for (HashTable<Material*, GeometryData*>::Iterator iterator = s_geometryToBatch.Begin(); iterator != s_geometryToBatch.End(); ++iterator)
+				BL_HASHTABLE_FOR(s_geometryToBatch, iterator)
 				{
 					if(iterator.GetValue()->vertices.Size() == 0)
 						continue;
@@ -374,7 +374,7 @@ namespace BaldLion
 		{
 			s_debugDrawRender->SetMvpMatrix(s_sceneData.viewProjectionMatrix);
 
-			for (ui32 i = 0; i < s_scheduledDebugDrawCommands.Size(); ++i) 
+			BL_DYNAMICARRAY_FOR(i, s_scheduledDebugDrawCommands, 0)			
 			{
 				s_scheduledDebugDrawCommands[i]();
 			}

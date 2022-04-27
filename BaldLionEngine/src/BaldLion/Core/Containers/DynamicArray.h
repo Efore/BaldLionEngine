@@ -9,7 +9,8 @@ namespace BaldLion
 	class DynamicArray
 	{
 	public:		
-		DynamicArray() : m_elements(nullptr) {};
+		DynamicArray() = default;
+
 		DynamicArray(Memory::AllocationType allocationType, ui32 capacity);
 		DynamicArray(Memory::AllocationType allocationType, const DynamicArray<T>& other);
 		DynamicArray(const DynamicArray<T>& other);
@@ -82,10 +83,10 @@ namespace BaldLion
 	private:
 
 		T* m_elements = nullptr;
-		AllocationType m_allocationType;
-
 		ui32 m_size = 0;
 		ui32 m_capacity = 0;
+
+		AllocationType m_allocationType;
 	};	
 
 
@@ -101,7 +102,10 @@ namespace BaldLion
 		: m_allocationType(allocationType), m_size(other.Size())
 	{
 		Reserve(other.m_capacity);
-		memcpy(m_elements, other.m_elements, m_size * sizeof(T));
+		if (m_capacity > 0)
+		{
+			memcpy(m_elements, other.m_elements, m_size * sizeof(T));
+		}
 	}
 
 	template <typename T>
@@ -109,7 +113,10 @@ namespace BaldLion
 		: m_allocationType(other.m_allocationType), m_size(other.Size())
 	{
 		Reserve(other.m_capacity);
-		memcpy(m_elements, other.m_elements, m_size * sizeof(T));
+		if (m_capacity > 0)
+		{
+			memcpy(m_elements, other.m_elements, m_size * sizeof(T));
+		}
 	}
 
 	template <typename T>
@@ -126,17 +133,25 @@ namespace BaldLion
 	template <typename T>
 	DynamicArray<T>& BaldLion::DynamicArray<T>::operator=(const DynamicArray<T>& other)
 	{
-		if (&other == this || other.m_elements == nullptr)			
+		if (&other == this)			
 			return *this;
 
-		//Clear();
+		Delete();
 		
 		m_allocationType = other.m_allocationType;
 		m_size = other.m_size;
 
 		Reserve(other.Capacity());
 
-		memcpy(m_elements, other.m_elements, m_size * sizeof(T));
+		if (other.m_elements != nullptr)
+		{
+			memcpy(m_elements, other.m_elements, m_size * sizeof(T));			
+		}
+		else 
+		{
+			m_elements = nullptr;
+		}
+
 		
 		return *this;
 	}
@@ -144,10 +159,10 @@ namespace BaldLion
 	template <typename T>
 	DynamicArray<T>& BaldLion::DynamicArray<T>::operator=(DynamicArray<T>&& other) noexcept
 	{
-		if (&other == this || other.m_elements == nullptr)
+		if (&other == this)
 			return *this;	
 
-		//Clear();
+		Delete();
 
 		m_allocationType = other.m_allocationType;
 		m_size = other.m_size;
@@ -164,7 +179,10 @@ namespace BaldLion
 	template <typename T>
 	BaldLion::DynamicArray<T>::~DynamicArray()
 	{
-
+		//if (m_elements != nullptr)
+		//{
+		//	DeleteNoDestructor();
+		//}
 	}
 
 	template <typename T>
@@ -198,7 +216,7 @@ namespace BaldLion
 
 		m_size = 0;
 		m_capacity = 0;
-		MemoryManager::DeleteNoDestructor(m_elements, true);
+		MemoryManager::DeleteNoDestructor(m_elements);
 		m_elements = nullptr;
 	}
 
@@ -463,7 +481,8 @@ namespace BaldLion
 
 		for (ui32 i = 0; i < m_size; ++i)
 		{
-			m_elements[i] = T();
+			T defaultValue;
+			memcpy(&(m_elements[i]), (T*)(&defaultValue), sizeof(T));
 		}
 	}
 
@@ -493,13 +512,25 @@ namespace BaldLion
 	void BaldLion::DynamicArray<T>::Reserve(ui32 capacity)
 	{
 		m_capacity = capacity;
-		m_elements = MemoryManager::NewArray<T>("Dynamic array", m_allocationType, capacity);
+		if (capacity > 0)
+		{
+			m_elements = MemoryManager::NewArray<T>("Dynamic array", m_allocationType, capacity);
+		}
 	}
 
 	template <typename T>
 	void BaldLion::DynamicArray<T>::Reallocate(ui32 newCapacity)
 	{	
 		BL_DEEP_PROFILE_FUNCTION();
+
+		if (newCapacity == 0)
+		{
+			m_elements = nullptr;
+			m_capacity = 0;
+			m_size = 0;
+
+			return;
+		}
 
 		T* newLocation = MemoryManager::NewArray<T>("Dynamic array", m_allocationType, newCapacity);
 
@@ -513,4 +544,10 @@ namespace BaldLion
 		m_capacity = newCapacity;
 		m_size = newSize;
 	}
+
+	#define BL_DYNAMICARRAY_FOR(iteratorName, dynamicArrayToIterate, startValue) \
+		for(ui32 iteratorName = startValue, size = (dynamicArrayToIterate).Size(); iteratorName < size; ++iteratorName)
+
+	#define BL_DYNAMICARRAY_FOR_RANGE(iteratorName, dynamicArrayToIterate, startValue, endValue) \
+		for(ui32 it = startValue, size = (dynamicArrayToIterate).Size(); iteratorName < size && iteratorName < endValue; ++iteratorName)
 }

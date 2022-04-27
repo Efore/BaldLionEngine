@@ -21,8 +21,8 @@ namespace BaldLion
 		void JobManager::QueueJob(Job& job)
 		{
 			s_currentJobToWaitForMutex.lock();
-			if (s_currentJobToWaitFor > 0 && s_currentJobToWaitFor != job.JobParentID)
-				job.JobDependencyID = s_currentJobToWaitFor;
+			if (s_currentJobToWaitFor > 0 && s_currentJobToWaitFor != job.JobParentName)
+				job.JobDependencyName = s_currentJobToWaitFor;
 			s_currentJobToWaitForMutex.unlock();
 
 			ThreadPool::QueueJob(job);

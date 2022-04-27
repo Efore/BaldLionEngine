@@ -82,7 +82,7 @@ namespace BaldLion
 
 		void SceneManager::AddScene(const char* sceneID, ECS::ECSManager* ecsManager, bool openAdditive, bool setAsMainScene)
 		{
-			StringId sceneid = STRING_TO_STRINGID(sceneID);
+			StringId sceneid = BL_STRING_TO_STRINGID(sceneID);
 
 			Scene* newScene = MemoryManager::New<Scene>(sceneID, AllocationType::FreeList_Main, sceneID, ecsManager);
 			newScene->Init();

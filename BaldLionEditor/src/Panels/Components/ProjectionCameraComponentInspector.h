@@ -17,12 +17,12 @@ namespace BaldLion
 
 				ComponentInspector::BeginComponentRender("Projection Camera Component", component->GetComponentType(), sceneHierarchyPanel, (GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f) * 9.0f);
 
-				ImGui::InputFloat("Near Plane Z", (float*)&projectionCameraComponent->nearPlane);
-				ImGui::InputFloat("Far Plane Z", (float*)&projectionCameraComponent->farPlane);
-				ImGui::InputFloat("Width", (float*)&projectionCameraComponent->width);
-				ImGui::InputFloat("Height", (float*)&projectionCameraComponent->height);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Near Plane Z", (float*)&projectionCameraComponent->nearPlane);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Far Plane Z", (float*)&projectionCameraComponent->farPlane);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Width", (float*)&projectionCameraComponent->width);
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Height", (float*)&projectionCameraComponent->height);
 
-				ImGui::DragFloat("Field of View", (float*)&projectionCameraComponent->fov, 1.0f, 20.0f, 180.0f);
+				IMGUI_LEFT_LABEL(ImGui::DragFloat, "Field of View", (float*)&projectionCameraComponent->fov, 1.0f, 20.0f, 180.0f);
 
 				ComponentInspector::EndComponentRender();
 			}

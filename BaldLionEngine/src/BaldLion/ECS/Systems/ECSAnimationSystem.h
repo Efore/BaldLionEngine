@@ -18,9 +18,7 @@ namespace BaldLion {
 			virtual void OnStart() override {}
 			virtual void UpdateOperation(ECSComponentLookUp* componentLookUp) override;
 			virtual void OnStop() override {}
-
-		private:
-			void CalculateInterpolatedTransforms(float progress, const AnimationData* animation, DynamicArray<JointTransform>& result);
+	
 		};
 
 	}

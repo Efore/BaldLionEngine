@@ -21,9 +21,9 @@ namespace BaldLion
 
 		void* FreeListAllocator::Allocate(size_t size, uint8_t alignment)
 		{
-			BL_ASSERT(size != 0 && alignment != 0, "Size and alignment must be bigger than 0");
-
 			const std::lock_guard<std::mutex> lock(m_mutex);
+
+			BL_ASSERT(size != 0 && alignment != 0, "Size and alignment must be bigger than 0");
 
 			AllocationBlock* bestFitBlock = nullptr;
 			AllocationBlock* bestFitPrevBlock = nullptr;
@@ -65,7 +65,7 @@ namespace BaldLion
 
 			if (bestFitBlock == nullptr)
 			{
-				BL_LOG_CORE_ERROR("{0}: Not enough memory", STRINGID_TO_STR_C(m_allocatorName));
+				BL_LOG_CORE_ERROR("{0}: Not enough memory", BL_STRINGID_TO_STR_C(m_allocatorName));
 				return nullptr;
 			}
 
@@ -116,9 +116,9 @@ namespace BaldLion
 
 		void FreeListAllocator::Deallocate(void* p)
 		{
-			BL_ASSERT(p != nullptr, "p cannot be null");
-
 			const std::lock_guard<std::mutex> lock(m_mutex);
+
+			BL_ASSERT(p != nullptr, "p cannot be null");
 
 			//Getting the header of the element to deallocate
 			AllocationHeader* header = (AllocationHeader*)SubstractPointerOffset(p, sizeof(AllocationHeader));

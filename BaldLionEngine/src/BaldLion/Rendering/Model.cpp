@@ -16,15 +16,15 @@ namespace BaldLion
 	namespace Rendering
 	{
 		Model::Model(const std::string& filePath) : 
-			ResourceManagement::Resource(STRING_TO_STRINGID(filePath), StringUtils::GetFileNameFromPath(filePath), ResourceManagement::ResourceType::Model)
+			ResourceManagement::Resource(BL_STRING_TO_STRINGID(filePath), StringUtils::GetFileNameFromPath(filePath), ResourceManagement::ResourceType::Model)
 		{
 			BL_PROFILE_FUNCTION(); 
 
 			// Extracting folder path from filePath
 
-			m_modelPath = STRING_TO_STRINGID(filePath);
+			m_modelPath = BL_STRING_TO_STRINGID(filePath);
 			auto lastSlash = filePath.find_last_of("/\\");		
-			m_modelFolderPath = STRING_TO_STRINGID(filePath.substr(0, lastSlash + 1));
+			m_modelFolderPath = BL_STRING_TO_STRINGID(filePath.substr(0, lastSlash + 1));
 			m_subMeshes = DynamicArray<Mesh*>(AllocationType::FreeList_Renderer, 5);
 			m_importFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes;
 			
@@ -41,7 +41,7 @@ namespace BaldLion
 
 			Assimp::Importer import;			
 
-			const aiScene *scene = import.ReadFile(STRINGID_TO_STR_C(m_modelPath), m_importFlags);
+			const aiScene *scene = import.ReadFile(BL_STRINGID_TO_STR_C(m_modelPath), m_importFlags);
 
 			if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 			{
@@ -55,7 +55,7 @@ namespace BaldLion
 		void Model::Draw() const
 		{
 			BL_PROFILE_FUNCTION();
-			for (ui32 i = 0; i < m_subMeshes.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, m_subMeshes, 0)			
 			{
 				m_subMeshes[i]->Draw();
 			}
@@ -157,7 +157,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &relativeTexPath);
-				completeTexPath = STRINGID_TO_STR_C(modelFolderPath);
+				completeTexPath = BL_STRINGID_TO_STR_C(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -180,7 +180,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &relativeTexPath);
-				completeTexPath = STRINGID_TO_STR_C(modelFolderPath);
+				completeTexPath = BL_STRINGID_TO_STR_C(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -203,7 +203,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &relativeTexPath);
-				completeTexPath = STRINGID_TO_STR_C(modelFolderPath);
+				completeTexPath = BL_STRINGID_TO_STR_C(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -227,7 +227,7 @@ namespace BaldLion
 			{
 				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &relativeTexPath);
 				
-				completeTexPath = STRINGID_TO_STR_C(modelFolderPath);
+				completeTexPath = BL_STRINGID_TO_STR_C(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -250,7 +250,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &relativeTexPath);
-				completeTexPath = STRINGID_TO_STR_C(modelFolderPath);
+				completeTexPath = BL_STRINGID_TO_STR_C(modelFolderPath);
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -275,8 +275,8 @@ namespace BaldLion
 		{
 			for (ui32 i = 0; i < aimesh->mNumBones; ++i)
 			{
-				jointMapping.Emplace(STRING_TO_STRINGID(aimesh->mBones[i]->mName.data), std::move(i));
-				jointOffsetMapping.Emplace(STRING_TO_STRINGID(aimesh->mBones[i]->mName.data), MathUtils::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
+				jointMapping.Emplace(BL_STRING_TO_STRINGID(aimesh->mBones[i]->mName.data), std::move(i));
+				jointOffsetMapping.Emplace(BL_STRING_TO_STRINGID(aimesh->mBones[i]->mName.data), MathUtils::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
 			}
 		}
 
@@ -287,7 +287,7 @@ namespace BaldLion
 			const int32_t parentID,
 			const aiNode* node)
 		{
-			const StringId jointName = STRING_TO_STRINGID(node->mName.data);
+			const StringId jointName = BL_STRING_TO_STRINGID(node->mName.data);
 
 
 			if (jointMapping.Contains(jointName))
@@ -327,7 +327,7 @@ namespace BaldLion
 				{
 					ui32 vertexID = aimesh->mBones[i]->mWeights[j].mVertexId;
 
-					const StringId jointName = STRING_TO_STRINGID(aimesh->mBones[i]->mName.data);
+					const StringId jointName = BL_STRING_TO_STRINGID(aimesh->mBones[i]->mName.data);
 
 					switch (jointsAssigned[vertexID])
 					{
@@ -378,7 +378,7 @@ namespace BaldLion
 
 			Material::MaterialProperties materialProperties
 			{
-				aimesh->HasBones() ? STRING_TO_STRINGID("assets/gameAssets/shaders/SkinnedLit.glsl") : STRING_TO_STRINGID("assets/gameAssets/shaders/BaseLit.glsl"),
+				aimesh->HasBones() ? BL_STRING_TO_STRINGID("assets/gameAssets/shaders/SkinnedLit.glsl") : BL_STRING_TO_STRINGID("assets/gameAssets/shaders/BaseLit.glsl"),
 				glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 				glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
 				glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),
@@ -395,7 +395,7 @@ namespace BaldLion
 				(ui8)Material::ShadowsSettingsBitMask::CastShadows
 			};
 						
-			const std::string matName = STRINGID_TO_STRING(modelFolderPath) + (aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data) + (".mat");
+			const std::string matName = BL_STRINGID_TO_STRING(modelFolderPath) + (aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data) + ResourceManager::GetResourceSuffixFromType(ResourceType::Material);
 
 			Material* meshMaterial = ResourceManagement::ResourceManager::LoadResource<Material>(matName);
 
@@ -409,7 +409,7 @@ namespace BaldLion
 			
 			meshMaterial->AssignShader();
 			
-			const std::string meshName = STRINGID_TO_STRING(modelFolderPath) + (aimesh->mName.C_Str()) + ".mesh";
+			const std::string meshName = BL_STRINGID_TO_STRING(modelFolderPath) + (aimesh->mName.C_Str()) + ResourceManager::GetResourceSuffixFromType(ResourceType::Mesh);
 
 			Mesh* mesh = ResourceManagement::ResourceManager::LoadResource<Mesh>(meshName);
 				
@@ -437,7 +437,7 @@ namespace BaldLion
 
 				FillVertexWeightData(aimesh, jointMapping, verticesBoneData);
 
-				const std::string skeletonName = STRINGID_TO_STRING(modelFolderPath) + (aimesh->mName.C_Str()) + (".skeleton");
+				const std::string skeletonName = BL_STRINGID_TO_STRING(modelFolderPath) + (aimesh->mName.C_Str()) + +ResourceManager::GetResourceSuffixFromType(ResourceType::Skeleton);
 
 				Animation::Skeleton* skeleton = ResourceManagement::ResourceManager::LoadResource<Animation::Skeleton>(skeletonName);
 					
@@ -450,7 +450,7 @@ namespace BaldLion
 				mesh->SetSkeleton(skeleton);
 				mesh->SetVertexBones(verticesBoneData);
 
-				const std::string animatorName = STRINGID_TO_STRING(modelFolderPath) + ("Animator.anim");
+				const std::string animatorName = BL_STRINGID_TO_STRING(modelFolderPath) + aimesh->mName.C_Str() + ResourceManager::GetResourceSuffixFromType(ResourceType::Animator);
 				Animation::AnimationManager::GenerateAnimator(aiscene, animatorName, jointMapping);
 			}
 
@@ -461,7 +461,7 @@ namespace BaldLion
 
 		void Model::GenerateEntities(ECS::ECSManager* ecsManager, bool isStatic) const
 		{
-			ECS::ECSEntityID rootEntityID = ecsManager->AddEntity(STRINGID_TO_STR_C(m_resourceName));
+			ECS::ECSEntityID rootEntityID = ecsManager->AddEntity(BL_STRINGID_TO_STR_C(m_resourcePath));
 
 			ECS::ECSTransformComponent* rootTransformComponent = ecsManager->AddComponent<ECS::ECSTransformComponent>(
 				ECS::ECSComponentType::Transform,
@@ -478,11 +478,11 @@ namespace BaldLion
 			ecsManager->AddComponentToEntity(rootEntityID, rootTransformComponent);
 			ecsManager->AddComponentToEntity(rootEntityID, rootHierarchyComponent);
 
-			for (ui32 i = 0; i < m_subMeshes.Size(); ++i) {
-
+			BL_DYNAMICARRAY_FOR(i, m_subMeshes, 0)
+			{
 				const Mesh* subMesh = m_subMeshes[i];
 
-				ECS::ECSEntityID childEntityID = ecsManager->AddEntity(STRINGID_TO_STR_C(subMesh->GetResourceName()));
+				ECS::ECSEntityID childEntityID = ecsManager->AddEntity(BL_STRINGID_TO_STR_C(subMesh->GetResourcePath()));
 
 				rootHierarchyComponent->childEntitiesIDs.EmplaceBack(childEntityID);
 

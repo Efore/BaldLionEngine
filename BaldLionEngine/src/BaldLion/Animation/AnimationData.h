@@ -10,6 +10,7 @@
 
 #include "Joint.h"
 #include "BaldLion/Core/Containers/DynamicArray.h"
+#include "BaldLion/ResourceManagement/Resource.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace BaldLion
@@ -63,31 +64,29 @@ namespace BaldLion
 		
 		//---------------------------------------------------------------------------------------
 
-		struct AnimationData {
+		struct AnimationData : public ResourceManagement::Resource {
 
 			glm::mat4 InverseRootTransform;
-			StringId AnimationID;
 			DynamicArray<KeyFrame> AnimationFrames;
 			float AnimationLength;
 
 			//---------------------------------------------------------------------------------------
 			
-			AnimationData(){}
+			AnimationData() = default;
 			
 			//---------------------------------------------------------------------------------------
 
-			AnimationData(const glm::mat4& inverseRootTransform, const std::string& animationID, const DynamicArray<KeyFrame>& animationFrames, const float animationLenght) :
-				InverseRootTransform(inverseRootTransform),
-				AnimationID(STRING_TO_STRINGID(animationID)), 
-				AnimationFrames(animationFrames), 
+			AnimationData(const glm::mat4& inverseRootTransform, const std::string& animationPath, ui32 animationFramesCount, const float animationLenght) : 
+				ResourceManagement::Resource (BL_STRING_TO_STRINGID(animationPath), animationPath, ResourceManagement::ResourceType::Animation),
+				InverseRootTransform(inverseRootTransform),				
+				AnimationFrames(DynamicArray<KeyFrame>(Memory::MemoryManager::GetAllocatorType(this), animationFramesCount)),
 				AnimationLength(animationLenght)
 			{}
 
 			//---------------------------------------------------------------------------------------
 
 			AnimationData(AnimationData&& other) : 
-				InverseRootTransform(other.InverseRootTransform),
-				AnimationID(other.AnimationID), 
+				InverseRootTransform(other.InverseRootTransform),				
 				AnimationLength(other.AnimationLength),
 				AnimationFrames(std::move(other.AnimationFrames))
 			{
@@ -97,8 +96,7 @@ namespace BaldLion
 
 			AnimationData& operator=(const AnimationData& other)
 			{
-				InverseRootTransform = other.InverseRootTransform;
-				AnimationID = other.AnimationID;
+				InverseRootTransform = other.InverseRootTransform;				
 				AnimationLength = other.AnimationLength;
 				AnimationFrames = other.AnimationFrames;
 
@@ -109,8 +107,7 @@ namespace BaldLion
 
 			AnimationData& operator=(AnimationData&& other)
 			{
-				InverseRootTransform = other.InverseRootTransform;
-				AnimationID  = other.AnimationID;
+				InverseRootTransform = other.InverseRootTransform;				
 				AnimationLength = other.AnimationLength;
 				AnimationFrames = std::move(other.AnimationFrames);				
 

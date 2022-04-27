@@ -48,7 +48,7 @@ namespace BaldLion
 
 		protected:
 
-			Texture(const std::string& path) : ResourceManagement::Resource(STRING_TO_STRINGID(path), StringUtils::GetFileNameFromPath(path), ResourceManagement::ResourceType::Texture) {}
+			Texture(const std::string& path) : ResourceManagement::Resource(BL_STRING_TO_STRINGID(path), StringUtils::GetFileNameFromPath(path), ResourceManagement::ResourceType::Texture) {}
 		};
 
 		class Texture2D : public Texture

@@ -19,7 +19,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BaldLionEditor</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLionEditorLayer.h" />
+    <ClInclude Include="src\Panels\AnimatorPanel.h" />
     <ClInclude Include="src\Panels\Components\ComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\DirectionalLightComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\ProjectionCameraComponentInspector.h" />
@@ -141,6 +142,7 @@
     <ClInclude Include="src\Panels\EntityPropertiesPanel.h" />
     <ClInclude Include="src\Panels\MemoryAllocationPanel.h" />
     <ClInclude Include="src\Panels\RenderingDataPanel.h" />
+    <ClInclude Include="src\Panels\ResourcesPanel.h" />
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
     <ClInclude Include="src\Panels\UtilsEditor.h" />
     <ClInclude Include="src\Panels\ViewportPanel.h" />
@@ -149,10 +151,12 @@
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp" />
     <ClCompile Include="src\BaldLionEditorLayer.cpp" />
+    <ClCompile Include="src\Panels\AnimatorPanel.cpp" />
     <ClCompile Include="src\Panels\EditorViewportPanel.cpp" />
     <ClCompile Include="src\Panels\EntityPropertiesPanel.cpp" />
     <ClCompile Include="src\Panels\MemoryAllocationPanel.cpp" />
     <ClCompile Include="src\Panels\RenderingDataPanel.cpp" />
+    <ClCompile Include="src\Panels\ResourcesPanel.cpp" />
     <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp" />
   </ItemGroup>

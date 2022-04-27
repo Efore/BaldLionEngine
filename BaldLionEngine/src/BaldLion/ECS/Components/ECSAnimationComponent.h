@@ -1,6 +1,7 @@
 #pragma once
 #include "BaldLion/ECS/ECSComponent.h"
 #include "BaldLion/Core/StringId.h"
+#include "BaldLion/Core/Time.h"
 
 namespace BaldLion {
 
@@ -10,15 +11,18 @@ namespace BaldLion {
 		{
 		public:
 
-			ECSAnimationComponent(StringId animatorID, StringId initAnimationId) :
-				ECSComponent(ECSComponentType::Animation), animatorID(animatorID), currentAnimationID(initAnimationId), currentAnimationProgress(0.0f)
+			ECSAnimationComponent(ui32 animatorID, ui32 initAnimationId) :
+				ECSComponent(ECSComponentType::Animation), animatorID(animatorID), currentAnimationID(initAnimationId), currentAnimationTime(0.0f), currentTransitionTime(0.0f), timer(Time::RequestNewTimer())
 			{
 			}
 
 		public:
-			StringId animatorID;
-			StringId currentAnimationID;
-			float currentAnimationProgress;
+			ui32 animatorID;
+			ui32 currentAnimationID;
+			Timer* timer;
+
+			float currentAnimationTime;
+			float currentTransitionTime;
 		};
 	}
 }

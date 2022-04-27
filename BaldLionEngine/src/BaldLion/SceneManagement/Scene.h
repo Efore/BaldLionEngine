@@ -21,7 +21,7 @@ namespace BaldLion {
 			const StringId GetSceneID() const { return m_sceneID; }
 
 			const StringId GetSceneName() const { return m_sceneName; }
-			void SetSceneName(const char* sceneName) { m_sceneName = STRING_TO_STRINGID(sceneName); }
+			void SetSceneName(const char* sceneName) { m_sceneName = BL_STRING_TO_STRINGID(sceneName); }
 
 			const ECS::ECSManager* GetECSManager() const { return m_ecsManager; }
 			ECS::ECSManager* GetECSManager() { return m_ecsManager; }

@@ -7,7 +7,7 @@ namespace BaldLion
 	class Queue
 	{
 	public:
-		Queue();
+		Queue() = default;
 		Queue(Memory::AllocationType allocationType, ui32 capacity);
 		Queue(Memory::AllocationType allocationType, const Queue<T>& other);
 		Queue(const Queue<T>& other);
@@ -48,17 +48,12 @@ namespace BaldLion
 	private:
 
 		T* m_elements = nullptr;
-		AllocationType m_allocationType;
+		AllocationType m_allocationType = AllocationType::FreeList_Main;
 
 		ui32 m_frontIndex = 0;
 		ui32 m_size = 0;
 		ui32 m_capacity = 0;
 	};
-
-	template <typename T>
-	BaldLion::Queue<T>::Queue()
-	{
-	}
 
 	template <typename T>
 	BaldLion::Queue<T>::Queue(Memory::AllocationType allocationType, ui32 capacity)

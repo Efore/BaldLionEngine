@@ -17,7 +17,6 @@ namespace BaldLion
 
 		void* MemoryManager::s_memory;
 		std::mutex MemoryManager::s_mutex;
-		std::mutex MemoryManager::s_arrayMutex;
 
 		size_t MemoryManager::s_memorySize = 0;
 
@@ -119,11 +118,10 @@ namespace BaldLion
 					break;
 				}
 
-
-				BL_LOG_CORE_INFO(STRINGID_TO_STR_C(it->second.allocationDescription));				
+				BL_LOG_CORE_INFO(BL_STRINGID_TO_STR_C(it->second.allocationDescription));				
 				BL_LOG_CORE_INFO("Size: {0}",(it->second.allocationSize));
 				BL_LOG_CORE_INFO("---------------");
-			}
+			}			
 
 			if (s_linearFrameAllocator != nullptr)
 			{

@@ -27,7 +27,7 @@ namespace BaldLion {
 
 			s_globalTimer.SetCurrentTime(currentTime);
 
-			for (HashTable<ui32, Timer>::Iterator it = s_additionalTimers.Begin(); it != s_additionalTimers.End(); ++it)
+			BL_HASHTABLE_FOR(s_additionalTimers, it)
 			{
 				it.GetValue().SetCurrentTime(currentTime);
 			}

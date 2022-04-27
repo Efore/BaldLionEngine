@@ -7,13 +7,17 @@ namespace BaldLion
 	namespace ResourceManagement
 	{
 		enum class ResourceType {
-			None,
-			Texture,
-			Model,
-			Mesh,
-			Skeleton,
-			Material,
-			Shader
+			None = 0,
+			Texture = 1,
+			Model = 2,
+			Mesh = 3,
+			Skeleton = 4,
+			Material = 5,
+			Shader = 6,
+			Animator = 7,
+			Animation = 8,
+
+			Meta
 		};
 		
 		class Resource
@@ -25,18 +29,18 @@ namespace BaldLion
 			Resource(Resource&& other) = delete;
 			Resource & operator=(const Resource&) = delete;
 
-			Resource(ui32 resourceID, const std::string& resourceName, ResourceType resourceType) : m_resourceID(resourceID), m_resourceName(STRING_TO_STRINGID(resourceName)), m_resourceType(resourceType)
+			Resource(ui32 resourceID, const std::string& resourcePath, ResourceType resourceType) : m_resourceID(resourceID), m_resourcePath(BL_STRING_TO_STRINGID(resourcePath)), m_resourceType(resourceType)
 			{
 			}
 
 			const ui32 GetResourceID() const { return m_resourceID; }
-			const StringId GetResourceName() const { return m_resourceName; }
+			const StringId GetResourcePath() const { return m_resourcePath; }
 			const ResourceType GetResourceType() const { return m_resourceType; }
 
 		protected:
 
 			ui32 m_resourceID;
-			StringId m_resourceName;
+			StringId m_resourcePath;
 			ResourceType m_resourceType;
 		};
 	}

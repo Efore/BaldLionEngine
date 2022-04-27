@@ -11,9 +11,20 @@ namespace BaldLion
 
 		Timer() = default;
 
-		Timer(ui32 timerID, double currentTime) : m_timerID(timerID), m_currentTime(currentTime), m_deltaTime(0.0f), m_timeScale(1.0f) {}
+		Timer(ui32 timerID, double currentTime) : m_timerID(timerID), m_currentTime(currentTime), m_deltaTime(0.0f), m_timeScale(1.0f), m_prevTimeScale(1.0f) {}
 
 		void SetTimeScale(float timeScale) { m_timeScale = timeScale;}
+
+		void Pause() 
+		{ 
+			m_prevTimeScale = m_timeScale;
+			m_timeScale = 0.0f;
+		}
+
+		void Resume()
+		{
+			m_timeScale = m_prevTimeScale;
+		}
 
 		float GetUnscaledDeltaTime() const { return m_deltaTime; }
 		float GetDeltaTime() const { return m_deltaTime * m_timeScale; }
@@ -34,6 +45,7 @@ namespace BaldLion
 		double m_currentTime;
 		float m_deltaTime;
 		float m_timeScale;
+		float m_prevTimeScale;
 		ui32 m_timerID;
 	};
 

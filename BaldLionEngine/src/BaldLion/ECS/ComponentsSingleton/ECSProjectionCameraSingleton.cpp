@@ -31,7 +31,7 @@ namespace BaldLion {
 				s_frustrumPlanes[5] = transposedViewProjection[3] - transposedViewProjection[2];	//Far Plane	
 
 				////Normalizing planes
-				for (ui32 i = 0; i < s_frustrumPlanes.Size(); ++i)
+				BL_DYNAMICARRAY_FOR(i, s_frustrumPlanes, 0)				
 				{
 					float magnitude = glm::sqrt((s_frustrumPlanes[i].x * s_frustrumPlanes[i].x) + (s_frustrumPlanes[i].y * s_frustrumPlanes[i].y) + (s_frustrumPlanes[i].z * s_frustrumPlanes[i].z));
 					s_frustrumPlanes[i].x /= magnitude;
@@ -61,7 +61,7 @@ namespace BaldLion {
 
 				glm::vec3 axisVert;
 
-				for (ui32 i = 0; i < s_frustrumPlanes.Size(); ++i)
+				BL_DYNAMICARRAY_FOR(i, s_frustrumPlanes, 0)				
 				{
 					glm::vec3 planeNormal(s_frustrumPlanes[i].x, s_frustrumPlanes[i].y, s_frustrumPlanes[i].z);
 					float planeConstant = s_frustrumPlanes[i].w;

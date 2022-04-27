@@ -67,7 +67,7 @@ namespace BaldLion {
 			ImGui::Begin("Viewport");
 
 			ImGui::SameLine();
-			ImGui::PushID(STRING_TO_STRINGID("Manipulate Translation"));
+			ImGui::PushID(BL_STRING_TO_STRINGID("Manipulate Translation"));
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor(0.8f, 0.2f, 0.2f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor(0.8f, 0.3f, 0.3f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor(0.8f, 0.4f, 0.4f));
@@ -78,7 +78,7 @@ namespace BaldLion {
 			ImGui::PopID();
 
 			ImGui::SameLine();
-			ImGui::PushID(STRING_TO_STRINGID("Manipulate Rotation"));
+			ImGui::PushID(BL_STRING_TO_STRINGID("Manipulate Rotation"));
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor(0.2f, 0.8f, 0.2f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor(0.3f, 0.8f, 0.3f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor(0.4f, 0.8f, 0.4f));
@@ -89,7 +89,7 @@ namespace BaldLion {
 			ImGui::PopID();
 
 			ImGui::SameLine();
-			ImGui::PushID(STRING_TO_STRINGID("Manipulate Scale"));
+			ImGui::PushID(BL_STRING_TO_STRINGID("Manipulate Scale"));
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor(0.2f, 0.2f, 0.8f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor(0.3f, 0.3f, 0.8f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor(0.4f, 0.4f, 0.8f));
@@ -167,6 +167,9 @@ namespace BaldLion {
 
 		void EditorViewportPanel::HandleInput()
 		{
+			if (!m_viewportFocused)
+				return;
+
 			if (!BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 			{
 				if (BaldLion::Input::IsKeyPressed(BL_KEY_Q))
@@ -183,10 +186,7 @@ namespace BaldLion {
 				}
 			}
 
-			if (m_viewportFocused)
-			{
-				MoveViewportCamera();
-			}
+			MoveViewportCamera();			
 		}
 
 		void EditorViewportPanel::MoveViewportCamera()

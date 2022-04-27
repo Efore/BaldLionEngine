@@ -9,7 +9,7 @@ namespace BaldLion {
 	namespace ECS {
 
 		ECSSystem::ECSSystem(const char* systemName, const ECSSignature& signature, ECSManager* ecsManager, bool parallelize, bool waitForUpdateOperationsToFinish) :
-			m_systemName(STRING_TO_STRINGID(systemName)), 
+			m_systemName(BL_STRING_TO_STRINGID(systemName)), 
 			m_signature(signature), 
 			m_ecsManager(ecsManager),
 			m_parallelize(parallelize),
@@ -18,7 +18,7 @@ namespace BaldLion {
 		{
 			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_ECS, 100);
 			
-			for (HashMap<ECSEntityID, ECSSignature>::Iterator iterator = m_ecsManager->GetEntitySignatures().Begin(); iterator != m_ecsManager->GetEntitySignatures().End(); ++iterator)
+			BL_HASHMAP_FOR(m_ecsManager->GetEntitySignatures(), iterator)
 			{
 				if ((iterator.GetValue() & m_signature) == m_signature)
 				{
@@ -40,7 +40,7 @@ namespace BaldLion {
 			if (m_componentLookUps.Size() == 0)
 				return;
 
-			for (ui32 i = 0; i < m_componentLookUps.Size(); ++i)
+			BL_DYNAMICARRAY_FOR(i, m_componentLookUps, 0)
 			{
 				ECSComponentLookUp* componentLookUp = m_componentLookUps[i];
 
@@ -77,7 +77,7 @@ namespace BaldLion {
 
 				m_componentLookUps.Clear();
 
-				for (HashMap<ECSEntityID, ECSSignature>::Iterator iterator = m_ecsManager->GetEntitySignatures().Begin(); iterator != m_ecsManager->GetEntitySignatures().End(); ++iterator)
+				BL_HASHMAP_FOR(m_ecsManager->GetEntitySignatures(), iterator)
 				{
 					if ((iterator.GetValue() & m_signature) == m_signature)
 					{

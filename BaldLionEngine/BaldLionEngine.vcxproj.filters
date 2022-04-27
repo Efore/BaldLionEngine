@@ -366,9 +366,6 @@
     <ClInclude Include="src\BaldLion\SceneManagement\SceneManager.h">
       <Filter>src\BaldLion\SceneManagement</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.h">
-      <Filter>src\BaldLion\SceneManagement\Serialization</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Utils\Compression.h">
       <Filter>src\BaldLion\Utils</Filter>
     </ClInclude>
@@ -1482,6 +1479,14 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.h">
+      <Filter>src\BaldLion\SceneManagement\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Animation\AnimatorTransition.h">
+      <Filter>src\BaldLion\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Animation\AnimationUtils.h" />
+    <ClInclude Include="src\BaldLion\Animation\Serialization\AnimatorSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -1637,9 +1642,6 @@
     <ClCompile Include="src\BaldLion\SceneManagement\SceneManager.cpp">
       <Filter>src\BaldLion\SceneManagement</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.cpp">
-      <Filter>src\BaldLion\SceneManagement\Serialization</Filter>
-    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -1655,5 +1657,12 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.cpp">
+      <Filter>src\BaldLion\SceneManagement\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Animation\AnimatorTransition.cpp">
+      <Filter>src\BaldLion\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Animation\Serialization\AnimatorSerializer.cpp" />
   </ItemGroup>
 </Project>

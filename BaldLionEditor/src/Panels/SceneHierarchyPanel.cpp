@@ -43,7 +43,7 @@ namespace BaldLion {
 			if (ImGui::BeginPopupModal("Create Entity", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				static char entityName[64] = "";
-				ImGui::InputText("Entity Name", entityName, 64);
+				IMGUI_LEFT_LABEL(ImGui::InputText, "Entity Name", entityName, 64);				
 
 				if (entityName != "" && ImGui::Button("Create")) 
 				{
@@ -68,15 +68,13 @@ namespace BaldLion {
 				model->GenerateEntities(m_sceneContext->GetECSManager(), true);
 			}
 
-			for (ui32 i = 0; i < m_sceneContext->GetECSManager()->GetEntities().Size(); ++i) 
+			BL_DYNAMICARRAY_FOR(i, m_sceneContext->GetECSManager()->GetEntities(), 0)			
 			{				
 				bool selectedThisFrame = false;
 				DrawEntityElement(m_sceneContext->GetECSManager()->GetEntities()[i], true, selectedThisFrame);
 			}
 
 			ImGui::End();
-
-			HandleInput();
 		}
 
 		void SceneHierarchyPanel::OnKeyPressed(int keyCode)
@@ -90,10 +88,21 @@ namespace BaldLion {
 
 					if (m_selectedEntityID > 0)
 					{
+						const ECS::ECSHierarchyComponent* hierarchyComponent = m_sceneContext->GetECSManager()->GetEntityComponents().Get(m_selectedEntityID).Read<ECS::ECSHierarchyComponent>(ECS::ECSComponentType::Hierarchy);
+
+						if (hierarchyComponent != nullptr)
+						{
+							BL_DYNAMICARRAY_FOR(i, hierarchyComponent->childEntitiesIDs, 0)
+							{
+								m_sceneContext->GetECSManager()->RemoveEntity(hierarchyComponent->childEntitiesIDs[i]);
+							}
+						}
+
 						m_sceneContext->GetECSManager()->RemoveEntity(m_selectedEntityID);
 						m_selectedEntityID = 0;
 					}
 					break;
+
 				default:
 					break;
 				}
@@ -114,7 +123,7 @@ namespace BaldLion {
 			if (hierarchyComponent == nullptr || hierarchyComponent->childEntitiesIDs.Size() == 0) 
 			{
 				flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
-				ImGui::TreeNodeEx((void*)(uint32_t)entity.GetEntityID(), flags, STRINGID_TO_STR_C(entity.GetEntityName()));
+				ImGui::TreeNodeEx((void*)(uint32_t)entity.GetEntityID(), flags, BL_STRINGID_TO_STR_C(entity.GetEntityName()));
 
 				if (ImGui::IsItemClicked())
 				{
@@ -124,13 +133,13 @@ namespace BaldLion {
 			}
 			else 
 			{
-				bool open = ImGui::TreeNodeEx((void*)(uint32_t)entity.GetEntityID(), flags, STRINGID_TO_STR_C(entity.GetEntityName()));
+				bool open = ImGui::TreeNodeEx((void*)(uint32_t)entity.GetEntityID(), flags, BL_STRINGID_TO_STR_C(entity.GetEntityName()));
 				bool selectNode = ImGui::IsItemClicked();
 				bool selectedThisFrame = false;
 
 				if (open) 
 				{
-					for (ui32 i = 0; i < hierarchyComponent->childEntitiesIDs.Size(); ++i) 
+					BL_DYNAMICARRAY_FOR(i, hierarchyComponent->childEntitiesIDs, 0)					
 					{
 						DrawEntityElement(*m_sceneContext->GetECSManager()->GetEntityMap().Get(hierarchyComponent->childEntitiesIDs[i]), false, selectedThisFrame);
 					}	
@@ -143,15 +152,6 @@ namespace BaldLion {
 					selectedThisFrame = true;
 				}
 			}		
-		}
-
-		void SceneHierarchyPanel::HandleInput()
-		{
-			if (m_selectedEntityID && BaldLion::Input::IsKeyPressed(BL_KEY_DELETE))
-			{
-				m_sceneContext->GetECSManager()->RemoveEntity(m_selectedEntityID);
-				m_selectedEntityID = 0;
-			}
 		}
 
 	}

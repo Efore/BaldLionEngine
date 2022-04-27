@@ -9,7 +9,7 @@ namespace BaldLion
 		class JobManager {
 
 		public:
-			static void Init(ui32 threadsCount = std::thread::hardware_concurrency() - 1);
+			static void Init(ui32 threadsCount = std::thread::hardware_concurrency() / 2);
 			static void Stop();
 			
 			static void QueueJob(Job& job);
