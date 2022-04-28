@@ -15,3 +15,6 @@
 [submodule "BaldLionEditor/vendor/ImGuizmo"]
 	path = BaldLionEditor/vendor/ImGuizmo
 	url = https://github.com/Efore/ImGuizmo
+[submodule "BaldLionEngine/vendor/imgui"]
+	path = BaldLionEngine/vendor/imgui
+	url = https://github.com/Efore/imgui
