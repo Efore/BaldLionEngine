@@ -144,11 +144,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h" />
+    <ClInclude Include="src\BaldLion\AI\FSM\FSMController.h" />
+    <ClInclude Include="src\BaldLion\AI\FSM\FSMState.h" />
+    <ClInclude Include="src\BaldLion\AI\FSM\FSMTransition.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationData.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationManager.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationUtils.h" />
-    <ClInclude Include="src\BaldLion\Animation\AnimatorTransition.h" />
     <ClInclude Include="src\BaldLion\Animation\Animator.h" />
+    <ClInclude Include="src\BaldLion\Animation\AnimatorTransition.h" />
     <ClInclude Include="src\BaldLion\Animation\Joint.h" />
     <ClInclude Include="src\BaldLion\Animation\Serialization\AnimatorSerializer.h" />
     <ClInclude Include="src\BaldLion\Animation\Skeleton.h" />
@@ -609,9 +612,12 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\BaldLion\AI\FSM\FSMController.cpp" />
+    <ClCompile Include="src\BaldLion\AI\FSM\FSMState.cpp" />
+    <ClCompile Include="src\BaldLion\AI\FSM\FSMTransition.cpp" />
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp" />
-    <ClCompile Include="src\BaldLion\Animation\AnimatorTransition.cpp" />
     <ClCompile Include="src\BaldLion\Animation\Animator.cpp" />
+    <ClCompile Include="src\BaldLion\Animation\AnimatorTransition.cpp" />
     <ClCompile Include="src\BaldLion\Animation\Serialization\AnimatorSerializer.cpp" />
     <ClCompile Include="src\BaldLion\Animation\Skeleton.cpp" />
     <ClCompile Include="src\BaldLion\Core\Application.cpp" />

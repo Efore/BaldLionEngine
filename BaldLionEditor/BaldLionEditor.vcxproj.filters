@@ -21,6 +21,9 @@
     <ClInclude Include="src\BaldLionEditorLayer.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\AnimatorPanel.h">
+      <Filter>src\Panels</Filter>
+    </ClInclude>
     <ClInclude Include="src\Panels\Components\ComponentInspector.h">
       <Filter>src\Panels\Components</Filter>
     </ClInclude>
@@ -48,7 +51,13 @@
     <ClInclude Include="src\Panels\RenderingDataPanel.h">
       <Filter>src\Panels</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\ResourcesPanel.h">
+      <Filter>src\Panels</Filter>
+    </ClInclude>
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h">
+      <Filter>src\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Panels\UtilsEditor.h">
       <Filter>src\Panels</Filter>
     </ClInclude>
     <ClInclude Include="src\Panels\ViewportPanel.h">
@@ -57,9 +66,6 @@
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
       <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panels\UtilsEditor.h" />
-    <ClInclude Include="src\Panels\ResourcesPanel.h" />
-    <ClInclude Include="src\Panels\AnimatorPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp">
@@ -67,6 +73,9 @@
     </ClCompile>
     <ClCompile Include="src\BaldLionEditorLayer.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Panels\AnimatorPanel.cpp">
+      <Filter>src\Panels</Filter>
     </ClCompile>
     <ClCompile Include="src\Panels\EditorViewportPanel.cpp">
       <Filter>src\Panels</Filter>
@@ -80,13 +89,14 @@
     <ClCompile Include="src\Panels\RenderingDataPanel.cpp">
       <Filter>src\Panels</Filter>
     </ClCompile>
+    <ClCompile Include="src\Panels\ResourcesPanel.cpp">
+      <Filter>src\Panels</Filter>
+    </ClCompile>
     <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp">
       <Filter>src\Panels</Filter>
     </ClCompile>
     <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
       <Filter>vendor\ImGuizmo</Filter>
     </ClCompile>
-    <ClCompile Include="src\Panels\ResourcesPanel.cpp" />
-    <ClCompile Include="src\Panels\AnimatorPanel.cpp" />
   </ItemGroup>
 </Project>

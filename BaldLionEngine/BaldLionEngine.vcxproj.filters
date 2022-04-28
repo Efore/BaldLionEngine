@@ -7,8 +7,17 @@
     <Filter Include="src\BaldLion">
       <UniqueIdentifier>{A16421C3-8DC7-B067-364D-E91D228F7CEA}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\BaldLion\AI">
+      <UniqueIdentifier>{9AFDAF32-0689-1DF7-0F9A-A0EB7BA479F7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\AI\FSM">
+      <UniqueIdentifier>{2F3564DF-9B96-41ED-2404-889F906478AC}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\BaldLion\Animation">
       <UniqueIdentifier>{D01A5164-BC14-7AB6-A581-10C7911AE022}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\Animation\Serialization">
+      <UniqueIdentifier>{5D1FBE86-4906-807E-F256-E69BDE1CF9E4}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\BaldLion\Core">
       <UniqueIdentifier>{9995A79E-05AC-A534-4E23-3156BA7876BC}</UniqueIdentifier>
@@ -102,17 +111,35 @@
     <ClInclude Include="src\BaldLion.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\FSM\FSMController.h">
+      <Filter>src\BaldLion\AI\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\FSM\FSMState.h">
+      <Filter>src\BaldLion\AI\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\FSM\FSMTransition.h">
+      <Filter>src\BaldLion\AI\FSM</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Animation\AnimationData.h">
       <Filter>src\BaldLion\Animation</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Animation\AnimationManager.h">
       <Filter>src\BaldLion\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Animation\AnimationUtils.h">
+      <Filter>src\BaldLion\Animation</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Animation\Animator.h">
+      <Filter>src\BaldLion\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Animation\AnimatorTransition.h">
       <Filter>src\BaldLion\Animation</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Animation\Joint.h">
       <Filter>src\BaldLion\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Animation\Serialization\AnimatorSerializer.h">
+      <Filter>src\BaldLion\Animation\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Animation\Skeleton.h">
       <Filter>src\BaldLion\Animation</Filter>
@@ -365,6 +392,9 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\SceneManagement\SceneManager.h">
       <Filter>src\BaldLion\SceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.h">
+      <Filter>src\BaldLion\SceneManagement\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Utils\Compression.h">
       <Filter>src\BaldLion\Utils</Filter>
@@ -1479,21 +1509,28 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.h">
-      <Filter>src\BaldLion\SceneManagement\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Animation\AnimatorTransition.h">
-      <Filter>src\BaldLion\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Animation\AnimationUtils.h" />
-    <ClInclude Include="src\BaldLion\Animation\Serialization\AnimatorSerializer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\BaldLion\AI\FSM\FSMController.cpp">
+      <Filter>src\BaldLion\AI\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\AI\FSM\FSMState.cpp">
+      <Filter>src\BaldLion\AI\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\AI\FSM\FSMTransition.cpp">
+      <Filter>src\BaldLion\AI\FSM</Filter>
+    </ClCompile>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
       <Filter>src\BaldLion\Animation</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Animation\Animator.cpp">
       <Filter>src\BaldLion\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Animation\AnimatorTransition.cpp">
+      <Filter>src\BaldLion\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Animation\Serialization\AnimatorSerializer.cpp">
+      <Filter>src\BaldLion\Animation\Serialization</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Animation\Skeleton.cpp">
       <Filter>src\BaldLion\Animation</Filter>
@@ -1642,6 +1679,9 @@
     <ClCompile Include="src\BaldLion\SceneManagement\SceneManager.cpp">
       <Filter>src\BaldLion\SceneManagement</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.cpp">
+      <Filter>src\BaldLion\SceneManagement\Serialization</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -1657,12 +1697,5 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\SceneManagement\Serialization\SceneSerializer.cpp">
-      <Filter>src\BaldLion\SceneManagement\Serialization</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Animation\AnimatorTransition.cpp">
-      <Filter>src\BaldLion\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Animation\Serialization\AnimatorSerializer.cpp" />
   </ItemGroup>
 </Project>
