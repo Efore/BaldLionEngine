@@ -5,15 +5,13 @@
 [submodule "BaldLionEngine/vendor/spdlog"]
 	path = BaldLionEngine/vendor/spdlog
 	url = https://github.com/Efore/spdlog
-[submodule "BaldLionEngine/vendor/imgui"]
-	path = BaldLionEngine/vendor/imgui
-	url = https://github.com/Efore/imgui		
 [submodule "BaldLionEngine/vendor/glm"]
 	path = BaldLionEngine/vendor/glm
 	url = https://github.com/Efore/glm
 [submodule "BaldLionEngine/vendor/yaml"]
 	path = BaldLionEngine/vendor/yaml
 	url = https://github.com/Efore/yaml-cpp
+	ignore = dirty
 [submodule "BaldLionEditor/vendor/ImGuizmo"]
 	path = BaldLionEditor/vendor/ImGuizmo
 	url = https://github.com/Efore/ImGuizmo
