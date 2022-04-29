@@ -57,8 +57,7 @@ project "BaldLionEngine"
 	defines
 	{
 		"_CRT_SECURE_NO_WARNINGS"
-	}
-	
+	}	
 	
 	includedirs
 	{
@@ -90,6 +89,9 @@ project "BaldLionEngine"
 		"assimp-vc141-mtd.lib",
 		"OptickCore.lib"
 	}
+	
+	filter { "**.h", "**.cpp" }
+	removefiles {"%{prj.name}/src/BaldLion/AI/**"}
 
 	filter "system:windows"		
 		systemversion "latest"

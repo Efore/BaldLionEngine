@@ -185,6 +185,8 @@ namespace BaldLion
 			default:
 				break;
 			}
+
+			return "";
 		}
 
 		void ResourceManager::LoadAssets()
