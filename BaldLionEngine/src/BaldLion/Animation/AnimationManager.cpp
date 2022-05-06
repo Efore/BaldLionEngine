@@ -39,17 +39,19 @@ namespace BaldLion
 			s_registeredAnimators.DeleteNoDestructor();
 		}
 
-		void AnimationManager::GenerateAnimator(const aiScene *scene, const std::string& animatorPath, const HashTable<StringId, ui32>& jointMapping)
+		void AnimationManager::GenerateAnimator(const aiScene *scene, std::string& animatorPath, const HashTable<StringId, ui32>& jointMapping)
 		{
 			if (scene->HasAnimations())
-			{				
+			{	
+				std::string animatorName = animatorPath + ResourceManager::GetResourceSuffixFromType(ResourceType::Animator);
+				
 				glm::mat4 rootTransform = MathUtils::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
 
 				Animator* animator = nullptr;
 
-				if (!s_registeredAnimators.TryGet(BL_STRING_TO_STRINGID(animatorPath), animator)) 
+				if (!s_registeredAnimators.TryGet(BL_STRING_TO_STRINGID(animatorName), animator))
 				{
-					animator = MemoryManager::New<Animator>(animatorPath.c_str(), AllocationType::FreeList_Resources, animatorPath);
+					animator = MemoryManager::New<Animator>(animatorName.c_str(), AllocationType::FreeList_Resources, animatorName);
 
 					ResourceManagement::ResourceManager::AddResource(animator);
 					RegisterAnimator(animator);
@@ -57,8 +59,8 @@ namespace BaldLion
 
 				for (ui32 i = 0; i < scene->mNumAnimations; ++i)
 				{
-					std::string animationPath = scene->mAnimations[i]->mName.C_Str();
-					animationPath.append(ResourceManager::GetResourceSuffixFromType(ResourceType::Animation));
+					const char* animationName = strlen(scene->mAnimations[i]->mName.C_Str()) == 0 ? "unnamedAnimation" : scene->mAnimations[i]->mName.C_Str();
+					std::string animationPath = animatorPath + "\\" + animationName + ResourceManager::GetResourceSuffixFromType(ResourceType::Animation);
 
 					AnimationData* animationData = MemoryManager::New<AnimationData>(animationPath.c_str(), AllocationType::FreeList_Resources,
 						glm::inverse(rootTransform),
@@ -85,7 +87,7 @@ namespace BaldLion
 						}
 						animationData->AnimationFrames.EmplaceBack(std::move(keyFrame));
 					}
-					animator->AddAnimation(std::move(animationData));
+					animator->AddAnimation(animationData);
 				}		
 
 				if (!ResourceManagement::ResourceManager::HasMetafile(animator))

@@ -2,10 +2,16 @@
 #include <imgui/imgui.h>
 #include "AnimatorPanel.h"
 #include "UtilsEditor.h"
+#include "ImNodesEz.h"
 
 namespace BaldLion {
 
 	namespace Editor {
+
+		AnimatorPanel::AnimatorPanel()
+		{
+			static ImNodes::Ez::Context* context = ImNodes::Ez::CreateContext();
+		}
 
 		void AnimatorPanel::OnImGuiRender()
 		{
@@ -48,177 +54,442 @@ namespace BaldLion {
 
 			ImGui::SetColumnWidth(0, 400);
 			ImGui::Text("Parameters"); ImGui::NextColumn();
-			ImGui::Text("Animations"); ImGui::NextColumn();
+			ImGui::Text(""); ImGui::NextColumn();
 			ImGui::Separator();
 
 			//Parameters
+			RenderParameters();
+			
+			ImGui::NextColumn();
+
+			//Animations
+			RenderAnimationNodes();
+		
+			ImGui::End();
+		}
+
+		void AnimatorPanel::RenderParameter(AnimatorParameter& parameter, StringId parameterName)
+		{			
+			ImGui::Text(BL_STRINGID_TO_STR_C(parameterName)); ImGui::NextColumn();
+
+			switch (parameter.Type)
 			{
-				if (ImGui::Button("Add Parameter")) {
-					ImGui::OpenPopup("add_parameter");
+			case AnimatorParameter::ValueType::Bool:
+				ImGui::Text("Bool"); ImGui::NextColumn();
+				IMGUI_LEFT_LABEL(ImGui::Checkbox, "", &(parameter.Value.boolean)); ImGui::NextColumn();
+				break;
+
+			case AnimatorParameter::ValueType::Int:
+				ImGui::Text("Int"); ImGui::NextColumn();
+				static int inputValue = parameter.Value.integer;
+				IMGUI_LEFT_LABEL(ImGui::InputInt, "", &inputValue); ImGui::NextColumn();
+				if (inputValue < 0) inputValue = 0;
+				parameter.Value.integer = inputValue;
+				break;
+
+			case AnimatorParameter::ValueType::Float:
+				ImGui::Text("Float"); ImGui::NextColumn();
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "", &parameter.Value.floating); ImGui::NextColumn();				
+				break;
+
+			default:
+				ImGui::Text("Float"); ImGui::NextColumn();
+				ImGui::Text("%f", parameter.Value.floating); ImGui::NextColumn();
+				break;
+			}			
+		}
+
+		void AnimatorPanel::RenderParameters()
+		{
+			if (ImGui::Button("Add Parameter")) {
+				ImGui::OpenPopup("add_parameter");
+			}
+
+			ImGui::BeginChild("parameter column");
+			{
+
+				ImGui::Columns(4);
+				ImGui::SetColumnWidth(0, 150);
+				ImGui::Text("Name"); ImGui::NextColumn();
+				ImGui::Text("Type"); ImGui::NextColumn();
+				ImGui::Text("Value"); ImGui::NextColumn();
+				ImGui::NextColumn();
+				ImGui::Separator();
+
+				DynamicArray<StringId> parametersToDestroy(Memory::AllocationType::Linear_Frame, m_currentAnimator->GetAllParameters().Size());
+
+				BL_HASHTABLE_FOR(m_currentAnimator->GetAllParameters(), it)
+				{
+					RenderParameter(it.GetValue(), it.GetKey());	
+
+					if (ImGui::Button("-")) {
+						parametersToDestroy.PushBack(it.GetKey());
+					}
+
+					ImGui::NextColumn();
+
+					ImGui::Separator();
 				}
 
-				ImGui::BeginChild("parameter column");
+				BL_DYNAMICARRAY_FOR(i, parametersToDestroy, 0)
 				{
+					m_currentAnimator->RemoveParameter(parametersToDestroy[i]);
+				}
+			}
 
-					ImGui::Columns(4);
-					ImGui::SetColumnWidth(0, 150);
-					ImGui::Text("Name"); ImGui::NextColumn();
-					ImGui::Text("Type"); ImGui::NextColumn();
-					ImGui::Text("Value"); ImGui::NextColumn();
+			ImGui::EndChild();
+
+			if (ImGui::BeginPopupModal("add_parameter", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				static char parameterName[64] = "";
+				IMGUI_LEFT_LABEL(ImGui::InputText, "Parameter Name", parameterName, 64);
+
+				ImGui::Separator();
+
+				const char* parameterTypeNames[] = {
+							"Int",
+							"Float",
+							"Bool"
+				};
+
+				static AnimatorParameter::ValueType parameterValueType = AnimatorParameter::ValueType::Int;
+
+				for (int i = 0; i < IM_ARRAYSIZE(parameterTypeNames); i++)
+				{
+					if (ImGui::Button(parameterTypeNames[i]))
+					{
+						parameterValueType = (AnimatorParameter::ValueType)i;
+					}
+				}
+
+				ImGui::Separator();
+
+				static int integerValue = 0;
+				static float floatValue = 0.0f;
+				static bool boolValue = true;
+
+				switch (parameterValueType)
+				{
+				case BaldLion::Animation::AnimatorParameter::ValueType::Int:
+					IMGUI_LEFT_LABEL(ImGui::InputInt, "Value: ", &integerValue);
+					break;
+
+				case BaldLion::Animation::AnimatorParameter::ValueType::Float:
+					IMGUI_LEFT_LABEL(ImGui::InputFloat, "Value: ", &floatValue);
+					break;
+
+				case BaldLion::Animation::AnimatorParameter::ValueType::Bool:
+					IMGUI_LEFT_LABEL(ImGui::Checkbox, "Value: ", &boolValue);
+					break;
+
+				default:
+					break;
+				}
+
+				ImGui::Separator();
+
+				if (parameterName != "" && ImGui::Button("Create"))
+				{
+					AnimatorParameter parameter;
+					parameter.Type = parameterValueType;
+
+					switch (parameterValueType)
+					{
+					case BaldLion::Animation::AnimatorParameter::ValueType::Int:
+						parameter.Value.integer = integerValue;
+						break;
+					case BaldLion::Animation::AnimatorParameter::ValueType::Float:
+						parameter.Value.floating = floatValue;
+						break;
+					case BaldLion::Animation::AnimatorParameter::ValueType::Bool:
+						parameter.Value.boolean = boolValue;
+						break;
+					default:
+						break;
+					}
+
+					m_currentAnimator->AddParameter(BL_STRING_TO_STRINGID(parameterName), parameter);
+
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("Close"))
+				{
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
+		}
+
+		void AnimatorPanel::RenderAnimationNodes()
+		{
+			if (ImGui::Button("Add animation"))
+			{
+				ImGui::OpenPopup("add_animation");
+			}
+
+			AnimationData* animationDataToLoad = UtilsEditor::RenderResourceInspectorPopup<AnimationData>("add_animation", ResourceManagement::ResourceType::Animation);
+
+			if (animationDataToLoad != nullptr)
+			{
+				m_currentAnimator->AddAnimation(animationDataToLoad);
+			}
+
+			ImGui::BeginChild("animations column");
+			{
+				ImGui::Columns(2);
+				ImGui::Text("Animations"); ImGui::NextColumn();
+				ImGui::Text("Transitions"); ImGui::NextColumn();
+				ImGui::Separator();
+
+				ui32 animationIndex = 0;
+				BL_HASHTABLE_FOR(m_currentAnimator->GetAllAnimations(), it)
+				{
+					const char* initialAnimationPath = BL_STRINGID_TO_STR_C(it.GetValue()->GetResourcePath());
+					ImGui::BulletText(initialAnimationPath);
+					ImGui::NextColumn();
+
+					DynamicArray<AnimatorTransition*>* transitions = m_currentAnimator->GetTransitionsOfAnimation(it.GetKey());
+					if (transitions != nullptr)
+					{
+						BL_DYNAMICARRAY_FOR(i, *transitions, 0)
+						{
+							const char* finalAnimationPath = BL_STRINGID_TO_STR_C(m_currentAnimator->GetAnimation((*transitions)[i]->GetFinalAnimationID())->GetResourcePath());
+							std::string popupId = "setup_transition" + std::to_string(i);
+
+							if (ImGui::Button(finalAnimationPath))
+							{
+								ImGui::OpenPopup(popupId.c_str());
+							}
+
+							RenderSetupTransitionPopup(popupId.c_str(), initialAnimationPath, finalAnimationPath, (*transitions)[i]);
+						}
+					}
+
+					std::string popupId = "add_transition" + std::to_string(animationIndex);
+					if (ImGui::Button("+"))
+					{
+						ImGui::OpenPopup(popupId.c_str());
+					}
+
+					RenderAddTransitionPopup(popupId.c_str(), initialAnimationPath, it.GetValue()->GetResourceID());
+
 					ImGui::NextColumn();
 					ImGui::Separator();
 
-					DynamicArray<StringId> parametersToDestroy(Memory::AllocationType::Linear_Frame, m_currentAnimator->GetAllParameters().Size());
+					animationIndex++;
+				}
+			}
+			ImGui::EndChild();
 
-					BL_HASHTABLE_FOR(m_currentAnimator->GetAllParameters(), it)
+			ImGui::Separator();
+		}
+
+		void AnimatorPanel::RenderAddTransitionPopup(const char* popupName, const char* initialAnimationPath, ui32 initialAnimationID)
+		{
+			if (ImGui::BeginPopupModal(popupName, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				ImGui::Text("Transition from %", initialAnimationPath);
+				ImGui::Separator();
+				
+				static ui32 finalAnimationID = initialAnimationID;
+
+				const char* combo_preview_value = "";
+				if (ImGui::BeginCombo("Final animation", combo_preview_value, ImGuiComboFlags_PopupAlignLeft))
+				{
+					BL_HASHTABLE_FOR(m_currentAnimator->GetAllAnimations(), it)
 					{
-						ImGui::Text(BL_STRINGID_TO_STR_C(it.GetKey())); ImGui::NextColumn();
+						if(it.GetKey() == initialAnimationID)
+							continue;
 
-						switch (it.GetValue().Type)
-						{
-						case AnimatorParameter::ValueType::Bool:
-							ImGui::Text("Bool"); ImGui::NextColumn();
-							ImGui::Text(it.GetValue().Value.boolean ? "True" : "False"); ImGui::NextColumn();
-							break;
+						const bool is_selected = (finalAnimationID == it.GetKey());
 
-						case AnimatorParameter::ValueType::Int:
-							ImGui::Text("Int"); ImGui::NextColumn();
-							ImGui::Text("%d", it.GetValue().Value.integer); ImGui::NextColumn();
-							break;
+						if (ImGui::Selectable(BL_STRINGID_TO_STR_C(it.GetValue()->GetResourcePath()), is_selected))
+							finalAnimationID = it.GetKey();
 
-						case AnimatorParameter::ValueType::Float:
-							ImGui::Text("Float"); ImGui::NextColumn();
-							ImGui::Text("%f", it.GetValue().Value.floating); ImGui::NextColumn();
-							break;
+						// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
 
-						default:
-							ImGui::Text("Float"); ImGui::NextColumn();
-							ImGui::Text("%f", it.GetValue().Value.floating); ImGui::NextColumn();
-							break;
-						}
+				static float transitionExitTime = 0.0f;
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Exit Time", &transitionExitTime);
+
+				static float transitionTime = 0.0f;
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Transition Time", &transitionTime);
+
+				ImGui::Separator();
+
+				if (ImGui::Button("Add"))
+				{
+					AnimatorTransition* transition = MemoryManager::New<AnimatorTransition>("Animator Transition", MemoryManager::GetAllocatorType(m_currentAnimator), initialAnimationID, finalAnimationID, transitionExitTime, transitionTime);
+					m_currentAnimator->AddAnimationTransition(transition);
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("Close"))
+				{
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
+		}
+
+		void AnimatorPanel::RenderSetupTransitionPopup(const char* popupID, const char* initialAnimationPath, const char* finalAnimationPath, AnimatorTransition* transition)
+		{
+			if (ImGui::BeginPopupModal(popupID, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				ImGui::Text("Transition %s to %s", initialAnimationPath, finalAnimationPath);
+				ImGui::Separator();
+
+				static float transitionExitTime = transition->GetExitTime();
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Exit Time", &transitionExitTime);
+				transition->SetExitTime(transitionExitTime);
+
+				static float transitionTime = transition->GetTransitionTime();
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Transition Time", &transitionTime);
+				transition->SetTransitionTime(transitionTime);
+
+				ImGui::BeginChild("transition columns");
+				{
+					ImGui::Columns(4);
+					DynamicArray<ui32> parametersToDestroy(Memory::AllocationType::Linear_Frame, transition->GetConditions().Size());
+
+					BL_DYNAMICARRAY_FOR(i, transition->GetConditions(), 0)
+					{
+						AnimatorParameter parameter = m_currentAnimator->GetParameter(transition->GetConditions()[i].ParameterAName);
+
+						RenderParameter(parameter, transition->GetConditions()[i].ParameterAName);
 
 						if (ImGui::Button("-")) {
-							parametersToDestroy.PushBack(it.GetKey());
+							parametersToDestroy.PushBack(i);
 						}
+
+						ImGui::NextColumn();
 
 						ImGui::Separator();
 					}
 
 					BL_DYNAMICARRAY_FOR(i, parametersToDestroy, 0)
 					{
-						m_currentAnimator->RemoveParameter(parametersToDestroy[i]);
+						transition->RemoveCondition(parametersToDestroy[i]);
 					}
-
 				}
 
 				ImGui::EndChild();
 
-				if (ImGui::BeginPopupModal("add_parameter", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+				ImGui::Separator();
+
+				if (ImGui::Button("+"))
 				{
-					static char parameterName[64] = "";
-					IMGUI_LEFT_LABEL(ImGui::InputText, "Parameter Name", parameterName, 64);
+					ImGui::OpenPopup("add_condition");
+				}
 
-					ImGui::Separator();
+				RenderConditionPopup(transition);
 
-					const char* parameterTypeNames[] = {
-								"Int",
-								"Float",
-								"Bool"
-					};
+				ImGui::EndPopup();
+			}
+		}
 
-					static AnimatorParameter::ValueType parameterValueType = AnimatorParameter::ValueType::Int;
+		void AnimatorPanel::RenderConditionPopup(AnimatorTransition* transition)
+		{
+			if (ImGui::BeginPopupModal("add_condition", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				static StringId parameterName = 0;
 
-					for (int i = 0; i < IM_ARRAYSIZE(parameterTypeNames); i++)
+				const char* combo_preview_value = parameterName != 0 ? BL_STRINGID_TO_STR_C(parameterName) : "";
+				if (ImGui::BeginCombo("Condition Parameter", combo_preview_value, ImGuiComboFlags_PopupAlignLeft))
+				{
+					BL_HASHTABLE_FOR(m_currentAnimator->GetAllParameters(), it)
 					{
-						if (ImGui::Button(parameterTypeNames[i]))
-						{
-							parameterValueType = (AnimatorParameter::ValueType)i;
-						}
+						const bool is_selected = (parameterName == it.GetKey());
+
+						if (ImGui::Selectable(BL_STRINGID_TO_STR_C(it.GetKey()), is_selected))
+							parameterName = it.GetKey();
+
+						// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
 					}
+					ImGui::EndCombo();
+				}
+				
+				if (parameterName != 0)
+				{
+					AnimatorParameter parameter = m_currentAnimator->GetParameter(parameterName);
+					AnimatorParameter parameterB;
+					AnimatorCondition::ComparisonType comparison = AnimatorCondition::ComparisonType::Equal;
 
-					ImGui::Separator();
+					static int selectIndex = 0;
+					static int intValue = 0;
+					static float floatValue = 0;
 
-					static int integerValue = 0;
-					static float floatValue = 0.0f;
-					static bool boolValue = true;
-
-					switch (parameterValueType)
+					switch (parameter.Type)
 					{
-					case BaldLion::Animation::AnimatorParameter::ValueType::Int:
-						IMGUI_LEFT_LABEL(ImGui::InputInt, "Value: ", &integerValue);
+
+					case AnimatorParameter::ValueType::Bool:
+						
+						ImGui::Combo("combo bool", &selectIndex, "False/True");
+
+						parameterB.Type = AnimatorParameter::ValueType::Bool;
+						parameterB.Value.boolean = selectIndex;
 						break;
 
-					case BaldLion::Animation::AnimatorParameter::ValueType::Float:
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Value: ", &floatValue);
+					case AnimatorParameter::ValueType::Int:
+
+						ImGui::Combo("combo int", &selectIndex, "</<=/==/!=/>=/>");
+						comparison = (AnimatorCondition::ComparisonType)selectIndex;
+
+						
+						IMGUI_LEFT_LABEL(ImGui::InputInt, "Value", &intValue);
+
+						parameterB.Type = AnimatorParameter::ValueType::Int;
+						parameterB.Value.integer = intValue;
+
 						break;
 
-					case BaldLion::Animation::AnimatorParameter::ValueType::Bool:
-						IMGUI_LEFT_LABEL(ImGui::Checkbox, "Value: ", &boolValue);
+					case AnimatorParameter::ValueType::Float:
+
+						ImGui::Combo("combo float", &selectIndex, "</<=/==/!=/>=/>");
+						comparison = (AnimatorCondition::ComparisonType)selectIndex;
+						
+						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Value", &floatValue);
+
+						parameterB.Type = AnimatorParameter::ValueType::Float;
+						parameterB.Value.floating = floatValue;
+
 						break;
 
 					default:
 						break;
 					}
 
-					ImGui::Separator();
+					AnimatorCondition condition { comparison, parameterName , parameterB };
 
-					if (parameterName != "" && ImGui::Button("Create"))
+					if (ImGui::Button("Add"))
 					{
-						AnimatorParameter parameter;
-						parameter.Type = parameterValueType;
-
-						switch (parameterValueType)
-						{
-						case BaldLion::Animation::AnimatorParameter::ValueType::Int:
-							parameter.Value.integer = integerValue;
-							break;
-						case BaldLion::Animation::AnimatorParameter::ValueType::Float:
-							parameter.Value.floating = floatValue;
-							break;
-						case BaldLion::Animation::AnimatorParameter::ValueType::Bool:
-							parameter.Value.boolean = boolValue;
-							break;
-						default:
-							break;
-						}
-
-						m_currentAnimator->AddParameter(BL_STRING_TO_STRINGID(parameterName), parameter);
-
+						transition->AddCondition(condition);
 						ImGui::CloseCurrentPopup();
 					}
-
 					ImGui::SameLine();
-
 					if (ImGui::Button("Close"))
 					{
 						ImGui::CloseCurrentPopup();
 					}
-
-					ImGui::EndPopup();
 				}
 
-				ImGui::Separator();
+
+				ImGui::EndPopup();
 			}
-			
-			//Animations
-			{
-				if (ImGui::Button("Add animation"))
-				{
-					ImGui::OpenPopup("add_animation");
-				}
-				AnimationData* animationDataToLoad = UtilsEditor::RenderResourceInspectorPopup<AnimationData>("add_animation", ResourceManagement::ResourceType::Animation);
-
-				if (animationDataToLoad != nullptr)
-				{					
-					m_currentAnimator->AddAnimation(animationDataToLoad);
-				}
-
-				ImGui::Separator();
-
-
-			}
-
-			ImGui::End();
 		}
+
 	}
 }

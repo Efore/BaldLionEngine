@@ -9,14 +9,16 @@ namespace BaldLion
 		AnimatorTransition::AnimatorTransition():
 			m_initialAnimationID(0),
 			m_finalAnimationID(0),
+			m_exitTime(0.0f),
 			m_transitionTime(0.0f)
 		{
 
 		}
 
-		AnimatorTransition::AnimatorTransition(ui32 initialAnimationID, ui32 finalAnimationID, float transitionTime) :
+		AnimatorTransition::AnimatorTransition(ui32 initialAnimationID, ui32 finalAnimationID,float exitTime, float transitionTime) :
 			m_initialAnimationID(initialAnimationID),
 			m_finalAnimationID(finalAnimationID),
+			m_exitTime(exitTime),
 			m_transitionTime(transitionTime)
 		{
 			m_conditions = DynamicArray<AnimatorCondition>(Memory::MemoryManager::GetAllocatorType(this), 10);
@@ -71,8 +73,11 @@ namespace BaldLion
 			m_conditions.PushBack(condition);
 		}
 
-		bool AnimatorTransition::CheckConditions(const Animator& animator) const
+		bool AnimatorTransition::CheckConditions(const Animator& animator, float animatorTime) const
 		{
+			if (m_exitTime > 0.0f && animatorTime < m_exitTime)
+				return false;
+
 			BL_DYNAMICARRAY_FOR(i, m_conditions, 0)
 			{
 				if (!AnimatorTransition::CheckCondition(animator, m_conditions[i]))
@@ -82,10 +87,18 @@ namespace BaldLion
 			return true;
 		}
 
+		void AnimatorTransition::RemoveCondition(ui32 conditionIndex)
+		{
+			if (conditionIndex < m_conditions.Size())
+			{
+				m_conditions.RemoveAtFast(conditionIndex);
+			}
+		}
+
 		bool AnimatorTransition::CheckCondition(const class Animator& animator, const AnimatorCondition& condition)
 		{
 			AnimatorParameter parameterA = animator.GetParameter(condition.ParameterAName);
-			AnimatorParameter parameterB = animator.GetParameter(condition.ParameterAName);
+			AnimatorParameter parameterB = condition.ParameterB;
 
 			switch (parameterA.Type)
 			{

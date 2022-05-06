@@ -92,7 +92,7 @@ namespace BaldLion {
 
 						if (hierarchyComponent != nullptr)
 						{
-							BL_DYNAMICARRAY_FOR(i, hierarchyComponent->childEntitiesIDs, 0)
+							for(ui32 i = 0, size = hierarchyComponent->childEntitiesSize; i < size; ++i)
 							{
 								m_sceneContext->GetECSManager()->RemoveEntity(hierarchyComponent->childEntitiesIDs[i]);
 							}
@@ -120,7 +120,7 @@ namespace BaldLion {
 				return;
 			}
 
-			if (hierarchyComponent == nullptr || hierarchyComponent->childEntitiesIDs.Size() == 0) 
+			if (hierarchyComponent == nullptr || hierarchyComponent->childEntitiesSize == 0) 
 			{
 				flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
 				ImGui::TreeNodeEx((void*)(uint32_t)entity.GetEntityID(), flags, BL_STRINGID_TO_STR_C(entity.GetEntityName()));
@@ -139,7 +139,7 @@ namespace BaldLion {
 
 				if (open) 
 				{
-					BL_DYNAMICARRAY_FOR(i, hierarchyComponent->childEntitiesIDs, 0)					
+					for(ui32 i = 0, size = hierarchyComponent->childEntitiesSize; i < size; ++i)					
 					{
 						DrawEntityElement(*m_sceneContext->GetECSManager()->GetEntityMap().Get(hierarchyComponent->childEntitiesIDs[i]), false, selectedThisFrame);
 					}	

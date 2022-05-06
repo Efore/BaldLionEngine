@@ -33,7 +33,7 @@ namespace BaldLion
 			} Comparison;
 
 			StringId ParameterAName;
-			StringId ParameterBName;
+			AnimatorParameter ParameterB;
 		};
 	}
 }

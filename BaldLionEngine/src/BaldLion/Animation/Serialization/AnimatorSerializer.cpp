@@ -13,6 +13,7 @@
 #define YAML_KEY_TRANSITION_INIT_ANIMATION_ID		"TransitionInitAnimationID"
 #define YAML_KEY_TRANSITION_FINAL_ANIMATION_ID		"TransitionFinalAnimationID"
 #define YAML_KEY_TRANSITION_TIME					"TransitionTime"
+#define YAML_KEY_TRANSITION_EXIT_TIME				"TransitionExitTime"
 
 #define YAML_KEY_CONDITIONS							"Conditions"
 #define YAML_KEY_CONDITION_PARAMETER_A				"ConditionsParameterA"
@@ -93,6 +94,9 @@ namespace BaldLion
 
 			Animator* animator = ResourceManagement::ResourceManager::LoadResource<Animator>(animatorPath);
 
+			if (animator == nullptr)
+				return false;
+
 			ui32 initialAnimationID = data[YAML_KEY_INITIAL_ANIMATION_ID].as<ui32>();
 
 			animator->SetInitialAnimation(initialAnimationID);
@@ -111,7 +115,10 @@ namespace BaldLion
 			for (auto yamlAnimation : animations)
 			{
 				AnimationData* animation = DeserializeAnimation(yamlAnimation);
-				animator->AddAnimation(animation);
+				if (animation != nullptr)
+				{
+					animator->AddAnimation(animation);
+				}
 			}
 
 			auto transitions = data[YAML_KEY_TRANSITIONS];
@@ -119,7 +126,10 @@ namespace BaldLion
 			for (auto yamlTransition : transitions)
 			{
 				AnimatorTransition* transition = DeserializeTransition(yamlTransition, animator);
-				animator->AddAnimationTransition(std::move(*transition));
+				if (transition != nullptr)
+				{
+					animator->AddAnimationTransition(std::move(transition));
+				}
 			}
 
 			return true;
@@ -139,18 +149,19 @@ namespace BaldLion
 			return ResourceManagement::ResourceManager::LoadResource<AnimationData>(animationPath);
 		}
 
-		void AnimatorSerializer::SerializeTransition(YAML::Emitter &out, const AnimatorTransition& transition)
+		void AnimatorSerializer::SerializeTransition(YAML::Emitter &out, const AnimatorTransition* transition)
 		{
 			out << YAML::BeginMap;
-			out << YAML::Key << YAML_KEY_TRANSITION_INIT_ANIMATION_ID << YAML::Value << BL_STRINGID_TO_STR_C(transition.GetInitialAnimationID());
-			out << YAML::Key << YAML_KEY_TRANSITION_FINAL_ANIMATION_ID << YAML::Value << BL_STRINGID_TO_STR_C(transition.GetFinalAnimationID());
-			out << YAML::Key << YAML_KEY_TRANSITION_TIME << YAML::Value << transition.GetTransitionTime();
+			out << YAML::Key << YAML_KEY_TRANSITION_INIT_ANIMATION_ID << YAML::Value << BL_STRINGID_TO_STR_C(transition->GetInitialAnimationID());
+			out << YAML::Key << YAML_KEY_TRANSITION_FINAL_ANIMATION_ID << YAML::Value << BL_STRINGID_TO_STR_C(transition->GetFinalAnimationID());
+			out << YAML::Key << YAML_KEY_TRANSITION_TIME << YAML::Value << transition->GetTransitionTime();
+			out << YAML::Key << YAML_KEY_TRANSITION_EXIT_TIME << YAML::Value << transition->GetExitTime();
 
 			out << YAML::Key << YAML_KEY_CONDITIONS << YAML::Value << YAML::BeginSeq;
 
-			BL_DYNAMICARRAY_FOR(i, transition.m_conditions, 0)
+			BL_DYNAMICARRAY_FOR(i, transition->m_conditions, 0)
 			{
-				SerializeCondition(out, transition.m_conditions[i]);
+				SerializeCondition(out, transition->m_conditions[i]);
 			}
 
 			out << YAML::EndSeq;
@@ -164,8 +175,9 @@ namespace BaldLion
 			ui32 initialAnimationID = BL_STRING_TO_STRINGID(yamlEntity[YAML_KEY_TRANSITION_INIT_ANIMATION_ID].as<std::string>());
 			ui32 finalAnimationID = BL_STRING_TO_STRINGID(yamlEntity[YAML_KEY_TRANSITION_FINAL_ANIMATION_ID].as<std::string>());
 			float transitiontime = yamlEntity[YAML_KEY_TRANSITION_TIME].as<float>();
+			float exitTime = yamlEntity[YAML_KEY_TRANSITION_EXIT_TIME].as<float>();
 			
-			result = MemoryManager::New<AnimatorTransition>("Animator Transition", MemoryManager::GetAllocatorType(animator), initialAnimationID, finalAnimationID, transitiontime);
+			result = MemoryManager::New<AnimatorTransition>("Animator Transition", MemoryManager::GetAllocatorType(animator), initialAnimationID, finalAnimationID, exitTime, transitiontime);
 
 			auto conditions = yamlEntity[YAML_KEY_CONDITIONS];
 
@@ -226,7 +238,7 @@ namespace BaldLion
 		{
 			out << YAML::BeginMap;
 			out << YAML::Key << YAML_KEY_CONDITION_PARAMETER_A << YAML::Value << BL_STRINGID_TO_STR_C(condition.ParameterAName);
-			out << YAML::Key << YAML_KEY_CONDITION_PARAMETER_B << YAML::Value << BL_STRINGID_TO_STR_C(condition.ParameterBName);
+			SerializeParameter(out, condition.ParameterB);
 			out << YAML::Key << YAML_KEY_CONDITION_COMPARISON_TYPE << YAML::Value << (ui32)condition.Comparison;
 			out << YAML::EndMap;
 		}
@@ -234,10 +246,11 @@ namespace BaldLion
 		AnimatorCondition AnimatorSerializer::DeserializeCondition(const YAML::detail::iterator_value& yamlEntity)
 		{
 			StringId parameterAName = BL_STRING_TO_STRINGID(yamlEntity[YAML_KEY_CONDITION_PARAMETER_A].as<std::string>());
-			StringId parameterBName = BL_STRING_TO_STRINGID(yamlEntity[YAML_KEY_CONDITION_PARAMETER_B].as<std::string>());
+			AnimatorParameter parameterB = DeserializeParameterer(yamlEntity);
+			
 			AnimatorCondition::ComparisonType comparisonType = (AnimatorCondition::ComparisonType)yamlEntity[YAML_KEY_CONDITION_COMPARISON_TYPE].as<ui32>();
 
-			return { comparisonType , parameterAName, parameterBName };
+			return { comparisonType , parameterAName, parameterB };
 		}
 
 	}

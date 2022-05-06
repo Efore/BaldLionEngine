@@ -221,7 +221,7 @@ namespace BaldLion
 				out << YAML::Key << YAML_KEY_PARENTID << YAML::Value << hierarchyComponent->parentEntityID;
 				out << YAML::Key << YAML_KEY_CHILDENTITIES << YAML::Value << YAML::BeginSeq;
 
-				BL_DYNAMICARRAY_FOR(i, hierarchyComponent->childEntitiesIDs, 0)				
+				for(ui32 i = 0, size = hierarchyComponent->childEntitiesSize; i < size; ++i)
 				{
 					out << YAML::Key << YAML_KEY_CHILDENTITY + std::to_string(i) << YAML::Value << hierarchyComponent->childEntitiesIDs[i];
 				}
@@ -337,19 +337,20 @@ namespace BaldLion
 
 				auto children = yamlComponent[YAML_KEY_CHILDENTITIES];
 
-				DynamicArray<ECSEntityID> childEntitiesIDs(AllocationType::Linear_Frame, 10);
+				ECSEntityID childEntitiesIDs[100];
 				ui32 i = 0;
 
 				for (auto child : children)
 				{
-					childEntitiesIDs.EmplaceBack(child[YAML_KEY_CHILDENTITY + std::to_string(i)].as<ECSEntityID>());
+					childEntitiesIDs[i] = child[YAML_KEY_CHILDENTITY + std::to_string(i)].as<ECSEntityID>();
 					++i;
 				}
 
 				component = SceneManager::GetECSManager()->AddComponent<ECSHierarchyComponent>(
 					ECS::ECSComponentType::Hierarchy,
 					parentEntityID,
-					childEntitiesIDs);
+					childEntitiesIDs,
+					i);
 			}
 				break;
 

@@ -12,19 +12,24 @@ namespace BaldLion {
 		public:
 
 			ECSHierarchyComponent(ECSEntityID parentEntityID) :
-				ECSComponent(ECSComponentType::Hierarchy), parentEntityID(parentEntityID)
+				ECSComponent(ECSComponentType::Hierarchy), parentEntityID(parentEntityID), childEntitiesSize(0)
 			{
-				childEntitiesIDs = DynamicArray<ECSEntityID>(AllocationType::FreeList_ECS, 10);
+				
 			}
 
-			ECSHierarchyComponent(ECSEntityID parentEntityID, const DynamicArray<ECSEntityID>& childEntitiesIDs) :
-				ECSComponent(ECSComponentType::Hierarchy),parentEntityID(parentEntityID), childEntitiesIDs(childEntitiesIDs)
+			ECSHierarchyComponent(ECSEntityID parentEntityID, const ECSEntityID* childEntitiesIDs, ui32 childEntitiesSize) :
+				ECSComponent(ECSComponentType::Hierarchy),parentEntityID(parentEntityID), childEntitiesSize(childEntitiesSize)
 			{
+				for (ui32 i = 0; i < childEntitiesSize; ++i)
+				{
+					this->childEntitiesIDs[i] = childEntitiesIDs[i];
+				}
 			}
 
 		public:
 			ECSEntityID parentEntityID;
-			DynamicArray<ECSEntityID> childEntitiesIDs;
+			ECSEntityID childEntitiesIDs[100];
+			ui32 childEntitiesSize;
 		};
 	}
 }

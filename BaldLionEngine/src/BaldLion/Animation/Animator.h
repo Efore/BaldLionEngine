@@ -28,10 +28,12 @@ namespace BaldLion
 
 			void CalculateInterpolatedTransforms(float currentAnimationTime, float currentTransitionTime, const AnimationData* animation, const AnimatorTransition* transition, DynamicArray<JointTransform>& result) const;
 
-			void AddAnimationTransition(AnimatorTransition&& animationTransition);		
+			void AddAnimationTransition(AnimatorTransition* animationTransition);		
 			void RemoveTransition(ui32 initialAnimationID, ui32 finalAnimationID);
 
-			const HashTable<ui32, DynamicArray<AnimatorTransition>>& GetAllTransitions() const { return m_transitions; }
+			const DynamicArray<AnimatorTransition*>* GetTransitionsOfAnimation(ui32 initialAnimationID) const;
+			DynamicArray<AnimatorTransition*>* GetTransitionsOfAnimation(ui32 initialAnimationID);
+			const HashTable<ui32, DynamicArray<AnimatorTransition*>>& GetAllTransitions() const { return m_transitions; }
 
 			const HashTable<StringId, AnimatorParameter>& GetAllParameters() const { return m_parameters; }
 
@@ -49,12 +51,12 @@ namespace BaldLion
 			bool GetParameterBool(const StringId parameterName);
 			void SetParameterBool(const StringId parameterName, bool value);
 
-			const AnimatorTransition* CheckConditions(const ui32 animationID) const;
+			const AnimatorTransition* CheckTransition(const ui32 animationID, float animationTime) const;
 
 		private:	
 
 			HashTable<ui32, AnimationData*> m_animations;
-			HashTable<ui32, DynamicArray<AnimatorTransition>> m_transitions;
+			HashTable<ui32, DynamicArray<AnimatorTransition*>> m_transitions;
 			HashTable<StringId, AnimatorParameter> m_parameters;
 
 			ui32 m_initAnimationID;

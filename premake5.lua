@@ -19,6 +19,7 @@ IncludeDir["stb_image"] = "BaldLionEngine/vendor/stb_image/"
 IncludeDir["assimp"] = "BaldLionEngine/vendor/assimp/include"
 IncludeDir["optick"] = "BaldLionEngine/vendor/optick/include"
 IncludeDir["ImGuizmo"] = "BaldLionEditor/vendor/ImGuizmo"
+IncludeDir["ImNodes"] = "BaldLionEditor/vendor/ImNodes"
 IncludeDir["debug_draw"] = "BaldLionEngine/vendor/debug-draw"
 IncludeDir["yaml"] = "BaldLionEngine/vendor/yaml/include"
 
@@ -52,7 +53,9 @@ project "BaldLionEngine"
 		"%{prj.name}/vendor/glm/glm/**.inl",		
 		"%{prj.name}/vendor/debug-draw/**.hpp",
 		"%{prj.name}/vendor/debug-draw/**.hpp"
-	}
+	}	
+		
+	removefiles {"%{prj.name}/src/BaldLion/AI/**"}
 
 	defines
 	{
@@ -86,12 +89,10 @@ project "BaldLionEngine"
 		"Glad",
 		"ImGui",
 		"yaml-cpp",
-		"assimp-vc141-mtd.lib",
+		"assimp-vc142-mtd.lib",
 		"OptickCore.lib"
 	}
-	
-	filter { "**.h", "**.cpp" }
-	removefiles {"%{prj.name}/src/BaldLion/AI/**"}
+
 
 	filter "system:windows"		
 		systemversion "latest"
@@ -136,7 +137,11 @@ project "BaldLionEditor"
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
-		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",
+		"%{prj.name}/vendor/ImNodes/ImNodes.h",
+		"%{prj.name}/vendor/ImNodes/ImNodes.cpp",
+		"%{prj.name}/vendor/ImNodes/ImNodesEz.h",
+		"%{prj.name}/vendor/ImNodes/ImNodesEz.cpp"
 	}
 
 	includedirs
@@ -148,6 +153,7 @@ project "BaldLionEditor"
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.optick}",	
 		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.ImNodes}",
 		"%{IncludeDir.debug_draw}",		
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.yaml}"
@@ -161,6 +167,11 @@ project "BaldLionEditor"
 	
 	filter "files:BaldLionEngine/vendor/ImGuizmo/**.cpp"
 		flags {"NoPCH"}
+		
+			
+	filter "files:BaldLionEngine/vendor/ImNodes/**.cpp"
+		flags {"NoPCH"}		
+		
 		
 	filter "system:windows"	
 		systemversion "latest"

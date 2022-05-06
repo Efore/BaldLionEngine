@@ -43,7 +43,7 @@ namespace BaldLion
 
 			const aiScene *scene = import.ReadFile(BL_STRINGID_TO_STR_C(m_modelPath), m_importFlags);
 
-			if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+			if (!scene || !scene->mRootNode)
 			{
 				std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
 				return;
@@ -408,8 +408,9 @@ namespace BaldLion
 			/*Material* meshMaterial = Material::Create(matName, materialProperties);*/
 			
 			meshMaterial->AssignShader();
-			
-			const std::string meshName = BL_STRINGID_TO_STRING(modelFolderPath) + (aimesh->mName.C_Str()) + ResourceManager::GetResourceSuffixFromType(ResourceType::Mesh);
+
+			const char* aiMeshName = strlen(aimesh->mName.C_Str()) == 0 ? "unnamedMesh" : aimesh->mName.C_Str();
+			const std::string meshName = BL_STRINGID_TO_STRING(modelFolderPath) + (aiMeshName) + ResourceManager::GetResourceSuffixFromType(ResourceType::Mesh);
 
 			Mesh* mesh = ResourceManagement::ResourceManager::LoadResource<Mesh>(meshName);
 				
@@ -450,8 +451,8 @@ namespace BaldLion
 				mesh->SetSkeleton(skeleton);
 				mesh->SetVertexBones(verticesBoneData);
 
-				const std::string animatorName = BL_STRINGID_TO_STRING(modelFolderPath) + aimesh->mName.C_Str() + ResourceManager::GetResourceSuffixFromType(ResourceType::Animator);
-				Animation::AnimationManager::GenerateAnimator(aiscene, animatorName, jointMapping);
+				std::string animatorPath = BL_STRINGID_TO_STRING(modelFolderPath) + aiMeshName;
+				Animation::AnimationManager::GenerateAnimator(aiscene, animatorPath, jointMapping);
 			}
 
 			mesh->SetUpMesh(vertices, indices);
@@ -467,13 +468,11 @@ namespace BaldLion
 				ECS::ECSComponentType::Transform,
 				glm::vec3(0.0f),
 				glm::vec3(0.0f),
-				glm::vec3(1.0f)
-				);
+				glm::vec3(1.0f));
 
 			ECS::ECSHierarchyComponent* rootHierarchyComponent = ecsManager->AddComponent<ECS::ECSHierarchyComponent>(
 				ECS::ECSComponentType::Hierarchy,
-				0
-				);
+				0);
 
 			ecsManager->AddComponentToEntity(rootEntityID, rootTransformComponent);
 			ecsManager->AddComponentToEntity(rootEntityID, rootHierarchyComponent);
@@ -484,7 +483,7 @@ namespace BaldLion
 
 				ECS::ECSEntityID childEntityID = ecsManager->AddEntity(BL_STRINGID_TO_STR_C(subMesh->GetResourcePath()));
 
-				rootHierarchyComponent->childEntitiesIDs.EmplaceBack(childEntityID);
+				rootHierarchyComponent->childEntitiesIDs[rootHierarchyComponent->childEntitiesSize++] = childEntityID;
 
 				ECS::ECSTransformComponent* childTransformComponent = ecsManager->AddComponent<ECS::ECSTransformComponent>(
 					ECS::ECSComponentType::Transform,

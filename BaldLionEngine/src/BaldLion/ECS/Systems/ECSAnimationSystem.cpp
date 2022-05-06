@@ -26,7 +26,7 @@ namespace BaldLion {
 			 
 			entityAnimation->currentAnimationTime = glm::mod(entityAnimation->currentAnimationTime + entityAnimation->timer->GetDeltaTime(), currentAnimation->AnimationLength);
 
-			const AnimatorTransition* currentTransition = entityAnimator->CheckConditions(entityAnimation->currentAnimationID);
+			const AnimatorTransition* currentTransition = entityAnimator->CheckTransition(entityAnimation->currentAnimationID, entityAnimation->currentAnimationTime);
 
 			if (currentTransition != nullptr)
 			{

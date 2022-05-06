@@ -12,9 +12,18 @@ namespace BaldLion {
 		class AnimatorPanel : public EditorPanel {
 
 		public:
-			AnimatorPanel() = default;
+			AnimatorPanel();
 
 			virtual void OnImGuiRender() override;
+
+		private:
+
+			void RenderParameters();
+			void RenderAnimationNodes();
+			void RenderAddTransitionPopup(const char* popupName, const char* initialAnimationPath, ui32 initialAnimationID);
+			void RenderSetupTransitionPopup(const char* popupID, const char* initialAnimationPath, const char* finalAnimationPath, AnimatorTransition* transition);
+			void RenderParameter(AnimatorParameter& parameter, StringId parameterName);
+			void RenderConditionPopup(AnimatorTransition* transition);
 
 		private:
 

@@ -81,16 +81,7 @@ namespace BaldLion
 				InverseRootTransform(inverseRootTransform),				
 				AnimationFrames(DynamicArray<KeyFrame>(Memory::MemoryManager::GetAllocatorType(this), animationFramesCount)),
 				AnimationLength(animationLenght)
-			{}
-
-			//---------------------------------------------------------------------------------------
-
-			AnimationData(AnimationData&& other) : 
-				InverseRootTransform(other.InverseRootTransform),				
-				AnimationLength(other.AnimationLength),
-				AnimationFrames(std::move(other.AnimationFrames))
-			{
-			}
+			{}		
 
 			//---------------------------------------------------------------------------------------
 
@@ -101,18 +92,7 @@ namespace BaldLion
 				AnimationFrames = other.AnimationFrames;
 
 				return *this;
-			}
-
-			//---------------------------------------------------------------------------------------
-
-			AnimationData& operator=(AnimationData&& other)
-			{
-				InverseRootTransform = other.InverseRootTransform;				
-				AnimationLength = other.AnimationLength;
-				AnimationFrames = std::move(other.AnimationFrames);				
-
-				return *this;
-			}			
+			}	
 		};
 
 	}

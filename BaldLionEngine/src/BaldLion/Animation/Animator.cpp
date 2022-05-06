@@ -11,7 +11,7 @@ namespace BaldLion
 		{
 			m_parameters = HashTable<StringId, AnimatorParameter>(Memory::MemoryManager::GetAllocatorType(this), 10);
 			m_animations = HashTable<StringId, AnimationData*>(Memory::MemoryManager::GetAllocatorType(this), 15);
-			m_transitions = HashTable<StringId, DynamicArray<AnimatorTransition>>(Memory::MemoryManager::GetAllocatorType(this), 15);
+			m_transitions = HashTable<StringId, DynamicArray<AnimatorTransition*>>(Memory::MemoryManager::GetAllocatorType(this), 15);
 		}
 
 		Animator::~Animator()
@@ -53,41 +53,62 @@ namespace BaldLion
 			}
 		}
 
-		void Animator::AddAnimationTransition(AnimatorTransition&& animationTransition)
+		void Animator::AddAnimationTransition(AnimatorTransition* animationTransition)
 		{
-			DynamicArray<AnimatorTransition>* transitions = nullptr;
+			DynamicArray<AnimatorTransition*>* transitions = nullptr;
 
-			if(m_transitions.TryGet(animationTransition.GetInitialAnimationID(), transitions))
-			{ 
-				if (!transitions->Contains(animationTransition))
-				{
-					transitions->EmplaceBack(std::move(animationTransition));
-				}
+			if(m_transitions.TryGet(animationTransition->GetInitialAnimationID(), transitions))
+			{ 				
+				transitions->EmplaceBack(std::move(animationTransition));				
 			}
 			else 
 			{
-				DynamicArray<AnimatorTransition> newTransitions = DynamicArray<AnimatorTransition>(Memory::MemoryManager::GetAllocatorType(this), 10);
+				DynamicArray<AnimatorTransition*> newTransitions = DynamicArray<AnimatorTransition*>(Memory::MemoryManager::GetAllocatorType(this), 10);
 				newTransitions.EmplaceBack(std::move(animationTransition));
 
-				m_transitions.Emplace(animationTransition.GetInitialAnimationID(), std::move(newTransitions));
+				m_transitions.Emplace(animationTransition->GetInitialAnimationID(), std::move(newTransitions));
 			}
 		}
 
 		void Animator::RemoveTransition(ui32 initialAnimationID, ui32 finalAnimationID)
 		{
-			DynamicArray<AnimatorTransition>* transitions = nullptr;
+			DynamicArray<AnimatorTransition*>* transitions = nullptr;
 
 			if (m_transitions.TryGet(initialAnimationID, transitions))
 			{
 				BL_DYNAMICARRAY_FOR(i, *transitions, 0)
 				{
-					if ((*transitions)[i].GetFinalAnimationID() == finalAnimationID)
+					if ((*transitions)[i]->GetFinalAnimationID() == finalAnimationID)
 					{
 						(*transitions).RemoveAt(i);
 						break;
 					}
 				}
 			}
+		}
+
+		const DynamicArray<AnimatorTransition*>* Animator::GetTransitionsOfAnimation(ui32 initialAnimationID) const
+		{
+			DynamicArray<AnimatorTransition*>* transitions = nullptr;
+
+			if (m_transitions.TryGet(initialAnimationID, transitions))
+			{
+				return transitions;
+			}
+
+			return transitions;
+		}
+
+		DynamicArray<AnimatorTransition*>* Animator::GetTransitionsOfAnimation(ui32 initialAnimationID)
+		{
+			DynamicArray<AnimatorTransition*>* transitions = nullptr;
+
+			if (m_transitions.TryGet(initialAnimationID, transitions))
+			{
+				return transitions;
+			}
+
+			return transitions;
 		}
 
 		void Animator::AddParameter(const StringId parameterName, const AnimatorParameter& parameter)
@@ -252,16 +273,16 @@ namespace BaldLion
 			}
 		}
 
-		const AnimatorTransition* Animator::CheckConditions(const ui32 animationID) const
+		const AnimatorTransition* Animator::CheckTransition(const ui32 animationID, float animationTime) const
 		{
-			DynamicArray<AnimatorTransition>* transitions = nullptr;
+			DynamicArray<AnimatorTransition*>* transitions = nullptr;
 
 			if (m_transitions.TryGet(animationID, transitions)) {
-
+				
 				BL_DYNAMICARRAY_FOR(i, *transitions, 0)
 				{
-					if ((*transitions)[i].CheckConditions(*this))
-						return &(*transitions)[i];
+					if ((*transitions)[i]->CheckConditions(*this, animationTime))
+						return (*transitions)[i];
 				}
 			}
 			return nullptr;

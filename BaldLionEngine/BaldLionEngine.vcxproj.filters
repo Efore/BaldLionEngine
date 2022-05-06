@@ -7,12 +7,6 @@
     <Filter Include="src\BaldLion">
       <UniqueIdentifier>{A16421C3-8DC7-B067-364D-E91D228F7CEA}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\BaldLion\AI">
-      <UniqueIdentifier>{9AFDAF32-0689-1DF7-0F9A-A0EB7BA479F7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\BaldLion\AI\FSM">
-      <UniqueIdentifier>{2F3564DF-9B96-41ED-2404-889F906478AC}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\BaldLion\Animation">
       <UniqueIdentifier>{D01A5164-BC14-7AB6-A581-10C7911AE022}</UniqueIdentifier>
     </Filter>
