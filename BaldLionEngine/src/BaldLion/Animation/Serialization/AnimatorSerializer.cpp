@@ -72,9 +72,14 @@ namespace BaldLion
 
 			out << YAML::EndMap;
 
-			std::ofstream fout(filepath);
-			fout << out.c_str();
-			fout.close();
+			const std::string parentFolderPath = StringUtils::GetPathWithoutFile(filepath);
+
+			if (CreateDirectoryA(parentFolderPath.c_str(), NULL) || ERROR_ALREADY_EXISTS != GetLastError())
+			{
+				std::ofstream fout(filepath);
+				fout << out.c_str();
+				fout.close();
+			}
 		}
 
 
@@ -97,10 +102,6 @@ namespace BaldLion
 			if (animator == nullptr)
 				return false;
 
-			ui32 initialAnimationID = data[YAML_KEY_INITIAL_ANIMATION_ID].as<ui32>();
-
-			animator->SetInitialAnimation(initialAnimationID);
-
 			auto parameters = data[YAML_KEY_PARAMETERS];
 
 			for (auto yamlParamter : parameters)
@@ -114,11 +115,18 @@ namespace BaldLion
 
 			for (auto yamlAnimation : animations)
 			{
-				AnimationData* animation = DeserializeAnimation(yamlAnimation);
+				AnimationClip* animation = DeserializeAnimation(yamlAnimation);
 				if (animation != nullptr)
 				{
 					animator->AddAnimation(animation);
 				}
+			}
+
+			ui32 initialAnimationID = data[YAML_KEY_INITIAL_ANIMATION_ID].as<ui32>();
+
+			if (animator->GetAnimation(initialAnimationID) != nullptr)
+			{
+				animator->SetInitialAnimation(initialAnimationID);
 			}
 
 			auto transitions = data[YAML_KEY_TRANSITIONS];
@@ -135,7 +143,7 @@ namespace BaldLion
 			return true;
 		}
 
-		void AnimatorSerializer::SerializeAnimation(YAML::Emitter &out, const AnimationData* animation)
+		void AnimatorSerializer::SerializeAnimation(YAML::Emitter &out, const AnimationClip* animation)
 		{
 			out << YAML::BeginMap;
 			out << YAML::Key << YAML_KEY_ANIMATION_PATH << YAML::Value << BL_STRINGID_TO_STR_C(animation->GetResourcePath());
@@ -143,10 +151,10 @@ namespace BaldLion
 			out << YAML::EndMap;
 		}
 
-		AnimationData* AnimatorSerializer::DeserializeAnimation(const YAML::detail::iterator_value& yamlEntity)
+		AnimationClip* AnimatorSerializer::DeserializeAnimation(const YAML::detail::iterator_value& yamlEntity)
 		{
 			std::string animationPath = yamlEntity[YAML_KEY_ANIMATION_PATH].as<std::string>();
-			return ResourceManagement::ResourceManager::LoadResource<AnimationData>(animationPath);
+			return ResourceManagement::ResourceManager::LoadResource<AnimationClip>(animationPath);
 		}
 
 		void AnimatorSerializer::SerializeTransition(YAML::Emitter &out, const AnimatorTransition* transition)

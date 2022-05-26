@@ -7,59 +7,106 @@ namespace BaldLion
 {
 	namespace Animation
 	{
+
 		#define BL_JOINT_WEIGHTS_PER_VERTEX 3 
-		#define BL_JOINT_POSITION_RANGE 100.0F
+		#define BL_JOINT_POSITION_RANGE 300.0F
+
+		enum class JointType
+		{
+			Hips,
+			Spine,
+			Chest,
+			Upper_Chest,
+			Neck,
+			Head,
+			HeadTop_End,
+			Left_Shoulder,
+			Left_Arm,
+			Left_Forearm,
+			Left_Hand,
+			Left_Hand_Thumb1,
+			Left_Hand_Thumb2,
+			Left_Hand_Thumb3,
+			Left_Hand_Thumb4,
+			Left_Hand_Index1,
+			Left_Hand_Index2,
+			Left_Hand_Index3,
+			Left_Hand_Index4,
+			Left_Hand_Middle1,
+			Left_Hand_Middle2,
+			Left_Hand_Middle3,
+			Left_Hand_Middle4,
+			Left_Hand_Ring1,
+			Left_Hand_Ring2,
+			Left_Hand_Ring3,
+			Left_Hand_Ring4,
+			Left_Hand_Pinky1,
+			Left_Hand_Pinky2,
+			Left_Hand_Pinky3,
+			Left_Hand_Pinky4,
+			Right_Shoulder,
+			Right_Arm,
+			Right_Forearm,
+			Right_Hand,
+			Right_Hand_Thumb1,
+			Right_Hand_Thumb2,
+			Right_Hand_Thumb3,
+			Right_Hand_Thumb4,
+			Right_Hand_Index1,
+			Right_Hand_Index2,
+			Right_Hand_Index3,
+			Right_Hand_Index4,
+			Right_Hand_Middle1,
+			Right_Hand_Middle2,
+			Right_Hand_Middle3,
+			Right_Hand_Middle4,
+			Right_Hand_Ring1,
+			Right_Hand_Ring2,
+			Right_Hand_Ring3,
+			Right_Hand_Ring4,
+			Right_Hand_Pinky1,
+			Right_Hand_Pinky2,
+			Right_Hand_Pinky3,
+			Right_Hand_Pinky4,
+			Left_Upper_Leg,
+			Left_Lower_Leg,
+			Left_Foot,
+			Left_Foot_Toe_Base,
+			Left_Foot_Toe_End,
+			Right_Upper_Leg,
+			Right_Lower_Leg,
+			Right_Foot,
+			Right_Foot_Toe_Base,
+			Right_Foot_Toe_End,
+
+			Count
+		};
 
 		struct Joint
 		{
-			glm::mat4 jointBindTransform;
+			glm::mat4 jointOffsetTransform;
+			glm::mat4 jointLocalSpaceTransform;
 			glm::mat4 jointModelSpaceTransform;
-			glm::mat4 jointAnimationTransform;
-
-			ui32 jointID;
-			i32 parentID;			
+			JointType parentJointType;			
 			
 			void UpdateJointTransforms(const glm::mat4& rootInverseTransform, const glm::mat4& parentTransform, const glm::mat4& localAnimationTransform)
-			{			
-				BL_PROFILE_FUNCTION();
-				jointModelSpaceTransform = parentTransform * localAnimationTransform;
-				jointAnimationTransform = rootInverseTransform * jointModelSpaceTransform * jointBindTransform;
+			{	
+				jointLocalSpaceTransform = parentTransform * localAnimationTransform;
+				jointModelSpaceTransform = rootInverseTransform * jointLocalSpaceTransform * jointOffsetTransform;
 			}
 		};
 
 		struct JointTransform {	
-
-			Compression::QuantizedVector3 position;
-			Compression::QuantizedQuaterion rotation;		
-
-			JointTransform() = default;
-
-			JointTransform(const glm::vec3& decompressedPosition, const glm::quat& decompressedRotation)
-			{
-				position = Compression::CompressVector3(decompressedPosition, BL_JOINT_POSITION_RANGE);
-				rotation = Compression::CompressQuaternion(decompressedRotation);
-			}
 			
-			const glm::vec3 GetDecompressedPosition() const
-			{
-				BL_PROFILE_FUNCTION();
-				return Compression::DecompressVector3(position, BL_JOINT_POSITION_RANGE);
-			}
+			glm::quat rotation;
+			glm::vec3 position;
+			glm::vec3 scale;
 
-			void SetPosition(const glm::vec3& decompressedPosition)
-			{
-				position = Compression::CompressVector3(decompressedPosition, BL_JOINT_POSITION_RANGE);
-			}
+			JointTransform() {
 
-			const glm::quat GetDecompressedRotation() const
-			{
-				BL_PROFILE_FUNCTION();
-				return Compression::DecompressCuaternion(rotation);
-			}
-
-			void SetRotation(const glm::quat& decompressedRotation)
-			{
-				rotation = Compression::CompressQuaternion(decompressedRotation);
+				rotation = glm::identity<glm::quat>();
+				position = glm::vec3(0.0f);
+				scale = glm::vec3(1.0f);
 			}
 		};
 	}

@@ -73,14 +73,14 @@ namespace BaldLion
 			m_conditions.PushBack(condition);
 		}
 
-		bool AnimatorTransition::CheckConditions(const Animator& animator, float animatorTime) const
+		bool AnimatorTransition::CheckConditions(const HashTable<StringId, AnimatorParameter>& componentParameters, float animatorTime) const
 		{
 			if (m_exitTime > 0.0f && animatorTime < m_exitTime)
 				return false;
 
 			BL_DYNAMICARRAY_FOR(i, m_conditions, 0)
 			{
-				if (!AnimatorTransition::CheckCondition(animator, m_conditions[i]))
+				if (!AnimatorTransition::CheckCondition(componentParameters, m_conditions[i]))
 					return false;
 			}
 
@@ -95,9 +95,9 @@ namespace BaldLion
 			}
 		}
 
-		bool AnimatorTransition::CheckCondition(const class Animator& animator, const AnimatorCondition& condition)
+		bool AnimatorTransition::CheckCondition(const HashTable<StringId, AnimatorParameter>& componentParameters, const AnimatorCondition& condition)
 		{
-			AnimatorParameter parameterA = animator.GetParameter(condition.ParameterAName);
+			AnimatorParameter parameterA = componentParameters.Get(condition.ParameterAName);
 			AnimatorParameter parameterB = condition.ParameterB;
 
 			switch (parameterA.Type)

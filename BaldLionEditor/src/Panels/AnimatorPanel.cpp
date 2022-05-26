@@ -32,7 +32,7 @@ namespace BaldLion {
 
 			if (m_currentAnimator != nullptr)
 			{
-				ImGui::Text("Current Animator: %s", BL_STRINGID_TO_STR_C(m_currentAnimator->GetResourcePath()));
+				ImGui::Text("Current Animator: %s", BL_STRINGID_TO_STR_C(m_currentAnimator->GetResourceName()));
 
 				ImGui::SameLine();
 
@@ -105,7 +105,8 @@ namespace BaldLion {
 				ImGui::OpenPopup("add_parameter");
 			}
 
-			ImGui::BeginChild("parameter column");
+			float ySize = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f * (m_currentAnimator->GetAllParameters().Size() + 4);
+			ImGui::BeginChild("parameter column", ImVec2(0, ySize));
 			{
 
 				ImGui::Columns(4);
@@ -231,13 +232,12 @@ namespace BaldLion {
 				ImGui::OpenPopup("add_animation");
 			}
 
-			AnimationData* animationDataToLoad = UtilsEditor::RenderResourceInspectorPopup<AnimationData>("add_animation", ResourceManagement::ResourceType::Animation);
+			AnimationClip* animationDataToLoad = UtilsEditor::RenderResourceInspectorPopup<AnimationClip>("add_animation", ResourceManagement::ResourceType::Animation);
 
 			if (animationDataToLoad != nullptr)
 			{
 				m_currentAnimator->AddAnimation(animationDataToLoad);
-			}
-
+			}			
 			ImGui::BeginChild("animations column");
 			{
 				ImGui::Columns(2);
@@ -329,6 +329,7 @@ namespace BaldLion {
 				{
 					AnimatorTransition* transition = MemoryManager::New<AnimatorTransition>("Animator Transition", MemoryManager::GetAllocatorType(m_currentAnimator), initialAnimationID, finalAnimationID, transitionExitTime, transitionTime);
 					m_currentAnimator->AddAnimationTransition(transition);
+
 					ImGui::CloseCurrentPopup();
 				}
 
@@ -358,9 +359,16 @@ namespace BaldLion {
 				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Transition Time", &transitionTime);
 				transition->SetTransitionTime(transitionTime);
 
-				ImGui::BeginChild("transition columns");
+				ImGui::Separator();
+
+				std::string childId = "transition columns";
+				childId.append(popupID);
+
+				float ySize = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f * (transition->GetConditions().Size() + 4);
+				ImGui::BeginChild(childId.c_str(), ImVec2(0, ySize));
 				{
 					ImGui::Columns(4);
+					
 					DynamicArray<ui32> parametersToDestroy(Memory::AllocationType::Linear_Frame, transition->GetConditions().Size());
 
 					BL_DYNAMICARRAY_FOR(i, transition->GetConditions(), 0)
@@ -388,20 +396,30 @@ namespace BaldLion {
 
 				ImGui::Separator();
 
+				std::string popupID = "add_condition";
+				childId.append(popupID);
+
 				if (ImGui::Button("+"))
 				{
-					ImGui::OpenPopup("add_condition");
+					ImGui::OpenPopup(popupID.c_str());
 				}
 
-				RenderConditionPopup(transition);
+				RenderConditionPopup(popupID.c_str(), transition);
+
+				ImGui::Separator();
+
+				if (ImGui::Button("Close"))
+				{
+					ImGui::CloseCurrentPopup();
+				}
 
 				ImGui::EndPopup();
 			}
 		}
 
-		void AnimatorPanel::RenderConditionPopup(AnimatorTransition* transition)
+		void AnimatorPanel::RenderConditionPopup(const char* popupID, AnimatorTransition* transition)
 		{
-			if (ImGui::BeginPopupModal("add_condition", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+			if (ImGui::BeginPopupModal(popupID, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				static StringId parameterName = 0;
 
@@ -437,7 +455,7 @@ namespace BaldLion {
 
 					case AnimatorParameter::ValueType::Bool:
 						
-						ImGui::Combo("combo bool", &selectIndex, "False/True");
+						ImGui::Combo("combo bool", &selectIndex, "False\0True");
 
 						parameterB.Type = AnimatorParameter::ValueType::Bool;
 						parameterB.Value.boolean = selectIndex;
@@ -445,7 +463,7 @@ namespace BaldLion {
 
 					case AnimatorParameter::ValueType::Int:
 
-						ImGui::Combo("combo int", &selectIndex, "</<=/==/!=/>=/>");
+						ImGui::Combo("combo int", &selectIndex, "<\0<=\0==\0!=\0>=\0>");
 						comparison = (AnimatorCondition::ComparisonType)selectIndex;
 
 						
@@ -458,7 +476,7 @@ namespace BaldLion {
 
 					case AnimatorParameter::ValueType::Float:
 
-						ImGui::Combo("combo float", &selectIndex, "</<=/==/!=/>=/>");
+						ImGui::Combo("combo float", &selectIndex, "<\0<=\0==\0!=\0>=\0>");
 						comparison = (AnimatorCondition::ComparisonType)selectIndex;
 						
 						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Value", &floatValue);
@@ -480,12 +498,13 @@ namespace BaldLion {
 						ImGui::CloseCurrentPopup();
 					}
 					ImGui::SameLine();
-					if (ImGui::Button("Close"))
-					{
-						ImGui::CloseCurrentPopup();
-					}
+
 				}
 
+				if (ImGui::Button("Close"))
+				{
+					ImGui::CloseCurrentPopup();
+				}
 
 				ImGui::EndPopup();
 			}

@@ -326,8 +326,7 @@ namespace BaldLion
 
 				StringId initAnimationID = Animation::AnimationManager::GetAnimator(animatorID)->GetInitialAnimationID();
 
-				component = SceneManager::GetECSManager()->AddComponent<ECS::ECSAnimationComponent>(
-					ECS::ECSComponentType::Animation, animatorID, initAnimationID);					
+				component = SceneManager::GetECSManager()->AddComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentType::Animation, animatorID, initAnimationID);					
 			}
 				break;
 

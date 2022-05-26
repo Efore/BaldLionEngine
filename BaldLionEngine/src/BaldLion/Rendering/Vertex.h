@@ -67,6 +67,11 @@ namespace BaldLion
 
 		struct VertexBone{
 
+			VertexBone() {
+				jointIDs = glm::ivec3(0);
+				weights = glm::vec3(0.0f);
+			}
+
 			glm::ivec3 jointIDs;
 			glm::vec3 weights;
 

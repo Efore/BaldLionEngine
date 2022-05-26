@@ -549,5 +549,5 @@ namespace BaldLion
 		for(ui32 iteratorName = startValue, size = (dynamicArrayToIterate).Size(); iteratorName < size; ++iteratorName)
 
 	#define BL_DYNAMICARRAY_FOR_RANGE(iteratorName, dynamicArrayToIterate, startValue, endValue) \
-		for(ui32 it = startValue, size = (dynamicArrayToIterate).Size(); iteratorName < size && iteratorName < endValue; ++iteratorName)
+		for(ui32 iteratorName = startValue, size = (dynamicArrayToIterate).Size(); iteratorName < size && iteratorName < endValue; ++iteratorName)
 }

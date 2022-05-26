@@ -22,12 +22,11 @@ namespace BaldLion {
 
 			~ECSSkeletonComponent() {
 				boneData.Delete();
-				joints.Delete();
 			}
 
 		public:
+			Joint joints[(ui32)JointType::Count];
 			DynamicArray<Rendering::VertexBone> boneData;
-			DynamicArray<Joint> joints;
 			ui32 skeletonResourceID;
 		};
 

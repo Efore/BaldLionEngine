@@ -1,5 +1,9 @@
 #pragma once
 #include "BaldLion/ResourceManagement/ResourceManager.h"
+#include "BaldLion/SceneManagement/SceneManager.h"
+#include "BaldLion/ECS/Components/ECSHierarchyComponent.h"
+#include "BaldLion/ECS/Components/ECSTransformComponent.h"
+
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <glm/glm.hpp>
@@ -32,13 +36,19 @@ namespace BaldLion
 						}
 					}
 
+					ImGui::Separator();
+
+					if (ImGui::Button("Close")) {
+						ImGui::CloseCurrentPopup();
+					}
+
 					ImGui::EndPopup();
 				}
 
 				return result;
 			}
 
-			static void DrawVec3Handler(char const* label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
+			static void DrawVec3Handler(char const* label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f, bool adjustable = true)
 			{
 				ImGuiIO& io = ImGui::GetIO();
 				auto boldFont = io.Fonts->Fonts[0];
@@ -61,16 +71,29 @@ namespace BaldLion
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 				ImGui::PushFont(boldFont);
 
+				
 				if (ImGui::Button("X", buttonSize))
 				{
-					values.x = resetValue;
-				}
+					if (adjustable)
+					{
+						values.x = resetValue;
+					}
+				}				
 
 				ImGui::PopFont();
 				ImGui::PopStyleColor(3);
 
 				ImGui::SameLine();
-				ImGui::DragFloat("##x", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+
+				if (adjustable)
+				{
+					ImGui::DragFloat("##x", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+				}
+				else 
+				{
+					ImGui::Text(" %.2f ", values.x);
+				}
+
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 
@@ -81,14 +104,26 @@ namespace BaldLion
 
 				if (ImGui::Button("Y", buttonSize))
 				{
-					values.y = resetValue;
+					if (adjustable)
+					{
+						values.y = resetValue;
+					}
 				}
 
 				ImGui::PopFont();
 				ImGui::PopStyleColor(3);
 
 				ImGui::SameLine();
-				ImGui::DragFloat("##y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
+
+				if (adjustable)
+				{
+					ImGui::DragFloat("##y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
+				}
+				else 
+				{
+					ImGui::Text(" %.2f ", values.y);
+				}
+
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
 
@@ -99,14 +134,26 @@ namespace BaldLion
 
 				if (ImGui::Button("Z", buttonSize))
 				{
-					values.z = resetValue;
+					if (adjustable)
+					{
+						values.z = resetValue;
+					}
 				}
 
 				ImGui::PopFont();
 				ImGui::PopStyleColor(3);
 
 				ImGui::SameLine();
-				ImGui::DragFloat("##z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
+
+				if (adjustable)
+				{
+					ImGui::DragFloat("##z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
+				}
+				else
+				{
+					ImGui::Text(" %.2f ", values.z);
+				}
+
 				ImGui::PopItemWidth();
 
 				ImGui::PopStyleVar();
@@ -114,6 +161,30 @@ namespace BaldLion
 				ImGui::Columns(1);
 
 				ImGui::PopID();
+			}
+
+			static void TransformChildsRecursive(ECS::ECSHierarchyComponent* hierarchyComponent, const glm::vec3& deltaPosition, const glm::vec3&  deltaRotation, const glm::vec3& deltaScale)
+			{
+				for (ui32 i = 0, size = hierarchyComponent->childEntitiesSize; i < size; ++i)
+				{
+					ui32 childEntityID = hierarchyComponent->childEntitiesIDs[i];
+
+					ECS::ECSComponentLookUp selectedEntityComponents;
+					if (SceneManager::GetECSManager()->GetEntityComponents().TryGet(childEntityID, selectedEntityComponents))
+					{
+						ECS::ECSTransformComponent* entityTransformComponent = selectedEntityComponents.Write<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
+
+						entityTransformComponent->position += deltaPosition;
+						entityTransformComponent->rotation += deltaRotation;
+						entityTransformComponent->scale += deltaScale;
+
+						ECS::ECSHierarchyComponent* childHierarchyComponent = selectedEntityComponents.Write<ECS::ECSHierarchyComponent>(ECS::ECSComponentType::Hierarchy);
+						if (hierarchyComponent != nullptr)
+						{
+							TransformChildsRecursive(childHierarchyComponent, deltaPosition, deltaRotation, deltaScale);							
+						}
+					}
+				}
 			}
 		}
 	}

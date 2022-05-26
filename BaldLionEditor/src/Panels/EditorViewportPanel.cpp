@@ -3,6 +3,7 @@
 #include <BaldLion.h>
 #include <imgui/imgui.h>
 #include "ImGuizmo.h"
+#include "UtilsEditor.h"
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -136,11 +137,20 @@ namespace BaldLion {
 					{
 						glm::vec3 translation, rotation, scale;
 						MathUtils::DecomposeTransformMatrix(entityTransformMat, translation, rotation, scale);
-						glm::vec deltaRotation = rotation - entityTransformComponent->rotation;
+
+						glm::vec3 deltaRotation = rotation - entityTransformComponent->rotation;
+						glm::vec3 deltaPosition = translation - entityTransformComponent->position;
+						glm::vec3 deltaScale = scale - entityTransformComponent->scale;
 
 						entityTransformComponent->position = translation;
 						entityTransformComponent->rotation += deltaRotation;
 						entityTransformComponent->scale = scale;
+
+						ECS::ECSHierarchyComponent* hierarchyComponent = selectedEntityComponents.Write<ECS::ECSHierarchyComponent>(ECS::ECSComponentType::Hierarchy);
+						if (hierarchyComponent != nullptr)
+						{	
+							UtilsEditor::TransformChildsRecursive(hierarchyComponent, deltaPosition, deltaRotation, deltaScale);
+						}
 					}					
 
 					const ECS::ECSProjectionCameraComponent* projectionCameraComponent = selectedEntityComponents.Read<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentType::ProjectionCamera);
@@ -246,5 +256,6 @@ namespace BaldLion {
 			prevX = BaldLion::Input::GetMouseX();
 			prevY = BaldLion::Input::GetMouseY();
 		}
+
 	}
 }

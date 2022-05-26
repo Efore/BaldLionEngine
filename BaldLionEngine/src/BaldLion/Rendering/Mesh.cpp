@@ -11,7 +11,7 @@ namespace BaldLion
 	namespace Rendering
 	{
 		Mesh::Mesh(Material* material, const std::string& meshPath) :
-			ResourceManagement::Resource(BL_STRING_TO_STRINGID(meshPath), StringUtils::GetFileNameFromPath(meshPath), ResourceManagement::ResourceType::Mesh),
+			ResourceManagement::Resource(BL_STRING_TO_STRINGID(meshPath), meshPath, ResourceManagement::ResourceType::Mesh),
 			m_material(material), 
 			m_skeleton(nullptr)
 		{	
@@ -67,9 +67,9 @@ namespace BaldLion
 
 			if (m_skeleton != nullptr)
 			{
-				BL_DYNAMICARRAY_FOR(i, m_skeleton->GetJoints(), 0)				
+				for(ui32 i = 0; i < (ui32)JointType::Count; ++i)
 				{
-					m_material->GetShader()->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &(m_skeleton->GetJoints()[i].jointAnimationTransform));
+					m_material->GetShader()->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(i) + "]")), ShaderDataType::Mat4, &(m_skeleton->GetJoints()[i].jointModelSpaceTransform));
 				}
 			}
 
@@ -121,8 +121,12 @@ namespace BaldLion
 		BaldLion::ECS::ECSSkeletonComponent* Mesh::GenerateSkeletonComponent(ECS::ECSManager* ecsManager) const
 		{
 			ECS::ECSSkeletonComponent* skeletonComponent = ecsManager->AddComponent<ECS::ECSSkeletonComponent>(ECS::ECSComponentType::Skeleton);
+						
+			for (ui32 i = 0; i < (ui32)JointType::Count; ++i)
+			{
+				skeletonComponent->joints[i] = m_skeleton->GetJoints()[i];
+			}
 
-			skeletonComponent->joints = DynamicArray<Animation::Joint>(AllocationType::FreeList_ECS, m_skeleton->GetJoints());
 			skeletonComponent->boneData = DynamicArray<VertexBone>(AllocationType::FreeList_ECS, m_vertexBones);
 			skeletonComponent->skeletonResourceID = m_resourceID;
 		

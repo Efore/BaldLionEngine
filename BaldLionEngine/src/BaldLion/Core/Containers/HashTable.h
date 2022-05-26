@@ -78,6 +78,7 @@ namespace BaldLion
 
 			HashTable() = default;
 			HashTable(Memory::AllocationType allocationType, ui32 capacity);
+			HashTable(Memory::AllocationType allocationType, const HashTable<K,V>& other);
 
 			bool Contains(const K& key) const;			
 
@@ -89,8 +90,8 @@ namespace BaldLion
 			bool TryGet(const K& key, V& result);
 			bool TryGet(const K& key, V& result) const;
 
-			bool TryGet(const K& key, V* result);
-			bool TryGet(const K& key, V* result) const;
+			bool TryGet(const K& key, V*& result);
+			bool TryGet(const K& key, V*& result) const;
 
 			const V& Get(const K& key) const;
 			V& Get(const K& key);
@@ -135,13 +136,27 @@ namespace BaldLion
 	};
 
 	template <typename K, typename V>
-	BaldLion::HashTable<K, V>::HashTable(Memory::AllocationType allocationType, ui32 capacity) : m_size(0), m_capacity(capacity), m_allocationType(allocationType)
+	BaldLion::HashTable<K, V>::HashTable(Memory::AllocationType allocationType, ui32 capacity) :
+		m_size(0), 
+		m_capacity(capacity),
+		m_allocationType(allocationType)
 	{
 		m_table = DynamicArray<HashTableNode<K, V>>(m_allocationType, capacity);
 		m_table.Populate();
 		
 		m_beginIterator = HashTable<K, V>::Iterator(this, capacity);
 		m_endIterator = HashTable<K, V>::Iterator(this, capacity);
+	}
+
+	template <typename K, typename V>
+	BaldLion::HashTable<K, V>::HashTable(Memory::AllocationType allocationType, const HashTable<K, V>& other) : 
+		m_size(other.m_size), 
+		m_capacity(other.m_capacity),
+		m_allocationType(allocationType)
+	{
+		m_table = DynamicArray<HashTableNode<K, V>>(m_allocationType, other.m_table);
+		m_beginIterator = HashTable<K, V>::Iterator(this, FindFirstElementIndex());
+		m_endIterator = HashTable<K, V>::Iterator(this, m_capacity);
 	}
 
 	template <typename K, typename V>
@@ -221,7 +236,7 @@ namespace BaldLion
 	}
 
 	template <typename K, typename V>
-	bool BaldLion::HashTable<K, V>::TryGet(const K& key, V* result)
+	bool BaldLion::HashTable<K, V>::TryGet(const K& key, V*& result)
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
@@ -238,7 +253,7 @@ namespace BaldLion
 	}
 
 	template <typename K, typename V>
-	bool BaldLion::HashTable<K, V>::TryGet(const K& key, V* result) const
+	bool BaldLion::HashTable<K, V>::TryGet(const K& key, V*& result) const
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 

@@ -79,7 +79,7 @@ namespace BaldLion
 			static Shader* Create(const std::string& filepath);
 		protected:
 
-			Shader(const std::string& filepath) : ResourceManagement::Resource(BL_STRING_TO_STRINGID(filepath), StringUtils::GetFileNameFromPath(filepath), ResourceManagement::ResourceType::Shader){}
+			Shader(const std::string& filepath) : ResourceManagement::Resource(BL_STRING_TO_STRINGID(filepath), filepath, ResourceManagement::ResourceType::Shader){}
 		};
 	}
 }

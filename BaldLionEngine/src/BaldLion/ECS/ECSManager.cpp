@@ -22,24 +22,32 @@ namespace BaldLion {
 
 			m_componentsPool = DynamicArray<void*>(AllocationType::FreeList_ECS, (ui32)ECSComponentType::Count);
 
-			//Pools initialization
+			//Pools initialization in ecscomponenttype order: 
+			//	1-Transform
+			//	2-ProjectionCamera
+			//	3-Mesh
+			//	4-Skeleton
+			//	5-DirectionalLight
+			//	6-Animation
+			//	7-Hierarchy
+
 			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_ECS, 1000);
 			m_componentsPool.EmplaceBack(&m_transformComponentPool);
 
 			m_projectionCameraComponentPool = DynamicArray<ECSProjectionCameraComponent>(AllocationType::FreeList_ECS, 10);
 			m_componentsPool.EmplaceBack(&m_projectionCameraComponentPool);
 
-			m_directionalLightComponentPool = DynamicArray<ECSDirectionalLightComponent>(AllocationType::FreeList_ECS, 10);
-			m_componentsPool.EmplaceBack(&m_directionalLightComponentPool);
-
 			m_meshComponentPool = DynamicArray<ECSMeshComponent>(AllocationType::FreeList_ECS, 100);
 			m_componentsPool.EmplaceBack(&m_meshComponentPool);
 
+			m_skeletonComponentPool = DynamicArray<ECSSkeletonComponent>(AllocationType::FreeList_ECS, 40);
+			m_componentsPool.EmplaceBack(&m_skeletonComponentPool);			
+
+			m_directionalLightComponentPool = DynamicArray<ECSDirectionalLightComponent>(AllocationType::FreeList_ECS, 10);
+			m_componentsPool.EmplaceBack(&m_directionalLightComponentPool);
+
 			m_animationComponentPool = DynamicArray<ECSAnimationComponent>(AllocationType::FreeList_ECS, 40);
 			m_componentsPool.EmplaceBack(&m_animationComponentPool);
-
-			m_skeletonComponentPool = DynamicArray<ECSSkeletonComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.EmplaceBack(&m_skeletonComponentPool);
 
 			m_hierarchyComponentPool = DynamicArray<ECSHierarchyComponent>(AllocationType::FreeList_ECS, 40);
 			m_componentsPool.EmplaceBack(&m_hierarchyComponentPool);

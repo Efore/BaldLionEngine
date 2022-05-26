@@ -7,10 +7,10 @@ namespace BaldLion
 	namespace Animation
 	{
 
-		Animator::Animator(const std::string& animatorName) : ResourceManagement::Resource(BL_STRING_TO_STRINGID(animatorName), animatorName, ResourceManagement::ResourceType::Animator)
+		Animator::Animator(const std::string& animatorPath) : ResourceManagement::Resource(BL_STRING_TO_STRINGID(animatorPath), animatorPath, ResourceManagement::ResourceType::Animator)
 		{
 			m_parameters = HashTable<StringId, AnimatorParameter>(Memory::MemoryManager::GetAllocatorType(this), 10);
-			m_animations = HashTable<StringId, AnimationData*>(Memory::MemoryManager::GetAllocatorType(this), 15);
+			m_animations = HashTable<StringId, AnimationClip*>(Memory::MemoryManager::GetAllocatorType(this), 15);
 			m_transitions = HashTable<StringId, DynamicArray<AnimatorTransition*>>(Memory::MemoryManager::GetAllocatorType(this), 15);
 		}
 
@@ -21,7 +21,7 @@ namespace BaldLion
 			m_parameters.Delete();
 		}
 
-		void Animator::AddAnimation(AnimationData* animationData)
+		void Animator::AddAnimation(AnimationClip* animationData)
 		{
 			if (!m_animations.Contains(animationData->GetResourceID()))
 			{
@@ -34,9 +34,9 @@ namespace BaldLion
 			}
 		}
 
-		const AnimationData* Animator::GetAnimation(const ui32 animationID) const
+		const AnimationClip* Animator::GetAnimation(const ui32 animationID) const
 		{
-			AnimationData* animation = nullptr;
+			AnimationClip* animation = nullptr;
 
 			if (m_animations.TryGet(animationID, animation)) {
 				return animation;
@@ -140,76 +140,68 @@ namespace BaldLion
 			}
 		}
 
-		void Animator::CalculateInterpolatedTransforms(float currentAnimationTime, float currentTransitionTime, const AnimationData* animation, const AnimatorTransition* transition, DynamicArray<JointTransform>& result) const
+		void Animator::CalculateInterpolatedTransforms(float currentAnimationTime, float currentTransitionTime, const AnimationClip* animation, const AnimatorTransition* transition, JointTransform* result) const
 		{		
 			BL_PROFILE_FUNCTION();
 
-			int prevFrameIndex = 0;
-			int nextFrameIndex = 0;
+			ui32 frame = (ui32)(glm::floor((currentAnimationTime / animation->AnimationTimeLength) * animation->NumFrames));
+			ui32 nextFrame = glm::min(animation->NumFrames - 1, frame + 1);
 
-			//Finding the correct point in the animation
-			BL_DYNAMICARRAY_FOR(i, animation->AnimationFrames, 1)
-			{
-				if (currentAnimationTime > animation->AnimationFrames[i].TimeStamp)
-					continue;
+			float frameTime = (animation->AnimationTimeLength / animation->NumFrames) * frame;
+			float nextFrameTime = (animation->AnimationTimeLength / animation->NumFrames) * nextFrame;
 
-				prevFrameIndex = i - 1;
-				nextFrameIndex = i;
-
-				break;
-			}
-
-			//Getting the interpolant for that point in the animation
-			float interpolant = (currentAnimationTime - animation->AnimationFrames[prevFrameIndex].TimeStamp) / (animation->AnimationFrames[nextFrameIndex].TimeStamp - animation->AnimationFrames[prevFrameIndex].TimeStamp);
-
-			result = DynamicArray<JointTransform>(AllocationType::Linear_Frame, animation->AnimationFrames[prevFrameIndex].JointTranforms);
+			float interpolant = (currentAnimationTime - frameTime) / (nextFrameTime - frameTime);
 
 			//Setting the result as the interpolation between the previous and the next frame to the chosen point in the animation
-			BL_DYNAMICARRAY_FOR(i, result, 0)
+			for (ui32 i = 0; i < (ui32)JointType::Count; ++i)
 			{
-				result[i].SetPosition(glm::mix(animation->AnimationFrames[prevFrameIndex].JointTranforms[i].GetDecompressedPosition(), animation->AnimationFrames[nextFrameIndex].JointTranforms[i].GetDecompressedPosition(), interpolant));
-				result[i].SetRotation(glm::mix(animation->AnimationFrames[prevFrameIndex].JointTranforms[i].GetDecompressedRotation(), animation->AnimationFrames[nextFrameIndex].JointTranforms[i].GetDecompressedRotation(), interpolant));
-			}
+				if(animation->AnimationTracks[i].TrackStartIndex == -1)
+					continue;
 
+				animation->GetFramePosition(i, frame, nextFrame, interpolant, result[i].position);
+				animation->GetFrameRotation(i, frame, nextFrame, interpolant, result[i].rotation);
+				animation->GetFrameScale(i, frame, nextFrame, interpolant, result[i].scale);
+			}
+			
 			//If there is a transition to process
 			if (currentTransitionTime >= 0.0f)
 			{
-				prevFrameIndex = 0;
-				nextFrameIndex = 0;
-
 				//Getting the correct point in the final animation
-				const AnimationData* nextAnimation = GetAnimation(transition->GetFinalAnimationID());
-				BL_DYNAMICARRAY_FOR(i, nextAnimation->AnimationFrames, 1)
-				{
-					if (currentTransitionTime > nextAnimation->AnimationFrames[i].TimeStamp)
-						continue;
+				const AnimationClip* nextAnimation = GetAnimation(transition->GetFinalAnimationID());	
 
-					prevFrameIndex = i - 1;
-					nextFrameIndex = i;
+				JointTransform nextAnimationTransforms[(ui32)JointType::Count];
 
-					break;
-				}
+				frame = (ui32)(glm::floor((currentTransitionTime / nextAnimation->AnimationTimeLength) * nextAnimation->NumFrames));
+				nextFrame = glm::min(nextAnimation->NumFrames - 1, frame + 1);
 
-				//Getting the interpolant for that point in the final animation
-				interpolant = (currentTransitionTime - nextAnimation->AnimationFrames[prevFrameIndex].TimeStamp) / (nextAnimation->AnimationFrames[nextFrameIndex].TimeStamp - nextAnimation->AnimationFrames[prevFrameIndex].TimeStamp);
+				frameTime = (nextAnimation->AnimationTimeLength / nextAnimation->NumFrames) * frame;
+				nextFrameTime = (nextAnimation->AnimationTimeLength / nextAnimation->NumFrames) * nextFrame;
 
-				DynamicArray<JointTransform> nextAnimationTransforms = DynamicArray<JointTransform>(AllocationType::Linear_Frame, nextAnimation->AnimationFrames[prevFrameIndex].JointTranforms);
+				interpolant = (currentTransitionTime - frameTime) / (nextFrameTime - frameTime);
 
 				//Setting the transforms for the interpolation between the previous and the next frame to the chosen point in the final animation
-				BL_DYNAMICARRAY_FOR(i, nextAnimationTransforms, 0)
+				for (ui32 i = 0; i < (ui32)JointType::Count; ++i)
 				{
-					nextAnimationTransforms[i].SetPosition(glm::mix(nextAnimation->AnimationFrames[prevFrameIndex].JointTranforms[i].GetDecompressedPosition(), nextAnimation->AnimationFrames[nextFrameIndex].JointTranforms[i].GetDecompressedPosition(), interpolant));
-					nextAnimationTransforms[i].SetRotation(glm::mix(nextAnimation->AnimationFrames[prevFrameIndex].JointTranforms[i].GetDecompressedRotation(), nextAnimation->AnimationFrames[nextFrameIndex].JointTranforms[i].GetDecompressedRotation(), interpolant));
+					if (nextAnimation->AnimationTracks[i].TrackStartIndex == -1)
+						continue;
+
+					nextAnimation->GetFramePosition(i, frame, nextFrame, interpolant,  nextAnimationTransforms[i].position);
+					nextAnimation->GetFrameRotation(i, frame, nextFrame, interpolant, nextAnimationTransforms[i].rotation);
+					nextAnimation->GetFrameScale(i, frame, nextFrame, interpolant, nextAnimationTransforms[i].scale);
 				}
 
 				//Getting the interpolant between both animations
 				interpolant = currentTransitionTime / transition->GetTransitionTime();
 
 				//Setting the result
-				BL_DYNAMICARRAY_FOR(i, result, 0)
+				for (ui32 i = 0; i < (ui32)JointType::Count; ++i)
 				{
-					result[i].SetPosition(glm::mix(result[i].GetDecompressedPosition(), nextAnimationTransforms[i].GetDecompressedPosition(), interpolant));
-					result[i].SetRotation(glm::mix(result[i].GetDecompressedRotation(), nextAnimationTransforms[i].GetDecompressedRotation(), interpolant));
+					if (animation->AnimationTracks[i].TrackStartIndex == -1)
+						continue;
+
+					result[i].position = (glm::mix(result[i].position, nextAnimationTransforms[i].position, interpolant));
+					result[i].rotation = (glm::mix(result[i].rotation, nextAnimationTransforms[i].rotation, interpolant));
+					result[i].scale = (glm::mix(result[i].scale, nextAnimationTransforms[i].scale, interpolant));
 				}
 			}
 		}
@@ -273,7 +265,7 @@ namespace BaldLion
 			}
 		}
 
-		const AnimatorTransition* Animator::CheckTransition(const ui32 animationID, float animationTime) const
+		const AnimatorTransition* Animator::CheckTransition(const ui32 animationID, float animationTime, const HashTable<StringId, AnimatorParameter>& componentParameters) const
 		{
 			DynamicArray<AnimatorTransition*>* transitions = nullptr;
 
@@ -281,7 +273,7 @@ namespace BaldLion
 				
 				BL_DYNAMICARRAY_FOR(i, *transitions, 0)
 				{
-					if ((*transitions)[i]->CheckConditions(*this, animationTime))
+					if ((*transitions)[i]->CheckConditions(componentParameters, animationTime))
 						return (*transitions)[i];
 				}
 			}

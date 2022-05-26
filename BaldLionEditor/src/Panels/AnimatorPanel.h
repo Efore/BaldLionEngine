@@ -23,12 +23,12 @@ namespace BaldLion {
 			void RenderAddTransitionPopup(const char* popupName, const char* initialAnimationPath, ui32 initialAnimationID);
 			void RenderSetupTransitionPopup(const char* popupID, const char* initialAnimationPath, const char* finalAnimationPath, AnimatorTransition* transition);
 			void RenderParameter(AnimatorParameter& parameter, StringId parameterName);
-			void RenderConditionPopup(AnimatorTransition* transition);
+			void RenderConditionPopup(const char* popupID, AnimatorTransition* transition);
 
 		private:
 
 			 Animator* m_currentAnimator = nullptr;
-			 AnimationData* m_selectedAnimation = nullptr;
+			 AnimationClip* m_selectedAnimation = nullptr;
 			 AnimatorTransition* m_selectedTransition = nullptr;
 		};
 	}

@@ -5,7 +5,6 @@
 #include "BaldLion/Utils/GeometryUtils.h"
 #include "BaldLion/Utils/MathUtils.h"
 #include "BaldLion/ECS/Components/ECSHierarchyComponent.h"
-
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -15,16 +14,16 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Model::Model(const std::string& filePath) : 
-			ResourceManagement::Resource(BL_STRING_TO_STRINGID(filePath), StringUtils::GetFileNameFromPath(filePath), ResourceManagement::ResourceType::Model)
+		Model::Model(const std::string& modelPath) : 
+			ResourceManagement::Resource(BL_STRING_TO_STRINGID(modelPath), StringUtils::GetFileNameFromPath(modelPath), ResourceManagement::ResourceType::Model)
 		{
 			BL_PROFILE_FUNCTION(); 
 
 			// Extracting folder path from filePath
 
-			m_modelPath = BL_STRING_TO_STRINGID(filePath);
-			auto lastSlash = filePath.find_last_of("/\\");		
-			m_modelFolderPath = BL_STRING_TO_STRINGID(filePath.substr(0, lastSlash + 1));
+			m_modelPath = BL_STRING_TO_STRINGID(modelPath);
+			auto lastSlash = modelPath.find_last_of("/\\");		
+			m_modelFolderPath = BL_STRING_TO_STRINGID(modelPath.substr(0, lastSlash + 1));
 			m_subMeshes = DynamicArray<Mesh*>(AllocationType::FreeList_Renderer, 5);
 			m_importFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes;
 			
@@ -68,7 +67,7 @@ namespace BaldLion
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 				
-				m_subMeshes.PushBack(Model::ProcessMesh(mesh, scene, m_modelFolderPath));
+				m_subMeshes.PushBack(Model::ProcessMesh(mesh, scene, m_modelPath));
 			}
 			// then do the same for each of its children
 			for (ui32 i = 0; i < node->mNumChildren; i++)
@@ -157,7 +156,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &relativeTexPath);
-				completeTexPath = BL_STRINGID_TO_STR_C(modelFolderPath);
+				completeTexPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STR_C(modelFolderPath));
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -180,7 +179,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &relativeTexPath);
-				completeTexPath = BL_STRINGID_TO_STR_C(modelFolderPath);
+				completeTexPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STR_C(modelFolderPath));
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -203,7 +202,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &relativeTexPath);
-				completeTexPath = BL_STRINGID_TO_STR_C(modelFolderPath);
+				completeTexPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STR_C(modelFolderPath));
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -227,7 +226,7 @@ namespace BaldLion
 			{
 				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &relativeTexPath);
 				
-				completeTexPath = BL_STRINGID_TO_STR_C(modelFolderPath);
+				completeTexPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STR_C(modelFolderPath));
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -250,7 +249,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &relativeTexPath);
-				completeTexPath = BL_STRINGID_TO_STR_C(modelFolderPath);
+				completeTexPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STR_C(modelFolderPath));
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -271,83 +270,82 @@ namespace BaldLion
 			}
 		}
 
-		void Model::GenerateJointMapping(const aiMesh *aimesh, HashTable<StringId, ui32>& jointMapping, HashMap<StringId, glm::mat4>& jointOffsetMapping)
+		void Model::GenerateJointMapping(const aiMesh *aimesh, HashTable<StringId, JointType>& jointMapping, HashMap<StringId, glm::mat4>& jointOffsetMapping)
 		{
 			for (ui32 i = 0; i < aimesh->mNumBones; ++i)
 			{
-				jointMapping.Emplace(BL_STRING_TO_STRINGID(aimesh->mBones[i]->mName.data), std::move(i));
-				jointOffsetMapping.Emplace(BL_STRING_TO_STRINGID(aimesh->mBones[i]->mName.data), MathUtils::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
+				JointType jointType = ParseNodeName(aimesh->mBones[i]->mName.data);
+
+				if (jointType != JointType::Count)
+				{					
+					jointMapping.Emplace(BL_STRING_TO_STRINGID(aimesh->mBones[i]->mName.data), std::move(jointType));
+					jointOffsetMapping.Emplace(BL_STRING_TO_STRINGID(aimesh->mBones[i]->mName.data), MathUtils::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
+				}
 			}
 		}
 
-		void Model::FillJointData(HashTable<StringId, ui32>& jointMapping,
-			DynamicArray<Animation::Joint>& jointsData,
+		void Model::FillJointData(HashTable<StringId, JointType>& jointMapping,
+			Animation::Joint* jointsData,
 			const HashMap<StringId, glm::mat4>& jointOffsetMapping,
-			ui32& currentID,
-			const int32_t parentID,
+			const JointType parentJointType,
 			const aiNode* node)
 		{
 			const StringId jointName = BL_STRING_TO_STRINGID(node->mName.data);
 
+			JointType jointType = parentJointType;
 
-			if (jointMapping.Contains(jointName))
-			{
-				jointMapping.Set(jointName,currentID);
-				jointsData[currentID].jointID = currentID;
-				jointsData[currentID].parentID = parentID;
-				jointsData[currentID].jointBindTransform = jointOffsetMapping.Get(jointName);
-				jointsData[currentID].jointAnimationTransform = jointsData[currentID].jointModelSpaceTransform = glm::mat4(1.0f);
-
-				++currentID;
+			if (jointMapping.TryGet(jointName, jointType))
+			{					
+				jointsData[(ui32)jointType].parentJointType = parentJointType;
+				jointsData[(ui32)jointType].jointOffsetTransform = jointOffsetMapping.Get(jointName);
+				jointsData[(ui32)jointType].jointModelSpaceTransform = jointsData[(ui32)jointType].jointLocalSpaceTransform = glm::mat4(1.0f);
 			}
 
 			for (ui32 i = 0; i < node->mNumChildren; ++i)
-			{
-				ui32 jointId = -1;
-
-				if (!jointMapping.TryGet(jointName, jointId))
-				{
-					jointId = parentID;
-				}
-
-				FillJointData(jointMapping, jointsData, jointOffsetMapping, currentID, jointId, node->mChildren[i]);
+			{	
+				FillJointData(jointMapping, jointsData, jointOffsetMapping, jointType, node->mChildren[i]);
 			}
 		}
 
 		void Model::FillVertexWeightData(const aiMesh* aimesh,
-			const HashTable<StringId, ui32>& jointMapping,
+			const HashTable<StringId, JointType>& jointMapping,
 			DynamicArray<VertexBone>& vertices)
 		{
 			ui32* jointsAssigned = new ui32[aimesh->mNumVertices]{ 0 };
 
 			//Fill jointIDs and weights
 			for (ui32 i = 0; i < aimesh->mNumBones; ++i)
-			{
+			{				
 				for (ui32 j = 0; j < aimesh->mBones[i]->mNumWeights; ++j)
 				{
 					ui32 vertexID = aimesh->mBones[i]->mWeights[j].mVertexId;
 
 					const StringId jointName = BL_STRING_TO_STRINGID(aimesh->mBones[i]->mName.data);
+					
+					JointType jointType = JointType::Count;
 
-					switch (jointsAssigned[vertexID])
+					if (jointMapping.TryGet(jointName, jointType))
 					{
-					case 0:
-						vertices[vertexID].jointIDs.x = jointMapping.Get(jointName);
-						vertices[vertexID].weights.x = aimesh->mBones[i]->mWeights[j].mWeight;
-						break;
-					case 1:
-						vertices[vertexID].jointIDs.y = jointMapping.Get(jointName);
-						vertices[vertexID].weights.y = aimesh->mBones[i]->mWeights[j].mWeight;
-						break;
-					case 2:
-						vertices[vertexID].jointIDs.z = jointMapping.Get(jointName);
-						vertices[vertexID].weights.z = aimesh->mBones[i]->mWeights[j].mWeight;
-						break;
-					default:
-						break;
-					}
+						switch (jointsAssigned[vertexID])
+						{
+						case 0:
+							vertices[vertexID].jointIDs.x = (ui32)jointType;
+							vertices[vertexID].weights.x = aimesh->mBones[i]->mWeights[j].mWeight;
+							break;
+						case 1:
+							vertices[vertexID].jointIDs.y = (ui32)jointType;
+							vertices[vertexID].weights.y = aimesh->mBones[i]->mWeights[j].mWeight;
+							break;
+						case 2:
+							vertices[vertexID].jointIDs.z = (ui32)jointType;
+							vertices[vertexID].weights.z = aimesh->mBones[i]->mWeights[j].mWeight;
+							break;
+						default:
+							break;
+						}
 
-					jointsAssigned[vertexID]++;
+						jointsAssigned[vertexID]++;
+					}
 				}
 
 			}
@@ -356,7 +354,7 @@ namespace BaldLion
 		}
 	
 
-		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene, const StringId modelFolderPath)
+		Mesh* Model::ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene, const StringId modelPath)
 		{
 			DynamicArray<Vertex> vertices(AllocationType::FreeList_Renderer, aimesh->mNumVertices);
 			DynamicArray<ui32> indices(AllocationType::FreeList_Renderer, aimesh->mNumVertices * 3);
@@ -374,7 +372,7 @@ namespace BaldLion
 			Texture* emissiveTex = nullptr;
 			Texture* normalTex = nullptr;
 
-			FillTextureData(aimesh, aiscene, modelFolderPath, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
+			FillTextureData(aimesh, aiscene, modelPath, ambientColor, diffuseColor, specularColor, emissiveColor, ambientTex, diffuseTex, specularTex, emissiveTex, normalTex);
 
 			Material::MaterialProperties materialProperties
 			{
@@ -395,13 +393,13 @@ namespace BaldLion
 				(ui8)Material::ShadowsSettingsBitMask::CastShadows
 			};
 						
-			const std::string matName = BL_STRINGID_TO_STRING(modelFolderPath) + (aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data) + ResourceManager::GetResourceSuffixFromType(ResourceType::Material);
+			const std::string matPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STRING(modelPath)) + (aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data) + ResourceManager::GetResourceSuffixFromType(ResourceType::Material);
 
-			Material* meshMaterial = ResourceManagement::ResourceManager::LoadResource<Material>(matName);
+			Material* meshMaterial = ResourceManagement::ResourceManager::LoadResource<Material>(matPath);
 
 			if (!meshMaterial)
 			{
-				meshMaterial = Material::Create(matName, materialProperties);
+				meshMaterial = Material::Create(matPath, materialProperties);
 				ResourceManagement::ResourceManager::AddResource(meshMaterial);
 			}
 
@@ -410,35 +408,38 @@ namespace BaldLion
 			meshMaterial->AssignShader();
 
 			const char* aiMeshName = strlen(aimesh->mName.C_Str()) == 0 ? "unnamedMesh" : aimesh->mName.C_Str();
-			const std::string meshName = BL_STRINGID_TO_STRING(modelFolderPath) + (aiMeshName) + ResourceManager::GetResourceSuffixFromType(ResourceType::Mesh);
+			const std::string meshPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STRING(modelPath)) + (aiMeshName) + ResourceManager::GetResourceSuffixFromType(ResourceType::Mesh);
 
-			Mesh* mesh = ResourceManagement::ResourceManager::LoadResource<Mesh>(meshName);
+			Mesh* mesh = ResourceManagement::ResourceManager::LoadResource<Mesh>(meshPath);
 				
 			if (!mesh) 
 			{
-				mesh = MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer, meshMaterial, meshName);
+				mesh = MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer, meshMaterial, meshPath);
 				ResourceManagement::ResourceManager::AddResource(mesh);
 			}
 
 			if (aimesh->HasBones())
 			{
 				DynamicArray<VertexBone> verticesBoneData(AllocationType::Linear_Frame, aimesh->mNumVertices);
-				DynamicArray<Animation::Joint> jointsData(AllocationType::FreeList_Renderer, aimesh->mNumBones);
+				verticesBoneData.Populate();				
 
-				verticesBoneData.Populate();
-				jointsData.Populate();
+				Animation::Joint jointsData[(ui32)JointType::Count];
+				for (ui32 i = 0; i < (ui32)JointType::Count; ++i)
+				{
+					jointsData[i].jointModelSpaceTransform = jointsData[i].jointOffsetTransform = jointsData[i].jointLocalSpaceTransform = glm::mat4(1.0f);
+					jointsData[i].parentJointType = JointType::Count;
+				}
 
-				HashTable<StringId, ui32> jointMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);
-				HashMap<StringId, glm::mat4> jointOffsetMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);
+				HashTable<StringId, JointType> jointMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);
+				HashMap<StringId, glm::mat4> jointOffsetMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);				
 
 				GenerateJointMapping(aimesh, jointMapping, jointOffsetMapping);
 
-				ui32 firstID = 0;
-				FillJointData(jointMapping, jointsData, jointOffsetMapping, firstID, -1, aiscene->mRootNode);
+				FillJointData(jointMapping, jointsData, jointOffsetMapping, JointType::Count, aiscene->mRootNode);
 
 				FillVertexWeightData(aimesh, jointMapping, verticesBoneData);
 
-				const std::string skeletonName = BL_STRINGID_TO_STRING(modelFolderPath) + (aimesh->mName.C_Str()) + +ResourceManager::GetResourceSuffixFromType(ResourceType::Skeleton);
+				const std::string skeletonName = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STRING(modelPath)) + (aimesh->mName.C_Str()) + ResourceManager::GetResourceSuffixFromType(ResourceType::Skeleton);
 
 				Animation::Skeleton* skeleton = ResourceManagement::ResourceManager::LoadResource<Animation::Skeleton>(skeletonName);
 					
@@ -451,13 +452,102 @@ namespace BaldLion
 				mesh->SetSkeleton(skeleton);
 				mesh->SetVertexBones(verticesBoneData);
 
-				std::string animatorPath = BL_STRINGID_TO_STRING(modelFolderPath) + aiMeshName;
+				std::string animatorPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STRING(modelPath)) + aiMeshName;
 				Animation::AnimationManager::GenerateAnimator(aiscene, animatorPath, jointMapping);
 			}
 
 			mesh->SetUpMesh(vertices, indices);
 
 			return mesh;
+		}
+
+		JointType Model::ParseNodeName(const char *nodeName)
+		{
+			static char* jointNames[] = {
+			"Hips",
+			"Spine",
+			"Spine1",
+			"Spine2",
+			"Neck",
+			"Head",
+			"HeadTop_End",
+			"LeftShoulder",
+			"LeftArm",
+			"LeftForearm",
+			"LeftHand",
+			"LeftHandThumb1",
+			"LeftHandThumb2",
+			"LeftHandThumb3",
+			"LeftHandThumb4",
+			"LeftHandIndex1",
+			"LeftHandIndex2",
+			"LeftHandIndex3",
+			"LeftHandIndex4",
+			"LeftHandMiddle1",
+			"LeftHandMiddle2",
+			"LeftHandMiddle3",
+			"LeftHandMiddle4",
+			"LeftHandRing1",
+			"LeftHandRing2",
+			"LeftHandRing3",
+			"LeftHandRing4",
+			"LeftHandPinky1",
+			"LeftHandPinky2",
+			"LeftHandPinky3",
+			"LeftHandPinky4",
+			"RightShoulder",
+			"RightArm",
+			"RightForearm",
+			"RightHand",
+			"RightHandThumb1",
+			"RightHandThumb2",
+			"RightHandThumb3",
+			"RightHandThumb4",
+			"RightHandIndex1",
+			"RightHandIndex2",
+			"RightHandIndex3",
+			"RightHandIndex4",
+			"RightHandMiddle1",
+			"RightHandMiddle2",
+			"RightHandMiddle3",
+			"RightHandMiddle4",
+			"RightHandRing1",
+			"RightHandRing2",
+			"RightHandRing3",
+			"RightHandRing4",
+			"RightHandPinky1",
+			"RightHandPinky2",
+			"RightHandPinky3",
+			"RightHandPinky4",
+			"LeftUpLeg",
+			"LeftLeg",
+			"LeftFoot",
+			"LeftToeBase",
+			"LeftToe_End",
+			"RightUpLeg",
+			"RightLeg",
+			"RightFoot",
+			"RightToeBase",
+			"RightToe_End"
+			};
+
+			for (i32 i = ((i32)JointType::Count) - 1; i >= 0; --i)
+			{
+				std::string lowerNodeName = nodeName;				
+				std::transform(lowerNodeName.begin(), lowerNodeName.end(), lowerNodeName.begin(), ::tolower);
+				size_t pos = lowerNodeName.rfind(':');
+				lowerNodeName = lowerNodeName.substr(pos + 1);
+
+				std::string lowerJointName = jointNames[i]; 
+				std::transform(lowerJointName.begin(), lowerJointName.end(), lowerJointName.begin(), ::tolower);
+
+				if (lowerNodeName == lowerJointName)
+				{
+					return (JointType)i;
+				}
+			}
+
+			return JointType::Count;
 		}
 
 		void Model::GenerateEntities(ECS::ECSManager* ecsManager, bool isStatic) const
@@ -481,7 +571,7 @@ namespace BaldLion
 			{
 				const Mesh* subMesh = m_subMeshes[i];
 
-				ECS::ECSEntityID childEntityID = ecsManager->AddEntity(BL_STRINGID_TO_STR_C(subMesh->GetResourcePath()));
+				ECS::ECSEntityID childEntityID = ecsManager->AddEntity(BL_STRINGID_TO_STR_C(subMesh->GetResourceName()));
 
 				rootHierarchyComponent->childEntitiesIDs[rootHierarchyComponent->childEntitiesSize++] = childEntityID;
 

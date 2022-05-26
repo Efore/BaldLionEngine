@@ -107,6 +107,9 @@ namespace BaldLion
 			bool TryGet(const K& key, V& result);
 			bool TryGet(const K& key, V& result) const;
 
+			bool TryGet(const K& key, V*& result);
+			bool TryGet(const K& key, V*& result) const;
+
 			const V& Get(const K& key) const;
 			V& Get(const K& key);
 
@@ -231,6 +234,36 @@ namespace BaldLion
 		if (node != nullptr)
 		{
 			result = node->nodeValue;
+			return true;
+		}
+
+		return false;
+	}
+
+	template <typename K, typename V>
+	bool BaldLion::HashMap<K, V>::TryGet(const K& key, V*& result)
+	{
+		const hashType hashedMapKey = std::hash<K>()(key);
+		HashMapNode<K, V>* node = FindNode(hashedMapKey);
+
+		if (node != nullptr)
+		{
+			result = &node->nodeValue;
+			return true;
+		}
+
+		return false;
+	}
+
+	template <typename K, typename V>
+	bool BaldLion::HashMap<K, V>::TryGet(const K& key, V*& result) const
+	{
+		const hashType hashedMapKey = std::hash<K>()(key);
+		const HashMapNode<K, V>* node = FindNode(hashedMapKey);
+
+		if (node != nullptr)
+		{
+			result = &node->nodeValue;
 			return true;
 		}
 

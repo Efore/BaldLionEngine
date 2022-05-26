@@ -24,7 +24,7 @@ namespace BaldLion
 			bool operator!= (const AnimatorTransition& other);
 
 			void AddCondition(const AnimatorCondition& condition);
-			bool CheckConditions(const class Animator& animator, float animationTime) const;
+			bool CheckConditions(const HashTable<StringId, AnimatorParameter>& componentParameters, float animationTime) const;
 			const DynamicArray<AnimatorCondition>& GetConditions() const { return m_conditions; }
 			void RemoveCondition(ui32 conditionIndex);
 
@@ -39,7 +39,7 @@ namespace BaldLion
 
 		private:
 
-			static bool CheckCondition(const class Animator& animator, const AnimatorCondition& condition);
+			static bool CheckCondition(const HashTable<StringId, AnimatorParameter>& componentParameters, const AnimatorCondition& condition);
 
 		private:
 

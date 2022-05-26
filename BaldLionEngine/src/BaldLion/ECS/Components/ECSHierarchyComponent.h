@@ -27,9 +27,9 @@ namespace BaldLion {
 			}
 
 		public:
-			ECSEntityID parentEntityID;
 			ECSEntityID childEntitiesIDs[100];
 			ui32 childEntitiesSize;
+			ECSEntityID parentEntityID;
 		};
 	}
 }

@@ -5,6 +5,14 @@ namespace BaldLion
 {
 	namespace StringUtils 
 	{
+		static std::string GetPathWithoutFile(const std::string &path, bool includeExt = false)
+		{
+			// Extracting name from last path
+			auto lastSlash = path.find_last_of("/\\");
+			return path.substr(0, lastSlash + 1);
+		}
+
+
 		static std::string GetFileNameFromPath(const std::string &path, bool includeExt = false)
 		{
 			// Extracting name from last path
@@ -18,7 +26,9 @@ namespace BaldLion
 		static std::string GetPathWithoutExtension(const std::string &path)
 		{
 			auto lastDot = path.rfind('.');
-			return path.substr(0, lastDot);
+			auto pathWithoutExtension = path.substr(0, lastDot);
+			pathWithoutExtension.append("\\");
+			return pathWithoutExtension;
 		}
 	}
 }

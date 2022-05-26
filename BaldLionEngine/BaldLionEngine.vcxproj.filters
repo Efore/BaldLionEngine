@@ -105,9 +105,6 @@
     <ClInclude Include="src\BaldLion.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Animation\AnimationData.h">
-      <Filter>src\BaldLion\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Animation\AnimationManager.h">
       <Filter>src\BaldLion\Animation</Filter>
     </ClInclude>
@@ -1652,6 +1649,9 @@
     </ClInclude>
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Animation\AnimationClip.h">
+      <Filter>src\BaldLion\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

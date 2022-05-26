@@ -5,22 +5,22 @@
 
 namespace BaldLion {
 
-	namespace Animation {
+	namespace Animation {		
 
 		class Skeleton : public ResourceManagement::Resource {
 
 		public:
 			Skeleton() = default;
 
-			Skeleton(const DynamicArray<Animation::Joint>& joints, const std::string& resourceName);
+			Skeleton(const Joint* joints, const std::string& resourceName);
 
 			~Skeleton();
 
-			const DynamicArray<Joint>& GetJoints() const { return m_joints; }
-			DynamicArray<Joint>& GetJoints() { return m_joints; }
+			const Joint* GetJoints() const { return m_joints; }
+			Joint* GetJoints() { return m_joints; }
 
 		private:
-			DynamicArray<Joint> m_joints;
+			Joint m_joints[(ui32)JointType::Count];
 		};
 	}
 }

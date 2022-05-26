@@ -247,11 +247,11 @@ namespace BaldLion
 					s_depthMapSkinnedShader->SetUniform(UNIFORM_LIGHT_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_lightViewProjection));
 					s_depthMapSkinnedShader->SetUniform(UNIFORM_MODEL_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_shadowCastingMeshes[i].transformMatrix));
 
-					const DynamicArray<Animation::Joint>* joints = &(s_shadowCastingMeshes[i].skeletonComponent->joints);
+					const Animation::Joint* joints = s_shadowCastingMeshes[i].skeletonComponent->joints;
 					
-					BL_DYNAMICARRAY_FOR(j, (*joints), 0)
+					for (ui32 j = 0; j < (ui32)JointType::Count; ++j)					
 					{
-						s_depthMapSkinnedShader->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &((*joints)[j].jointAnimationTransform));
+						s_depthMapSkinnedShader->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &(joints[j].jointModelSpaceTransform));
 					}
 
 					s_rendererPlatformInterface->DrawVertexArray(vertexArray);
@@ -315,11 +315,11 @@ namespace BaldLion
 
 				if (s_dynamicMeshes[i].skeletonComponent != nullptr) {
 
-					const DynamicArray<Animation::Joint>* joints = &(s_dynamicMeshes[i].skeletonComponent->joints);
+					const Animation::Joint* joints = (s_dynamicMeshes[i].skeletonComponent->joints);
 
-					BL_DYNAMICARRAY_FOR(j, (*joints), 0)
+					for (ui32 j = 0; j < (ui32)JointType::Count; ++j)
 					{
-						s_dynamicMeshes[i].meshComponent->material->GetShader()->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &((*joints)[j].jointAnimationTransform));
+						s_dynamicMeshes[i].meshComponent->material->GetShader()->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &(joints[j].jointModelSpaceTransform));
 					}
 				}					
 				

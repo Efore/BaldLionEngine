@@ -149,8 +149,8 @@ namespace BaldLion
 		protected:
 
 			Material(){}
-			Material::Material(const std::string& matName, const MaterialProperties& materialProperties) : 
-				ResourceManagement::Resource(BL_STRING_TO_STRINGID(matName), StringUtils::GetFileNameFromPath(matName), ResourceManagement::ResourceType::Material),
+			Material::Material(const std::string& matPath, const MaterialProperties& materialProperties) : 
+				ResourceManagement::Resource(BL_STRING_TO_STRINGID(matPath), matPath, ResourceManagement::ResourceType::Material),
 				m_materialProperties(materialProperties){}
 
 			StringId m_materialName;

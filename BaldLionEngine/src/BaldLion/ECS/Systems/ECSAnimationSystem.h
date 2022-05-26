@@ -1,6 +1,6 @@
 #pragma once
 #include "BaldLion/ECS/ECSSystem.h"
-#include "BaldLion/Animation/AnimationData.h"
+#include "BaldLion/Animation/AnimationClip.h"
 
 
 namespace BaldLion {

@@ -144,7 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h" />
-    <ClInclude Include="src\BaldLion\Animation\AnimationData.h" />
+    <ClInclude Include="src\BaldLion\Animation\AnimationClip.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationManager.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationUtils.h" />
     <ClInclude Include="src\BaldLion\Animation\Animator.h" />

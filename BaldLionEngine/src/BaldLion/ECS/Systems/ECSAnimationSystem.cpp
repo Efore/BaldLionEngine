@@ -22,11 +22,11 @@ namespace BaldLion {
 			ECSAnimationComponent* entityAnimation = componentLookUp->Write<ECSAnimationComponent>(ECSComponentType::Animation);
 			
 			const Animator* entityAnimator = AnimationManager::GetAnimator(entityAnimation->animatorID);
-			const AnimationData* currentAnimation = entityAnimator->GetAnimation(entityAnimation->currentAnimationID);
+			const AnimationClip* currentAnimation = entityAnimator->GetAnimation(entityAnimation->currentAnimationID);
 			 
-			entityAnimation->currentAnimationTime = glm::mod(entityAnimation->currentAnimationTime + entityAnimation->timer->GetDeltaTime(), currentAnimation->AnimationLength);
+			entityAnimation->currentAnimationTime = glm::mod(entityAnimation->currentAnimationTime + entityAnimation->timer->GetDeltaTime(), currentAnimation->AnimationTimeLength);
 
-			const AnimatorTransition* currentTransition = entityAnimator->CheckTransition(entityAnimation->currentAnimationID, entityAnimation->currentAnimationTime);
+			const AnimatorTransition* currentTransition = entityAnimator->CheckTransition(entityAnimation->currentAnimationID, entityAnimation->currentAnimationTime, entityAnimation->animatorParameters);
 
 			if (currentTransition != nullptr)
 			{
@@ -43,17 +43,17 @@ namespace BaldLion {
 				entityAnimation->currentTransitionTime = -1.0f;
 			}
 
-			DynamicArray<JointTransform> transforms;
+			JointTransform transforms[(ui32)JointType::Count];
 			entityAnimator->CalculateInterpolatedTransforms(entityAnimation->currentAnimationTime, entityAnimation->currentTransitionTime, currentAnimation, currentTransition, transforms);
 
-			BL_DYNAMICARRAY_FOR(i, transforms, 0)			
+			for (ui32 i = 0; i < (ui32)JointType::Count; ++i)
 			{
-				const i32 parentID = entitySkeleton->joints[i].parentID;
+				const JointType parentJointType = entitySkeleton->joints[i].parentJointType;
+				
+				const glm::mat4& parentTransform = parentJointType == JointType::Count ? glm::mat4(1.0f) : entitySkeleton->joints[(ui32)parentJointType].jointLocalSpaceTransform;
 
-				const glm::mat4& parentTransform = parentID == -1 ? glm::mat4(1.0f) : entitySkeleton->joints[parentID].jointModelSpaceTransform;
-
-				const glm::mat4& animationTransform = glm::translate(glm::mat4(1.0f), transforms[i].GetDecompressedPosition()) * glm::mat4_cast(transforms[i].GetDecompressedRotation()) * glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
-
+				const glm::mat4& animationTransform = glm::translate(glm::mat4(1.0f), transforms[i].position) * glm::mat4_cast(transforms[i].rotation) * glm::scale(glm::mat4(1.0f), transforms[i].scale);
+				
 				entitySkeleton->joints[i].UpdateJointTransforms(currentAnimation->InverseRootTransform, parentTransform, animationTransform);
 			}
 		}	

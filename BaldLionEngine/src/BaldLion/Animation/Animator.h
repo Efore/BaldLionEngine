@@ -1,5 +1,5 @@
 #pragma once
-#include "AnimationData.h"
+#include "AnimationClip.h"
 #include "BaldLion/Core/Core.h"
 #include "BaldLion/Core/Containers/HashTable.h"
 #include "Joint.h"
@@ -14,19 +14,19 @@ namespace BaldLion
 
 		public:
 			Animator() = default;
-			Animator(const std::string& animatorName);
+			Animator(const std::string& animatorPath);
 			~Animator();
 
-			void AddAnimation(AnimationData* animationData);
-			const AnimationData* GetAnimation(const ui32 animationID) const;		
+			void AddAnimation(AnimationClip* animationData);
+			const AnimationClip* GetAnimation(const ui32 animationID) const;		
 			void RemoveAnimation(const ui32 animationID);
 
 			const ui32 GetInitialAnimationID() const { return m_initAnimationID; }
 			void SetInitialAnimation(const ui32 animationID);
 
-			const HashTable<ui32, AnimationData*>& GetAllAnimations() const { return m_animations; }
+			const HashTable<ui32, AnimationClip*>& GetAllAnimations() const { return m_animations; }
 
-			void CalculateInterpolatedTransforms(float currentAnimationTime, float currentTransitionTime, const AnimationData* animation, const AnimatorTransition* transition, DynamicArray<JointTransform>& result) const;
+			void CalculateInterpolatedTransforms(float currentAnimationTime, float currentTransitionTime, const AnimationClip* animation, const AnimatorTransition* transition, JointTransform* result) const;
 
 			void AddAnimationTransition(AnimatorTransition* animationTransition);		
 			void RemoveTransition(ui32 initialAnimationID, ui32 finalAnimationID);
@@ -51,11 +51,11 @@ namespace BaldLion
 			bool GetParameterBool(const StringId parameterName);
 			void SetParameterBool(const StringId parameterName, bool value);
 
-			const AnimatorTransition* CheckTransition(const ui32 animationID, float animationTime) const;
+			const AnimatorTransition* CheckTransition(const ui32 animationID, float animationTime, const HashTable<StringId, AnimatorParameter>& componentParameters) const;
 
 		private:	
 
-			HashTable<ui32, AnimationData*> m_animations;
+			HashTable<ui32, AnimationClip*> m_animations;
 			HashTable<ui32, DynamicArray<AnimatorTransition*>> m_transitions;
 			HashTable<StringId, AnimatorParameter> m_parameters;
 
