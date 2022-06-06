@@ -5,6 +5,7 @@
 #include "Components/TransformComponentInspector.h"
 #include "Components/DirectionalLightComponentInspector.h"
 #include "Components/ProjectionCameraComponentInspector.h"
+#include "Components/AnimationComponentInspector.h"
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
 #include "BaldLion/Utils/MathUtils.h"
@@ -240,8 +241,7 @@ namespace BaldLion {
 					break;
 
 				case ECS::ECSComponentType::Animation:
-					ComponentInspector::BeginComponentRender("Animation Component", ECS::ECSComponentType::Animation, m_sceneHierarchyPanel, GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f);
-					ComponentInspector::EndComponentRender();
+					AnimationComponentInspector::OnImGuiRender(component, m_sceneHierarchyPanel);					
 					break;
 				
 				default:

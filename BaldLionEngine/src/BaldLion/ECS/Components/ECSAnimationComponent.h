@@ -22,6 +22,67 @@ namespace BaldLion {
 
 		public:
 
+			float GetParameterFloat(const StringId parameterName)
+			{
+				AnimatorParameter parameter;
+				if (animatorParameters.TryGet(parameterName, parameter))
+				{
+					return parameter.Value.floating;
+				}
+
+				return -1;
+			}
+
+			void SetParameterFloat(const StringId parameterName, float value)
+			{
+				AnimatorParameter parameter;
+				if (animatorParameters.TryGet(parameterName, parameter))
+				{
+					parameter.Value.floating = value;
+				}
+			}
+
+			ui32 GetParameterInt(const StringId parameterName)
+			{
+				AnimatorParameter parameter;
+				if (animatorParameters.TryGet(parameterName, parameter))
+				{
+					return parameter.Value.integer;
+				}
+				return -1;
+			}
+
+			void SetParameterInt(const StringId parameterName, ui32 value)
+			{
+				AnimatorParameter parameter;
+				if (animatorParameters.TryGet(parameterName, parameter))
+				{
+					parameter.Value.integer = value;
+				}
+			}
+
+			bool GetParameterBool(const StringId parameterName)
+			{
+				AnimatorParameter parameter;
+				if (animatorParameters.TryGet(parameterName, parameter))
+				{
+					return parameter.Value.boolean;
+				}
+
+				return false;
+			}
+
+			void SetParameterBool(const StringId parameterName, bool value)
+			{
+				AnimatorParameter parameter;
+				if (animatorParameters.TryGet(parameterName, parameter))
+				{
+					parameter.Value.boolean = value;
+				}
+			}
+
+		public:
+
 			HashTable<StringId, AnimatorParameter> animatorParameters;
 
 			ui32 animatorID;

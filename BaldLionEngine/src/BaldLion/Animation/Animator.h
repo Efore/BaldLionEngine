@@ -18,15 +18,13 @@ namespace BaldLion
 			~Animator();
 
 			void AddAnimation(AnimationClip* animationData);
-			const AnimationClip* GetAnimation(const ui32 animationID) const;		
+			const AnimationClip* GetAnimationClip(const ui32 animationID) const;		
 			void RemoveAnimation(const ui32 animationID);
 
 			const ui32 GetInitialAnimationID() const { return m_initAnimationID; }
 			void SetInitialAnimation(const ui32 animationID);
 
 			const HashTable<ui32, AnimationClip*>& GetAllAnimations() const { return m_animations; }
-
-			void CalculateInterpolatedTransforms(float currentAnimationTime, float currentTransitionTime, const AnimationClip* animation, const AnimatorTransition* transition, JointTransform* result) const;
 
 			void AddAnimationTransition(AnimatorTransition* animationTransition);		
 			void RemoveTransition(ui32 initialAnimationID, ui32 finalAnimationID);
@@ -41,15 +39,6 @@ namespace BaldLion
 			void RemoveParameter(const StringId parameterName);
 
 			const AnimatorParameter& GetParameter(const StringId parameterName) const;
-
-			float GetParameterFloat(const StringId parameterName);
-			void SetParameterFloat(const StringId parameterName, float value);
-
-			ui32 GetParameterInt(const StringId parameterName);
-			void SetParameterInt(const StringId parameterName, ui32 value);
-
-			bool GetParameterBool(const StringId parameterName);
-			void SetParameterBool(const StringId parameterName, bool value);
 
 			const AnimatorTransition* CheckTransition(const ui32 animationID, float animationTime, const HashTable<StringId, AnimatorParameter>& componentParameters) const;
 

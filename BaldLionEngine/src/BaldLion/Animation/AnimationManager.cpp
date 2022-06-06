@@ -240,7 +240,7 @@ namespace BaldLion
 			}
 		}
 
-		BaldLion::Animation::Animator* AnimationManager::GetAnimator(const ui32 animatorID)
+		Animator* AnimationManager::GetAnimator(const ui32 animatorID)
 		{
 			Animator* result = nullptr;
 

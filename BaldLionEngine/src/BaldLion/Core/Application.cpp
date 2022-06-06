@@ -45,6 +45,8 @@ namespace BaldLion
 
 	Application::~Application()
 	{
+		JobManagement::JobManager::WaitForJobs();
+
 		m_layerStack.PopOverlay(m_imGuiLayer);
 		m_layerStack.Delete();
 		Window::Destroy(m_window);

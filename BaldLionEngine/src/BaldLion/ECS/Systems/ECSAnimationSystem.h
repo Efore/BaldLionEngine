@@ -1,6 +1,6 @@
 #pragma once
 #include "BaldLion/ECS/ECSSystem.h"
-#include "BaldLion/Animation/AnimationClip.h"
+#include "BaldLion/Animation/Animator.h"
 
 
 namespace BaldLion {
@@ -19,6 +19,8 @@ namespace BaldLion {
 			virtual void UpdateOperation(ECSComponentLookUp* componentLookUp) override;
 			virtual void OnStop() override {}
 	
+		private: 
+			void CalculateInterpolatedTransforms(float currentAnimationTime, float currentTransitionTime, const AnimationClip* animation, const Animator* animator, const AnimatorTransition* transition, JointTransform* result) const;
 		};
 
 	}

@@ -25,11 +25,14 @@ namespace BaldLion
 
 			void AddCondition(const AnimatorCondition& condition);
 			bool CheckConditions(const HashTable<StringId, AnimatorParameter>& componentParameters, float animationTime) const;
-			const DynamicArray<AnimatorCondition>& GetConditions() const { return m_conditions; }
+
+			const DynamicArray<AnimatorCondition>& GetConditions() const { return m_conditions; }			
+			DynamicArray<AnimatorCondition>& GetConditions() { return m_conditions; }
+
 			void RemoveCondition(ui32 conditionIndex);
 
 			ui32 GetInitialAnimationID() const { return m_initialAnimationID; }
-			ui32 GetFinalAnimationID() const { return m_initialAnimationID; }
+			ui32 GetFinalAnimationID() const { return m_finalAnimationID; }
 
 			float GetExitTime() const { return m_exitTime; }
 			void SetExitTime(float value) { m_exitTime = value; }

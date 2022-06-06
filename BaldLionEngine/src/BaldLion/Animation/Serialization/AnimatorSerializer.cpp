@@ -74,7 +74,7 @@ namespace BaldLion
 
 			const std::string parentFolderPath = StringUtils::GetPathWithoutFile(filepath);
 
-			if (CreateDirectoryA(parentFolderPath.c_str(), NULL) || ERROR_ALREADY_EXISTS != GetLastError())
+			if (CreateDirectoryA(parentFolderPath.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
 			{
 				std::ofstream fout(filepath);
 				fout << out.c_str();
@@ -124,7 +124,7 @@ namespace BaldLion
 
 			ui32 initialAnimationID = data[YAML_KEY_INITIAL_ANIMATION_ID].as<ui32>();
 
-			if (animator->GetAnimation(initialAnimationID) != nullptr)
+			if (animator->GetAnimationClip(initialAnimationID) != nullptr)
 			{
 				animator->SetInitialAnimation(initialAnimationID);
 			}

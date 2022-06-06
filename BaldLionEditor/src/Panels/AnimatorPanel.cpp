@@ -32,7 +32,7 @@ namespace BaldLion {
 
 			if (m_currentAnimator != nullptr)
 			{
-				ImGui::Text("Current Animator: %s", BL_STRINGID_TO_STR_C(m_currentAnimator->GetResourceName()));
+				ImGui::Text("Current Animator: %s", BL_STRINGID_TO_STR_C(m_currentAnimator->GetResourcePath()));
 
 				ImGui::SameLine();
 
@@ -97,6 +97,39 @@ namespace BaldLion {
 				ImGui::Text("%f", parameter.Value.floating); ImGui::NextColumn();
 				break;
 			}			
+		}
+
+		void AnimatorPanel::RenderCondition(AnimatorCondition* condition)
+		{
+			ImGui::Text(BL_STRINGID_TO_STR_C(condition->ParameterAName)); ImGui::NextColumn();
+			int selectIndex = (int)condition->Comparison;
+
+			switch (condition->ParameterB.Type)
+			{
+			case AnimatorParameter::ValueType::Bool:				
+				IMGUI_LEFT_LABEL(ImGui::Checkbox, "", &(condition->ParameterB.Value.boolean)); ImGui::NextColumn();
+				break;
+
+			case AnimatorParameter::ValueType::Int:			
+			{
+				ImGui::Combo("##", &selectIndex, "<\0<=\0==\0!=\0>=\0>"); ImGui::NextColumn();
+				condition->Comparison = (AnimatorCondition::ComparisonType)selectIndex;
+
+				int inputValue = condition->ParameterB.Value.integer;
+				IMGUI_LEFT_LABEL(ImGui::InputInt, "##", &inputValue); ImGui::NextColumn();
+
+				if (inputValue < 0) inputValue = 0;
+				condition->ParameterB.Value.integer = inputValue;
+			}
+				break;
+
+			case AnimatorParameter::ValueType::Float:
+				ImGui::Combo("##", &selectIndex, "<\0<=\0==\0!=\0>=\0>"); ImGui::NextColumn();
+				condition->Comparison = (AnimatorCondition::ComparisonType)selectIndex;
+
+				IMGUI_LEFT_LABEL(ImGui::InputFloat, "##", &condition->ParameterB.Value.floating); ImGui::NextColumn();
+				break;
+			}
 		}
 
 		void AnimatorPanel::RenderParameters()
@@ -253,12 +286,15 @@ namespace BaldLion {
 					ImGui::NextColumn();
 
 					DynamicArray<AnimatorTransition*>* transitions = m_currentAnimator->GetTransitionsOfAnimation(it.GetKey());
+
 					if (transitions != nullptr)
 					{
+						DynamicArray<ui32> transitionIndexToRemove(Memory::AllocationType::Linear_Frame, transitions->Size());
 						BL_DYNAMICARRAY_FOR(i, *transitions, 0)
 						{
-							const char* finalAnimationPath = BL_STRINGID_TO_STR_C(m_currentAnimator->GetAnimation((*transitions)[i]->GetFinalAnimationID())->GetResourcePath());
-							std::string popupId = "setup_transition" + std::to_string(i);
+							const char* finalAnimationPath = BL_STRINGID_TO_STR_C(m_currentAnimator->GetAnimationClip((*transitions)[i]->GetFinalAnimationID())->GetResourcePath());
+							std::string popupId = "Setup Transition to ";
+							popupId.append(finalAnimationPath);
 
 							if (ImGui::Button(finalAnimationPath))
 							{
@@ -266,11 +302,22 @@ namespace BaldLion {
 							}
 
 							RenderSetupTransitionPopup(popupId.c_str(), initialAnimationPath, finalAnimationPath, (*transitions)[i]);
+
+							ImGui::SameLine();
+							if (ImGui::Button("-"))
+							{
+								transitionIndexToRemove.EmplaceBack(i);								
+							}
+						}
+
+						BL_DYNAMICARRAY_FOR(i, transitionIndexToRemove, 0)
+						{
+							transitions->RemoveAt(transitionIndexToRemove[i]);
 						}
 					}
 
-					std::string popupId = "add_transition" + std::to_string(animationIndex);
-					if (ImGui::Button("+"))
+					std::string popupId = "Add Transition " + std::to_string(animationIndex);
+					if (ImGui::Button(popupId.c_str()))
 					{
 						ImGui::OpenPopup(popupId.c_str());
 					}
@@ -297,7 +344,8 @@ namespace BaldLion {
 				
 				static ui32 finalAnimationID = initialAnimationID;
 
-				const char* combo_preview_value = "";
+				const char* combo_preview_value = finalAnimationID == initialAnimationID ? "" : BL_STRINGID_TO_STR_C(finalAnimationID);
+
 				if (ImGui::BeginCombo("Final animation", combo_preview_value, ImGuiComboFlags_PopupAlignLeft))
 				{
 					BL_HASHTABLE_FOR(m_currentAnimator->GetAllAnimations(), it)
@@ -308,7 +356,9 @@ namespace BaldLion {
 						const bool is_selected = (finalAnimationID == it.GetKey());
 
 						if (ImGui::Selectable(BL_STRINGID_TO_STR_C(it.GetValue()->GetResourcePath()), is_selected))
+						{
 							finalAnimationID = it.GetKey();
+						}
 
 						// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 						if (is_selected)
@@ -351,11 +401,11 @@ namespace BaldLion {
 				ImGui::Text("Transition %s to %s", initialAnimationPath, finalAnimationPath);
 				ImGui::Separator();
 
-				static float transitionExitTime = transition->GetExitTime();
+				float transitionExitTime = transition->GetExitTime();
 				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Exit Time", &transitionExitTime);
 				transition->SetExitTime(transitionExitTime);
 
-				static float transitionTime = transition->GetTransitionTime();
+				float transitionTime = transition->GetTransitionTime();
 				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Transition Time", &transitionTime);
 				transition->SetTransitionTime(transitionTime);
 
@@ -373,9 +423,7 @@ namespace BaldLion {
 
 					BL_DYNAMICARRAY_FOR(i, transition->GetConditions(), 0)
 					{
-						AnimatorParameter parameter = m_currentAnimator->GetParameter(transition->GetConditions()[i].ParameterAName);
-
-						RenderParameter(parameter, transition->GetConditions()[i].ParameterAName);
+						RenderCondition(&transition->GetConditions()[i]);
 
 						if (ImGui::Button("-")) {
 							parametersToDestroy.PushBack(i);
@@ -404,7 +452,7 @@ namespace BaldLion {
 					ImGui::OpenPopup(popupID.c_str());
 				}
 
-				RenderConditionPopup(popupID.c_str(), transition);
+				RenderAddCondition(popupID.c_str(), transition);
 
 				ImGui::Separator();
 
@@ -417,7 +465,7 @@ namespace BaldLion {
 			}
 		}
 
-		void AnimatorPanel::RenderConditionPopup(const char* popupID, AnimatorTransition* transition)
+		void AnimatorPanel::RenderAddCondition(const char* popupID, AnimatorTransition* transition)
 		{
 			if (ImGui::BeginPopupModal(popupID, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 			{

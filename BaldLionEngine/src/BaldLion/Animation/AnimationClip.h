@@ -201,7 +201,7 @@ namespace BaldLion
 					glm::quat nextFrameRot;
 					Compression::DecompressSmallestThree(valueA, valueB, valueC, nextFrameRot);
 
-					result = glm::mix(result, nextFrameRot, interpolant);
+					result = glm::slerp(result, nextFrameRot, interpolant);
 				}
 			}
 

@@ -17,13 +17,19 @@ namespace BaldLion
 
 		void Pause() 
 		{ 
-			m_prevTimeScale = m_timeScale;
-			m_timeScale = 0.0f;
+			if (m_timeScale > 0.0f) 
+			{
+				m_prevTimeScale = m_timeScale;
+				m_timeScale = 0.0f;
+			}
 		}
 
 		void Resume()
 		{
-			m_timeScale = m_prevTimeScale;
+			if (m_timeScale == 0.0f)
+			{
+				m_timeScale = m_prevTimeScale;
+			}
 		}
 
 		float GetUnscaledDeltaTime() const { return m_deltaTime; }

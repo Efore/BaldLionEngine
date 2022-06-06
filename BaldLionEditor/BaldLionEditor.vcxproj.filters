@@ -75,6 +75,7 @@
     <ClInclude Include="vendor\ImNodes\ImNodesEz.h">
       <Filter>vendor\ImNodes</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\Components\AnimationComponentInspector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp">
