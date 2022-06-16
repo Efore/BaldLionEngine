@@ -24,7 +24,7 @@ namespace BaldLion {
 			const Animator* entityAnimator = AnimationManager::GetAnimator(animationComponent->animatorID);
 			const AnimationClip* currentAnimation = entityAnimator->GetAnimationClip(animationComponent->currentAnimationID);
 			 
-			animationComponent->currentAnimationTime = glm::mod(animationComponent->currentAnimationTime + animationComponent->timer->GetDeltaTime(), currentAnimation->AnimationTimeLength);
+			animationComponent->currentAnimationTime = glm::mod(animationComponent->currentAnimationTime + animationComponent->timer.GetDeltaTime(), currentAnimation->AnimationTimeLength);
 
 			const AnimatorTransition* currentTransition = entityAnimator->CheckTransition(animationComponent->currentAnimationID, animationComponent->currentAnimationTime, animationComponent->animatorParameters);
 
@@ -32,7 +32,7 @@ namespace BaldLion {
 
 			if (currentTransition != nullptr)
 			{
-				animationComponent->currentTransitionTime += animationComponent->timer->GetDeltaTime();
+				animationComponent->currentTransitionTime += animationComponent->timer.GetDeltaTime();
 				currentTransitionTime = animationComponent->currentTransitionTime;
 
 				if (animationComponent->currentTransitionTime >= currentTransition->GetTransitionTime())

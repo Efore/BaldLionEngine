@@ -6,4 +6,3 @@
 #include "BaldLion/ECS/Components/ECSDirectionalLightComponent.h"
 #include "BaldLion/ECS/Components/ECSAnimationComponent.h"
 #include "BaldLion/ECS/Components/ECSSkeletonComponent.h"
-#include "BaldLion/ECS/Components/ECSHierarchyComponent.h"

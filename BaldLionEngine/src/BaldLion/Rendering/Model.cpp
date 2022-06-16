@@ -4,7 +4,7 @@
 #include "BaldLion/Animation/AnimationManager.h"
 #include "BaldLion/Utils/GeometryUtils.h"
 #include "BaldLion/Utils/MathUtils.h"
-#include "BaldLion/ECS/Components/ECSHierarchyComponent.h"
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -560,31 +560,19 @@ namespace BaldLion
 				glm::vec3(0.0f),
 				glm::vec3(1.0f));
 
-			ECS::ECSHierarchyComponent* rootHierarchyComponent = ecsManager->AddComponent<ECS::ECSHierarchyComponent>(
-				ECS::ECSComponentType::Hierarchy,
-				0);
-
 			ecsManager->AddComponentToEntity(rootEntityID, rootTransformComponent);
-			ecsManager->AddComponentToEntity(rootEntityID, rootHierarchyComponent);
 
 			BL_DYNAMICARRAY_FOR(i, m_subMeshes, 0)
 			{
 				const Mesh* subMesh = m_subMeshes[i];
 
 				ECS::ECSEntityID childEntityID = ecsManager->AddEntity(BL_STRINGID_TO_STR_C(subMesh->GetResourceName()));
-
-				rootHierarchyComponent->childEntitiesIDs[rootHierarchyComponent->childEntitiesSize++] = childEntityID;
-
+				
 				ECS::ECSTransformComponent* childTransformComponent = ecsManager->AddComponent<ECS::ECSTransformComponent>(
 					ECS::ECSComponentType::Transform,
 					glm::vec3(0.0f),
 					glm::vec3(0.0f),
 					glm::vec3(1.0f)
-					);
-
-				ECS::ECSHierarchyComponent* childHierarchyComponent = ecsManager->AddComponent<ECS::ECSHierarchyComponent>(
-					ECS::ECSComponentType::Hierarchy,
-					rootEntityID
 					);
 
 				ECS::ECSMeshComponent* childMeshComponent = nullptr;
@@ -593,14 +581,17 @@ namespace BaldLion
 				subMesh->GenerateMeshComponent(ecsManager, isStatic, childMeshComponent, childSkeletonComponent);
 
 				ecsManager->AddComponentToEntity(childEntityID, childTransformComponent);
-				ecsManager->AddComponentToEntity(childEntityID, childHierarchyComponent);
 				ecsManager->AddComponentToEntity(childEntityID, childMeshComponent);
 
 				if (childSkeletonComponent != nullptr)
 				{
 					ecsManager->AddComponentToEntity(childEntityID, childSkeletonComponent);
 				}
+
+				ecsManager->SetHierarchy(childEntityID, rootEntityID);
 			}
+
+			ecsManager->GenerateCachedHierarchy();
 		}
 	} 
 

@@ -46,7 +46,6 @@
 #include "BaldLion/ECS/Components/ECSAnimationComponent.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSProjectionCameraSingleton.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
-#include "BaldLion/ECS/Components/ECSHierarchyComponent.h"
 
 #include "BaldLion/SceneManagement/SceneManager.h"
 

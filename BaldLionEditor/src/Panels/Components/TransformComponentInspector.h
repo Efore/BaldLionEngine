@@ -17,50 +17,32 @@ namespace BaldLion
 				ECS::ECSTransformComponent* componentTransform = (ECS::ECSTransformComponent*)component;
 				
 				glm::vec3 newPosition = componentTransform->position;
-				UtilsEditor::DrawVec3Handler("World Position", newPosition, 1.0f, 110.0f);
-
-				glm::vec3 deltaPosition = newPosition - componentTransform->position;
+				UtilsEditor::DrawVec3Handler("World Position", newPosition, 0.0f, 110.0f);				
 				componentTransform->position = newPosition;
 				
 				glm::vec3 rotation = glm::degrees(componentTransform->rotation);
-				UtilsEditor::DrawVec3Handler("World Rotation", rotation, 1.0f, 110.0f);
-
-				glm::vec3 newRotation = glm::radians(glm::vec3(rotation.x, rotation.y, rotation.z));
-				glm::vec3 deltaRotation = newRotation - componentTransform->rotation;
-				componentTransform->rotation = newRotation;
+				UtilsEditor::DrawVec3Handler("World Rotation", rotation, 0.0f, 110.0f);			
+				componentTransform->rotation = glm::radians(rotation);
 
 				glm::vec3 newScale = componentTransform->scale;
-				UtilsEditor::DrawVec3Handler("World Scale", newScale, 1.0f, 110.0f);
-
-				glm::vec3 deltaScale = newScale - componentTransform->scale;
+				UtilsEditor::DrawVec3Handler("World Scale", newScale, 1.0f, 110.0f);				
 				componentTransform->scale = newScale;
 
-				ECS::ECSComponentLookUp selectedEntityComponents;
-				if (SceneManager::GetECSManager()->GetEntityComponents().TryGet(sceneHierarchyPanel->GetSelectedEntityID(), selectedEntityComponents))
-				{
-					ECS::ECSHierarchyComponent* hierarchyComponent = selectedEntityComponents.Write<ECS::ECSHierarchyComponent>(ECS::ECSComponentType::Hierarchy);
-					if (hierarchyComponent != nullptr)
-					{
-						UtilsEditor::TransformChildsRecursive(hierarchyComponent, deltaPosition, deltaRotation, deltaScale);
+				ECS::ECSEntity* entity = SceneManager::GetECSManager()->GetEntityMap().Get(sceneHierarchyPanel->GetSelectedEntityID());
 
-						if (hierarchyComponent->parentEntityID > 0)
-						{
-							if (SceneManager::GetECSManager()->GetEntityComponents().TryGet(hierarchyComponent->parentEntityID, selectedEntityComponents))
-							{
-								const ECS::ECSTransformComponent* parentTrasnformComponent = selectedEntityComponents.Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
+				if (entity->GetParentID() > 0) {
 
-								glm::vec3 localPosition = componentTransform->position - parentTrasnformComponent->position;
-								glm::vec3 localRotation = componentTransform->rotation - parentTrasnformComponent->rotation;
-								glm::vec3 localScale = componentTransform->scale - parentTrasnformComponent->scale;
+					ECS::ECSTransformComponent* parentTransformComponent = (ECS::ECSTransformComponent*)SceneManager::GetECSManager()->GetEntityComponents().Get(entity->GetParentID())[(ui32)ECS::ECSComponentType::Transform];
 
-								ImGui::Separator();
+					glm::vec3 localPosition = componentTransform->position - parentTransformComponent->position;
+					glm::vec3 localRotation = componentTransform->rotation - parentTransformComponent->rotation;
+					glm::vec3 localScale = componentTransform->scale - parentTransformComponent->scale;
 
-								UtilsEditor::DrawVec3Handler("Local Position", localPosition, 0.0f, 110.0f, false);
-								UtilsEditor::DrawVec3Handler("Local Rotation", localRotation, 0.0f, 110.0f, false);
-								UtilsEditor::DrawVec3Handler("Local Scale", localScale, 0.0f, 110.0f, false);
-							}
-						}
-					}
+					ImGui::Separator();
+
+					UtilsEditor::DrawVec3Handler("Local Position", localPosition, 0.0f, 110.0f, false);
+					UtilsEditor::DrawVec3Handler("Local Rotation", glm::degrees(localRotation), 0.0f, 110.0f, false);
+					UtilsEditor::DrawVec3Handler("Local Scale", localScale, 0.0f, 110.0f, false);
 				}
 
 				ComponentInspector::EndComponentRender();

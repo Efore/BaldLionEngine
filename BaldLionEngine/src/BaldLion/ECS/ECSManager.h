@@ -5,6 +5,7 @@
 #include "ECSSystem.h"
 #include "ECSUtils.h"
 #include "ECSEntity.h"
+#include "Components/ECSTransformComponent.h"
 #include "BaldLion/Core/Containers/HashMap.h"
 #include "BaldLion/Core/Containers/HashTable.h"
 
@@ -13,6 +14,13 @@ namespace BaldLion {
 	namespace ECS {		
 
 		//---------------------------------------------------------------------------------------------------
+
+		struct ECSTransformHierarchyEntry
+		{
+			ECS::ECSTransformComponent* transformComponent;
+			glm::mat4 parentWorldTransform;
+			i32 parentIndex;
+		};
 
 		class ECSManager {
 			
@@ -25,13 +33,23 @@ namespace BaldLion {
 
 			~ECSManager();
 
-			//Add elements
+			//Entities
 			ECSEntityID AddEntity(const char* entityName);
-			void AddComponentToEntity(ECSEntityID entityID, ECSComponent* component);
-			void AddSystem(ECSSystem* system);			
-			
+			void RemoveEntity(ECSEntityID entityID);			
+
+			//Components
 			template <typename T, typename... Args >
 			T* AddComponent(ECSComponentType componentID, Args&&... args);
+			void AddComponentToEntity(ECSEntityID entityID, ECSComponent* component);
+			void RemoveComponentFromEntity(ECSComponentType componentID, ECSEntityID entityID);
+
+			//Systems
+			void AddSystem(ECSSystem* system);		
+			void RemoveSystem(ECSSystem* system);			
+
+			//Hierarchy
+			void SetHierarchy(ECSEntityID entityID, ECSEntityID parentID);
+			void GenerateCachedHierarchy();
 
 			//Main loop
 			void StartSystems();
@@ -39,26 +57,25 @@ namespace BaldLion {
 			void UpdateSystems();
 			void FrameEnd();
 			void StopSystems();
+			void UpdateHierarchyTransforms();
 
-			//Remove elements
-			void RemoveEntity(ECSEntityID entityID);			
-			void RemoveComponentFromEntity(ECSComponentType componentID, ECSEntityID entityID);
-			void RemoveSystem(ECSSystem* system);
+			HashTable<ECSEntityID, ECSComponentLookUp>& GetEntityComponents() { return m_entityComponents; }
+			const HashTable<ECSEntityID, ECSComponentLookUp>& GetEntityComponents() const { return m_entityComponents; }
 
-			HashMap<ECSEntityID, ECSComponentLookUp>& GetEntityComponents() { return m_entityComponents; }
-			const HashMap<ECSEntityID, ECSComponentLookUp>& GetEntityComponents() const { return m_entityComponents; }
+			HashTable<ECSEntityID, ECSSignature>& GetEntitySignatures() { return m_entitySignatures; }
+			const HashTable<ECSEntityID, ECSSignature>& GetEntitySignatures() const { return m_entitySignatures; }
 
-			HashMap<ECSEntityID, ECSSignature>& GetEntitySignatures() { return m_entitySignatures; }
-			const HashMap<ECSEntityID, ECSSignature>& GetEntitySignatures() const { return m_entitySignatures; }
-
-			HashMap<ECSEntityID, ECSEntity*>& GetEntityMap() { return m_entitiyMap; }
-			const HashMap<ECSEntityID, ECSEntity*>& GetEntityMap() const { return m_entitiyMap; }
+			HashTable<ECSEntityID, ECSEntity*>& GetEntityMap() { return m_entitiyMap; }
+			const HashTable<ECSEntityID, ECSEntity*>& GetEntityMap() const { return m_entitiyMap; }
 
 			DynamicArray<ECSEntity>& GetEntities() { return m_entities; }
 			const DynamicArray<ECSEntity>& GetEntities() const { return m_entities; }
 
+			const DynamicArray<ECSTransformHierarchyEntry>& GetCachedEntityHierarchy() const { return m_cachedEntityHierarchy; }
+
 			static ui32 GetNextEntityID() { return m_entityIDProvider++; }
 			static ui32 GetNextComponentID() { return m_componentIDProvider++; }
+
 
 		private:
 
@@ -67,14 +84,21 @@ namespace BaldLion {
 
 			void RemoveComponentFromPool(ECSComponentType componentType, const ECSComponent* componentToRemove);
 
+			void FillEntityHierarchyList(ECSEntityID rootID, DynamicArray<ECSEntityID>& entitiesIDlist);
+			void InternalRemoveEntity(ECSEntityID entityID);
+
+			void FillCachedHierarchy(ECSEntityID childEntityID, i32 parentIndex);
+
 		private:
 
-			HashMap<ECSEntityID, ECSComponentLookUp> m_entityComponents;
-			HashMap<ECSEntityID, ECSSignature> m_entitySignatures;
-			HashMap<ECSEntityID, ECSEntity*> m_entitiyMap;
+			HashTable<ECSEntityID, ECSComponentLookUp> m_entityComponents;
+			HashTable<ECSEntityID, ECSSignature> m_entitySignatures;
+			HashTable<ECSEntityID, ECSEntity*> m_entitiyMap;
 
 			DynamicArray<ECSEntity> m_entities;
 			DynamicArray<ECSSystem*> m_systems;
+
+			DynamicArray<ECSTransformHierarchyEntry> m_cachedEntityHierarchy;
 
 			//Pools
 			DynamicArray<void*> m_componentsPool;
@@ -83,8 +107,7 @@ namespace BaldLion {
 			DynamicArray<class ECSDirectionalLightComponent> m_directionalLightComponentPool;
 			DynamicArray<class ECSMeshComponent> m_meshComponentPool;
 			DynamicArray<class ECSAnimationComponent> m_animationComponentPool;
-			DynamicArray<class ECSSkeletonComponent> m_skeletonComponentPool;
-			DynamicArray<class ECSHierarchyComponent> m_hierarchyComponentPool;
+			DynamicArray<class ECSSkeletonComponent> m_skeletonComponentPool;			
 
 			static ui32 m_entityIDProvider;
 			static ui32 m_componentIDProvider;

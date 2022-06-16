@@ -139,18 +139,10 @@ namespace BaldLion {
 						MathUtils::DecomposeTransformMatrix(entityTransformMat, translation, rotation, scale);
 
 						glm::vec3 deltaRotation = rotation - entityTransformComponent->rotation;
-						glm::vec3 deltaPosition = translation - entityTransformComponent->position;
-						glm::vec3 deltaScale = scale - entityTransformComponent->scale;
-
+						
 						entityTransformComponent->position = translation;
 						entityTransformComponent->rotation += deltaRotation;
-						entityTransformComponent->scale = scale;
-
-						ECS::ECSHierarchyComponent* hierarchyComponent = selectedEntityComponents.Write<ECS::ECSHierarchyComponent>(ECS::ECSComponentType::Hierarchy);
-						if (hierarchyComponent != nullptr)
-						{	
-							UtilsEditor::TransformChildsRecursive(hierarchyComponent, deltaPosition, deltaRotation, deltaScale);
-						}
+						entityTransformComponent->scale = scale;						
 					}					
 
 					const ECS::ECSProjectionCameraComponent* projectionCameraComponent = selectedEntityComponents.Read<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentType::ProjectionCamera);

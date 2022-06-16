@@ -37,5 +37,13 @@ namespace BaldLion
 
 			bool m_refreshComponentLookUps;
 		};
+
+		#define BL_GENERATE_SYSTEM(SystemName, SystemType, ecsManager, ...)	\
+				{	\
+				const ECS::ECSSignature systemSignature = GenerateSignature(BL_NUMARGS(__VA_ARGS__),__VA_ARGS__);	\
+				SystemType* ecsSystem = MemoryManager::New<SystemType>(SystemName, AllocationType::FreeList_ECS, SystemName, systemSignature, ecsManager);	\
+				ecsManager->AddSystem(ecsSystem);	\
+				}
+
 	}
 }

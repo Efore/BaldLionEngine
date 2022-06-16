@@ -102,6 +102,8 @@ namespace BaldLion
 				}
 			}
 
+			SceneManager::GetECSManager()->GenerateCachedHierarchy();
+
 			return true;
 		}
 
@@ -122,8 +124,18 @@ namespace BaldLion
 					}
 				}
 			}
-
 			out << YAML::EndSeq;
+
+			out << YAML::Key << YAML_KEY_PARENTID << YAML::Value << entity->GetParentID();
+			out << YAML::Key << YAML_KEY_CHILDENTITIES << YAML::Value << YAML::BeginSeq;
+
+			BL_DYNAMICARRAY_FOREACH(entity->GetChildrenIDs())
+			{
+				out << YAML::Key << YAML_KEY_CHILDENTITY + std::to_string(i) << YAML::Value << entity->GetChildrenIDs()[i];
+			}
+
+			out << YAML::EndSeq;			
+
 			out << YAML::EndMap;			
 		}
 
@@ -141,6 +153,20 @@ namespace BaldLion
 				{
 					DeserializeComponent(entityID, component);
 				}
+			}
+			ECS::ECSEntity* entity = SceneManager::GetECSManager()->GetEntityMap().Get(entityID);
+
+			ECSEntityID parentEntityID = yamlEntity[YAML_KEY_PARENTID].as<ECSEntityID>();
+			entity->SetParentID(parentEntityID);
+
+			auto children = yamlEntity[YAML_KEY_CHILDENTITIES];
+
+			ui32 i = 0;
+
+			for (auto child : children)
+			{
+				entity->GetChildrenIDs().PushBack(child[YAML_KEY_CHILDENTITY + std::to_string(i)].as<ECSEntityID>());
+				++i;
 			}
 		}
 
@@ -163,7 +189,7 @@ namespace BaldLion
 				SerializeVec3(out, YAML_KEY_ROTATION, transformComponent->rotation);
 				SerializeVec3(out, YAML_KEY_SCALE, transformComponent->scale);
 			}
-				break;
+			break;
 
 			case ECS::ECSComponentType::ProjectionCamera:
 			{
@@ -177,7 +203,7 @@ namespace BaldLion
 				out << YAML::Key << YAML_KEY_CAMERANEARPLANE << YAML::Value << cameraComponent->nearPlane;
 				out << YAML::Key << YAML_KEY_CAMERAFARPLANE << YAML::Value << cameraComponent->farPlane;
 			}
-				break;
+			break;
 
 			case ECS::ECSComponentType::Mesh:
 			{
@@ -185,14 +211,14 @@ namespace BaldLion
 				out << YAML::Key << YAML_KEY_MESHRESOURCEID << YAML::Value << meshComponent->meshResourceID;
 				out << YAML::Key << YAML_KEY_MESHISSTATIC << YAML::Value << meshComponent->isStatic;
 			}
-				break;
+			break;
 
 			case ECS::ECSComponentType::Skeleton:
 			{
 				ECSSkeletonComponent* skeletonComponent = (ECSSkeletonComponent*)component;
 				out << YAML::Key << YAML_KEY_MESHRESOURCEID << YAML::Value << skeletonComponent->skeletonResourceID;
 			}
-				break;
+			break;
 
 			case ECS::ECSComponentType::DirectionalLight:
 			{
@@ -203,7 +229,7 @@ namespace BaldLion
 				SerializeVec3(out, YAML_KEY_SPECULARCOLOR, directionalLightComponent->specularColor);
 				SerializeVec3(out, YAML_KEY_LIGHTDIRECTION, directionalLightComponent->direction);
 			}
-				break;
+			break;
 
 			case ECS::ECSComponentType::PointLight:
 				break;
@@ -213,25 +239,10 @@ namespace BaldLion
 				ECSAnimationComponent* animationComponent = (ECSAnimationComponent*)component;
 				out << YAML::Key << YAML_KEY_ANIMATOR_PATH << YAML::Value << animationComponent->animatorID;
 			}
-				break;
-			case ECS::ECSComponentType::Hierarchy:
-			{
-				ECSHierarchyComponent* hierarchyComponent = (ECSHierarchyComponent*)component;
-
-				out << YAML::Key << YAML_KEY_PARENTID << YAML::Value << hierarchyComponent->parentEntityID;
-				out << YAML::Key << YAML_KEY_CHILDENTITIES << YAML::Value << YAML::BeginSeq;
-
-				for(ui32 i = 0, size = hierarchyComponent->childEntitiesSize; i < size; ++i)
-				{
-					out << YAML::Key << YAML_KEY_CHILDENTITY + std::to_string(i) << YAML::Value << hierarchyComponent->childEntitiesIDs[i];
-				}
-
-				out << YAML::EndSeq;
-			}
-				break;
-			}
+			break;
 
 			out << YAML::EndMap;
+			}
 		}
 
 		void SceneSerializer::DeserializeComponent(ECS::ECSEntityID entityID, const YAML::detail::iterator_value& yamlComponent)
@@ -330,29 +341,6 @@ namespace BaldLion
 			}
 				break;
 
-			case BaldLion::ECS::ECSComponentType::Hierarchy:
-			{
-				ECSEntityID parentEntityID = yamlComponent[YAML_KEY_PARENTID].as<ECSEntityID>();
-
-				auto children = yamlComponent[YAML_KEY_CHILDENTITIES];
-
-				ECSEntityID childEntitiesIDs[100];
-				ui32 i = 0;
-
-				for (auto child : children)
-				{
-					childEntitiesIDs[i] = child[YAML_KEY_CHILDENTITY + std::to_string(i)].as<ECSEntityID>();
-					++i;
-				}
-
-				component = SceneManager::GetECSManager()->AddComponent<ECSHierarchyComponent>(
-					ECS::ECSComponentType::Hierarchy,
-					parentEntityID,
-					childEntitiesIDs,
-					i);
-			}
-				break;
-
 			default:
 				break;
 			}
@@ -376,5 +364,22 @@ namespace BaldLion
 			return glm::vec3(x, y, z);
 		}
 
+		void SceneSerializer::SerializeQuat(YAML::Emitter &out, const std::string& key, const glm::quat& quat)
+		{
+			out << YAML::Key << (key + "X") << YAML::Value << quat.x;
+			out << YAML::Key << (key + "Y") << YAML::Value << quat.y;
+			out << YAML::Key << (key + "Z") << YAML::Value << quat.z;
+			out << YAML::Key << (key + "W") << YAML::Value << quat.w;
+		}
+
+		glm::quat SceneSerializer::DeserializeQuat(const YAML::Node& node, const std::string& key)
+		{
+			float x = node[key + "X"].as<float>();
+			float y = node[key + "Y"].as<float>();
+			float z = node[key + "Z"].as<float>();
+			float w = node[key + "W"].as<float>();
+
+			return glm::quat(w, x, y, z);
+		}
 	}
 }

@@ -2,7 +2,6 @@
 #include "SceneHierarchyPanel.h"
 #include "UtilsEditor.h"
 
-#include "BaldLion/ECS/Components/ECSHierarchyComponent.h"
 #include <BaldLion.h>
 #include <imgui/imgui.h>
 
@@ -88,16 +87,6 @@ namespace BaldLion {
 
 					if (m_selectedEntityID > 0)
 					{
-						const ECS::ECSHierarchyComponent* hierarchyComponent = m_sceneContext->GetECSManager()->GetEntityComponents().Get(m_selectedEntityID).Read<ECS::ECSHierarchyComponent>(ECS::ECSComponentType::Hierarchy);
-
-						if (hierarchyComponent != nullptr)
-						{
-							for(ui32 i = 0, size = hierarchyComponent->childEntitiesSize; i < size; ++i)
-							{
-								m_sceneContext->GetECSManager()->RemoveEntity(hierarchyComponent->childEntitiesIDs[i]);
-							}
-						}
-
 						m_sceneContext->GetECSManager()->RemoveEntity(m_selectedEntityID);
 						m_selectedEntityID = 0;
 					}
@@ -113,14 +102,12 @@ namespace BaldLion {
 		{
 			ImGuiTreeNodeFlags flags = (m_selectedEntityID == entity.GetEntityID() ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;			
 
-			const ECS::ECSHierarchyComponent* hierarchyComponent = m_sceneContext->GetECSManager()->GetEntityComponents().Get(entity.GetEntityID()).Read<ECS::ECSHierarchyComponent>(ECS::ECSComponentType::Hierarchy);
-
-			if (hierarchyComponent != nullptr && hierarchyComponent->parentEntityID > 0 && firstCall) 
+			if (entity.GetParentID() > 0 && firstCall)
 			{
 				return;
 			}
 
-			if (hierarchyComponent == nullptr || hierarchyComponent->childEntitiesSize == 0) 
+			if (entity.GetChildrenIDs().Size() == 0)
 			{
 				flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
 				ImGui::TreeNodeEx((void*)(uint32_t)entity.GetEntityID(), flags, BL_STRINGID_TO_STR_C(entity.GetEntityName()));
@@ -139,9 +126,9 @@ namespace BaldLion {
 
 				if (open) 
 				{
-					for(ui32 i = 0, size = hierarchyComponent->childEntitiesSize; i < size; ++i)					
+					BL_DYNAMICARRAY_FOREACH(entity.GetChildrenIDs())
 					{
-						DrawEntityElement(*m_sceneContext->GetECSManager()->GetEntityMap().Get(hierarchyComponent->childEntitiesIDs[i]), false, selectedThisFrame);
+						DrawEntityElement(*m_sceneContext->GetECSManager()->GetEntityMap().Get(entity.GetChildrenIDs()[i]), false, selectedThisFrame);
 					}	
 					ImGui::TreePop();
 				}

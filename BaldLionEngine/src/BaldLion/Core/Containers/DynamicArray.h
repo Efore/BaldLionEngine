@@ -133,6 +133,8 @@ namespace BaldLion
 	template <typename T>
 	DynamicArray<T>& BaldLion::DynamicArray<T>::operator=(const DynamicArray<T>& other)
 	{
+		BL_DEEP_PROFILE_FUNCTION();
+
 		if (&other == this)			
 			return *this;
 
@@ -159,6 +161,8 @@ namespace BaldLion
 	template <typename T>
 	DynamicArray<T>& BaldLion::DynamicArray<T>::operator=(DynamicArray<T>&& other) noexcept
 	{
+		BL_DEEP_PROFILE_FUNCTION();
+
 		if (&other == this)
 			return *this;	
 
@@ -197,6 +201,8 @@ namespace BaldLion
 	template <typename T>
 	void BaldLion::DynamicArray<T>::Delete()
 	{
+		BL_DEEP_PROFILE_FUNCTION();
+
 		if (m_elements == nullptr)
 			return;
 
@@ -254,6 +260,8 @@ namespace BaldLion
 	template <typename T>
 	void BaldLion::DynamicArray<T>::PushBack(T&& element)
 	{	
+		BL_DEEP_PROFILE_FUNCTION();
+
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
 		if (m_size == m_capacity)
@@ -267,6 +275,8 @@ namespace BaldLion
 	template <typename T>
 	void BaldLion::DynamicArray<T>::PushBackRange(const DynamicArray<T>& other, ui32 size)
 	{
+		BL_DEEP_PROFILE_FUNCTION();
+
 		if (size == 0) size = other.m_size;
 
 		if ((m_size + size) > m_capacity)
@@ -279,6 +289,8 @@ namespace BaldLion
 	template <typename T>
 	void BaldLion::DynamicArray<T>::PushBackRange(const T* other, ui32 size)
 	{
+		BL_DEEP_PROFILE_FUNCTION();
+
 		if (m_size + size > m_capacity)
 			Reallocate(m_size + size);
 
@@ -289,6 +301,8 @@ namespace BaldLion
 	template <typename T>
 	void BaldLion::DynamicArray<T>::PushAt(const T& element, ui32 index)
 	{
+		BL_DEEP_PROFILE_FUNCTION();
+
 		BL_ASSERT(m_capacity > 0, "Capacity is 0");
 
 		if (index >= m_size - 1)
@@ -545,8 +559,15 @@ namespace BaldLion
 		m_size = newSize;
 	}
 
+	#define BL_DYNAMICARRAY_FOREACH(dynamicArrayToIterate) \
+		for(ui32 i = 0, size = (dynamicArrayToIterate).Size(); i < size; ++i)
+
+
 	#define BL_DYNAMICARRAY_FOR(iteratorName, dynamicArrayToIterate, startValue) \
 		for(ui32 iteratorName = startValue, size = (dynamicArrayToIterate).Size(); iteratorName < size; ++iteratorName)
+
+	#define BL_DYNAMICARRAY_INVERSE_FOR(iteratorName, dynamicArrayToIterate, endValue) \
+		for(ui32 iteratorName = (dynamicArrayToIterate).Size() - 1; iteratorName >= endValue; --iteratorName)
 
 	#define BL_DYNAMICARRAY_FOR_RANGE(iteratorName, dynamicArrayToIterate, startValue, endValue) \
 		for(ui32 iteratorName = startValue, size = (dynamicArrayToIterate).Size(); iteratorName < size && iteratorName < endValue; ++iteratorName)

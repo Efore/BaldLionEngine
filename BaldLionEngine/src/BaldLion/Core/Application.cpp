@@ -17,7 +17,7 @@ namespace BaldLion
 
 	Application::Application(const std::string& applicationName)
 	{
-		BL_PROFILE_FUNCTION();
+		BL_PROFILE_FRAME();
 
 		BL_CORE_ASSERT(!s_instance, "Application already exists");
 
@@ -59,6 +59,8 @@ namespace BaldLion
 		ResourceManagement::ResourceManager::Stop();
 		JobManagement::JobManager::Stop();
 		Memory::MemoryManager::Stop();
+
+		OPTICK_SHUTDOWN();
 	}
 
 	void Application::PushLayer(Layer * layer)
@@ -122,8 +124,6 @@ namespace BaldLion
 			m_window->OnUpdate();			
 			MemoryManager::Delete(AllocationType::Linear_Frame);
 		}	
-
-		OPTICK_SHUTDOWN();
 	}
 
 	void Application::OnEvent(Event & e)

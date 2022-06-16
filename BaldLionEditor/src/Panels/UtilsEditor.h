@@ -162,30 +162,7 @@ namespace BaldLion
 
 				ImGui::PopID();
 			}
-
-			static void TransformChildsRecursive(ECS::ECSHierarchyComponent* hierarchyComponent, const glm::vec3& deltaPosition, const glm::vec3&  deltaRotation, const glm::vec3& deltaScale)
-			{
-				for (ui32 i = 0, size = hierarchyComponent->childEntitiesSize; i < size; ++i)
-				{
-					ui32 childEntityID = hierarchyComponent->childEntitiesIDs[i];
-
-					ECS::ECSComponentLookUp selectedEntityComponents;
-					if (SceneManager::GetECSManager()->GetEntityComponents().TryGet(childEntityID, selectedEntityComponents))
-					{
-						ECS::ECSTransformComponent* entityTransformComponent = selectedEntityComponents.Write<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
-
-						entityTransformComponent->position += deltaPosition;
-						entityTransformComponent->rotation += deltaRotation;
-						entityTransformComponent->scale += deltaScale;
-
-						ECS::ECSHierarchyComponent* childHierarchyComponent = selectedEntityComponents.Write<ECS::ECSHierarchyComponent>(ECS::ECSComponentType::Hierarchy);
-						if (hierarchyComponent != nullptr)
-						{
-							TransformChildsRecursive(childHierarchyComponent, deltaPosition, deltaRotation, deltaScale);							
-						}
-					}
-				}
-			}
+			
 		}
 	}
 }

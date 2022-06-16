@@ -3,7 +3,7 @@
 
 namespace BaldLion {
 
-	HashTable<ui32, Timer> Time::s_additionalTimers;
+	HashTable<ui32, Timer*> Time::s_additionalTimers;
 	Timer Time::s_globalTimer;
 	ui32 Time::s_timerIDprovider;
 
@@ -11,7 +11,7 @@ namespace BaldLion {
 	{
 		s_timerIDprovider = 0;
 		s_globalTimer = Timer(s_timerIDprovider++, 0.0f);
-		s_additionalTimers = HashTable<ui32, Timer>(AllocationType::FreeList_Main, 10);
+		s_additionalTimers = HashTable<ui32, Timer*>(AllocationType::FreeList_Main, 10);
 	}
 
 	void Time::Stop()
@@ -29,19 +29,18 @@ namespace BaldLion {
 
 			BL_HASHTABLE_FOR(s_additionalTimers, it)
 			{
-				it.GetValue().SetCurrentTime(currentTime);
+				it.GetValue()->SetCurrentTime(currentTime);
 			}
 			return true;
 		}
 		return false;
 	}
 
-	Timer* Time::RequestNewTimer()
+	void Time::RequestNewTimer(Timer& timer)
 	{
 		const ui32 newTimerID = s_timerIDprovider++;
-		s_additionalTimers.Emplace(newTimerID, newTimerID, s_globalTimer.GetCurrentTimeAsDouble());
-
-		return &s_additionalTimers.Get(newTimerID);
+		timer = Timer(newTimerID, s_globalTimer.GetCurrentTimeAsDouble());
+		s_additionalTimers.Emplace(newTimerID, &timer);
 	}
 
 	void Time::RemoveTimer(ui32 timerID)

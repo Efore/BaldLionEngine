@@ -17,13 +17,13 @@ namespace BaldLion
 				ComponentInspector::BeginComponentRender("Animation Component", component->GetComponentType(), sceneHierarchyPanel, (GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f) * 7.0f);
 
 				if (ImGui::Button("Play")) {
-					animationComponent->timer->Resume();
+					animationComponent->timer.Resume();
 				}
 
 				ImGui::SameLine();
 
 				if (ImGui::Button("Pause")) {
-					animationComponent->timer->Pause();
+					animationComponent->timer.Pause();
 				}
 
 				ImGui::SameLine();
@@ -32,11 +32,11 @@ namespace BaldLion
 				if (steppingForward)
 				{
 					steppingForward = false;
-					animationComponent->timer->Pause();
+					animationComponent->timer.Pause();
 				}
 
 				if (ImGui::Button("Step Fwd")) {
-					animationComponent->timer->Resume();
+					animationComponent->timer.Resume();
 					steppingForward = true;
 				}
 
@@ -66,11 +66,11 @@ namespace BaldLion
 				else {
 					//ImGui::Text("Current animation: %s", BL_STRINGID_TO_STR_C(currentAnimation->GetResourceName()));
 
-					int frame = (glm::floor((animationComponent->currentAnimationTime / currentAnimation->AnimationTimeLength) * currentAnimation->NumFrames));
+					int frame = (int)(glm::floor((animationComponent->currentAnimationTime / currentAnimation->AnimationTimeLength) * currentAnimation->NumFrames));
 					float progress = animationComponent->currentAnimationTime / currentAnimation->AnimationTimeLength;
 
 					char buf[32];
-					sprintf(buf, "%d/%d", frame, currentAnimation->NumFrames);
+					sprintf_s(buf, "%d/%d", frame, currentAnimation->NumFrames);
 					ImGui::ProgressBar(progress, ImVec2(0.f, 0.f), buf);
 				}
 

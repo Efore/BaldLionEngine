@@ -15,8 +15,9 @@ namespace BaldLion {
 		public:
 
 			ECSAnimationComponent(ui32 animatorID, ui32 initAnimationId) :
-				ECSComponent(ECSComponentType::Animation), animatorID(animatorID), currentAnimationID(initAnimationId), currentAnimationTime(0.0f), currentTransitionTime(0.0f), timer(Time::RequestNewTimer())
+				ECSComponent(ECSComponentType::Animation), animatorID(animatorID), currentAnimationID(initAnimationId), currentAnimationTime(0.0f), currentTransitionTime(0.0f)
 			{
+				Time::RequestNewTimer(timer);
 				animatorParameters = HashTable<StringId, AnimatorParameter>(MemoryManager::GetAllocatorType(this), AnimationManager::GetAnimator(animatorID)->GetAllParameters());
 			}
 
@@ -87,7 +88,7 @@ namespace BaldLion {
 
 			ui32 animatorID;
 			ui32 currentAnimationID;
-			Timer* timer;
+			Timer timer;
 
 			float currentAnimationTime;
 			float currentTransitionTime;

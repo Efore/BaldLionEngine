@@ -7,14 +7,14 @@ namespace BaldLion {
 
 	namespace ECS
 	{
-		class ECSHierarchyComponent : public ECSComponent
+		/*class ECSHierarchyComponent : public ECSComponent
 		{
 		public:
 
 			ECSHierarchyComponent(ECSEntityID parentEntityID) :
 				ECSComponent(ECSComponentType::Hierarchy), parentEntityID(parentEntityID), childEntitiesSize(0)
 			{
-				
+
 			}
 
 			ECSHierarchyComponent(ECSEntityID parentEntityID, const ECSEntityID* childEntitiesIDs, ui32 childEntitiesSize) :
@@ -30,6 +30,6 @@ namespace BaldLion {
 			ECSEntityID childEntitiesIDs[100];
 			ui32 childEntitiesSize;
 			ECSEntityID parentEntityID;
-		};
+		};*/
 	}
 }

@@ -73,12 +73,12 @@ namespace BaldLion
 
 		static bool SetCurrentTime(double currentTime);
 
-		static Timer* RequestNewTimer();
+		static void RequestNewTimer(Timer& timer);
 		static void RemoveTimer(ui32 timerID);
 
 	private:
 
-		static HashTable<ui32, Timer> s_additionalTimers;
+		static HashTable<ui32, Timer*> s_additionalTimers;
 		static Timer s_globalTimer;
 		static ui32 s_timerIDprovider;
 
