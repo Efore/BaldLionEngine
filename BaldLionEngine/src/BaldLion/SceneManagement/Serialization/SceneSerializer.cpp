@@ -131,7 +131,9 @@ namespace BaldLion
 
 			BL_DYNAMICARRAY_FOREACH(entity->GetChildrenIDs())
 			{
+				out << YAML::BeginMap;
 				out << YAML::Key << YAML_KEY_CHILDENTITY + std::to_string(i) << YAML::Value << entity->GetChildrenIDs()[i];
+				out << YAML::EndMap;
 			}
 
 			out << YAML::EndSeq;			
@@ -241,8 +243,8 @@ namespace BaldLion
 			}
 			break;
 
-			out << YAML::EndMap;
 			}
+			out << YAML::EndMap;
 		}
 
 		void SceneSerializer::DeserializeComponent(ECS::ECSEntityID entityID, const YAML::detail::iterator_value& yamlComponent)

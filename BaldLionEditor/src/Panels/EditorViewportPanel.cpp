@@ -143,25 +143,10 @@ namespace BaldLion {
 						entityTransformComponent->position = translation;
 						entityTransformComponent->rotation += deltaRotation;
 						entityTransformComponent->scale = scale;						
-					}					
-
-					const ECS::ECSProjectionCameraComponent* projectionCameraComponent = selectedEntityComponents.Read<ECS::ECSProjectionCameraComponent>(ECS::ECSComponentType::ProjectionCamera);
-
-					if (projectionCameraComponent)
-					{
-						const glm::mat4 viewMatrix = glm::inverse(entityTransformComponent->GetTransformMatrix());
-
-						const glm::mat4 projectionMatrix = glm::perspective(glm::radians(projectionCameraComponent->fov), projectionCameraComponent->width / projectionCameraComponent->height, projectionCameraComponent->nearPlane, projectionCameraComponent->farPlane);
-
-						const glm::mat4 frustrum = glm::inverse(projectionMatrix * viewMatrix);
-
-						Renderer::DrawDebugFrustrum(frustrum, glm::vec3(0.3f, 1.0f, 0.3f), 0.0f, false);
-					}
+					}	
 				}
-
-			}
+			}			
 			
-			//ImGuizmo::ViewManipulate((float*)&cameraView, 1.0f, ImVec2{ ImGui::GetWindowPos().x + ImGui::GetWindowWidth() - 128, ImGui::GetWindowPos().y + 10 }, ImVec2(128, 128), 0x10101010);
 			ImGui::End();			
 		
 			HandleInput();			

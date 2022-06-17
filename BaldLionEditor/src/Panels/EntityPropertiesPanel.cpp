@@ -6,6 +6,7 @@
 #include "Components/DirectionalLightComponentInspector.h"
 #include "Components/ProjectionCameraComponentInspector.h"
 #include "Components/AnimationComponentInspector.h"
+#include "Components/MeshComponentInspector.h"
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
 #include "BaldLion/Utils/MathUtils.h"
@@ -226,8 +227,7 @@ namespace BaldLion {
 					break;
 
 				case ECS::ECSComponentType::Mesh:
-					ComponentInspector::BeginComponentRender("Mesh Component", ECS::ECSComponentType::Mesh, m_sceneHierarchyPanel, GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f);
-					ComponentInspector::EndComponentRender();
+					MeshComponentInspector::OnImGuiRender(component, m_sceneHierarchyPanel);					
 					break;
 
 				case ECS::ECSComponentType::Skeleton:

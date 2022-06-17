@@ -2,6 +2,7 @@
 
 #include "ComponentInspector.h"
 #include "BaldLion/ECS/Components/ECSProjectionCameraComponent.h"
+#include "BaldLion/Rendering/Renderer.h"
 
 namespace BaldLion
 {
@@ -12,6 +13,7 @@ namespace BaldLion
 		public:
 
 			static void OnImGuiRender(ECS::ECSComponent* component, SceneHierarchyPanel* sceneHierarchyPanel) {
+				
 
 				ECS::ECSProjectionCameraComponent* projectionCameraComponent = (ECS::ECSProjectionCameraComponent*)component;
 
@@ -24,7 +26,23 @@ namespace BaldLion
 
 				IMGUI_LEFT_LABEL(ImGui::DragFloat, "Field of View", (float*)&projectionCameraComponent->fov, 1.0f, 20.0f, 180.0f);
 
-				ComponentInspector::EndComponentRender();
+				static bool showDebugFrustrum = false;
+				IMGUI_LEFT_LABEL(ImGui::Checkbox, "Show debug frustrum", &showDebugFrustrum);
+
+				ComponentInspector::EndComponentRender();	
+
+				if (showDebugFrustrum && sceneHierarchyPanel->GetSelectedEntityID() > 0)
+				{
+					ECS::ECSTransformComponent* entityTransformComponent = (ECS::ECSTransformComponent*)SceneManager::GetECSManager()->GetEntityComponents().Get(sceneHierarchyPanel->GetSelectedEntityID())[(ui32)ECS::ECSComponentType::Transform];
+
+					const glm::mat4 viewMatrix = glm::inverse(entityTransformComponent->GetTransformMatrix());
+
+					const glm::mat4 projectionMatrix = glm::perspective(glm::radians(projectionCameraComponent->fov), projectionCameraComponent->width / projectionCameraComponent->height, projectionCameraComponent->nearPlane, projectionCameraComponent->farPlane);
+
+					const glm::mat4 frustrum = glm::inverse(projectionMatrix * viewMatrix);
+
+					Renderer::DrawDebugFrustrum(frustrum, glm::vec3(0.3f, 1.0f, 0.3f), 0.0f, false);
+				}
 			}
 
 		};

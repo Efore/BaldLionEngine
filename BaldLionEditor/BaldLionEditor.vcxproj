@@ -136,6 +136,7 @@
     <ClInclude Include="src\Panels\Components\AnimationComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\ComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\DirectionalLightComponentInspector.h" />
+    <ClInclude Include="src\Panels\Components\MeshComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\ProjectionCameraComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\TransformComponentInspector.h" />
     <ClInclude Include="src\Panels\EditorPanel.h" />

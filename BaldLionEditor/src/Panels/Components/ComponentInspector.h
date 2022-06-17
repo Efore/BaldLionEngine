@@ -35,9 +35,7 @@ namespace BaldLion {
 			static void EndComponentRender() {
 
 				ImGui::EndChild();
-			}
-
-			
+			}						
 			
 		};
 

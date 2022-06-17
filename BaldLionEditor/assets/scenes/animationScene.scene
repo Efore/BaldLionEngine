@@ -16,7 +16,10 @@ Entities:
         LightDirectionX: -1
         LightDirectionY: -1
         LightDirectionZ: -1
-  - EntityName: Walking
+    ParentEntityID: 0
+    ChildEntities:
+      []
+  - EntityName: Idle
     Components:
       - ComponentType: 0
         PositionX: 0
@@ -28,31 +31,28 @@ Entities:
         ScaleX: 1
         ScaleY: 1
         ScaleZ: 1
-      - ComponentType: 6
-        ParentEntityID: 0
-        ChildEntities:
-          - ChildEntity0
-          - 3
-  - EntityName: MutantMesh
+    ParentEntityID: 0
+    ChildEntities:
+      - ChildEntity0: 3
+  - EntityName: Ch24
     Components:
       - ComponentType: 0
         PositionX: 0
         PositionY: 0
         PositionZ: 0
         RotationX: 0
-        RotationY: 0
+        RotationY: -0
         RotationZ: 0
         ScaleX: 1
         ScaleY: 1
         ScaleZ: 1
       - ComponentType: 2
-        MeshResourceID: 2917325750
+        MeshResourceID: 478118258
         MeshIsStatic: false
       - ComponentType: 3
-        MeshResourceID: 2917325750
+        MeshResourceID: 478118258
       - ComponentType: 5
-        AnimatorID: 3786014756
-      - ComponentType: 6
-        ParentEntityID: 2
-        ChildEntities:
-          []
+        AnimatorID: 4116390880
+    ParentEntityID: 2
+    ChildEntities:
+      []
