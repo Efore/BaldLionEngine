@@ -10,7 +10,7 @@ namespace BaldLion {
 
 		public:
 			ViewportPanel() = default;
-			ViewportPanel(SceneHierarchyPanel* sceneHierarchyPanel){ m_sceneHierarchyPanel = sceneHierarchyPanel; }
+			ViewportPanel(SceneHierarchyPanel* sceneHierarchyPanel, const char* viewportID) : EditorPanel(viewportID), m_sceneHierarchyPanel(sceneHierarchyPanel) {}
 
 			virtual void SetupViewportCamera() = 0;
 

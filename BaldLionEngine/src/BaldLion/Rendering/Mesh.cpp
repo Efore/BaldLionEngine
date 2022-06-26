@@ -115,7 +115,7 @@ namespace BaldLion
 				}
 			}
 
-			meshComponent->localAABB = { minPointInLocalSpace , maxPointInLocalSpace };
+			meshComponent->localBoundingBox = { minPointInLocalSpace , maxPointInLocalSpace };
 		}
 
 		BaldLion::ECS::ECSSkeletonComponent* Mesh::GenerateSkeletonComponent(ECS::ECSManager* ecsManager) const

@@ -7,7 +7,10 @@ namespace BaldLion {
 		class EditorPanel {
 
 		public:
-			EditorPanel() = default;
+			EditorPanel(const char* panelName) {
+				m_panelName = BL_STRING_TO_STRINGID(panelName);
+			}
+
 			virtual ~EditorPanel(){}
 			virtual void OnImGuiRender()
 			{
@@ -16,7 +19,9 @@ namespace BaldLion {
 
 			protected:
 
-			bool m_viewportFocused;			
+			bool m_viewportFocused;		
+			StringId m_panelName;
+			ui32 m_panelID;
 		};
 	}
 }

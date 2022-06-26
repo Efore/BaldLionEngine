@@ -20,7 +20,7 @@ namespace BaldLion
 				IMGUI_LEFT_LABEL(ImGui::ColorEdit3,"Diffuse color", (float*)&directionalLight->diffuseColor);
 				IMGUI_LEFT_LABEL(ImGui::ColorEdit3,"Specular color", (float*)&directionalLight->specularColor);
 
-				UtilsEditor::DrawVec3Handler("Direction", directionalLight->direction, 1.0f);
+				EditorUtils::DrawVec3Handler("Direction", directionalLight->direction, 1.0f);
 
 				ComponentInspector::EndComponentRender();
 			}

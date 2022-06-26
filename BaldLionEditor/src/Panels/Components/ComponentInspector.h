@@ -3,7 +3,7 @@
 #include <imgui/imgui_internal.h>
 #include <glm/glm.hpp>
 #include "SceneHierarchyPanel.h"
-#include "UtilsEditor.h"
+#include "EditorUtils.h"
 
 namespace BaldLion {
 

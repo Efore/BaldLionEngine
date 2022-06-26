@@ -8,8 +8,8 @@ namespace BaldLion {
 
 		class MemoryAllocationPanel : public EditorPanel{
 
-		public:
-			MemoryAllocationPanel() = default;			
+		public:	
+			MemoryAllocationPanel() : EditorPanel("Memory") {}
 			virtual void OnImGuiRender() override;						
 		};
 	}

@@ -146,7 +146,7 @@
     <ClInclude Include="src\Panels\RenderingDataPanel.h" />
     <ClInclude Include="src\Panels\ResourcesPanel.h" />
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
-    <ClInclude Include="src\Panels\UtilsEditor.h" />
+    <ClInclude Include="src\Panels\EditorUtils.h" />
     <ClInclude Include="src\Panels\ViewportPanel.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="vendor\ImNodes\ImNodes.h" />

@@ -60,9 +60,6 @@
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h">
       <Filter>src\Panels</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panels\UtilsEditor.h">
-      <Filter>src\Panels</Filter>
-    </ClInclude>
     <ClInclude Include="src\Panels\ViewportPanel.h">
       <Filter>src\Panels</Filter>
     </ClInclude>
@@ -75,8 +72,15 @@
     <ClInclude Include="vendor\ImNodes\ImNodesEz.h">
       <Filter>vendor\ImNodes</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panels\Components\AnimationComponentInspector.h" />
-    <ClInclude Include="src\Panels\Components\MeshComponentInspector.h" />
+    <ClInclude Include="src\Panels\EditorUtils.h">
+      <Filter>src\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Panels\Components\AnimationComponentInspector.h">
+      <Filter>src\Panels\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Panels\Components\MeshComponentInspector.h">
+      <Filter>src\Panels\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp">

@@ -1,6 +1,6 @@
 #pragma once
 #include "SceneHierarchyPanel.h"
-#include "UtilsEditor.h"
+#include "EditorUtils.h"
 
 #include <BaldLion.h>
 #include <imgui/imgui.h>
@@ -9,7 +9,9 @@ namespace BaldLion {
 
 	namespace Editor {
 
-		SceneHierarchyPanel::SceneHierarchyPanel(Scene* sceneContext) : m_sceneContext(sceneContext), m_selectedEntityID(0)
+		SceneHierarchyPanel::SceneHierarchyPanel() : EditorPanel("Scene Hierarchy"){}
+
+		SceneHierarchyPanel::SceneHierarchyPanel(Scene* sceneContext) : EditorPanel("Scene Hierarchy"), m_sceneContext(sceneContext), m_selectedEntityID(0)
 		{
 
 		}
@@ -21,8 +23,9 @@ namespace BaldLion {
 
 		void SceneHierarchyPanel::OnImGuiRender()
 		{
-			ImGui::Begin("Scene Hierarchy");
-			
+			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
+			m_panelID = ImGui::GetCurrentWindow()->ID;
+
 			m_viewportFocused = ImGui::IsWindowFocused();
 
 			if (ImGui::Button("Add Entity"))
@@ -60,7 +63,7 @@ namespace BaldLion {
 				ImGui::EndPopup();
 			}
 
-			Rendering::Model* model = UtilsEditor::RenderResourceInspectorPopup<Rendering::Model>("create_model_entity", ResourceManagement::ResourceType::Model);
+			Rendering::Model* model = EditorUtils::RenderResourceInspectorPopup<Rendering::Model>("create_model_entity", ResourceManagement::ResourceType::Model);
 			
 			if (model)
 			{

@@ -8,7 +8,7 @@ namespace BaldLion {
 		class RenderingDataPanel : public EditorPanel {
 
 		public:
-			RenderingDataPanel() = default;
+			RenderingDataPanel() : EditorPanel("Rendering Data"){}
 			virtual void OnImGuiRender() override;
 		};
 	}

@@ -3,7 +3,7 @@
 #include <BaldLion.h>
 #include <imgui/imgui.h>
 #include "ImGuizmo.h"
-#include "UtilsEditor.h"
+#include "EditorUtils.h"
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,15 +14,16 @@ namespace BaldLion {
 
 	namespace Editor {
 
-		EditorViewportPanel::EditorViewportPanel(SceneHierarchyPanel* sceneHierarchyPanel) : ViewportPanel(sceneHierarchyPanel), m_viewportFocused(false), m_imGuizmoOperation(0)
+		EditorViewportPanel::EditorViewportPanel() : ViewportPanel(nullptr, "Viewport"), m_viewportFocused(false), m_imGuizmoOperation(ImGuizmo::OPERATION::TRANSLATE)
+		{
+
+		}
+
+		EditorViewportPanel::EditorViewportPanel(SceneHierarchyPanel* sceneHierarchyPanel) : ViewportPanel(sceneHierarchyPanel, "Viewport"), m_viewportFocused(false), m_imGuizmoOperation(0)
 		{
 		
 		}
 
-		EditorViewportPanel::EditorViewportPanel() : m_viewportFocused(false), m_imGuizmoOperation(ImGuizmo::OPERATION::TRANSLATE)
-		{
-
-		}
 
 		EditorViewportPanel::~EditorViewportPanel()
 		{
@@ -65,7 +66,10 @@ namespace BaldLion {
 
 		void EditorViewportPanel::OnImGuiRender()
 		{
-			ImGui::Begin("Viewport");
+			m_isManipulatingGizmo = false;
+
+			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
+			m_panelID = ImGui::GetCurrentWindow()->ID;
 
 			ImGui::SameLine();
 			ImGui::PushID(BL_STRING_TO_STRINGID("Manipulate Translation"));
@@ -101,7 +105,7 @@ namespace BaldLion {
 			ImGui::PopID();
 
 			m_viewportFocused = ImGui::IsWindowFocused();
-
+     
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 			if (m_viewportSize != glm::vec2{ viewportPanelSize.x, viewportPanelSize.y })
 			{
@@ -115,8 +119,8 @@ namespace BaldLion {
 			ECS::ECSEntityID selectedEntityID = m_sceneHierarchyPanel->GetSelectedEntityID();
 			ECS::ECSComponentLookUp selectedEntityComponents;
 			
-			glm::mat4 cameraView = glm::inverse(m_viewportCameraTransform->GetTransformMatrix());
-			const glm::mat4 cameraProjection = glm::perspective(glm::radians(m_viewportCamera->fov), m_viewportCamera->width / m_viewportCamera->height, m_viewportCamera->nearPlane, m_viewportCamera->farPlane);
+			m_cameraView = glm::inverse(m_viewportCameraTransform->GetTransformMatrix());
+			m_cameraProjection = glm::perspective(glm::radians(m_viewportCamera->fov), m_viewportCamera->width / m_viewportCamera->height, m_viewportCamera->nearPlane, m_viewportCamera->farPlane);
 
 			ImGuizmo::SetOrthographic(false);
 
@@ -131,10 +135,11 @@ namespace BaldLion {
 				{
 					glm::mat4 entityTransformMat = entityTransformComponent->GetTransformMatrix();
 					
-					ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), (ImGuizmo::OPERATION)m_imGuizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(entityTransformMat));
+					ImGuizmo::Manipulate(glm::value_ptr(m_cameraView), glm::value_ptr(m_cameraProjection), (ImGuizmo::OPERATION)m_imGuizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(entityTransformMat));
 
 					if (ImGuizmo::IsUsing())
 					{
+						m_isManipulatingGizmo = true;
 						glm::vec3 translation, rotation, scale;
 						MathUtils::DecomposeTransformMatrix(entityTransformMat, translation, rotation, scale);
 
@@ -171,6 +176,11 @@ namespace BaldLion {
 				{
 					m_imGuizmoOperation = 2;
 				}
+			}
+			
+			if (!m_isManipulatingGizmo && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			{
+				CheckSelectEntity();
 			}
 
 			MoveViewportCamera();			
@@ -232,6 +242,56 @@ namespace BaldLion {
 
 			prevX = BaldLion::Input::GetMouseX();
 			prevY = BaldLion::Input::GetMouseY();
+		}
+
+		void EditorViewportPanel::CheckSelectEntity()
+		{
+			//glm::vec2 windowsPos = glm::vec2(ImGui::GetWindowViewport()->Pos.x, ImGui::GetWindowViewport()->Pos.y);
+			glm::vec2 mouseInWindow;
+			if (EditorUtils::GetMouseRelativePosInWindow(m_panelID, mouseInWindow))
+			{	
+				const glm::vec3 rayOrigin = m_viewportCameraTransform->position;
+
+				const glm::vec4 rayClip = glm::vec4(mouseInWindow.x, mouseInWindow.y, 1.0f, 1.0f);
+
+				glm::vec3 rayDirection = glm::inverse(m_viewportCamera->viewProjectionMatrix) * rayClip;
+				rayDirection = glm::normalize(rayDirection);
+
+				//Renderer::DrawDebugLine(rayOrigin, rayDirection * 5000.0f, glm::vec3(1.0f, 0.0f, 0.0f), false, 5000);
+
+				ECS::ECSEntityID closestEntityID = 0;
+				float sqrClosestDistance = 10000;
+				
+				BL_HASHTABLE_FOR(SceneManager::GetECSManager()->GetEntityComponents(), it)
+				{
+					ECS::ECSMeshComponent* meshComponent = (ECS::ECSMeshComponent*)it.GetValue()[(ui32)ECS::ECSComponentType::Mesh];
+
+					if (meshComponent != nullptr)
+					{
+						ECS::ECSTransformComponent* transform = (ECS::ECSTransformComponent*)it.GetValue()[(ui32)ECS::ECSComponentType::Transform];
+
+						const BoundingBox meshAABB = GeometryUtils::GetAABB(meshComponent->localBoundingBox, transform->GetTransformMatrix());												
+
+						if (ECS::SingletonComponents::ECSProjectionCameraSingleton::IsAABBVisible(meshAABB) && meshAABB.IsIntersectedByRayFast(rayOrigin, rayDirection))
+						{			
+							float sqrDistance = glm::length2(meshAABB.GetCenter() - rayOrigin);
+							if (sqrDistance < sqrClosestDistance)
+							{
+								sqrClosestDistance = sqrDistance;
+								closestEntityID = it.GetKey();
+							}
+						}
+					}
+				}
+
+				if (closestEntityID > 0)
+				{
+					m_sceneHierarchyPanel->SetSelectedEntityID(closestEntityID);
+				}
+				else {
+					m_sceneHierarchyPanel->SetSelectedEntityID(0);
+				}
+			}
 		}
 
 	}

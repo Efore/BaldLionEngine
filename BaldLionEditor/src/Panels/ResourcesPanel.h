@@ -10,8 +10,8 @@ namespace BaldLion {
 
 		class ResourcesPanel : public EditorPanel {
 
-		public:
-			ResourcesPanel() = default;
+		public:			
+			ResourcesPanel() : EditorPanel("Resources"){}
 
 			virtual void OnImGuiRender() override;
 		};

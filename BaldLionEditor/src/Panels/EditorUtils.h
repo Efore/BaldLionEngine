@@ -14,7 +14,7 @@ namespace BaldLion
 	{
 		#define IMGUI_LEFT_LABEL(func, label, ...) (ImGui::TextUnformatted(label), ImGui::SameLine(), func("##" label, __VA_ARGS__))
 
-		namespace UtilsEditor
+		namespace EditorUtils
 		{
 			template<typename T>
 			static T* RenderResourceInspectorPopup(const char* popupName, ResourceManagement::ResourceType resourceType)
@@ -162,7 +162,61 @@ namespace BaldLion
 
 				ImGui::PopID();
 			}
-			
+
+			static bool GetMousePosInWindow( ui32 windowID, glm::vec2& result)
+			{
+				ImGuiWindow* window = ImGui::FindWindowByID(windowID);
+
+				if (window != nullptr)
+				{
+					auto[pos_x, pos_y] = window->Pos;
+					auto[size_x, size_y] = window->Size;
+
+					auto[mx, my] = ImGui::GetMousePos();
+
+					mx -= pos_x;
+					my = (pos_y + size_y) - my;
+
+					if (mx >= 0.0f && mx < size_x && my >= 0.0f && my < size_y)
+					{
+						result.x = mx;
+						result.y = my;	
+
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			static bool GetMouseRelativePosInWindow(ui32 windowID, glm::vec2& result)
+			{
+				ImGuiWindow* window = ImGui::FindWindowByID(windowID);
+
+				if (window != nullptr)
+				{
+					auto[pos_x, pos_y] = window->Pos;
+					auto[size_x, size_y] = window->Size;
+
+					auto[mx, my] = ImGui::GetMousePos();
+
+					mx -= pos_x;
+					my = (pos_y + size_y) - my;
+
+					if (mx >= 0.0f && mx < size_x && my >= 0.0f && my < size_y)
+					{
+						result.x = mx;
+						result.y = my;
+
+						result.x = (2.0f * result.x) / size_x - 1.0f;
+						result.y = (2.0f * result.y) / size_y - 1.0f;
+
+						return true;
+					}
+				}
+
+				return false;
+			}
 		}
 	}
 }

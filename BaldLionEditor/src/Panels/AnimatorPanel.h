@@ -13,7 +13,6 @@ namespace BaldLion {
 
 		public:
 			AnimatorPanel();
-
 			virtual void OnImGuiRender() override;
 
 		private:

@@ -1,6 +1,7 @@
 #pragma once
 #include <BaldLion.h>
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 #include "MemoryAllocationPanel.h"
 
 
@@ -10,7 +11,8 @@ namespace BaldLion {
 
 		void MemoryAllocationPanel::OnImGuiRender()
 		{
-			ImGui::Begin("Memory");
+			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
+			m_panelID = ImGui::GetCurrentWindow()->ID;
 
 			ImGui::Text("Total Memory: %zu", MemoryManager::GetMemorySize());
 			ImGui::Text("Free List Main Allocator: %zu / %zu", MemoryManager::GetAllocatorUsedMemory(AllocationType::FreeList_Main), MemoryManager::GetAllocatorSize(AllocationType::FreeList_Main));

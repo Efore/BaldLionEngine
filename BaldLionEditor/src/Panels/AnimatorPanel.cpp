@@ -1,21 +1,23 @@
 #include <BaldLion.h>
 #include <imgui/imgui.h>
 #include "AnimatorPanel.h"
-#include "UtilsEditor.h"
+#include "EditorUtils.h"
 #include "ImNodesEz.h"
 
 namespace BaldLion {
 
 	namespace Editor {
 
-		AnimatorPanel::AnimatorPanel()
+		AnimatorPanel::AnimatorPanel() : EditorPanel("Animator")
 		{
 			static ImNodes::Ez::Context* context = ImNodes::Ez::CreateContext();
 		}
 
 		void AnimatorPanel::OnImGuiRender()
 		{
-			ImGui::Begin("Animator");
+			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
+			m_panelID = ImGui::GetCurrentWindow()->ID;
+
 			m_viewportFocused = ImGui::IsWindowFocused();
 
 			if (ImGui::Button("Open Animator"))
@@ -23,7 +25,7 @@ namespace BaldLion {
 				ImGui::OpenPopup("load_animator");
 			}
 
-			Animator* animatorToLoad = UtilsEditor::RenderResourceInspectorPopup<Animator>("load_animator", ResourceManagement::ResourceType::Animator);
+			Animator* animatorToLoad = EditorUtils::RenderResourceInspectorPopup<Animator>("load_animator", ResourceManagement::ResourceType::Animator);
 
 			if (animatorToLoad != nullptr)
 			{
@@ -265,7 +267,7 @@ namespace BaldLion {
 				ImGui::OpenPopup("add_animation");
 			}
 
-			AnimationClip* animationDataToLoad = UtilsEditor::RenderResourceInspectorPopup<AnimationClip>("add_animation", ResourceManagement::ResourceType::Animation);
+			AnimationClip* animationDataToLoad = EditorUtils::RenderResourceInspectorPopup<AnimationClip>("add_animation", ResourceManagement::ResourceType::Animation);
 
 			if (animationDataToLoad != nullptr)
 			{

@@ -10,6 +10,13 @@ namespace BaldLion
 {
 	namespace MathUtils {
 
+		static glm::vec3 Vector3UnitX	= glm::vec3(1.0f, 0.0f, 0.0f);
+		static glm::vec3 Vector3UnitY	= glm::vec3(0.0f, 1.0f, 0.0f);
+		static glm::vec3 Vector3UnitZ	= glm::vec3(0.0f, 0.0f, 1.0f);
+		static glm::vec3 Vector3Zero	= glm::vec3(0.0f);
+		
+		static glm::quat QuaternionIdentity = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+
 		static glm::mat4 AiMat4ToGlmMat4(const aiMatrix4x4& aiMat4)
 		{
 			return glm::mat4(
@@ -20,13 +27,6 @@ namespace BaldLion
 			);
 		}
 
-		static glm::vec3 Vector3UnitX	= glm::vec3(1.0f, 0.0f, 0.0f);
-		static glm::vec3 Vector3UnitY	= glm::vec3(0.0f, 1.0f, 0.0f);
-		static glm::vec3 Vector3UnitZ	= glm::vec3(0.0f, 0.0f, 1.0f);
-		static glm::vec3 Vector3Zero	= glm::vec3(0.0f);
-
-		static glm::quat QuaternionIdentity = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-
 		static glm::vec3 GetTransformForwardDirection(const glm::mat4& transformMatrix) {
 
 			return glm::vec3(transformMatrix[2][0], transformMatrix[2][1], transformMatrix[2][2]);
@@ -36,7 +36,6 @@ namespace BaldLion
 
 			return glm::vec3(transformMatrix[0][0], transformMatrix[0][1], transformMatrix[0][2]);
 		}
-
 
 		static bool DecomposeTransformMatrix(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale) {
 
@@ -108,6 +107,6 @@ namespace BaldLion
 
 
 			return true;
-		}
+		}		
 	} 
 }

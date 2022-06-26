@@ -1,6 +1,6 @@
 #pragma once
 #include "EntityPropertiesPanel.h"
-#include "UtilsEditor.h"
+#include "EditorUtils.h"
 
 #include "Components/TransformComponentInspector.h"
 #include "Components/DirectionalLightComponentInspector.h"
@@ -21,14 +21,20 @@ namespace BaldLion {
 	using namespace ECS;
 	namespace Editor {
 
-		EntityPropertiesPanel::EntityPropertiesPanel(SceneHierarchyPanel* sceneHierarchyPanel) : m_sceneHierarchyPanel(sceneHierarchyPanel)
+		EntityPropertiesPanel::EntityPropertiesPanel() : EditorPanel("Properties")
+		{
+
+		}
+
+		EntityPropertiesPanel::EntityPropertiesPanel(SceneHierarchyPanel* sceneHierarchyPanel) : EditorPanel("Properties"), m_sceneHierarchyPanel(sceneHierarchyPanel)
 		{
 
 		}
 
 		void EntityPropertiesPanel::OnImGuiRender()
 		{
-			ImGui::Begin("Properties");
+			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
+			m_panelID = ImGui::GetCurrentWindow()->ID;
 
 			const ECS::ECSEntityID selectedEntityID = m_sceneHierarchyPanel->GetSelectedEntityID();
 
@@ -133,7 +139,7 @@ namespace BaldLion {
 						}
 					}
 					
-					Rendering::Mesh* mesh = UtilsEditor::RenderResourceInspectorPopup<Rendering::Mesh>(meshPopup, ResourceManagement::ResourceType::Mesh);
+					Rendering::Mesh* mesh = EditorUtils::RenderResourceInspectorPopup<Rendering::Mesh>(meshPopup, ResourceManagement::ResourceType::Mesh);
 
 					if (mesh)
 					{						

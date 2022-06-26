@@ -2587,13 +2587,13 @@ namespace dd
 
 	void flush(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx, ) const std::int64_t currTimeMillis, const std::uint32_t flags)
 	{
+		// Save the last know time value for next dd::line/dd::point calls.
+		DD_CONTEXT->currentTimeMillis = currTimeMillis;
+
 		if (!hasPendingDraws(DD_EXPLICIT_CONTEXT_ONLY(ctx)))
 		{
 			return;
 		}
-
-		// Save the last know time value for next dd::line/dd::point calls.
-		DD_CONTEXT->currentTimeMillis += currTimeMillis;
 
 		// Let the user set common render states.
 		DD_CONTEXT->renderInterface->beginDraw();

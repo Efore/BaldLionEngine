@@ -25,7 +25,7 @@ namespace BaldLion {
 
 				static const ECSProjectionCameraComponent* GetMainCamera() { return s_mainCamera; }
 
-				static bool IsAABBVisible(const GeometryUtils::AABB& aabb);
+				static bool IsAABBVisible(const GeometryUtils::BoundingBox& aabb);
 				static void UpdateFrustrumPlanes();
 
 			private:

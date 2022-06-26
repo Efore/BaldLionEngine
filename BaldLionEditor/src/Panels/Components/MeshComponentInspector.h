@@ -5,6 +5,7 @@
 #include "BaldLion/ECS/Components/ECSTransformComponent.h"
 #include "BaldLion/Rendering/Renderer.h"
 
+
 namespace BaldLion
 {
 	namespace Editor {
@@ -30,22 +31,9 @@ namespace BaldLion
 
 					const glm::mat4 meshTransformMatrix = meshTransform->GetTransformMatrix();
 
-					const glm::vec3 minPointInWorldSpace = meshTransformMatrix * glm::vec4(meshComponent->localAABB.minPoint, 1.0f);
-					const glm::vec3 maxPointInWorldSpace = meshTransformMatrix * glm::vec4(meshComponent->localAABB.maxPoint, 1.0f);
+					const BoundingBox meshAABB = GeometryUtils::GetAABB(meshComponent->localBoundingBox, meshTransformMatrix);										
 
-					const float minX = minPointInWorldSpace.x < maxPointInWorldSpace.x ? minPointInWorldSpace.x : maxPointInWorldSpace.x;
-					const float minY = minPointInWorldSpace.y < maxPointInWorldSpace.y ? minPointInWorldSpace.y : maxPointInWorldSpace.y;
-					const float minZ = minPointInWorldSpace.z < maxPointInWorldSpace.z ? minPointInWorldSpace.z : maxPointInWorldSpace.z;
-
-					const float maxX = minPointInWorldSpace.x > maxPointInWorldSpace.x ? minPointInWorldSpace.x : maxPointInWorldSpace.x;
-					const float maxY = minPointInWorldSpace.y > maxPointInWorldSpace.y ? minPointInWorldSpace.y : maxPointInWorldSpace.y;
-					const float maxZ = minPointInWorldSpace.z > maxPointInWorldSpace.z ? minPointInWorldSpace.z : maxPointInWorldSpace.z;
-
-					const AABB meshAABB = { glm::vec3(minX,minY,minZ), glm::vec3(maxX,maxY,maxZ) };
-
-					glm::vec3 midPoint = meshAABB.minPoint + (meshAABB.maxPoint - meshAABB.minPoint) * 0.5f;
-
-					Renderer::DrawDebugBox(midPoint, meshAABB.maxPoint - meshAABB.minPoint, glm::vec3(0.3f, 1.0f, 0.3f));
+					Renderer::DrawDebugBox(meshAABB.GetCenter(), meshAABB.maxPoint - meshAABB.minPoint, glm::vec3(0.3f, 1.0f, 0.3f));
 				}
 
 			}

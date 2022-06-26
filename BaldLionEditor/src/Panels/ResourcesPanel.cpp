@@ -1,7 +1,7 @@
 #include <BaldLion.h>
 #include <imgui/imgui.h>
 #include "ResourcesPanel.h"
-#include "UtilsEditor.h"
+#include "EditorUtils.h"
 
 
 namespace BaldLion {
@@ -10,7 +10,8 @@ namespace BaldLion {
 
 		void ResourcesPanel::OnImGuiRender()
 		{
-			ImGui::Begin("Resources");
+			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
+			m_panelID = ImGui::GetCurrentWindow()->ID;
 
 			ImGui::Columns(3, "ResourceColums"); // 4-ways, with border
 			ImGui::Separator();

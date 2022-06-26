@@ -21,6 +21,13 @@ namespace BaldLion
 		return state == GLFW_PRESS;
 	}
 
+	bool BaldLion::Input::IsMouseButtonReleased(int button)
+	{
+		auto window = static_cast<GLFWwindow*>(Application::GetInstance().GetWindow().GetNativeWindow());
+		auto state = glfwGetMouseButton(window, button);
+		return state == GLFW_RELEASE;
+	}
+
 	std::pair<float, float> Input::GetMousePosition()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::GetInstance().GetWindow().GetNativeWindow());

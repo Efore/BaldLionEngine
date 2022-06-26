@@ -11,7 +11,7 @@ namespace BaldLion {
 		class SceneHierarchyPanel : public EditorPanel {
 
 		public:
-			SceneHierarchyPanel() = default;
+			SceneHierarchyPanel();
 			SceneHierarchyPanel(Scene* sceneContext);
 
 			const Scene* GetSceneContext() const { return m_sceneContext; }
@@ -20,6 +20,8 @@ namespace BaldLion {
 			void SetSceneContext(Scene* sceneContext);
 
 			const ECS::ECSEntityID GetSelectedEntityID() const { return m_selectedEntityID; }
+			void SetSelectedEntityID(ECS::ECSEntityID newEntity) { m_selectedEntityID = newEntity; }
+
 			virtual void OnImGuiRender() override;
 			virtual void OnKeyPressed(int keyCode) override;
 
