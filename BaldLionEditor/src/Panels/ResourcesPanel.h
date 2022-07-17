@@ -14,6 +14,9 @@ namespace BaldLion {
 			ResourcesPanel() : EditorPanel("Resources"){}
 
 			virtual void OnImGuiRender() override;
+
+		private:
+			void AddResource();
 		};
 	}
 }

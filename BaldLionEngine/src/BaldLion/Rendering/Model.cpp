@@ -97,14 +97,6 @@ namespace BaldLion
 					normal.z = aimesh->mNormals[i].z;
 				}
 
-				glm::vec3 color = glm::vec3(0.0f);
-				if (aimesh->HasVertexColors(i))
-				{
-					color.x = aimesh->mColors[i]->r;
-					color.y = aimesh->mColors[i]->g;
-					color.z = aimesh->mColors[i]->b;
-				}
-
 				glm::vec2 texCoord = glm::vec2(0.0f);
 				if (aimesh->HasTextureCoords(0)) // does the mesh contain texture coordinates?
 				{
@@ -119,7 +111,7 @@ namespace BaldLion
 					tangent.y = aimesh->mTangents[i].y;
 				}
 
-				vertices.EmplaceBack(position, color, normal, texCoord, tangent);
+				vertices.EmplaceBack(position, normal, texCoord, tangent);
 			}
 
 			for (ui32 i = 0; i < aimesh->mNumFaces; i++)
@@ -156,7 +148,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_AMBIENT) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_AMBIENT, 0, &relativeTexPath);
-				completeTexPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STR_C(modelFolderPath));
+				completeTexPath = StringUtils::GetPathWithoutFile(BL_STRINGID_TO_STR_C(modelFolderPath));
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -179,7 +171,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_DIFFUSE, 0, &relativeTexPath);
-				completeTexPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STR_C(modelFolderPath));
+				completeTexPath = StringUtils::GetPathWithoutFile(BL_STRINGID_TO_STR_C(modelFolderPath));
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -202,7 +194,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_SPECULAR, 0, &relativeTexPath);
-				completeTexPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STR_C(modelFolderPath));
+				completeTexPath = StringUtils::GetPathWithoutFile(BL_STRINGID_TO_STR_C(modelFolderPath));
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -226,7 +218,7 @@ namespace BaldLion
 			{
 				aimaterial->GetTexture(aiTextureType_EMISSIVE, 0, &relativeTexPath);
 				
-				completeTexPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STR_C(modelFolderPath));
+				completeTexPath = StringUtils::GetPathWithoutFile(BL_STRINGID_TO_STR_C(modelFolderPath));
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
@@ -249,7 +241,7 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &relativeTexPath);
-				completeTexPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STR_C(modelFolderPath));
+				completeTexPath = StringUtils::GetPathWithoutFile(BL_STRINGID_TO_STR_C(modelFolderPath));
 				completeTexPath.append(relativeTexPath.C_Str());
 
 				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))

@@ -19,9 +19,9 @@ IncludeDir["stb_image"] = "BaldLionEngine/vendor/stb_image/"
 IncludeDir["assimp"] = "BaldLionEngine/vendor/assimp/include"
 IncludeDir["optick"] = "BaldLionEngine/vendor/optick/include"
 IncludeDir["ImGuizmo"] = "BaldLionEditor/vendor/ImGuizmo"
-IncludeDir["ImNodes"] = "BaldLionEditor/vendor/ImNodes"
 IncludeDir["debug_draw"] = "BaldLionEngine/vendor/debug-draw"
 IncludeDir["yaml"] = "BaldLionEngine/vendor/yaml/include"
+IncludeDir["Physx"] = "BaldLionEngine/vendor/Physx/include"
 
 group "Dependencies"
 	include "BaldLionEngine/vendor/GLFW"
@@ -52,10 +52,19 @@ project "BaldLionEngine"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",		
 		"%{prj.name}/vendor/debug-draw/**.hpp",
-		"%{prj.name}/vendor/debug-draw/**.hpp"
+		"%{prj.name}/vendor/optick/**.h",
+		"%{prj.name}/vendor/optick/**.cpp",
+		"%{prj.name}/vendor/assimp/**.h",
+		"%{prj.name}/vendor/assimp/**.hpp",
+		"%{prj.name}/vendor/assimp/**.inl",
+		"%{prj.name}/vendor/Physx/**.h",
 	}	
 		
-	removefiles {"%{prj.name}/src/BaldLion/AI/**"}
+	removefiles {
+		"%{prj.name}/src/BaldLion/AI/**",
+		"%{prj.name}/vendor/optick/src/optick_gpu.d3d12.**",
+		"%{prj.name}/vendor/optick/src/optick_gpu.vulkan.**",
+	}
 
 	defines
 	{
@@ -74,14 +83,16 @@ project "BaldLionEngine"
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.optick}",
 		"%{IncludeDir.debug_draw}",		
-		"%{IncludeDir.yaml}"
+		"%{IncludeDir.yaml}",
+		"%{IncludeDir.Physx}"
 	}	
 	
-	libdirs 
-	{ 
-		"BaldLionEngine/vendor/assimp/lib",
-		"BaldLionEngine/vendor/optick/lib/x64/%{cfg.shortname}",
-	}
+	-- libdirs 
+	-- { 
+		-- "BaldLionEngine/vendor/assimp/lib",
+		-- "BaldLionEngine/vendor/optick/lib/x64/%{cfg.shortname}",
+		-- "BaldLionEngine/vendor/Physx/bin",
+	-- }
 	
 	links
 	{
@@ -89,8 +100,8 @@ project "BaldLionEngine"
 		"Glad",
 		"ImGui",
 		"yaml-cpp",
-		"assimp-vc142-mtd.lib",
-		"OptickCore.lib"
+		-- "assimp-vc142-mtd.lib",
+		-- "OptickCore.lib"
 	}
 
 
@@ -117,6 +128,9 @@ project "BaldLionEngine"
 		defines "BL_DIST"
 		runtime "Release"
 		optimize "on"
+		
+	filter "files:BaldLionEngine/vendor/optick/**.cpp"
+		flags {"NoPCH"}
 
 project "BaldLionEditor"
 	location "BaldLionEditor"
@@ -137,11 +151,7 @@ project "BaldLionEditor"
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
-		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",
-		"%{prj.name}/vendor/ImNodes/ImNodes.h",
-		"%{prj.name}/vendor/ImNodes/ImNodes.cpp",
-		"%{prj.name}/vendor/ImNodes/ImNodesEz.h",
-		"%{prj.name}/vendor/ImNodes/ImNodesEz.cpp"
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"		
 	}
 
 	includedirs
@@ -153,26 +163,27 @@ project "BaldLionEditor"
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.optick}",	
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.ImNodes}",
 		"%{IncludeDir.debug_draw}",		
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.yaml}"
+		"%{IncludeDir.yaml}",
+		"%{IncludeDir.Physx}"
+	}
+	
+	libdirs 
+	{ 
+		"%{prj.name}/vendor/assimp/lib",
 	}
 
 	links
 	{
-		"BaldLionEngine"
+		"BaldLionEngine",
+		"assimp-vc142-mtd.lib"
 	}
 
 	
 	filter "files:BaldLionEngine/vendor/ImGuizmo/**.cpp"
 		flags {"NoPCH"}
-		
-			
-	filter "files:BaldLionEngine/vendor/ImNodes/**.cpp"
-		flags {"NoPCH"}		
-		
-		
+				
 	filter "system:windows"	
 		systemversion "latest"
 
@@ -196,62 +207,62 @@ project "BaldLionEditor"
 		runtime "Release"
 		optimize "on"
 		
-project "BaldLionSandbox"
-	location "BaldLionSandbox"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++17"
-	staticruntime "on"
+-- project "BaldLionSandbox"
+	-- location "BaldLionSandbox"
+	-- kind "ConsoleApp"
+	-- language "C++"
+	-- cppdialect "C++17"
+	-- staticruntime "on"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	-- targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	-- objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-	debugenvs { 
-		"PATH=%PATH%;$(ProjectDir)lib"
-	}
+	-- debugenvs { 
+		-- "PATH=%PATH%;$(ProjectDir)lib"
+	-- }
 	
-	files
-	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
-	}
+	-- files
+	-- {
+		-- "%{prj.name}/src/**.h",
+		-- "%{prj.name}/src/**.cpp"
+	-- }
 
-	includedirs
-	{
-		"BaldLionEngine/vendor/spdlog/include",
-		"BaldLionEngine/src",
-		"BaldLionEngine/vendor",
-		"%{IncludeDir.glm}",
-		"%{IncludeDir.assimp}",
-		"%{IncludeDir.optick}",
-		"%{IncludeDir.ImGui}"
-	}
+	-- includedirs
+	-- {
+		-- "BaldLionEngine/vendor/spdlog/include",
+		-- "BaldLionEngine/src",
+		-- "BaldLionEngine/vendor",
+		-- "%{IncludeDir.glm}",
+		-- "%{IncludeDir.assimp}",
+		-- "%{IncludeDir.optick}",
+		-- "%{IncludeDir.ImGui}"
+	-- }
 
-	links
-	{
-		"BaldLionEngine"
-	}
+	-- links
+	-- {
+		-- "BaldLionEngine"
+	-- }
 
-	filter "system:windows"	
-		systemversion "latest"
+	-- filter "system:windows"	
+		-- systemversion "latest"
 
-		defines
-		{
-			"BL_PLATFORM_WINDOWS"
-		}
+		-- defines
+		-- {
+			-- "BL_PLATFORM_WINDOWS"
+		-- }
 
-	filter "configurations:Debug"
-		defines "BL_DEBUG"
-		runtime "Debug"
-		symbols "on"
+	-- filter "configurations:Debug"
+		-- defines "BL_DEBUG"
+		-- runtime "Debug"
+		-- symbols "on"
 
-	filter "configurations:Release"
-		defines "BL_RELEASE"
-		runtime "Release"
-		optimize "on"
+	-- filter "configurations:Release"
+		-- defines "BL_RELEASE"
+		-- runtime "Release"
+		-- optimize "on"
 
-	filter "configurations:Dist"
-		defines "BL_DIST"
-		runtime "Release"
-		optimize "on"
+	-- filter "configurations:Dist"
+		-- defines "BL_DIST"
+		-- runtime "Release"
+		-- optimize "on"
 		

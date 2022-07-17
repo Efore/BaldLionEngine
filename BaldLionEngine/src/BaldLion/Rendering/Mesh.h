@@ -19,7 +19,7 @@ namespace BaldLion
 		class Mesh : public ResourceManagement::Resource{
 
 		public:
-			Mesh(Material* material, const std::string& meshPath);
+			Mesh(Material* material, const std::string& meshPath, bool isPrimitive = false);
 			~Mesh();
 
 			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);
@@ -57,6 +57,7 @@ namespace BaldLion
 			Material* m_material;
 			Skeleton* m_skeleton;
 			DynamicArray<VertexBone> m_vertexBones;
+			bool m_isPrimitive = false;
 		};
 	}
 }

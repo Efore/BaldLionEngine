@@ -16,9 +16,6 @@
     <Filter Include="vendor\ImGuizmo">
       <UniqueIdentifier>{73BF7F4C-DF4A-ED10-E85B-700554664911}</UniqueIdentifier>
     </Filter>
-    <Filter Include="vendor\ImNodes">
-      <UniqueIdentifier>{D137BDC4-BD05-B1CA-A699-21F192068D2F}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLionEditorLayer.h">
@@ -27,10 +24,16 @@
     <ClInclude Include="src\Panels\AnimatorPanel.h">
       <Filter>src\Panels</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\Components\AnimationComponentInspector.h">
+      <Filter>src\Panels\Components</Filter>
+    </ClInclude>
     <ClInclude Include="src\Panels\Components\ComponentInspector.h">
       <Filter>src\Panels\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\Panels\Components\DirectionalLightComponentInspector.h">
+      <Filter>src\Panels\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Panels\Components\MeshComponentInspector.h">
       <Filter>src\Panels\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\Panels\Components\ProjectionCameraComponentInspector.h">
@@ -40,6 +43,9 @@
       <Filter>src\Panels\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\Panels\EditorPanel.h">
+      <Filter>src\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Panels\EditorUtils.h">
       <Filter>src\Panels</Filter>
     </ClInclude>
     <ClInclude Include="src\Panels\EditorViewportPanel.h">
@@ -65,21 +71,6 @@
     </ClInclude>
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
       <Filter>vendor\ImGuizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImNodes\ImNodes.h">
-      <Filter>vendor\ImNodes</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImNodes\ImNodesEz.h">
-      <Filter>vendor\ImNodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Panels\EditorUtils.h">
-      <Filter>src\Panels</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Panels\Components\AnimationComponentInspector.h">
-      <Filter>src\Panels\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Panels\Components\MeshComponentInspector.h">
-      <Filter>src\Panels\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -112,12 +103,6 @@
     </ClCompile>
     <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
       <Filter>vendor\ImGuizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImNodes\ImNodes.cpp">
-      <Filter>vendor\ImNodes</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImNodes\ImNodesEz.cpp">
-      <Filter>vendor\ImNodes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

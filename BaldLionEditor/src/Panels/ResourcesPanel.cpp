@@ -3,6 +3,8 @@
 #include "ResourcesPanel.h"
 #include "EditorUtils.h"
 
+#include "BaldLion/Utils/PlatformUtils.h"
+
 
 namespace BaldLion {
 
@@ -12,6 +14,13 @@ namespace BaldLion {
 		{
 			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
 			m_panelID = ImGui::GetCurrentWindow()->ID;
+
+			if (ImGui::Button("Add Resource"))
+			{
+				AddResource();
+			}
+
+			ImGui::Separator();
 
 			ImGui::Columns(3, "ResourceColums"); // 4-ways, with border
 			ImGui::Separator();
@@ -32,5 +41,16 @@ namespace BaldLion {
 
 			ImGui::End();
 		}
+
+		void ResourcesPanel::AddResource()
+		{
+			std::string filepath = FileDialogs::OpenFile("Add Resource \0*.fbx\0");
+
+			if (!filepath.empty())
+			{
+				ResourceManagement::ResourceManager::AddResource<Model>(filepath, ResourceManagement::ResourceType::Model);
+			}
+		}
+
 	}
 }

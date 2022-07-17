@@ -8,7 +8,7 @@ namespace BaldLion
 	namespace Rendering
 	{
 		SphereMesh::SphereMesh(Material* material, float radius, ui32 rings, ui32 sectors, const std::string& meshName) :
-			Mesh(material, meshName),
+			Mesh(material, meshName, true),
 			m_radius(radius),
 			m_rings(rings),
 			m_sectors(sectors)
@@ -33,7 +33,6 @@ namespace BaldLion
 
 					vertices.EmplaceBack(
 						vertexPos * m_radius,
-						glm::vec3(1.0f),
 						vertexPos,
 						glm::vec2((float)(i / m_rings), (float)(j / m_sectors)),
 						glm::vec3(1.0f)

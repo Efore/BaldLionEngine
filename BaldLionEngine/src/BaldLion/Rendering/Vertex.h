@@ -7,8 +7,7 @@ namespace BaldLion
 	{
 		struct Vertex {
 
-			glm::vec3 position;
-			glm::vec3 color;
+			glm::vec3 position;			
 			glm::vec3 normal;
 			glm::vec3 tangent;
 			glm::vec2 textCoord;
@@ -21,9 +20,8 @@ namespace BaldLion
 
 			}
 
-			Vertex(const glm::vec3& pos, const glm::vec3& col, const glm::vec3& nor, const glm::vec2& tCoords, const glm::vec3& tan) :
+			Vertex(const glm::vec3& pos, const glm::vec3& nor, const glm::vec2& tCoords, const glm::vec3& tan) :
 				position(pos),
-				color(col),
 				normal(nor),
 				textCoord(tCoords),
 				tangent(tan)
@@ -32,7 +30,6 @@ namespace BaldLion
 
 			Vertex(const Vertex& other) : 
 				position(other.position),
-				color(other.color),
 				normal(other.normal),
 				textCoord(other.textCoord),
 				tangent(other.tangent)
@@ -42,7 +39,6 @@ namespace BaldLion
 			Vertex& operator= (const Vertex& other)
 			{
 				position = other.position;
-				color = other.color;
 				normal = other.normal;
 				textCoord = other.textCoord;
 				tangent = other.tangent;

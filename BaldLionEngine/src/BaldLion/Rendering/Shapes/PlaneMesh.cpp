@@ -7,8 +7,8 @@ namespace BaldLion
 	{
 
 		PlaneMesh::PlaneMesh(Material* material, float size, const std::string& meshName) :
-			Mesh(material, meshName),
-			m_size(size)			
+			Mesh(material, meshName, true),
+			m_size(size)
 		{
 		}		
 
@@ -26,7 +26,6 @@ namespace BaldLion
 				const glm::vec3 position = initialPoint + glm::vec3(m_gridSize * (i % columns), 0.0f, m_gridSize * (ui32)(i / columns));				
 				vertices.EmplaceBack(
 					position,
-					glm::vec3(1.0f),
 					glm::vec3(0.0f, 1.0f, 0.0f),
 					glm::vec2((float)(i % columns)/(float)(columns - 1) , (float)(i / columns)/(float)(rows - 1)),
 					glm::vec3(0.0f, 0.0f, 1.0f)

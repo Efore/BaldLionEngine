@@ -221,8 +221,7 @@ namespace BaldLion
 				VertexBuffer* vertexBuffer = VertexBuffer::Create(s_shadowCastingMeshes[i].meshComponent->vertices[0].GetFirstElement(), (ui32)(s_shadowCastingMeshes[i].meshComponent->vertices.Size() * sizeof(Vertex)));
 
 				vertexBuffer->SetLayout({
-					{ ShaderDataType::Float3, "vertex_position"},
-					{ ShaderDataType::Float3, "vertex_color"},
+					{ ShaderDataType::Float3, "vertex_position"},					
 					{ ShaderDataType::Float3, "vertex_normal"},
 					{ ShaderDataType::Float3, "vertex_tangent"},
 					{ ShaderDataType::Float2, "vertex_texcoord"}
@@ -288,8 +287,7 @@ namespace BaldLion
 				VertexBuffer* vertexBuffer = VertexBuffer::Create(s_dynamicMeshes[i].meshComponent->vertices[0].GetFirstElement(), (ui32)(s_dynamicMeshes[i].meshComponent->vertices.Size() * sizeof(Vertex)));
 
 				vertexBuffer->SetLayout({
-					{ ShaderDataType::Float3, "vertex_position"},
-					{ ShaderDataType::Float3, "vertex_color"},
+					{ ShaderDataType::Float3, "vertex_position"},					
 					{ ShaderDataType::Float3, "vertex_normal"},
 					{ ShaderDataType::Float3, "vertex_tangent"},
 					{ ShaderDataType::Float2, "vertex_texcoord"}
@@ -350,7 +348,6 @@ namespace BaldLion
 
 					vertexBuffer->SetLayout({
 						{ ShaderDataType::Float3, "vertex_position"},
-						{ ShaderDataType::Float3, "vertex_color"},
 						{ ShaderDataType::Float3, "vertex_normal"},
 						{ ShaderDataType::Float3, "vertex_tangent"},
 						{ ShaderDataType::Float2, "vertex_texcoord"}

@@ -60,7 +60,6 @@ namespace BaldLion
 
 				vertices.EmplaceBack(
 					v0,
-					glm::vec3(1.0f),
 					faceNormal,
 					textCoords[0],
 					tangent
@@ -68,7 +67,6 @@ namespace BaldLion
 
 				vertices.EmplaceBack(
 					v1,
-					glm::vec3(1.0f),
 					faceNormal,
 					textCoords[1],
 					tangent
@@ -76,7 +74,6 @@ namespace BaldLion
 
 				vertices.EmplaceBack(
 					v2,
-					glm::vec3(1.0f),
 					faceNormal,
 					textCoords[2],
 					tangent
@@ -84,7 +81,6 @@ namespace BaldLion
 
 				vertices.EmplaceBack(
 					v3,
-					glm::vec3(1.0f),
 					faceNormal,
 					textCoords[3],
 					tangent

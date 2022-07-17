@@ -2,7 +2,6 @@
 #include <imgui/imgui.h>
 #include "AnimatorPanel.h"
 #include "EditorUtils.h"
-#include "ImNodesEz.h"
 
 namespace BaldLion {
 
@@ -10,7 +9,7 @@ namespace BaldLion {
 
 		AnimatorPanel::AnimatorPanel() : EditorPanel("Animator")
 		{
-			static ImNodes::Ez::Context* context = ImNodes::Ez::CreateContext();
+			
 		}
 
 		void AnimatorPanel::OnImGuiRender()

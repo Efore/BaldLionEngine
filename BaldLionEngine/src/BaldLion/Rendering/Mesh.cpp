@@ -10,10 +10,11 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Mesh::Mesh(Material* material, const std::string& meshPath) :
+		Mesh::Mesh(Material* material, const std::string& meshPath, bool isPrimitive) :
 			ResourceManagement::Resource(BL_STRING_TO_STRINGID(meshPath), meshPath, ResourceManagement::ResourceType::Mesh),
 			m_material(material), 
-			m_skeleton(nullptr)
+			m_skeleton(nullptr),
+			m_isPrimitive(isPrimitive)
 		{	
 		}
 
@@ -37,8 +38,7 @@ namespace BaldLion
 			VertexBuffer* vertexBuffer = VertexBuffer::Create(m_geometryData->vertices[0].GetFirstElement(), (ui32)(m_geometryData->vertices.Size() * sizeof(Vertex)));
 
 			vertexBuffer->SetLayout({
-				{ ShaderDataType::Float3, "vertex_position"},
-				{ ShaderDataType::Float3, "vertex_color"},
+				{ ShaderDataType::Float3, "vertex_position"},				
 				{ ShaderDataType::Float3, "vertex_normal"},
 				{ ShaderDataType::Float3, "vertex_tangent"},
 				{ ShaderDataType::Float2, "vertex_texcoord"}

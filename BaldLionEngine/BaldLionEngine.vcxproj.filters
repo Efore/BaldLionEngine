@@ -76,6 +76,75 @@
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\Physx">
+      <UniqueIdentifier>{3E6509EF-2AC8-9893-D34D-D149BF8F6416}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include">
+      <UniqueIdentifier>{B1EA4E31-9D79-D8FA-4698-ECF53206E9A0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\characterkinematic">
+      <UniqueIdentifier>{C2FDDA8E-2E8D-9C79-3789-7D91A397D785}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\collision">
+      <UniqueIdentifier>{2C115C55-1837-26BC-017D-AB87ED414B88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\common">
+      <UniqueIdentifier>{E9FA9D84-5508-CC6A-DEEE-C7554AFB9721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\common\windows">
+      <UniqueIdentifier>{43169082-AFCF-FA2C-382F-1507A4E7B09C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\cooking">
+      <UniqueIdentifier>{2A578018-1612-70C4-BFC9-E80EAB63BA54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\cudamanager">
+      <UniqueIdentifier>{D8996B74-C4EA-56B6-ED4E-4578D9FEE91F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\extensions">
+      <UniqueIdentifier>{501B3474-BCFE-42B4-C501-71F031640905}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\filebuf">
+      <UniqueIdentifier>{FD6836F1-E923-269D-92DB-9EE77E75702D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\geometry">
+      <UniqueIdentifier>{4C4BEED7-B863-D501-8110-659BEDE7699B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\geomutils">
+      <UniqueIdentifier>{5915D9D6-453B-A33D-2E81-28091A46C809}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\gpu">
+      <UniqueIdentifier>{0C6652BF-F88A-A13F-21D6-86CF0D5AA05D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\pvd">
+      <UniqueIdentifier>{0A8D52BF-F6B1-A13F-1FFD-86CF0B81A05D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\solver">
+      <UniqueIdentifier>{9B1DF0A9-072B-1E90-9011-1A7BFC1DEA46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\task">
+      <UniqueIdentifier>{D308A6A9-3FCB-D933-887B-68C0F47CB211}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Physx\include\vehicle">
+      <UniqueIdentifier>{20653FB7-0C20-2F63-B5D7-A7ADA17179F3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\assimp">
+      <UniqueIdentifier>{6F57A1F8-DB17-1D2F-A452-66AC10D2610B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\assimp\include">
+      <UniqueIdentifier>{E27D8AD0-4EEA-45CB-17DE-DD2883096833}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\assimp\include\assimp">
+      <UniqueIdentifier>{BE36F154-AAF1-E000-53A9-594B3F432B91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\assimp\include\assimp\Compiler">
+      <UniqueIdentifier>{E8EB814D-54B0-803D-1D16-B10789991C73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\assimp\include\assimp\port">
+      <UniqueIdentifier>{F2EEE8C8-5E5D-3E48-A746-F94713F433E4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\assimp\include\assimp\port\AndroidJNI">
+      <UniqueIdentifier>{031EAA1A-EF30-AA73-981A-8760840C47C1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor\debug-draw">
       <UniqueIdentifier>{A41C7815-1033-76AB-59AA-01CDC5FF4633}</UniqueIdentifier>
     </Filter>
@@ -97,6 +166,15 @@
     <Filter Include="vendor\glm\glm\gtx">
       <UniqueIdentifier>{B3A6A76B-9F8A-68C1-08EB-6214F4ED5243}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\optick">
+      <UniqueIdentifier>{CCD11319-3892-8F4F-01CD-D8CC6D4CD42B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\optick\include">
+      <UniqueIdentifier>{3F050CE2-AB71-C7DC-7465-5F3AE090E944}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\optick\src">
+      <UniqueIdentifier>{E3951B3F-4FAC-19D5-9823-A5F60479EA5C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor\stb_image">
       <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
     </Filter>
@@ -104,6 +182,9 @@
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Animation\AnimationClip.h">
+      <Filter>src\BaldLion\Animation</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Animation\AnimationManager.h">
       <Filter>src\BaldLion\Animation</Filter>
@@ -398,6 +479,762 @@
     </ClInclude>
     <ClInclude Include="src\blpch.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxActor.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxAggregate.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxArticulation.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxArticulationBase.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxArticulationJoint.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxArticulationJointReducedCoordinate.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxArticulationLink.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxArticulationReducedCoordinate.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxBatchQuery.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxBatchQueryDesc.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxBroadPhase.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxClient.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxConstraint.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxConstraintDesc.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxContact.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxContactModifyCallback.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxDeletionListener.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxFiltering.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxForceMode.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxFoundation.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxImmediateMode.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxLockedData.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxMaterial.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxPhysXConfig.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxPhysics.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxPhysicsAPI.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxPhysicsSerialization.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxPhysicsVersion.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxPruningStructure.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxQueryFiltering.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxQueryReport.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxRigidActor.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxRigidBody.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxRigidDynamic.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxRigidStatic.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxScene.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxSceneDesc.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxSceneLock.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxShape.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxSimulationEventCallback.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxSimulationStatistics.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\PxVisualizationParameter.h">
+      <Filter>vendor\Physx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\characterkinematic\PxBoxController.h">
+      <Filter>vendor\Physx\include\characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\characterkinematic\PxCapsuleController.h">
+      <Filter>vendor\Physx\include\characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\characterkinematic\PxCharacter.h">
+      <Filter>vendor\Physx\include\characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\characterkinematic\PxController.h">
+      <Filter>vendor\Physx\include\characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\characterkinematic\PxControllerBehavior.h">
+      <Filter>vendor\Physx\include\characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\characterkinematic\PxControllerManager.h">
+      <Filter>vendor\Physx\include\characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\characterkinematic\PxControllerObstacles.h">
+      <Filter>vendor\Physx\include\characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\characterkinematic\PxExtended.h">
+      <Filter>vendor\Physx\include\characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\collision\PxCollisionDefs.h">
+      <Filter>vendor\Physx\include\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxBase.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxCollection.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxCoreUtilityTypes.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxMetaData.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxMetaDataFlags.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxPhysXCommonConfig.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxPhysicsInsertionCallback.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxProfileZone.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxRenderBuffer.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxSerialFramework.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxSerializer.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxStringTable.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxTolerancesScale.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\PxTypeInfo.h">
+      <Filter>vendor\Physx\include\common</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\common\windows\PxWindowsDelayLoadHook.h">
+      <Filter>vendor\Physx\include\common\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\cooking\PxBVH33MidphaseDesc.h">
+      <Filter>vendor\Physx\include\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\cooking\PxBVH34MidphaseDesc.h">
+      <Filter>vendor\Physx\include\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\cooking\PxBVHStructureDesc.h">
+      <Filter>vendor\Physx\include\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\cooking\PxConvexMeshDesc.h">
+      <Filter>vendor\Physx\include\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\cooking\PxCooking.h">
+      <Filter>vendor\Physx\include\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\cooking\PxMidphaseDesc.h">
+      <Filter>vendor\Physx\include\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\cooking\PxTriangleMeshDesc.h">
+      <Filter>vendor\Physx\include\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\cooking\Pxc.h">
+      <Filter>vendor\Physx\include\cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\cudamanager\PxCudaContextManager.h">
+      <Filter>vendor\Physx\include\cudamanager</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\cudamanager\PxCudaMemoryManager.h">
+      <Filter>vendor\Physx\include\cudamanager</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\cudamanager\PxGpuCopyDesc.h">
+      <Filter>vendor\Physx\include\cudamanager</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\cudamanager\PxGpuCopyDescQueue.h">
+      <Filter>vendor\Physx\include\cudamanager</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxBinaryConverter.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxBroadPhaseExt.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxCollectionExt.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxConstraintExt.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxContactJoint.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxConvexMeshExt.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxD6Joint.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxD6JointCreate.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxDefaultAllocator.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxDefaultCpuDispatcher.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxDefaultErrorCallback.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxDefaultSimulationFilterShader.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxDefaultStreams.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxDistanceJoint.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxExtensionsAPI.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxFixedJoint.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxJoint.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxJointLimit.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxMassProperties.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxPrismaticJoint.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxRaycastCCD.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxRepXSerializer.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxRepXSimpleType.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxRevoluteJoint.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxRigidActorExt.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxRigidBodyExt.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxSceneQueryExt.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxSerialization.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxShapeExt.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxSimpleFactory.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxSmoothNormals.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxSphericalJoint.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxStringTableExt.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\extensions\PxTriangleMeshExt.h">
+      <Filter>vendor\Physx\include\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\filebuf\PxFileBuf.h">
+      <Filter>vendor\Physx\include\filebuf</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxBVHStructure.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxBoxGeometry.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxCapsuleGeometry.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxConvexMesh.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxConvexMeshGeometry.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxGeometry.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxGeometryHelpers.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxGeometryQuery.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxHeightField.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxHeightFieldDesc.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxHeightFieldFlag.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxHeightFieldGeometry.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxHeightFieldSample.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxMeshQuery.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxMeshScale.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxPlaneGeometry.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxSimpleTriangleMesh.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxSphereGeometry.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxTriangle.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxTriangleMesh.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geometry\PxTriangleMeshGeometry.h">
+      <Filter>vendor\Physx\include\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geomutils\GuContactBuffer.h">
+      <Filter>vendor\Physx\include\geomutils</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\geomutils\GuContactPoint.h">
+      <Filter>vendor\Physx\include\geomutils</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\gpu\PxGpu.h">
+      <Filter>vendor\Physx\include\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\pvd\PxPvd.h">
+      <Filter>vendor\Physx\include\pvd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\pvd\PxPvdSceneClient.h">
+      <Filter>vendor\Physx\include\pvd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\pvd\PxPvdTransport.h">
+      <Filter>vendor\Physx\include\pvd</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\solver\PxSolverDefs.h">
+      <Filter>vendor\Physx\include\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\task\PxCpuDispatcher.h">
+      <Filter>vendor\Physx\include\task</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\task\PxGpuDispatcher.h">
+      <Filter>vendor\Physx\include\task</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\task\PxGpuTask.h">
+      <Filter>vendor\Physx\include\task</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\task\PxTask.h">
+      <Filter>vendor\Physx\include\task</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\task\PxTaskDefine.h">
+      <Filter>vendor\Physx\include\task</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\task\PxTaskManager.h">
+      <Filter>vendor\Physx\include\task</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleComponents.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleDrive.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleDrive4W.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleDriveNW.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleDriveTank.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleNoDrive.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleSDK.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleShaders.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleTireFriction.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleUpdate.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleUtil.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleUtilControl.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleUtilSetup.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleUtilTelemetry.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Physx\include\vehicle\PxVehicleWheels.h">
+      <Filter>vendor\Physx\include\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Base64.hpp">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\BaseImporter.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Bitmap.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\BlobIOSystem.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\ByteSwapper.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\ColladaMetaData.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Compiler\poppack1.h">
+      <Filter>vendor\assimp\include\assimp\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Compiler\pstdint.h">
+      <Filter>vendor\assimp\include\assimp\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Compiler\pushpack1.h">
+      <Filter>vendor\assimp\include\assimp\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\CreateAnimMesh.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\DefaultIOStream.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\DefaultIOSystem.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\DefaultLogger.hpp">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Exceptional.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Exporter.hpp">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\GenericProperty.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\GltfMaterial.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Hash.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\IOStream.hpp">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\IOStreamBuffer.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\IOSystem.hpp">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Importer.hpp">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\LineSplitter.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\LogAux.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\LogStream.hpp">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Logger.hpp">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\MathFunctions.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\MemoryIOWrapper.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\NullLogger.hpp">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\ObjMaterial.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\ParsingUtils.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Profiler.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\ProgressHandler.hpp">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\RemoveComments.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\SGSpatialSort.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\SceneCombiner.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\SkeletonMeshBuilder.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\SmallVector.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\SmoothingGroups.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\SmoothingGroups.inl">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\SpatialSort.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\StandardShapes.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\StreamReader.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\StreamWriter.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\StringComparison.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\StringUtils.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Subdivision.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\TinyFormatter.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\Vertex.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\XMLTools.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\XmlParser.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\ZipArchiveIOSystem.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\aabb.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\ai_assert.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\anim.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\camera.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\cexport.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\cfileio.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\cimport.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\color4.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\color4.inl">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\commonMetaData.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\config.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\defs.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\fast_atof.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\importerdesc.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\light.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\material.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\material.inl">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\matrix3x3.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\matrix3x3.inl">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\matrix4x4.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\matrix4x4.inl">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\mesh.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\metadata.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\pbrmaterial.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\port\AndroidJNI\AndroidJNIIOSystem.h">
+      <Filter>vendor\assimp\include\assimp\port\AndroidJNI</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\port\AndroidJNI\BundledAssetIOSystem.h">
+      <Filter>vendor\assimp\include\assimp\port\AndroidJNI</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\postprocess.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\qnan.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\quaternion.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\quaternion.inl">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\scene.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\texture.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\types.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\vector2.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\vector2.inl">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\vector3.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\vector3.inl">
+      <Filter>vendor\assimp\include\assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\assimp\include\assimp\version.h">
+      <Filter>vendor\assimp\include\assimp</Filter>
     </ClInclude>
     <ClInclude Include="vendor\debug-draw\debug_draw.hpp">
       <Filter>vendor\debug-draw</Filter>
@@ -1647,11 +2484,62 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\optick\include\optick.config.h">
+      <Filter>vendor\optick\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\include\optick.h">
+      <Filter>vendor\optick\include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick.config.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_capi.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_common.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_core.freebsd.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_core.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_core.linux.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_core.macos.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_core.platform.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_core.win.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_gpu.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_memory.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_message.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_miniz.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_serialization.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\optick\src\optick_server.h">
+      <Filter>vendor\optick\src</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Animation\AnimationClip.h">
-      <Filter>src\BaldLion\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1828,6 +2716,27 @@
     </ClCompile>
     <ClCompile Include="src\blpch.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\optick\src\optick_capi.cpp">
+      <Filter>vendor\optick\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\optick\src\optick_core.cpp">
+      <Filter>vendor\optick\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\optick\src\optick_gpu.cpp">
+      <Filter>vendor\optick\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\optick\src\optick_message.cpp">
+      <Filter>vendor\optick\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\optick\src\optick_miniz.cpp">
+      <Filter>vendor\optick\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\optick\src\optick_serialization.cpp">
+      <Filter>vendor\optick\src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\optick\src\optick_server.cpp">
+      <Filter>vendor\optick\src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
