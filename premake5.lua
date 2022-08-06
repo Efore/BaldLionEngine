@@ -21,7 +21,7 @@ IncludeDir["optick"] = "BaldLionEngine/vendor/optick/include"
 IncludeDir["ImGuizmo"] = "BaldLionEditor/vendor/ImGuizmo"
 IncludeDir["debug_draw"] = "BaldLionEngine/vendor/debug-draw"
 IncludeDir["yaml"] = "BaldLionEngine/vendor/yaml/include"
-IncludeDir["Physx"] = "BaldLionEngine/vendor/Physx/include"
+IncludeDir["ReactPhysics3D"] = "BaldLionEngine/vendor/ReactPhysics3D/include"
 
 group "Dependencies"
 	include "BaldLionEngine/vendor/GLFW"
@@ -47,19 +47,26 @@ project "BaldLionEngine"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/stb_image/**.cpp",
+		
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl",		
+		"%{prj.name}/vendor/glm/glm/**.inl",	
+		
 		"%{prj.name}/vendor/debug-draw/**.hpp",
+		
 		"%{prj.name}/vendor/optick/**.h",
 		"%{prj.name}/vendor/optick/**.cpp",
+		
 		"%{prj.name}/vendor/assimp/**.h",
 		"%{prj.name}/vendor/assimp/**.hpp",
 		"%{prj.name}/vendor/assimp/**.inl",
-		"%{prj.name}/vendor/Physx/**.h",
-	}	
 		
+		"%{prj.name}/vendor/ReactPhysics3D/**.h",
+		"%{prj.name}/vendor/ReactPhysics3D/**.cpp"
+	}	
+	
 	removefiles {
 		"%{prj.name}/src/BaldLion/AI/**",
 		"%{prj.name}/vendor/optick/src/optick_gpu.d3d12.**",
@@ -84,27 +91,28 @@ project "BaldLionEngine"
 		"%{IncludeDir.optick}",
 		"%{IncludeDir.debug_draw}",		
 		"%{IncludeDir.yaml}",
-		"%{IncludeDir.Physx}"
+		"%{IncludeDir.ReactPhysics3D}"
 	}	
-	
-	-- libdirs 
-	-- { 
-		-- "BaldLionEngine/vendor/assimp/lib",
-		-- "BaldLionEngine/vendor/optick/lib/x64/%{cfg.shortname}",
-		-- "BaldLionEngine/vendor/Physx/bin",
-	-- }
-	
+		
+	libdirs 
+	{ 	
+		"BaldLionEngine/vendor/assimp/lib",
+		--"BaldLionEngine/vendor/ReactPhysics3D/lib",
+	}
+
 	links
 	{
 		"GLFW",
 		"Glad",
 		"ImGui",
 		"yaml-cpp",
-		-- "assimp-vc142-mtd.lib",
-		-- "OptickCore.lib"
+		--"reactphysics3d.lib",
+		"assimp-vc142-mtd.lib",
 	}
 
-
+	filter "files:BaldLionEngine/vendor/ReactPhysics3D/**.cpp"
+		flags {"NoPCH"}
+		
 	filter "system:windows"		
 		systemversion "latest"
 
@@ -166,18 +174,20 @@ project "BaldLionEditor"
 		"%{IncludeDir.debug_draw}",		
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.yaml}",
-		"%{IncludeDir.Physx}"
+		"%{IncludeDir.ReactPhysics3D}",
 	}
 	
-	libdirs 
-	{ 
-		"%{prj.name}/vendor/assimp/lib",
-	}
+	-- libdirs 
+	-- { 
+		-- "BaldLionEngine/vendor/assimp/lib",
+		-- "BaldLionEngine/vendor/ReactPhysics3D/lib",
+	-- }
 
 	links
 	{
 		"BaldLionEngine",
-		"assimp-vc142-mtd.lib"
+		-- "assimp-vc142-mtd.lib",
+		-- "reactphysics3d.lib"
 	}
 
 	

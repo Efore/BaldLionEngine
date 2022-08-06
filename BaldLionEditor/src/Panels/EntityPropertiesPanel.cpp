@@ -7,6 +7,8 @@
 #include "Components/ProjectionCameraComponentInspector.h"
 #include "Components/AnimationComponentInspector.h"
 #include "Components/MeshComponentInspector.h"
+#include "Components/PhyisicsBodyComponentInspector.h"
+
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
 #include "BaldLion/Utils/MathUtils.h"
@@ -14,6 +16,7 @@
 #include "BaldLion/Rendering/Mesh.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
 #include "BaldLion/Animation/AnimationManager.h"
+
 
 
 namespace BaldLion {
@@ -50,8 +53,15 @@ namespace BaldLion {
 										"Mesh",
 										"Skeleton",
 										"DirectionalLight",										
-										"Animation"
+										"Animation",
+										"Physics Body"
 									};
+
+				const char* physicsBodyShapes[] = {
+										"Box",
+										"Sphere",
+										"Cilinder"
+				};
 
 				// Simple selection popup
 				// (If you want to show the current selection inside the Button itself, you may want to build a string using the "###" operator to preserve a constant ID with a variable label)
@@ -70,7 +80,7 @@ namespace BaldLion {
 
 					const char* meshPopup = "Choose Mesh";
 					const char* animatorPopup = "Choose Animator";
-					
+					const char* physicsBodyPopup = "Physics Body Shape";
 
 					if (m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityComponents().TryGet(selectedEntityID, selectedEntityComponents)) 
 					{
@@ -130,6 +140,10 @@ namespace BaldLion {
 									case ECS::ECSComponentType::Animation:
 										ImGui::OpenPopup(animatorPopup);
 										break;
+
+									case ECS::ECSComponentType::PhysicsBody:
+										ImGui::OpenPopup(physicsBodyPopup);
+										break;
 									
 									}
 
@@ -177,6 +191,27 @@ namespace BaldLion {
 							}
 							
 						}
+						ImGui::EndPopup();
+					}
+
+					if (ImGui::BeginPopupModal(physicsBodyPopup, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+					{				
+						Physics::PhysicsShape shape;
+						for (int i = 0; i < 3; ++i)
+						{
+							if (ImGui::Selectable(physicsBodyShapes[i]))
+							{
+								shape = (Physics::PhysicsShape)i;
+
+								newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECS::ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody,
+									shape,
+									glm::vec3(1.0f),
+									MathUtils::Vector3Zero,
+									MathUtils::Vector3Zero,
+									1.0f);
+							}
+						}
+						
 						ImGui::EndPopup();
 					}
 
@@ -248,6 +283,10 @@ namespace BaldLion {
 
 				case ECS::ECSComponentType::Animation:
 					AnimationComponentInspector::OnImGuiRender(component, m_sceneHierarchyPanel);					
+					break;
+
+				case ECS::ECSComponentType::PhysicsBody:
+					PhyisicsBodyComponentInspector::OnImGuiRender(component, m_sceneHierarchyPanel);
 					break;
 				
 				default:

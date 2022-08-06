@@ -22,7 +22,7 @@ namespace BaldLion
 		void BaldLionEditorLayer::OnAttach()
 		{
 			BL_PROFILE_FUNCTION();		
-
+			Physics::PhysicsManager::SetIsPhysicsActive(false);
 			SceneManagement::SceneManager::AddScene("UnNamed Scene");
 			m_currentScenePathFile = "";
 			m_ecsManager = SceneManagement::SceneManager::GetECSManager();
@@ -160,6 +160,22 @@ namespace BaldLion
 					if (ImGui::MenuItem("Exit"))
 					{
 						BaldLion::Application::GetInstance().Close();
+					}
+
+					ImGui::EndMenu();
+				}
+
+
+				if (ImGui::BeginMenu("Physics"))
+				{
+					if (ImGui::MenuItem("Activate Phyisics"))
+					{
+						Physics::PhysicsManager::SetIsPhysicsActive(true);
+					}
+
+					if (ImGui::MenuItem("Deactivate Phyisics"))
+					{
+						Physics::PhysicsManager::SetIsPhysicsActive(false);
 					}
 
 					ImGui::EndMenu();

@@ -10,9 +10,9 @@ namespace BaldLion {
 		struct BoundingBox {
 
 			glm::vec3 minPoint;
-			glm::vec3 maxPoint;
+			glm::vec3 maxPoint;			
+			glm::vec3 center;
 
-			inline const glm::vec3 GetCenter() const { return ((maxPoint + minPoint) * 0.5f); }
 			inline const float GetRadius() const { return glm::length(maxPoint - minPoint) * 0.5f; }
 			inline const float GetSqrRadius() const { return glm::length2((maxPoint - minPoint) * 0.5f); }
 
@@ -23,7 +23,7 @@ namespace BaldLion {
 
 			bool IsIntersectedByRayFast(const glm::vec3& rayOrigin, const glm::vec3& rayDirection) const
 			{				
-				const glm::vec3 toCentre = GetCenter() - rayOrigin;
+				const glm::vec3 toCentre = center - rayOrigin;
 
 				float proyectionDistance = glm::dot(toCentre, rayDirection);
 

@@ -30,7 +30,7 @@ namespace BaldLion
 			//	4-Skeleton
 			//	5-DirectionalLight
 			//	6-Animation
-			//	7-Hierarchy
+			//	7-PhysicsBody
 
 			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_ECS, 1000);
 			m_componentsPool.EmplaceBack(&m_transformComponentPool);
@@ -49,6 +49,9 @@ namespace BaldLion
 
 			m_animationComponentPool = DynamicArray<ECSAnimationComponent>(AllocationType::FreeList_ECS, 40);
 			m_componentsPool.EmplaceBack(&m_animationComponentPool);
+
+			m_physicsBodyComponentPool = DynamicArray<ECSPhysicsBodyComponent>(AllocationType::FreeList_ECS, 40);
+			m_componentsPool.EmplaceBack(&m_physicsBodyComponentPool);
 
 			m_entityIDProvider = 1;
 			m_componentIDProvider = 1;
@@ -70,10 +73,11 @@ namespace BaldLion
 
 			CleanComponentPool<ECSTransformComponent>(ECSComponentType::Transform);
 			CleanComponentPool<ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera);
-			CleanComponentPool<ECSDirectionalLightComponent>(ECSComponentType::DirectionalLight);
 			CleanComponentPool<ECSMeshComponent>(ECSComponentType::Mesh);
-			CleanComponentPool<ECSAnimationComponent>(ECSComponentType::Animation);
 			CleanComponentPool<ECSSkeletonComponent>(ECSComponentType::Skeleton);
+			CleanComponentPool<ECSDirectionalLightComponent>(ECSComponentType::DirectionalLight);
+			CleanComponentPool<ECSAnimationComponent>(ECSComponentType::Animation);
+			CleanComponentPool<ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);
 
 			m_componentsPool.Delete();
 		}

@@ -79,11 +79,9 @@ namespace BaldLion
 			static void RegisterMaterial(Material* material);
 
 			static void DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
-
 			static void DrawDebugSphere(const glm::vec3& center, float radius, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
-
+			static void DrawDebugCapsule(const glm::vec3& center, float radius, float height, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, bool arrow = false, int durationMs = 0, bool depthEnabled = true);
-
 			static void DrawDebugFrustrum(const glm::mat4& invClipMatrix, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 
 		private:

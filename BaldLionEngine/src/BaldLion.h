@@ -51,6 +51,8 @@
 
 //---------------- Others ------------------
 
+#include "BaldLion/Physics/PhysicsManager.h"
+
 #include "BaldLion/Utils/MathUtils.h"
 
 using namespace BaldLion::Rendering;

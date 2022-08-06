@@ -77,25 +77,22 @@ namespace BaldLion {
 			{
 			case AnimatorParameter::ValueType::Bool:
 				ImGui::Text("Bool"); ImGui::NextColumn();
-				IMGUI_LEFT_LABEL(ImGui::Checkbox, "", &(parameter.Value.boolean)); ImGui::NextColumn();
+				BL_IMGUI_LEFT_LABEL(ImGui::Checkbox, "", &(parameter.Value.boolean)); ImGui::NextColumn();
 				break;
 
 			case AnimatorParameter::ValueType::Int:
+			{
 				ImGui::Text("Int"); ImGui::NextColumn();
-				static int inputValue = parameter.Value.integer;
-				IMGUI_LEFT_LABEL(ImGui::InputInt, "", &inputValue); ImGui::NextColumn();
+				int inputValue = parameter.Value.integer;
+				BL_IMGUI_LEFT_LABEL(ImGui::InputInt, "", &inputValue); ImGui::NextColumn();
 				if (inputValue < 0) inputValue = 0;
 				parameter.Value.integer = inputValue;
+			}
 				break;
 
 			case AnimatorParameter::ValueType::Float:
 				ImGui::Text("Float"); ImGui::NextColumn();
-				IMGUI_LEFT_LABEL(ImGui::InputFloat, "", &parameter.Value.floating); ImGui::NextColumn();				
-				break;
-
-			default:
-				ImGui::Text("Float"); ImGui::NextColumn();
-				ImGui::Text("%f", parameter.Value.floating); ImGui::NextColumn();
+				BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "", &parameter.Value.floating); ImGui::NextColumn();				
 				break;
 			}			
 		}
@@ -108,7 +105,7 @@ namespace BaldLion {
 			switch (condition->ParameterB.Type)
 			{
 			case AnimatorParameter::ValueType::Bool:				
-				IMGUI_LEFT_LABEL(ImGui::Checkbox, "", &(condition->ParameterB.Value.boolean)); ImGui::NextColumn();
+				BL_IMGUI_LEFT_LABEL(ImGui::Checkbox, "", &(condition->ParameterB.Value.boolean)); ImGui::NextColumn();
 				break;
 
 			case AnimatorParameter::ValueType::Int:			
@@ -117,7 +114,7 @@ namespace BaldLion {
 				condition->Comparison = (AnimatorCondition::ComparisonType)selectIndex;
 
 				int inputValue = condition->ParameterB.Value.integer;
-				IMGUI_LEFT_LABEL(ImGui::InputInt, "##", &inputValue); ImGui::NextColumn();
+				BL_IMGUI_LEFT_LABEL(ImGui::InputInt, "##", &inputValue); ImGui::NextColumn();
 
 				if (inputValue < 0) inputValue = 0;
 				condition->ParameterB.Value.integer = inputValue;
@@ -128,7 +125,7 @@ namespace BaldLion {
 				ImGui::Combo("##", &selectIndex, "<\0<=\0==\0!=\0>=\0>"); ImGui::NextColumn();
 				condition->Comparison = (AnimatorCondition::ComparisonType)selectIndex;
 
-				IMGUI_LEFT_LABEL(ImGui::InputFloat, "##", &condition->ParameterB.Value.floating); ImGui::NextColumn();
+				BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "##", &condition->ParameterB.Value.floating); ImGui::NextColumn();
 				break;
 			}
 		}
@@ -177,7 +174,7 @@ namespace BaldLion {
 			if (ImGui::BeginPopupModal("add_parameter", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				static char parameterName[64] = "";
-				IMGUI_LEFT_LABEL(ImGui::InputText, "Parameter Name", parameterName, 64);
+				BL_IMGUI_LEFT_LABEL(ImGui::InputText, "Parameter Name", parameterName, 64);
 
 				ImGui::Separator();
 
@@ -199,22 +196,22 @@ namespace BaldLion {
 
 				ImGui::Separator();
 
-				static int integerValue = 0;
-				static float floatValue = 0.0f;
-				static bool boolValue = true;
+				int integerValue = 0;
+				float floatValue = 0.0f;
+				bool boolValue = true;
 
 				switch (parameterValueType)
 				{
 				case BaldLion::Animation::AnimatorParameter::ValueType::Int:
-					IMGUI_LEFT_LABEL(ImGui::InputInt, "Value: ", &integerValue);
+					BL_IMGUI_LEFT_LABEL(ImGui::InputInt, "Value: ", &integerValue);
 					break;
 
 				case BaldLion::Animation::AnimatorParameter::ValueType::Float:
-					IMGUI_LEFT_LABEL(ImGui::InputFloat, "Value: ", &floatValue);
+					BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Value: ", &floatValue);
 					break;
 
 				case BaldLion::Animation::AnimatorParameter::ValueType::Bool:
-					IMGUI_LEFT_LABEL(ImGui::Checkbox, "Value: ", &boolValue);
+					BL_IMGUI_LEFT_LABEL(ImGui::Checkbox, "Value: ", &boolValue);
 					break;
 
 				default:
@@ -369,10 +366,10 @@ namespace BaldLion {
 				}
 
 				static float transitionExitTime = 0.0f;
-				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Exit Time", &transitionExitTime);
+				BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Exit Time", &transitionExitTime);
 
 				static float transitionTime = 0.0f;
-				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Transition Time", &transitionTime);
+				BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Transition Time", &transitionTime);
 
 				ImGui::Separator();
 
@@ -403,11 +400,11 @@ namespace BaldLion {
 				ImGui::Separator();
 
 				float transitionExitTime = transition->GetExitTime();
-				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Exit Time", &transitionExitTime);
+				BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Exit Time", &transitionExitTime);
 				transition->SetExitTime(transitionExitTime);
 
 				float transitionTime = transition->GetTransitionTime();
-				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Transition Time", &transitionTime);
+				BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Transition Time", &transitionTime);
 				transition->SetTransitionTime(transitionTime);
 
 				ImGui::Separator();
@@ -495,9 +492,9 @@ namespace BaldLion {
 					AnimatorParameter parameterB;
 					AnimatorCondition::ComparisonType comparison = AnimatorCondition::ComparisonType::Equal;
 
-					static int selectIndex = 0;
-					static int intValue = 0;
-					static float floatValue = 0;
+					int selectIndex = 0;
+					int intValue = 0;
+					float floatValue = 0;
 
 					switch (parameter.Type)
 					{
@@ -516,7 +513,7 @@ namespace BaldLion {
 						comparison = (AnimatorCondition::ComparisonType)selectIndex;
 
 						
-						IMGUI_LEFT_LABEL(ImGui::InputInt, "Value", &intValue);
+						BL_IMGUI_LEFT_LABEL(ImGui::InputInt, "Value", &intValue);
 
 						parameterB.Type = AnimatorParameter::ValueType::Int;
 						parameterB.Value.integer = intValue;
@@ -528,7 +525,7 @@ namespace BaldLion {
 						ImGui::Combo("combo float", &selectIndex, "<\0<=\0==\0!=\0>=\0>");
 						comparison = (AnimatorCondition::ComparisonType)selectIndex;
 						
-						IMGUI_LEFT_LABEL(ImGui::InputFloat, "Value", &floatValue);
+						BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Value", &floatValue);
 
 						parameterB.Type = AnimatorParameter::ValueType::Float;
 						parameterB.Value.floating = floatValue;

@@ -115,7 +115,7 @@ namespace BaldLion
 				}
 			}
 
-			meshComponent->localBoundingBox = { minPointInLocalSpace , maxPointInLocalSpace };
+			meshComponent->localBoundingBox = { minPointInLocalSpace , maxPointInLocalSpace, ((maxPointInLocalSpace + minPointInLocalSpace) * 0.5f) };
 		}
 
 		BaldLion::ECS::ECSSkeletonComponent* Mesh::GenerateSkeletonComponent(ECS::ECSManager* ecsManager) const
@@ -131,6 +131,33 @@ namespace BaldLion
 			skeletonComponent->skeletonResourceID = m_resourceID;
 		
 			return skeletonComponent;
+		}
+
+		ECS::ECSEntityID Mesh::GenerateEntity(ECS::ECSManager* ecsManager, bool isStatic) const
+		{
+			ECS::ECSEntityID entityID = ecsManager->AddEntity(BL_STRINGID_TO_STR_C(m_resourcePath));
+
+			ECS::ECSTransformComponent* transformComponent = ecsManager->AddComponent<ECS::ECSTransformComponent>(
+				ECS::ECSComponentType::Transform,
+				glm::vec3(0.0f),
+				glm::vec3(0.0f),
+				glm::vec3(1.0f)
+				);
+
+			ECS::ECSMeshComponent* meshComponent = nullptr;
+			ECS::ECSSkeletonComponent* skeletonComponent = nullptr;
+
+			GenerateMeshComponent(ecsManager, isStatic, meshComponent, skeletonComponent);
+
+			ecsManager->AddComponentToEntity(entityID, transformComponent);
+			ecsManager->AddComponentToEntity(entityID, meshComponent);
+
+			if (skeletonComponent != nullptr)
+			{
+				ecsManager->AddComponentToEntity(entityID, skeletonComponent);
+			}		
+
+			return entityID;
 		}
 
 	}

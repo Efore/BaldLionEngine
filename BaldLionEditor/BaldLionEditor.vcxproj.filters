@@ -36,6 +36,9 @@
     <ClInclude Include="src\Panels\Components\MeshComponentInspector.h">
       <Filter>src\Panels\Components</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\Components\PhyisicsBodyComponentInspector.h">
+      <Filter>src\Panels\Components</Filter>
+    </ClInclude>
     <ClInclude Include="src\Panels\Components\ProjectionCameraComponentInspector.h">
       <Filter>src\Panels\Components</Filter>
     </ClInclude>

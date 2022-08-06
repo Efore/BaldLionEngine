@@ -5,7 +5,6 @@
 
 #include "BaldLion/ECS/Components/ECSAnimationComponent.h"
 #include "BaldLion/ECS/Components/ECSSkeletonComponent.h"
-#include "BaldLion/ECS/Components/ECSTransformComponent.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

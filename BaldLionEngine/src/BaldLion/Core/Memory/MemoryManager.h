@@ -18,7 +18,8 @@ namespace BaldLion
 			Stack,
 			FreeList_Renderer,
 			FreeList_ECS,
-			FreeList_Resources
+			FreeList_Resources,
+			FreeList_PhysX
 		};
 
 		struct AllocationInfo {
@@ -65,6 +66,8 @@ namespace BaldLion
 			static FreeListAllocator* s_freeListRendererAllocator;
 			static FreeListAllocator* s_freeListECSAllocator;
 			static FreeListAllocator* s_freeListResourcesAllocator;
+			static FreeListAllocator* s_freeListPhysXAllocator;
+
 			static LinearAllocator* s_linearFrameAllocator;
 			static StackAllocator* s_stackAllocator;
 

@@ -274,7 +274,7 @@ namespace BaldLion {
 
 						if (ECS::SingletonComponents::ECSProjectionCameraSingleton::IsAABBVisible(meshAABB) && meshAABB.IsIntersectedByRayFast(rayOrigin, rayDirection))
 						{			
-							float sqrDistance = glm::length2(meshAABB.GetCenter() - rayOrigin);
+							float sqrDistance = glm::length2(meshAABB.center - rayOrigin);
 							if (sqrDistance < sqrClosestDistance)
 							{
 								sqrClosestDistance = sqrDistance;

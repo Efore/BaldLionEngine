@@ -15,7 +15,7 @@ namespace BaldLion
 
 		private:
 
-			const float m_gridSize = 10.0f;
+			const float m_gridSize = 1.0f;
 			float m_size;
 		};
 	}

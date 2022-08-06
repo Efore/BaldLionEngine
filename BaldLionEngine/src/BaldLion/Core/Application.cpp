@@ -5,6 +5,7 @@
 #include "BaldLion/Animation/AnimationManager.h"
 #include "BaldLion/SceneManagement/SceneManager.h"
 #include "BaldLion/ResourceManagement/ResourceManager.h"
+#include "BaldLion/Physics/PhysicsManager.h"
 
 #include <GLFW/glfw3.h>
 
@@ -35,7 +36,7 @@ namespace BaldLion
 		SceneManagement::SceneManager::Init();
 		Rendering::Renderer::Init(m_window->GetWidth(), m_window->GetHeight());
 		ResourceManagement::ResourceManager::LoadAssets();
-
+		Physics::PhysicsManager::Init(1.0f/60.0f);
 
 		m_layerStack.Init();
 
@@ -54,6 +55,8 @@ namespace BaldLion
 		Rendering::Renderer::Stop();
 		SceneManagement::SceneManager::Stop	();
 		Animation::AnimationManager::Stop();
+		Physics::PhysicsManager::Stop();
+
 		Time::Stop();
 
 		ResourceManagement::ResourceManager::Stop();

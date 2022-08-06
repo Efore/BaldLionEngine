@@ -558,27 +558,7 @@ namespace BaldLion
 			{
 				const Mesh* subMesh = m_subMeshes[i];
 
-				ECS::ECSEntityID childEntityID = ecsManager->AddEntity(BL_STRINGID_TO_STR_C(subMesh->GetResourceName()));
-				
-				ECS::ECSTransformComponent* childTransformComponent = ecsManager->AddComponent<ECS::ECSTransformComponent>(
-					ECS::ECSComponentType::Transform,
-					glm::vec3(0.0f),
-					glm::vec3(0.0f),
-					glm::vec3(1.0f)
-					);
-
-				ECS::ECSMeshComponent* childMeshComponent = nullptr;
-				ECS::ECSSkeletonComponent* childSkeletonComponent = nullptr;
-
-				subMesh->GenerateMeshComponent(ecsManager, isStatic, childMeshComponent, childSkeletonComponent);
-
-				ecsManager->AddComponentToEntity(childEntityID, childTransformComponent);
-				ecsManager->AddComponentToEntity(childEntityID, childMeshComponent);
-
-				if (childSkeletonComponent != nullptr)
-				{
-					ecsManager->AddComponentToEntity(childEntityID, childSkeletonComponent);
-				}
+				ECS::ECSEntityID childEntityID = subMesh->GenerateEntity(ecsManager, isStatic);
 
 				ecsManager->SetHierarchy(childEntityID, rootEntityID);
 			}

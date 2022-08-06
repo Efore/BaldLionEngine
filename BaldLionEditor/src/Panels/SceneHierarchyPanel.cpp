@@ -40,12 +40,17 @@ namespace BaldLion {
 				ImGui::OpenPopup("create_model_entity");
 			}
 
+			if (ImGui::Button("Create Entity from Mesh"))
+			{
+				ImGui::OpenPopup("create_mesh_entity");
+			}
+
 			ImGui::Separator();			
 
 			if (ImGui::BeginPopupModal("Create Entity", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				static char entityName[64] = "";
-				IMGUI_LEFT_LABEL(ImGui::InputText, "Entity Name", entityName, 64);				
+				BL_IMGUI_LEFT_LABEL(ImGui::InputText, "Entity Name", entityName, 64);				
 
 				if (entityName != "" && ImGui::Button("Create")) 
 				{
@@ -68,6 +73,13 @@ namespace BaldLion {
 			if (model)
 			{
 				model->GenerateEntities(m_sceneContext->GetECSManager(), true);
+			}
+
+			Rendering::Mesh* mesh = EditorUtils::RenderResourceInspectorPopup<Rendering::Mesh>("create_mesh_entity", ResourceManagement::ResourceType::Mesh);
+
+			if (mesh)
+			{
+				mesh->GenerateEntity(m_sceneContext->GetECSManager(), true);
 			}
 
 			BL_DYNAMICARRAY_FOR(i, m_sceneContext->GetECSManager()->GetEntities(), 0)			

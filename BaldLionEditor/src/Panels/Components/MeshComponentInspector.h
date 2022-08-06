@@ -21,7 +21,7 @@ namespace BaldLion
 				ComponentInspector::BeginComponentRender("Mesh Component", component->GetComponentType(), sceneHierarchyPanel, (GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f) * 3.0f);
 
 				static bool showDebugFrustrum = false;
-				IMGUI_LEFT_LABEL(ImGui::Checkbox, "Show AABB", &showDebugFrustrum);
+				BL_IMGUI_LEFT_LABEL(ImGui::Checkbox, "Show AABB", &showDebugFrustrum);
 
 				ComponentInspector::EndComponentRender();
 
@@ -33,7 +33,7 @@ namespace BaldLion
 
 					const BoundingBox meshAABB = GeometryUtils::GetAABB(meshComponent->localBoundingBox, meshTransformMatrix);										
 
-					Renderer::DrawDebugBox(meshAABB.GetCenter(), meshAABB.maxPoint - meshAABB.minPoint, glm::vec3(0.3f, 1.0f, 0.3f));
+					Renderer::DrawDebugBox(meshAABB.center, meshAABB.maxPoint - meshAABB.minPoint, glm::vec3(0.3f, 1.0f, 0.3f));
 				}
 
 			}

@@ -476,6 +476,36 @@ namespace BaldLion
 			});
 		}
 
+
+		void Renderer::DrawDebugCapsule(const glm::vec3& center, float radius, float height, const glm::vec3& color, int durationMs /*= 0*/, bool depthEnabled /*= true*/)
+		{
+			ScheduleDebugDrawCommand([center, radius, height, color, durationMs, depthEnabled]
+			{
+				glm::vec3 position = center +  MathUtils::Vector3UnitY * ((height * 0.5f) - radius);
+				dd::sphere((float*)&position, (float*)&color, radius, durationMs, depthEnabled);
+			});
+
+			ui32 numCircles = height / 0.5f;
+
+			glm::vec3 circlesStartPosition = center - MathUtils::Vector3UnitY * ((height * 0.5f) - radius);
+			for (ui32 i = 0; i < numCircles; ++i)
+			{
+				circlesStartPosition += MathUtils::Vector3UnitY * (i * 0.5f);
+				ScheduleDebugDrawCommand([center, radius, color, durationMs, depthEnabled]
+				{
+					glm::vec3 circleNormal = MathUtils::Vector3UnitY;
+					dd::circle((float*)&center, (float*)&circleNormal, (float*)&color, radius, 32, durationMs, depthEnabled);
+				});
+			}
+
+			ScheduleDebugDrawCommand([center, radius, height, color, durationMs, depthEnabled]
+			{
+				glm::vec3 position = center - MathUtils::Vector3UnitY * ((height * 0.5f) - radius);
+				dd::sphere((float*)&position, (float*)&color, radius, durationMs, depthEnabled);
+			});
+
+		}
+
 		void Renderer::DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, bool arrow, int durationMs, bool depthEnabled /*= true*/)
 		{
 			ScheduleDebugDrawCommand([from, to, color, arrow, durationMs, depthEnabled]
@@ -503,5 +533,7 @@ namespace BaldLion
 		{
 			s_scheduledDebugDrawCommands.EmplaceBack(debugDrawCommand);
 		}
+
+
 	}
 }

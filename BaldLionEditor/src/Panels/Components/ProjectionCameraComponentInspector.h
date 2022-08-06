@@ -19,15 +19,15 @@ namespace BaldLion
 
 				ComponentInspector::BeginComponentRender("Projection Camera Component", component->GetComponentType(), sceneHierarchyPanel, (GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f) * 9.0f);
 
-				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Near Plane Z", (float*)&projectionCameraComponent->nearPlane);
-				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Far Plane Z", (float*)&projectionCameraComponent->farPlane);
-				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Width", (float*)&projectionCameraComponent->width);
-				IMGUI_LEFT_LABEL(ImGui::InputFloat, "Height", (float*)&projectionCameraComponent->height);
+				BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Near Plane Z", (float*)&projectionCameraComponent->nearPlane);
+				BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Far Plane Z", (float*)&projectionCameraComponent->farPlane);
+				BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Width", (float*)&projectionCameraComponent->width);
+				BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Height", (float*)&projectionCameraComponent->height);
 
-				IMGUI_LEFT_LABEL(ImGui::DragFloat, "Field of View", (float*)&projectionCameraComponent->fov, 1.0f, 20.0f, 180.0f);
+				BL_IMGUI_LEFT_LABEL(ImGui::DragFloat, "Field of View", (float*)&projectionCameraComponent->fov, 1.0f, 20.0f, 180.0f);
 
 				static bool showDebugFrustrum = false;
-				IMGUI_LEFT_LABEL(ImGui::Checkbox, "Show debug frustrum", &showDebugFrustrum);
+				BL_IMGUI_LEFT_LABEL(ImGui::Checkbox, "Show debug frustrum", &showDebugFrustrum);
 
 				ComponentInspector::EndComponentRender();	
 

@@ -34,6 +34,7 @@ namespace BaldLion
 
 			static ResourceType GetResourceTypeFromPath(const std::string &path);
 			static void LoadMetaFile(const std::string &path);
+			static void LoadPrimitiveShapeMeshes();
 
 		private:
 			static HashMap<ui32, Resource*> s_resourceMap;

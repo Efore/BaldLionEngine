@@ -50,6 +50,8 @@ namespace BaldLion
 			void GenerateMeshComponent(ECS::ECSManager* ecsManager, bool isStatic, ECS::ECSMeshComponent*& meshComponent, ECS::ECSSkeletonComponent*& skeletonComponent) const ;
 			ECS::ECSSkeletonComponent* GenerateSkeletonComponent(ECS::ECSManager* ecsManager) const;
 
+			ECS::ECSEntityID GenerateEntity(ECS::ECSManager* ecsManager, bool isStatic) const;
+
 		protected:
 
 			GeometryData* m_geometryData;

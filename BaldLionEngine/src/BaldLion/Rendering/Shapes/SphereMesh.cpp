@@ -7,11 +7,11 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		SphereMesh::SphereMesh(Material* material, float radius, ui32 rings, ui32 sectors, const std::string& meshName) :
+		SphereMesh::SphereMesh(Material* material, float radius, const std::string& meshName) :
 			Mesh(material, meshName, true),
 			m_radius(radius),
-			m_rings(rings),
-			m_sectors(sectors)
+			m_rings(32),
+			m_sectors(32)
 		{
 
 		}

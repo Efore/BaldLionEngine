@@ -31,8 +31,9 @@ namespace BaldLion {
 
 				{//Systems
 
-					BL_GENERATE_SYSTEM("ECS RenderSystem", ECS::ECSRenderSystem, m_ecsManager, ECS::ECSComponentType::Mesh, ECS::ECSComponentType::Transform);
 					BL_GENERATE_SYSTEM("ECS AnimationSystem", ECS::ECSAnimationSystem, m_ecsManager, ECS::ECSComponentType::Animation, ECS::ECSComponentType::Skeleton);
+					BL_GENERATE_SYSTEM("ECS PhysicsSystem", ECS::ECSPhysicsSystem, m_ecsManager, ECS::ECSComponentType::PhysicsBody, ECS::ECSComponentType::Transform);
+					BL_GENERATE_SYSTEM("ECS RenderSystem", ECS::ECSRenderSystem, m_ecsManager, ECS::ECSComponentType::Mesh, ECS::ECSComponentType::Transform);
 				}
 
 				m_ecsManager->StartSystems();
