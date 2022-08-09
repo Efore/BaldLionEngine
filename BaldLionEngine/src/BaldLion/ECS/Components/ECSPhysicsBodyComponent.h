@@ -11,10 +11,10 @@ namespace BaldLion {
 		{
 
 		public:
-			ECSPhysicsBodyComponent(Physics::PhysicsShape shape, const glm::vec3& colliderSize,  const glm::vec3& position, const glm::vec3& rotation, float initialMass) :
+			ECSPhysicsBodyComponent(Physics::PhysicsShape shape, Physics::PhysicsBodyType bodyType, const glm::vec3& colliderSize,  const glm::vec3& position, const glm::vec3& rotation, float initialMass) :
 				ECSComponent(ECSComponentType::PhysicsBody),
 				shape(shape),
-				bodyType(Physics::PhysicsBodyType::Static),
+				bodyType(bodyType),
 				unscaledColliderSize(colliderSize)
 
 			{

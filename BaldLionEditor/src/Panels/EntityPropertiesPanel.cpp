@@ -205,6 +205,7 @@ namespace BaldLion {
 
 								newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECS::ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody,
 									shape,
+									Physics::PhysicsBodyType::Static,
 									glm::vec3(1.0f),
 									MathUtils::Vector3Zero,
 									MathUtils::Vector3Zero,

@@ -32,7 +32,7 @@ namespace BaldLion {
 			ECSSystem::OnUpdate();
 		}
 
-		void ECSPhysicsSystem::UpdateOperation(ECSComponentLookUp* componentLookUp)
+		void ECSPhysicsSystem::UpdateComponents(ECSComponentLookUp* componentLookUp)
 		{
 			 ECSTransformComponent* transform = componentLookUp->Write<ECSTransformComponent>(ECSComponentType::Transform);		
 			 const ECSPhysicsBodyComponent* physicsBody = componentLookUp->Read<ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);

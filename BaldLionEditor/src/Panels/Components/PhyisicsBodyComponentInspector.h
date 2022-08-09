@@ -51,6 +51,9 @@ namespace BaldLion
 						break;
 					}
 				}
+				else {
+					ImGui::Text("Physics System is active. Please, stop it to show the component inspector");
+				}
 
 
 				float radius = 0.0f;
@@ -63,7 +66,7 @@ namespace BaldLion
 
 					if (!Physics::PhysicsManager::GetIsPhysicsActive())
 					{
-						EditorUtils::DrawVec3Handler("Box Size", componentPhysicsBody->unscaledColliderSize, 0.0f, 110.0f);
+						EditorUtils::DrawVec3Handler("Box Size", componentPhysicsBody->unscaledColliderSize, 1.0f, 110.0f);
 						boxSize = componentPhysicsBody->unscaledColliderSize;
 						boxSize.x *= transformComponent->scale.x;
 						boxSize.y *= transformComponent->scale.y;

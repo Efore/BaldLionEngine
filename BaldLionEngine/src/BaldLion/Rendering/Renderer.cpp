@@ -485,7 +485,7 @@ namespace BaldLion
 				dd::sphere((float*)&position, (float*)&color, radius, durationMs, depthEnabled);
 			});
 
-			ui32 numCircles = height / 0.5f;
+			ui32 numCircles = (ui32)(height / 0.5f);
 
 			glm::vec3 circlesStartPosition = center - MathUtils::Vector3UnitY * ((height * 0.5f) - radius);
 			for (ui32 i = 0; i < numCircles; ++i)

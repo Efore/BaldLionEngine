@@ -13,7 +13,7 @@ namespace BaldLion {
 			
 			virtual void OnStart() override {};
 			virtual void OnUpdate() override;
-			virtual void UpdateOperation(ECSComponentLookUp* componentLookUp) override;		
+			virtual void UpdateComponents(ECSComponentLookUp* componentLookUp) override;
 			virtual void OnStop() override {};
 
 		};

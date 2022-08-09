@@ -248,8 +248,10 @@ namespace BaldLion
 				Material::BlendMode::None,
 				Material::DepthBufferMode::TestAndWrite,
 				Material::CullingMode::Back,
-				(ui8)Material::ShadowsSettingsBitMask::CastShadows
+				(ui8)Material::ShadowsSettingsBitMask::CastShadows | (ui8)Material::ShadowsSettingsBitMask::ReceiveShadows
 			};
+
+
 
 			const std::string matPath = "assets/editorAssets/materials/primitive.mat";
 			Material* meshMaterial = Material::Create(matPath, materialProperties);
@@ -257,17 +259,22 @@ namespace BaldLion
 			meshMaterial->AssignShader();
 
 			const std::string cubeMeshPath = "assets/editorAssets/meshes/cubeMesh.mesh";
-			CubeMesh* cubeMesh = MemoryManager::New<CubeMesh>("CubeMesh", AllocationType::FreeList_Renderer, meshMaterial, 1.0f, cubeMeshPath);
+			auto resourcePath = std::filesystem::path(cubeMeshPath);
+
+			CubeMesh* cubeMesh = MemoryManager::New<CubeMesh>("CubeMesh", AllocationType::FreeList_Renderer, meshMaterial, 1.0f, resourcePath.make_preferred().string());
 			ResourceManagement::ResourceManager::AddResource(cubeMesh);
 			cubeMesh->SetUpCube();
 
 			const std::string planeMeshPath = "assets/editorAssets/meshes/planeMesh.mesh";
-			PlaneMesh* planeMesh = MemoryManager::New<PlaneMesh>("CubeMesh", AllocationType::FreeList_Renderer, meshMaterial, 10.0f, planeMeshPath);
+			resourcePath = std::filesystem::path(planeMeshPath);
+
+			PlaneMesh* planeMesh = MemoryManager::New<PlaneMesh>("CubeMesh", AllocationType::FreeList_Renderer, meshMaterial, 1.0f, resourcePath.make_preferred().string());
 			ResourceManagement::ResourceManager::AddResource(planeMesh);
 			planeMesh->SetUpPlane();
 
 			const std::string sphereMeshPath = "assets/editorAssets/meshes/sphereMesh.mesh";
-			SphereMesh* sphereMesh = MemoryManager::New<SphereMesh>("CubeMesh", AllocationType::FreeList_Renderer, meshMaterial, 1.0f, sphereMeshPath);
+			resourcePath = std::filesystem::path(sphereMeshPath);
+			SphereMesh* sphereMesh = MemoryManager::New<SphereMesh>("CubeMesh", AllocationType::FreeList_Renderer, meshMaterial, 1.0f, resourcePath.make_preferred().string());
 			ResourceManagement::ResourceManager::AddResource(sphereMesh);
 			sphereMesh->SetUpSphere();
 

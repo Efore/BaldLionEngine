@@ -20,7 +20,7 @@ namespace BaldLion
 			virtual void OnFrameStart();
 			virtual void OnFrameEnd();
 
-			virtual void UpdateOperation(ECSComponentLookUp* componentLookUp) = 0;
+			virtual void UpdateComponents(ECSComponentLookUp* componentLookUp) = 0;
 
 			void OnEntityModified(ECSSignature entitySignature);					
 

@@ -1,7 +1,6 @@
 #include "blpch.h"
 #include "SceneSerializer.h"
 
-
 #include "BaldLion/ECS/ECSComponentsInclude.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
 #include "BaldLion/SceneManagement/SceneManager.h"
@@ -42,7 +41,15 @@ using namespace BaldLion::ECS;
 #define YAML_KEY_LIGHTDIRECTION		"LightDirection"
 
 //Animation
-#define YAML_KEY_ANIMATOR_PATH			"AnimatorID"
+#define YAML_KEY_ANIMATOR_PATH		"AnimatorID"
+
+//Physics
+#define YAML_KEY_PHYSICS_SHAPE			"PhyisicsShape"
+#define YAML_KEY_PHYSICS_COLLIDER_SIZE	"PhyisicsColliderSize"
+#define YAML_KEY_PHYSICS_BODY_TYPE		"PhyisicsBodyType"
+#define YAML_KEY_PHYSICS_BODY_POSITION	"PhyisicsBodyPosition"
+#define YAML_KEY_PHYSICS_BODY_ROTATION	"PhyisicsBodyRotation"
+#define YAML_KEY_PHYSICS_MASS			"PhyisicsMass"
 
 //Hierarchy
 #define YAML_KEY_PARENTID			"ParentEntityID"
@@ -240,6 +247,21 @@ namespace BaldLion
 			{
 				ECSAnimationComponent* animationComponent = (ECSAnimationComponent*)component;
 				out << YAML::Key << YAML_KEY_ANIMATOR_PATH << YAML::Value << animationComponent->animatorID;
+			}			
+			break;
+
+			case ECS::ECSComponentType::PhysicsBody:
+			{
+				ECSPhysicsBodyComponent* physicsBodyComponent = (ECSPhysicsBodyComponent*)component;
+
+				out << YAML::Key << YAML_KEY_PHYSICS_SHAPE << YAML::Value << (ui32)physicsBodyComponent->shape;
+				SerializeVec3(out, YAML_KEY_PHYSICS_COLLIDER_SIZE, physicsBodyComponent->unscaledColliderSize);				
+
+				out << YAML::Key << YAML_KEY_PHYSICS_BODY_TYPE << YAML::Value << (ui32)physicsBodyComponent->bodyType;
+				SerializeVec3(out, YAML_KEY_PHYSICS_BODY_POSITION, Physics::ToGlmVec3(physicsBodyComponent->rigidBody->getTransform().getPosition()));
+				SerializeVec3(out, YAML_KEY_PHYSICS_BODY_ROTATION, glm::eulerAngles(Physics::ToGlmQuat(physicsBodyComponent->rigidBody->getTransform().getOrientation())));
+
+				out << YAML::Key << YAML_KEY_PHYSICS_MASS << YAML::Value << (float)physicsBodyComponent->rigidBody->getMass();
 			}
 			break;
 
@@ -336,12 +358,26 @@ namespace BaldLion
 			case BaldLion::ECS::ECSComponentType::Animation:
 			{
 				StringId animatorID = yamlComponent[YAML_KEY_ANIMATOR_PATH].as<StringId>();
-
 				StringId initAnimationID = Animation::AnimationManager::GetAnimator(animatorID)->GetInitialAnimationID();
 
 				component = SceneManager::GetECSManager()->AddComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentType::Animation, animatorID, initAnimationID);					
 			}
 				break;
+
+			case ECS::ECSComponentType::PhysicsBody:
+			{
+				glm::vec3 position = DeserializeVec3(yamlComponent, YAML_KEY_PHYSICS_BODY_POSITION);
+				glm::vec3 rotation = DeserializeVec3(yamlComponent, YAML_KEY_PHYSICS_BODY_ROTATION);
+
+				Physics::PhysicsShape shape = (Physics::PhysicsShape)yamlComponent[YAML_KEY_PHYSICS_SHAPE].as<ui32>();
+				Physics::PhysicsBodyType bodyType = (Physics::PhysicsBodyType)yamlComponent[YAML_KEY_PHYSICS_BODY_TYPE].as<ui32>();
+				glm::vec3 colliderSize = DeserializeVec3(yamlComponent, YAML_KEY_PHYSICS_COLLIDER_SIZE);
+
+				float mass = yamlComponent[YAML_KEY_PHYSICS_MASS].as<float>();
+
+				component = SceneManager::GetECSManager()->AddComponent<ECSPhysicsBodyComponent>(ECS::ECSComponentType::PhysicsBody, shape, bodyType, colliderSize, position, rotation, mass);
+			}
+			break;
 
 			default:
 				break;

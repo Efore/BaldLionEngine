@@ -41,7 +41,7 @@ namespace BaldLion
 
 					const glm::mat4 frustrum = glm::inverse(projectionMatrix * viewMatrix);
 
-					Renderer::DrawDebugFrustrum(frustrum, glm::vec3(0.3f, 1.0f, 0.3f), 0.0f, false);
+					Renderer::DrawDebugFrustrum(frustrum, glm::vec3(0.3f, 1.0f, 0.3f), 0, false);
 				}
 			}
 

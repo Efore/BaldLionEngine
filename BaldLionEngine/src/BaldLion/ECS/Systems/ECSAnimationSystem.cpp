@@ -13,7 +13,7 @@ namespace BaldLion {
 
 	namespace ECS {
 		
-		void ECSAnimationSystem::UpdateOperation(ECSComponentLookUp* componentLookUp)
+		void ECSAnimationSystem::UpdateComponents(ECSComponentLookUp* componentLookUp)
 		{
 			BL_PROFILE_FUNCTION();
 

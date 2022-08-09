@@ -20,7 +20,7 @@ namespace BaldLion {
 			ECSSystem::OnUpdate();
 		}
 
-		void ECSRenderSystem::UpdateOperation(ECSComponentLookUp* componentLookUp)
+		void ECSRenderSystem::UpdateComponents(ECSComponentLookUp* componentLookUp)
 		{
 			BL_PROFILE_FUNCTION();
 

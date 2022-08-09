@@ -52,14 +52,14 @@ namespace BaldLion {
 
 					systemUpdateJob.Task = [this, componentLookUp] {
 
-						this->UpdateOperation(componentLookUp);
+						this->UpdateComponents(componentLookUp);
 					};
 
 					JobManagement::JobManager::QueueJob(systemUpdateJob);
 				}
 				else 
 				{
-					this->UpdateOperation(componentLookUp);
+					this->UpdateComponents(componentLookUp);
 				}
 			}
 
