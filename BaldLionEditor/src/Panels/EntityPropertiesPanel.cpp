@@ -63,6 +63,11 @@ namespace BaldLion {
 										"Cilinder"
 				};
 
+				const char* meshStatic[] = {
+										"Dynamic",
+										"Static"
+				};
+
 				// Simple selection popup
 				// (If you want to show the current selection inside the Button itself, you may want to build a string using the "###" operator to preserve a constant ID with a variable label)
 				if (ImGui::Button("AddComponent"))
@@ -97,7 +102,7 @@ namespace BaldLion {
 
 									case ECS::ECSComponentType::Transform:
 
-										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECS::ECSTransformComponent>(ECSComponentType::Transform,
+										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECS::ECSTransformComponent>(ECSComponentType::Transform,
 											MathUtils::Vector3Zero,
 											MathUtils::Vector3Zero,
 											glm::vec3(1.0f));
@@ -106,7 +111,7 @@ namespace BaldLion {
 
 									case ECS::ECSComponentType::ProjectionCamera:
 
-										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECS::ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera,
+										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECS::ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera,
 											45.0f,
 											600.0f,
 											480.0f,
@@ -124,7 +129,7 @@ namespace BaldLion {
 
 									case ECS::ECSComponentType::DirectionalLight:
 
-										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECSDirectionalLightComponent>(ECSComponentType::DirectionalLight,
+										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECSDirectionalLightComponent>(ECSComponentType::DirectionalLight,
 											glm::vec3(0.0f),
 											glm::vec3(1.0f),
 											glm::vec3(0.2f),
@@ -156,10 +161,11 @@ namespace BaldLion {
 					Rendering::Mesh* mesh = EditorUtils::RenderResourceInspectorPopup<Rendering::Mesh>(meshPopup, ResourceManagement::ResourceType::Mesh);
 
 					if (mesh)
-					{						
-						if (selectedEntityComponents[(ui32)ECSComponentType::Transform] == nullptr) 
+					{	
+						ECSTransformComponent* transform = selectedEntityComponents.Write<ECSTransformComponent>(ECSComponentType::Transform);
+						if (transform == nullptr)
 						{
-							ECSTransformComponent* transform = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECS::ECSTransformComponent>(ECSComponentType::Transform,
+							transform = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECS::ECSTransformComponent>(ECSComponentType::Transform,
 								MathUtils::Vector3Zero,
 								MathUtils::Vector3Zero,
 								glm::vec3(1.0f));
@@ -169,7 +175,7 @@ namespace BaldLion {
 
 						ECS::ECSSkeletonComponent* skeletonComponent = nullptr;
 						ECS::ECSMeshComponent* meshComponent = nullptr;
-						mesh->GenerateMeshComponent(m_sceneHierarchyPanel->GetSceneContext()->GetECSManager(), false, meshComponent, skeletonComponent);
+						mesh->GenerateMeshComponent(m_sceneHierarchyPanel->GetSceneContext()->GetECSManager(), true, transform, meshComponent, skeletonComponent);
 
 						newComponent = meshComponent;
 
@@ -185,7 +191,7 @@ namespace BaldLion {
 						{
 							if (ImGui::Selectable(BL_STRINGID_TO_STR_C(hashMapIterator.GetValue()->GetResourcePath())))
 							{
-								newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECS::ECSAnimationComponent>(ECSComponentType::Animation,
+								newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECS::ECSAnimationComponent>(ECSComponentType::Animation,
 									hashMapIterator.GetValue()->GetResourceID(),
 									hashMapIterator.GetValue()->GetInitialAnimationID());
 							}
@@ -203,7 +209,7 @@ namespace BaldLion {
 							{
 								shape = (Physics::PhysicsShape)i;
 
-								newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponent<ECS::ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody,
+								newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECS::ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody,
 									shape,
 									Physics::PhysicsBodyType::Static,
 									glm::vec3(1.0f),

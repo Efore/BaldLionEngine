@@ -82,7 +82,36 @@ namespace BaldLion
 			m_vertexBones = DynamicArray<VertexBone>(AllocationType::FreeList_Renderer, vertexBones);
 		}
 
-		void Mesh::GenerateMeshComponent(ECS::ECSManager* ecsManager, bool isStatic, ECS::ECSMeshComponent*& meshComponent, ECS::ECSSkeletonComponent*& skeletonComponent) const
+		ECS::ECSEntityID Mesh::GenerateEntity(ECS::ECSManager* ecsManager, bool isStatic) const
+		{
+			ECS::ECSEntityID entityID = ecsManager->AddEntity(BL_STRINGID_TO_STR_C(m_resourcePath));
+			ECS::ECSEntity* entity = ecsManager->GetEntityMap().Get(entityID);
+
+			ECS::ECSTransformComponent* transformComponent = ecsManager->CreateComponent<ECS::ECSTransformComponent>(
+				ECS::ECSComponentType::Transform,
+				glm::vec3(0.0f),
+				glm::vec3(0.0f),
+				glm::vec3(1.0f)
+				);
+
+			ECS::ECSMeshComponent* meshComponent = nullptr;
+			ECS::ECSSkeletonComponent* skeletonComponent = nullptr;
+
+			GenerateMeshComponent(ecsManager, isStatic, transformComponent, meshComponent, skeletonComponent);
+			entity->SetIsStatic(meshComponent->isStatic);
+
+			ecsManager->AddComponentToEntity(entityID, transformComponent);
+			ecsManager->AddComponentToEntity(entityID, meshComponent);
+
+			if (skeletonComponent != nullptr)
+			{
+				ecsManager->AddComponentToEntity(entityID, skeletonComponent);
+			}		
+
+			return entityID;
+		}
+
+		void Mesh::GenerateMeshComponent(ECS::ECSManager* ecsManager, bool isStatic, const ECS::ECSTransformComponent* transformComponent, ECS::ECSMeshComponent*& meshComponent, ECS::ECSSkeletonComponent*& skeletonComponent) const
 		{
 			if (m_skeleton != nullptr)
 			{
@@ -90,18 +119,33 @@ namespace BaldLion
 				isStatic = false;
 			}
 
-			meshComponent = ecsManager->AddComponent<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh, isStatic);
+			meshComponent = ecsManager->CreateComponent<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh, isStatic);
 
 			meshComponent->material = m_material;
-			meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices);
 			meshComponent->indices = DynamicArray<ui32>(AllocationType::FreeList_ECS, m_geometryData->indices);
 			meshComponent->meshResourceID = m_resourceID;
+
+			Renderer::RegisterMaterial(m_material);
+
+			if (isStatic)
+			{			
+				meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices.Size());
+
+				const glm::mat4 meshTransformMatrix = transformComponent->GetTransformMatrix();
+				BL_DYNAMICARRAY_FOREACH(m_geometryData->vertices)
+				{
+					meshComponent->vertices.EmplaceBack(m_geometryData->vertices[i] * meshTransformMatrix);
+				}
+			}
+			else {
+				meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices);
+			}
 
 			glm::vec3 minPointInLocalSpace = meshComponent->vertices[0].position;
 			glm::vec3 maxPointInLocalSpace = meshComponent->vertices[0].position;
 
 			{				
-				BL_DYNAMICARRAY_FOR(i, meshComponent->vertices, 0)				
+				BL_DYNAMICARRAY_FOREACH(meshComponent->vertices)				
 				{
 					const glm::vec3 vertexPosInWorldSpace = meshComponent->vertices[i].position;
 
@@ -120,7 +164,7 @@ namespace BaldLion
 
 		BaldLion::ECS::ECSSkeletonComponent* Mesh::GenerateSkeletonComponent(ECS::ECSManager* ecsManager) const
 		{
-			ECS::ECSSkeletonComponent* skeletonComponent = ecsManager->AddComponent<ECS::ECSSkeletonComponent>(ECS::ECSComponentType::Skeleton);
+			ECS::ECSSkeletonComponent* skeletonComponent = ecsManager->CreateComponent<ECS::ECSSkeletonComponent>(ECS::ECSComponentType::Skeleton);
 						
 			for (ui32 i = 0; i < (ui32)JointType::Count; ++i)
 			{
@@ -133,32 +177,6 @@ namespace BaldLion
 			return skeletonComponent;
 		}
 
-		ECS::ECSEntityID Mesh::GenerateEntity(ECS::ECSManager* ecsManager, bool isStatic) const
-		{
-			ECS::ECSEntityID entityID = ecsManager->AddEntity(BL_STRINGID_TO_STR_C(m_resourcePath));
-
-			ECS::ECSTransformComponent* transformComponent = ecsManager->AddComponent<ECS::ECSTransformComponent>(
-				ECS::ECSComponentType::Transform,
-				glm::vec3(0.0f),
-				glm::vec3(0.0f),
-				glm::vec3(1.0f)
-				);
-
-			ECS::ECSMeshComponent* meshComponent = nullptr;
-			ECS::ECSSkeletonComponent* skeletonComponent = nullptr;
-
-			GenerateMeshComponent(ecsManager, isStatic, meshComponent, skeletonComponent);
-
-			ecsManager->AddComponentToEntity(entityID, transformComponent);
-			ecsManager->AddComponentToEntity(entityID, meshComponent);
-
-			if (skeletonComponent != nullptr)
-			{
-				ecsManager->AddComponentToEntity(entityID, skeletonComponent);
-			}		
-
-			return entityID;
-		}
 
 	}
 }

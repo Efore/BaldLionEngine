@@ -545,8 +545,10 @@ namespace BaldLion
 		void Model::GenerateEntities(ECS::ECSManager* ecsManager, bool isStatic) const
 		{
 			ECS::ECSEntityID rootEntityID = ecsManager->AddEntity(BL_STRINGID_TO_STR_C(m_resourcePath));
+			ECS::ECSEntity* entity = ecsManager->GetEntityMap().Get(rootEntityID);
+			entity->SetIsStatic(isStatic);
 
-			ECS::ECSTransformComponent* rootTransformComponent = ecsManager->AddComponent<ECS::ECSTransformComponent>(
+			ECS::ECSTransformComponent* rootTransformComponent = ecsManager->CreateComponent<ECS::ECSTransformComponent>(
 				ECS::ECSComponentType::Transform,
 				glm::vec3(0.0f),
 				glm::vec3(0.0f),
@@ -554,16 +556,22 @@ namespace BaldLion
 
 			ecsManager->AddComponentToEntity(rootEntityID, rootTransformComponent);
 
+			ECS::ECSEntityID childEntityID = 0;
 			BL_DYNAMICARRAY_FOR(i, m_subMeshes, 0)
 			{
 				const Mesh* subMesh = m_subMeshes[i];
 
-				ECS::ECSEntityID childEntityID = subMesh->GenerateEntity(ecsManager, isStatic);
-
-				ecsManager->SetHierarchy(childEntityID, rootEntityID);
+				childEntityID = subMesh->GenerateEntity(ecsManager, isStatic);	
+				ecsManager->SetEntityParent(childEntityID, rootEntityID);
 			}
 
-			ecsManager->GenerateCachedHierarchy();
+			if (childEntityID > 0)
+			{
+				ECS::ECSEntity* childEntity = ecsManager->GetEntityMap().Get(childEntityID);
+				entity->SetIsStatic(childEntity->GetIsStatic());
+			}
+			
+			ecsManager->GenerateCachedHierarchyRoot();
 		}
 	} 
 

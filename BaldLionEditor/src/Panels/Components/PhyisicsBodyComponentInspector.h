@@ -21,7 +21,7 @@ namespace BaldLion
 
 				ECS::ECSPhysicsBodyComponent* componentPhysicsBody = (ECS::ECSPhysicsBodyComponent*)component;
 				
-				ECS::ECSTransformComponent* transformComponent = (ECS::ECSTransformComponent*)SceneManager::GetECSManager()->GetEntityComponents().Get(sceneHierarchyPanel->GetSelectedEntityID())[(ui32)ECS::ECSComponentType::Transform];
+				const ECS::ECSTransformComponent* transformComponent = SceneManager::GetECSManager()->GetEntityComponents().Get(sceneHierarchyPanel->GetSelectedEntityID()).Read< ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
 
 				if (!Physics::PhysicsManager::GetIsPhysicsActive())
 				{
@@ -75,7 +75,7 @@ namespace BaldLion
 						((reactphysics3d::BoxShape*)componentPhysicsBody->collider->getCollisionShape())->setHalfExtents(Physics::FromGlmVec3(boxSize * 0.5f));
 					}
 
-					Rendering::Renderer::DrawDebugBox(transformComponent->position, boxSize, MathUtils::Vector3UnitY);
+					Rendering::Renderer::DrawDebugBox(transformComponent->position, boxSize, transformComponent->GetTransformMatrix(), MathUtils::Vector3UnitY);
 
 					break;
 
@@ -111,7 +111,7 @@ namespace BaldLion
 						((reactphysics3d::CapsuleShape*)componentPhysicsBody->collider->getCollisionShape())->setHeight(height);						
 					}
 
-					Rendering::Renderer::DrawDebugCapsule(transformComponent->position, radius, height, MathUtils::Vector3UnitY);
+					Rendering::Renderer::DrawDebugCapsule(transformComponent->position, transformComponent->GetTransformMatrix(), radius, height, MathUtils::Vector3UnitY);
 
 					break;
 				}

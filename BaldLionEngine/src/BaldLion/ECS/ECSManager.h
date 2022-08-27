@@ -17,9 +17,11 @@ namespace BaldLion {
 
 		struct ECSTransformHierarchyEntry
 		{
-			ECS::ECSTransformComponent* transformComponent;
 			glm::mat4 parentWorldTransform;
+			ECS::ECSTransformComponent* transformComponent;
+			ECSEntityID entityID;
 			i32 parentIndex;
+			bool hasChanged;
 		};
 
 		class ECSManager {
@@ -39,7 +41,7 @@ namespace BaldLion {
 
 			//Components
 			template <typename T, typename... Args >
-			T* AddComponent(ECSComponentType componentID, Args&&... args);
+			T* CreateComponent(ECSComponentType componentID, Args&&... args);
 			void AddComponentToEntity(ECSEntityID entityID, ECSComponent* component);
 			void RemoveComponentFromEntity(ECSComponentType componentID, ECSEntityID entityID);
 
@@ -48,8 +50,9 @@ namespace BaldLion {
 			void RemoveSystem(ECSSystem* system);			
 
 			//Hierarchy
-			void SetHierarchy(ECSEntityID entityID, ECSEntityID parentID);
-			void GenerateCachedHierarchy();
+			void SetEntityParent(ECSEntityID entityID, ECSEntityID parentID);
+			void GenerateCachedHierarchyRoot();
+			void MarkEntityAsChangedInHierarchy(ECSEntityID entityID);
 
 			//Main loop
 			void StartSystems();
@@ -57,7 +60,6 @@ namespace BaldLion {
 			void UpdateSystems();
 			void FrameEnd();
 			void StopSystems();
-			void UpdateHierarchyTransforms();
 
 			HashTable<ECSEntityID, ECSComponentLookUp>& GetEntityComponents() { return m_entityComponents; }
 			const HashTable<ECSEntityID, ECSComponentLookUp>& GetEntityComponents() const { return m_entityComponents; }
@@ -88,6 +90,7 @@ namespace BaldLion {
 			void InternalRemoveEntity(ECSEntityID entityID);
 
 			void FillCachedHierarchy(ECSEntityID childEntityID, i32 parentIndex);
+			void UpdateHierarchyTransforms();
 
 		private:
 
@@ -122,12 +125,11 @@ namespace BaldLion {
 		}
 
 		template <typename T, typename...Args >
-		T* BaldLion::ECS::ECSManager::AddComponent(ECSComponentType componentType, Args&&... args)
+		T* BaldLion::ECS::ECSManager::CreateComponent(ECSComponentType componentType, Args&&... args)
 		{
 			static_assert(std::is_base_of<ECSComponent, T>::value, "T must inherit from Component");
 			DynamicArray<T>* componentPool = static_cast<DynamicArray<T>*>(m_componentsPool[(ui32)componentType]);
 			return componentPool->EmplaceBack(std::forward<Args>(args)...);
 		}
-
 	}
 }

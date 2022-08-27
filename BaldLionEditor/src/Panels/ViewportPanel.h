@@ -18,9 +18,12 @@ namespace BaldLion {
 
 		protected:
 
+			glm::mat4 m_staticSelectedLastTransform;
+
 			SceneHierarchyPanel* m_sceneHierarchyPanel;
 			ECS::ECSProjectionCameraComponent* m_viewportCamera;
 			ECS::ECSTransformComponent* m_viewportCameraTransform;
+
 		};
 	}
 }

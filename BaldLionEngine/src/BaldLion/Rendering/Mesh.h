@@ -47,7 +47,7 @@ namespace BaldLion
 
 			void SetVertexBones(const DynamicArray<VertexBone>& vertexBones);
 
-			void GenerateMeshComponent(ECS::ECSManager* ecsManager, bool isStatic, ECS::ECSMeshComponent*& meshComponent, ECS::ECSSkeletonComponent*& skeletonComponent) const ;
+			void GenerateMeshComponent(ECS::ECSManager* ecsManager, bool isStatic, const ECS::ECSTransformComponent* transformComponent, ECS::ECSMeshComponent*& meshComponent, ECS::ECSSkeletonComponent*& skeletonComponent) const ;
 			ECS::ECSSkeletonComponent* GenerateSkeletonComponent(ECS::ECSManager* ecsManager) const;
 
 			ECS::ECSEntityID GenerateEntity(ECS::ECSManager* ecsManager, bool isStatic) const;

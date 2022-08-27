@@ -30,7 +30,7 @@ namespace BaldLion
 			{//Directional Light setup
 
 				ECS::ECSEntityID directionalLight = m_ecsManager->AddEntity("Directional Light");
-				ECS::ECSDirectionalLightComponent* directionalLightComponent = m_ecsManager->AddComponent<ECS::ECSDirectionalLightComponent>(
+				ECS::ECSDirectionalLightComponent* directionalLightComponent = m_ecsManager->CreateComponent<ECS::ECSDirectionalLightComponent>(
 					ECS::ECSComponentType::DirectionalLight,
 					glm::vec3(0.0f),
 					glm::vec3(1.0f),

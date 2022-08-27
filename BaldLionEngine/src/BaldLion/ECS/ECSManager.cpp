@@ -118,9 +118,8 @@ namespace BaldLion
 				InternalRemoveEntity(entitiesIDToRemove[i]);
 			}
 
-			GenerateCachedHierarchy();
-		}
-		
+			GenerateCachedHierarchyRoot();
+		}		
 		
 		void ECSManager::InternalRemoveEntity(ECSEntityID entityID)
 		{
@@ -185,7 +184,7 @@ namespace BaldLion
 				m_systems[i]->OnEntityModified(signature);
 			}
 		}
-
+		
 		void ECSManager::RemoveComponentFromEntity(ECSComponentType componentType, ECSEntityID entityID)
 		{
 			ECSSignature signatureToRemove;
@@ -197,11 +196,11 @@ namespace BaldLion
 			m_entitySignatures.Set(entityID, newSignature);
 
 			ECSComponent* componentToRemove = m_entityComponents.Get(entityID)[(ui32)componentType];
-		
+
 			RemoveComponentFromPool(componentType, componentToRemove);
 
 			m_entityComponents.Get(entityID).Set(componentType, nullptr);
-			
+
 			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
 			{
 				m_systems[i]->OnEntityModified(oldSignature);
@@ -227,7 +226,7 @@ namespace BaldLion
 			}
 		}
 
-		void ECSManager::SetHierarchy(ECSEntityID entityID, ECSEntityID parentID)
+		void ECSManager::SetEntityParent(ECSEntityID entityID, ECSEntityID parentID)
 		{
 			ECSEntity* entity = m_entitiyMap.Get(entityID);
 
@@ -246,7 +245,7 @@ namespace BaldLion
 			entity->SetParentID(parentID);
 		}
 
-		void ECSManager::GenerateCachedHierarchy()
+		void ECSManager::GenerateCachedHierarchyRoot()
 		{
 			m_cachedEntityHierarchy.Clear();
 
@@ -256,11 +255,11 @@ namespace BaldLion
 
 				if (entity->GetChildrenIDs().Size() > 0 && entity->GetParentID() == 0)
 				{
-					ECS::ECSTransformComponent* transformComponent = (ECS::ECSTransformComponent*)m_entityComponents.Get(entity->GetEntityID())[(ui32)ECSComponentType::Transform];
+					ECS::ECSTransformComponent* transformComponent = m_entityComponents.Get(entity->GetEntityID()).Write<ECS::ECSTransformComponent>(ECSComponentType::Transform);
 
 					ui32 currentCachedHierarchySize = m_cachedEntityHierarchy.Size();
 
-					m_cachedEntityHierarchy.PushBack({ transformComponent, glm::mat4(1.0f), -1 });
+					m_cachedEntityHierarchy.PushBack({glm::mat4(1.0f), transformComponent, entity->GetEntityID() , -1, false });
 
 					BL_DYNAMICARRAY_FOREACH(it.GetValue()->GetChildrenIDs())
 					{
@@ -273,18 +272,92 @@ namespace BaldLion
 		void ECSManager::FillCachedHierarchy(ECSEntityID childEntityID, i32 parentIndex)
 		{					
 			ECSEntity* entity = m_entitiyMap.Get(childEntityID);
-			ECS::ECSTransformComponent* transformComponent = (ECS::ECSTransformComponent*)m_entityComponents.Get(entity->GetEntityID())[(ui32)ECSComponentType::Transform];
+			ECS::ECSTransformComponent* transformComponent = m_entityComponents.Get(entity->GetEntityID()).Write<ECS::ECSTransformComponent>(ECSComponentType::Transform);
 
 			glm::mat4 parentWorldMatrix = m_cachedEntityHierarchy[parentIndex].transformComponent->GetTransformMatrix();			
 
 			ui32 currentCachedHierarchySize = m_cachedEntityHierarchy.Size();
-			m_cachedEntityHierarchy.PushBack({ transformComponent, parentWorldMatrix, parentIndex });
+			m_cachedEntityHierarchy.PushBack({ parentWorldMatrix, transformComponent, childEntityID, parentIndex, false});
 
 			BL_DYNAMICARRAY_FOREACH(entity->GetChildrenIDs())
 			{
 				if (entity->GetChildrenIDs().Size() > 0)
 				{
 					FillCachedHierarchy(entity->GetChildrenIDs()[i], currentCachedHierarchySize);
+				}
+			}
+		}
+
+		void ECSManager::UpdateHierarchyTransforms()
+		{
+			BL_DYNAMICARRAY_FOREACH(m_cachedEntityHierarchy)
+			{
+				if (m_cachedEntityHierarchy[i].parentIndex > -1 && m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].hasChanged)
+				{
+					ECS::ECSTransformComponent* transformComponent = m_cachedEntityHierarchy[i].transformComponent;
+
+					const glm::mat4 transformMatrix = transformComponent->GetTransformMatrix();
+
+					const glm::mat4 relativeToParentTransform = glm::inverse(m_cachedEntityHierarchy[i].parentWorldTransform) * transformMatrix;
+					const glm::mat4 parentWorldTransform = m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].transformComponent->GetTransformMatrix();
+					const glm::mat4 newWorldTransform = parentWorldTransform * relativeToParentTransform;
+
+					glm::vec3 deltaPosition;
+					glm::quat deltaRotationQuat;
+					glm::vec3 deltaScale;
+					glm::vec3 skew;
+					glm::vec4 perspective;
+					glm::decompose(newWorldTransform, deltaScale, deltaRotationQuat, deltaPosition, skew, perspective);
+
+					transformComponent->position = deltaPosition;
+					transformComponent->rotation = glm::eulerAngles(deltaRotationQuat);
+					transformComponent->scale = deltaScale;
+
+					m_cachedEntityHierarchy[i].parentWorldTransform = parentWorldTransform;
+					m_cachedEntityHierarchy[i].hasChanged = true;
+
+					//Mesh update
+					{
+						ECS::ECSMeshComponent* meshComponent = m_entityComponents.Get(m_cachedEntityHierarchy[i].entityID).Write<ECS::ECSMeshComponent>(ECSComponentType::Mesh);
+
+						//Static meshes need to update their vertices
+						if (meshComponent != nullptr && meshComponent->isStatic)
+						{
+							BL_DYNAMICARRAY_FOREACH(meshComponent->vertices)
+							{
+								meshComponent->vertices[i] = meshComponent->vertices[i] * glm::inverse(transformMatrix);
+								meshComponent->vertices[i] = meshComponent->vertices[i] * transformComponent->GetTransformMatrix();
+							}
+						}
+
+						meshComponent->UpdateLocalBoundingBox();
+					}
+
+					//Physic body update
+					{
+						/*ECS::ECSPhysicsBodyComponent* physicsBodyComponent = m_entityComponents.Get(m_cachedEntityHierarchy[i].entityID).Write<ECS::ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);
+
+
+						physicsBodyComponent->rigidBody->getTransform().setPosition(BaldLion::Physics::FromGlmVec3(transformComponent->position));*/
+					}
+				}
+			}
+
+			//Restoring hasChanged values
+			BL_DYNAMICARRAY_FOREACH(m_cachedEntityHierarchy)
+			{
+				m_cachedEntityHierarchy[i].hasChanged = false;
+			}
+		}
+
+		void ECSManager::MarkEntityAsChangedInHierarchy(ECSEntityID entityID) 
+		{
+			BL_DYNAMICARRAY_FOREACH(m_cachedEntityHierarchy)
+			{
+				if (m_cachedEntityHierarchy[i].entityID == entityID)
+				{
+					m_cachedEntityHierarchy[i].hasChanged = true;
+					break;
 				}
 			}
 		}
@@ -337,34 +410,11 @@ namespace BaldLion
 			{
 				m_systems[i]->OnFrameEnd();
 			}
+
+			UpdateHierarchyTransforms();
 		}
 
-		void ECSManager::UpdateHierarchyTransforms()
-		{
-			BL_DYNAMICARRAY_FOREACH(m_cachedEntityHierarchy)
-			{
-				if (m_cachedEntityHierarchy[i].parentIndex > -1) 
-				{
-					ECS::ECSTransformComponent* transformComponent = m_cachedEntityHierarchy[i].transformComponent;
-					const glm::mat4 relativeToParentTransform = glm::inverse(m_cachedEntityHierarchy[i].parentWorldTransform) * transformComponent->GetTransformMatrix();
-					const glm::mat4 parentWorldTransform = m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].transformComponent->GetTransformMatrix();
-					const glm::mat4 newWorldTransform = parentWorldTransform * relativeToParentTransform;
-
-					glm::vec3 deltaPosition;
-					glm::quat deltaRotationQuat;
-					glm::vec3 deltaScale;
-					glm::vec3 skew;
-					glm::vec4 perspective;
-					glm::decompose(newWorldTransform, deltaScale, deltaRotationQuat, deltaPosition, skew, perspective);
-
-					transformComponent->position = deltaPosition;
-					transformComponent->rotation = glm::eulerAngles(deltaRotationQuat);
-					transformComponent->scale = deltaScale;					
-
-					m_cachedEntityHierarchy[i].parentWorldTransform = parentWorldTransform;
-				}
-			}
-		}
+		
 
 
 		//---------------------------------------------------------------------------------------------------

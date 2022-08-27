@@ -168,47 +168,37 @@ namespace BaldLion
 			if (m_materialProperties.ambientTex != nullptr)
 			{
 				m_shader->SetUniform(UNIFORM_AMBIENT_TEX, ShaderDataType::Int, &m_ambientTexSlot);
+				m_materialProperties.ambientTex->Bind(m_ambientTexSlot);
 			}
 			m_shader->SetUniform(UNIFORM_USE_AMBIENT_TEX, ShaderDataType::Int, &m_useAmbientTex);
 
 			if (m_materialProperties.diffuseTex != nullptr)
 			{
 				m_shader->SetUniform(UNIFORM_DIFFUSE_TEX, ShaderDataType::Int, &m_diffuseTexSlot);
+				m_materialProperties.diffuseTex->Bind(m_diffuseTexSlot);
 			}
 			m_shader->SetUniform(UNIFORM_USE_DIFFUSE_TEX, ShaderDataType::Int, &m_useDiffuseTex);
 
 			if (m_materialProperties.emissiveTex != nullptr)
 			{
 				m_shader->SetUniform(UNIFORM_EMISSIVE_TEX, ShaderDataType::Int, &m_emissiveTexSlot);
+				m_materialProperties.emissiveTex->Bind(m_emissiveTexSlot);
 			}
 			m_shader->SetUniform(UNIFORM_USE_EMISSIVE_TEX, ShaderDataType::Int, &m_useEmissiveTex);
 
 			if (m_materialProperties.specularTex != nullptr)
 			{
 				m_shader->SetUniform(UNIFORM_SPECULAR_TEX, ShaderDataType::Int, &m_specularTexSlot);
+				m_materialProperties.specularTex->Bind(m_specularTexSlot);
 			}
 			m_shader->SetUniform(UNIFORM_USE_SPECULAR_TEX, ShaderDataType::Int, &m_useSpecularTex);
 
 			if (m_materialProperties.normalTex != nullptr)
 			{
 				m_shader->SetUniform(UNIFORM_NORMAL_TEX, ShaderDataType::Int, &m_normalTexSlot);
+				m_materialProperties.normalTex->Bind(m_normalTexSlot);
 			}
 			m_shader->SetUniform(UNIFORM_USE_NORMAL_TEX, ShaderDataType::Int, &m_useNormalTex);
-
-			if (m_materialProperties.ambientTex != nullptr)
-				m_materialProperties.ambientTex->Bind(m_ambientTexSlot);
-
-			if (m_materialProperties.diffuseTex != nullptr)
-				m_materialProperties.diffuseTex->Bind(m_diffuseTexSlot);
-
-			if (m_materialProperties.emissiveTex != nullptr)
-				m_materialProperties.emissiveTex->Bind(m_emissiveTexSlot);
-
-			if (m_materialProperties.specularTex != nullptr)
-				m_materialProperties.specularTex->Bind(m_specularTexSlot);
-
-			if (m_materialProperties.normalTex != nullptr)
-				m_materialProperties.normalTex->Bind(m_normalTexSlot);
 		}
 
 		void OpenGLMaterial::Unbind() const

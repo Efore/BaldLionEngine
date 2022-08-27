@@ -9,7 +9,7 @@ namespace BaldLion {
 		{
 		public:
 			ECSRenderSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager) :
-				ECSSystem(systemName, signature, ecsManager, true, true) {}
+				ECSSystem(systemName, signature, ecsManager, false, false) {}
 			
 			virtual void OnStart() override {};
 			virtual void OnUpdate() override;

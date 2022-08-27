@@ -3123,6 +3123,49 @@ namespace dd
 		box(DD_EXPLICIT_CONTEXT_ONLY(ctx, ) points, color, durationMillis, depthEnabled);
 	}
 
+	void box(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx, ) ddVec3_In center, ddMat4x4_In transformMatrix, ddVec3_In color, const float width,
+		const float height, const float depth, const int durationMillis, const bool depthEnabled)
+	{
+		if (!isInitialized(DD_EXPLICIT_CONTEXT_ONLY(ctx)))
+		{
+			return;
+		}
+
+		const float cx = center[X];
+		const float cy = center[Y];
+		const float cz = center[Z];
+		const float w = width * 0.5f;
+		const float h = height * 0.5f;
+		const float d = depth * 0.5f;
+
+		// Create all the 8 points:
+		ddVec3 points[8];
+#define DD_BOX_V(v, op1, op2, op3) \
+    v[X] = cx op1 w; \
+    v[Y] = cy op2 h; \
+    v[Z] = cz op3 d
+		DD_BOX_V(points[0], -, +, +);
+		DD_BOX_V(points[1], -, +, -);
+		DD_BOX_V(points[2], +, +, -);
+		DD_BOX_V(points[3], +, +, +);
+		DD_BOX_V(points[4], -, -, +);
+		DD_BOX_V(points[5], -, -, -);
+		DD_BOX_V(points[6], +, -, -);
+		DD_BOX_V(points[7], +, -, +);
+#undef DD_BOX_V
+
+		for (uint32_t i = 0; i < 8; ++i)
+		{
+			ddVec3 result;
+			matTransformPointXYZ(result, points[i], transformMatrix);
+			points[i][X] = result[X];
+			points[i][Y] = result[Y];
+			points[i][Z] = result[Z];
+		}
+
+		box(DD_EXPLICIT_CONTEXT_ONLY(ctx, ) points, color, durationMillis, depthEnabled);
+	}
+
 	void aabb(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx, ) ddVec3_In mins, ddVec3_In maxs,
 		ddVec3_In color, const int durationMillis, const bool depthEnabled)
 	{

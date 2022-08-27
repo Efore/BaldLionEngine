@@ -10,7 +10,7 @@ namespace BaldLion {
 
 		public:
 
-			ECSEntity(const char* entityName, ECSEntityID entityID) : m_entityName(BL_STRING_TO_STRINGID(entityName)), m_entityID(entityID), m_parentID(0)
+			ECSEntity(const char* entityName, ECSEntityID entityID) : m_entityName(BL_STRING_TO_STRINGID(entityName)), m_entityID(entityID), m_parentID(0), m_isStatic(false)
 			{
 				m_childrenIDs = DynamicArray<ECSEntityID>(MemoryManager::GetAllocatorType(this), 5);
 			}
@@ -23,15 +23,21 @@ namespace BaldLion {
 			void SetParentID(ECSEntityID parentID) { m_parentID = parentID; }
 			ECSEntityID GetParentID() const { return m_parentID; }
 
+			bool GetIsStatic() const { return m_isStatic; }
+			void SetIsStatic(bool isStatic) { m_isStatic = isStatic; }
+
 			const DynamicArray<ECSEntityID>& GetChildrenIDs() const { return m_childrenIDs; }
 			DynamicArray<ECSEntityID>& GetChildrenIDs() { return m_childrenIDs; }
 
 		private: 
+
 			StringId m_entityName;
 			ECSEntityID m_entityID;
 
 			ECSEntityID m_parentID;
 			DynamicArray<ECSEntityID> m_childrenIDs;
+
+			bool m_isStatic;
 
 			friend class ECSManager;
 		};

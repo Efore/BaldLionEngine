@@ -82,7 +82,6 @@ namespace BaldLion {
 			boundingBoxPoints[6] = glm::vec4(localBoundingBox.minPoint.x, localBoundingBox.maxPoint.y, localBoundingBox.minPoint.z, 1.0f);
 			boundingBoxPoints[7] = glm::vec4(localBoundingBox.maxPoint, 1.0f);
 
-
 			float minX = FLT_MAX;
 			float minY = FLT_MAX;
 			float minZ = FLT_MAX;
@@ -104,7 +103,7 @@ namespace BaldLion {
 				maxZ = glm::max(boundingBoxPoints[i].z, maxZ);
 			}
 
-			return { glm::vec3(minX,minY,minZ), glm::vec3(maxX,maxY,maxZ) };
+			return { glm::vec3(minX,minY,minZ), glm::vec3(maxX,maxY,maxZ),  (glm::vec3(minX,minY,minZ) + glm::vec3(maxX,maxY,maxZ)) * 0.5f };
 		}
 
 		

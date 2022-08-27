@@ -58,7 +58,6 @@ namespace BaldLion {
 		{
 			if (m_ecsManager != nullptr) {
 				m_ecsManager->FrameEnd();
-				m_ecsManager->UpdateHierarchyTransforms();
 			}
 		}
 

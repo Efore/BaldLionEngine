@@ -24,7 +24,6 @@ namespace BaldLion {
 		
 		}
 
-
 		EditorViewportPanel::~EditorViewportPanel()
 		{
 			if (m_viewportCameraTransform) 
@@ -65,9 +64,7 @@ namespace BaldLion {
 		}
 
 		void EditorViewportPanel::OnImGuiRender()
-		{
-			m_isManipulatingGizmo = false;
-
+		{		
 			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
 			m_panelID = ImGui::GetCurrentWindow()->ID;
 
@@ -131,24 +128,63 @@ namespace BaldLion {
 			if (SceneManager::GetECSManager()->GetEntityComponents().TryGet(selectedEntityID, selectedEntityComponents))
 			{
 				ECS::ECSTransformComponent* entityTransformComponent = selectedEntityComponents.Write<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
+
 				if (entityTransformComponent)
-				{
-					glm::mat4 entityTransformMat = entityTransformComponent->GetTransformMatrix();
+				{	
+					ECS::ECSEntity* entity = SceneManager::GetECSManager()->GetEntityMap().Get(selectedEntityID);
+
+					const glm::mat4 preManipulationMat = entityTransformComponent->GetTransformMatrix();
+					glm::mat4 manipulationMat = entityTransformComponent->GetTransformMatrix();
 					
-					ImGuizmo::Manipulate(glm::value_ptr(m_cameraView), glm::value_ptr(m_cameraProjection), (ImGuizmo::OPERATION)m_imGuizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(entityTransformMat));
+					ImGuizmo::Manipulate(glm::value_ptr(m_cameraView), glm::value_ptr(m_cameraProjection), (ImGuizmo::OPERATION)m_imGuizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(manipulationMat));
 
 					if (ImGuizmo::IsUsing())
 					{
-						m_isManipulatingGizmo = true;
+						if (!m_isManipulatingGizmo)
+						{
+							m_staticSelectedLastTransform = preManipulationMat;
+							m_isManipulatingGizmo = true;
+						}
+
 						glm::vec3 translation, rotation, scale;
-						MathUtils::DecomposeTransformMatrix(entityTransformMat, translation, rotation, scale);
+						MathUtils::DecomposeTransformMatrix(manipulationMat, translation, rotation, scale);
 
 						glm::vec3 deltaRotation = rotation - entityTransformComponent->rotation;
 						
 						entityTransformComponent->position = translation;
 						entityTransformComponent->rotation += deltaRotation;
-						entityTransformComponent->scale = scale;						
+						entityTransformComponent->scale = scale;	
+
+						if (!entity->GetIsStatic())
+						{
+							m_isManipulatingGizmo = false;
+							SceneManager::GetECSManager()->MarkEntityAsChangedInHierarchy(selectedEntityID);
+						}
 					}	
+					else if (entity->GetIsStatic() && m_isManipulatingGizmo)
+					{
+						ECS::ECSMeshComponent* entityMeshComponent = SceneManager::GetECSManager()->GetEntityComponents().Get(entity->GetEntityID()).Write< ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh);
+
+						m_isManipulatingGizmo = false;
+								
+						if (entityMeshComponent != nullptr)
+						{
+							const glm::mat4 newMatrixAfterManipulation = entityTransformComponent->GetTransformMatrix();
+
+							BL_DYNAMICARRAY_FOR(i, entityMeshComponent->vertices, 0)
+							{
+								//Returning  vertices to original values
+								entityMeshComponent->vertices[i] = entityMeshComponent->vertices[i] * glm::inverse(m_staticSelectedLastTransform);
+
+								//New values
+								entityMeshComponent->vertices[i] = entityMeshComponent->vertices[i] * newMatrixAfterManipulation;
+							}
+
+							entityMeshComponent->UpdateLocalBoundingBox();
+						}
+
+						SceneManager::GetECSManager()->MarkEntityAsChangedInHierarchy(selectedEntityID);							
+					}					
 				}
 			}			
 			
@@ -178,10 +214,10 @@ namespace BaldLion {
 				}
 			}
 			
-			if (!m_isManipulatingGizmo && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			/*if (!m_isManipulatingGizmo && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 			{
 				CheckSelectEntity();
-			}
+			}*/
 
 			MoveViewportCamera();			
 		}
@@ -264,11 +300,11 @@ namespace BaldLion {
 				
 				BL_HASHTABLE_FOR(SceneManager::GetECSManager()->GetEntityComponents(), it)
 				{
-					ECS::ECSMeshComponent* meshComponent = (ECS::ECSMeshComponent*)it.GetValue()[(ui32)ECS::ECSComponentType::Mesh];
+					const ECS::ECSMeshComponent* meshComponent = it.GetValue().Read<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh);
 
 					if (meshComponent != nullptr)
 					{
-						ECS::ECSTransformComponent* transform = (ECS::ECSTransformComponent*)it.GetValue()[(ui32)ECS::ECSComponentType::Transform];
+						const ECS::ECSTransformComponent* transform = it.GetValue().Read< ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
 
 						const BoundingBox meshAABB = GeometryUtils::GetAABB(meshComponent->localBoundingBox, transform->GetTransformMatrix());												
 

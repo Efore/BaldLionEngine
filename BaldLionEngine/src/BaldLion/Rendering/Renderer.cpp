@@ -41,11 +41,6 @@ namespace BaldLion
 
 		glm::mat4 Renderer::s_lightViewProjection;
 
-		//Mutexes
-		std::mutex Renderer::s_geometryToBatchMutex;
-		std::mutex Renderer::s_dynamicMeshesToRenderMutex;		
-		std::mutex Renderer::s_shadowCastingMeshesMutex;
-
 		void Renderer::Init(ui32 width, ui32 height)
 		{
 			BL_PROFILE_FUNCTION();
@@ -83,7 +78,7 @@ namespace BaldLion
 			s_shadowCastingMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
 			s_disposableVertexArrays = DynamicArray<VertexArray*>(AllocationType::FreeList_Renderer, 100);
 			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::FreeList_Renderer, 100);
-			s_scheduledDebugDrawCommands = DynamicArray<std::function<void()>>(AllocationType::FreeList_Renderer, 100);			
+			s_scheduledDebugDrawCommands = DynamicArray<std::function<void()>>(AllocationType::FreeList_Renderer, 1000);			
 
 			s_debugDrawRender = DebugDrawRenderProvider::Create();
 			s_debugDrawRender->Init();
@@ -380,27 +375,6 @@ namespace BaldLion
 			s_scheduledDebugDrawCommands.Clear();
 		}
 
-		void Renderer::ParallelAddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
-		{
-			std::lock_guard<std::mutex> addDynamicMeshesGuard(s_dynamicMeshesToRenderMutex);
-
-			AddDynamicMesh(meshComponent, meshTransform, skeletonComponent);
-		}
-
-		void Renderer::ParallelAddStaticMeshToBatch(Material* material, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices)
-		{
-			std::lock_guard<std::mutex> addStaticMeshGuard(s_geometryToBatchMutex);
-
-			AddStaticMeshToBatch(material, vertices, indices);
-		}
-
-		void Renderer::ParallelAddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
-		{
-			std::lock_guard<std::mutex> shadowCastingGuard(s_shadowCastingMeshesMutex);
-			
-			AddShadowCastingMesh(meshComponent, meshTransform, skeletonComponent);
-		}
-
 		void Renderer::AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
 		{
 			BL_PROFILE_FUNCTION();
@@ -445,8 +419,6 @@ namespace BaldLion
 
 		void Renderer::RegisterMaterial(Material* material)
 		{
-			std::lock_guard<std::mutex> addStaticMeshGuard(s_geometryToBatchMutex);
-
 			GeometryData* batch = nullptr;
 
 			if (!s_geometryToBatch.TryGet(material, batch))
@@ -460,11 +432,11 @@ namespace BaldLion
 			}
 		}
 		
-		void Renderer::DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::vec3& color, int durationMs, bool depthEnabled /*= true*/)
+		void Renderer::DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::mat4& transformMatrix, const glm::vec3& color, int durationMs, bool depthEnabled /*= true*/)
 		{
-			ScheduleDebugDrawCommand([center, color, size, durationMs, depthEnabled]
+			ScheduleDebugDrawCommand([center, transformMatrix, color, size, durationMs, depthEnabled]
 			{
-				dd::box((float*)&center, (float*)&color, size[0], size[1], size[2], durationMs, depthEnabled);
+				dd::box((float*)&center, (float*)&transformMatrix, (float*)&color, size[0], size[1], size[2], durationMs, depthEnabled);
 			});
 		}
 
@@ -476,31 +448,33 @@ namespace BaldLion
 			});
 		}
 
-
-		void Renderer::DrawDebugCapsule(const glm::vec3& center, float radius, float height, const glm::vec3& color, int durationMs /*= 0*/, bool depthEnabled /*= true*/)
+		void Renderer::DrawDebugCapsule(const glm::vec3& center, const glm::mat4& transformMatrix, float radius, float height, const glm::vec3& color, int durationMs /*= 0*/, bool depthEnabled /*= true*/)
 		{
-			ScheduleDebugDrawCommand([center, radius, height, color, durationMs, depthEnabled]
+			glm::vec3 transformedCenter = transformMatrix * glm::vec4(center, 1.0f);
+			glm::vec3 circleNormal = transformMatrix * glm::vec4(MathUtils::Vector3UnitY, 1.0f);
+
+			ScheduleDebugDrawCommand([transformedCenter, circleNormal, radius, height, color, durationMs, depthEnabled]
 			{
-				glm::vec3 position = center +  MathUtils::Vector3UnitY * ((height * 0.5f) - radius);
+				glm::vec3 position = transformedCenter + circleNormal * ((height * 0.5f) - radius);
 				dd::sphere((float*)&position, (float*)&color, radius, durationMs, depthEnabled);
 			});
 
 			ui32 numCircles = (ui32)(height / 0.5f);
 
-			glm::vec3 circlesStartPosition = center - MathUtils::Vector3UnitY * ((height * 0.5f) - radius);
+			glm::vec3 circlesStartPosition = transformedCenter - circleNormal * ((height * 0.5f) - radius);
+
 			for (ui32 i = 0; i < numCircles; ++i)
 			{
-				circlesStartPosition += MathUtils::Vector3UnitY * (i * 0.5f);
-				ScheduleDebugDrawCommand([center, radius, color, durationMs, depthEnabled]
-				{
-					glm::vec3 circleNormal = MathUtils::Vector3UnitY;
-					dd::circle((float*)&center, (float*)&circleNormal, (float*)&color, radius, 32, durationMs, depthEnabled);
+				circlesStartPosition += circleNormal * (i * 0.5f);
+				ScheduleDebugDrawCommand([transformedCenter, circleNormal, radius, color, durationMs, depthEnabled]
+				{					
+					dd::circle((float*)&transformedCenter, (float*)&circleNormal, (float*)&color, radius, 32, durationMs, depthEnabled);
 				});
 			}
 
-			ScheduleDebugDrawCommand([center, radius, height, color, durationMs, depthEnabled]
+			ScheduleDebugDrawCommand([transformedCenter, circleNormal, radius, height, color, durationMs, depthEnabled]
 			{
-				glm::vec3 position = center - MathUtils::Vector3UnitY * ((height * 0.5f) - radius);
+				glm::vec3 position = transformedCenter - circleNormal * ((height * 0.5f) - radius);
 				dd::sphere((float*)&position, (float*)&color, radius, durationMs, depthEnabled);
 			});
 
@@ -512,11 +486,11 @@ namespace BaldLion
 			{
 				if (arrow) 
 				{
-					dd::line((float*)&from, (float*)&to, (float*)&color, durationMs, depthEnabled);
+					dd::arrow((float*)&from, (float*)&to, (float*)&color, 1.0f, durationMs, depthEnabled);
 				}
 				else 
 				{
-					dd::arrow((float*)&from, (float*)&to, (float*)&color, 1.0f, durationMs, depthEnabled);
+					dd::line((float*)&from, (float*)&to, (float*)&color, durationMs, depthEnabled);
 				}				
 			});
 		}

@@ -15,6 +15,7 @@ using namespace BaldLion::ECS;
 #define YAML_KEY_SCENEID			"SceneID"
 #define YAML_KEY_ENTITIES			"Entities"
 #define YAML_KEY_ENTITYNAME			"EntityName"
+#define YAML_KEY_ENTITYISSTATIC		"EntityIsStatic"
 #define YAML_KEY_COMPONENTS			"Components"
 #define YAML_KEY_COMPONENTTYPE		"ComponentType"
 
@@ -109,7 +110,7 @@ namespace BaldLion
 				}
 			}
 
-			SceneManager::GetECSManager()->GenerateCachedHierarchy();
+			SceneManager::GetECSManager()->GenerateCachedHierarchyRoot();
 
 			return true;
 		}
@@ -118,6 +119,8 @@ namespace BaldLion
 		{
 			out << YAML::BeginMap;
 			out << YAML::Key << YAML_KEY_ENTITYNAME << YAML::Value << BL_STRINGID_TO_STR_C(entity->GetEntityName());
+			out << YAML::Key << YAML_KEY_ENTITYISSTATIC << YAML::Value << entity->GetIsStatic();
+
 			out << YAML::Key << YAML_KEY_COMPONENTS << YAML::Value << YAML::BeginSeq;
 
 			ECS::ECSComponentLookUp entityComponentLookUp;
@@ -151,7 +154,8 @@ namespace BaldLion
 		void SceneSerializer::DeserializeEntity(const YAML::detail::iterator_value& yamlEntity)
 		{
 			std::string entityName = yamlEntity[YAML_KEY_ENTITYNAME].as<std::string>();
-
+			bool isStatic = yamlEntity[YAML_KEY_ENTITYISSTATIC].as<bool>();
+				
 			ECS::ECSEntityID entityID = SceneManager::GetECSManager()->AddEntity(entityName.c_str());
 
 			auto components = yamlEntity[YAML_KEY_COMPONENTS];
@@ -163,7 +167,9 @@ namespace BaldLion
 					DeserializeComponent(entityID, component);
 				}
 			}
+
 			ECS::ECSEntity* entity = SceneManager::GetECSManager()->GetEntityMap().Get(entityID);
+			entity->SetIsStatic(isStatic);
 
 			ECSEntityID parentEntityID = yamlEntity[YAML_KEY_PARENTID].as<ECSEntityID>();
 			entity->SetParentID(parentEntityID);
@@ -284,7 +290,7 @@ namespace BaldLion
 				glm::vec3 rotation = DeserializeVec3(yamlComponent, YAML_KEY_ROTATION);
 				glm::vec3 scale = DeserializeVec3(yamlComponent, YAML_KEY_SCALE);
 
-				component = SceneManager::GetECSManager()->AddComponent<ECSTransformComponent>(
+				component = SceneManager::GetECSManager()->CreateComponent<ECSTransformComponent>(
 					ECSComponentType::Transform,
 					position,
 					rotation,
@@ -302,7 +308,7 @@ namespace BaldLion
 				float nearPlane = yamlComponent[YAML_KEY_CAMERANEARPLANE].as<float>();
 				float farPlane = yamlComponent[YAML_KEY_CAMERAFARPLANE].as<float>();
 
-				component = SceneManager::GetECSManager()->AddComponent<ECSProjectionCameraComponent>(
+				component = SceneManager::GetECSManager()->CreateComponent<ECSProjectionCameraComponent>(
 					ECSComponentType::ProjectionCamera,
 					fov,
 					width,
@@ -321,7 +327,9 @@ namespace BaldLion
 
 				ECSMeshComponent* meshComponent = nullptr;
 				ECSSkeletonComponent* skeletonComponent = nullptr;
-				mesh->GenerateMeshComponent(SceneManager::GetECSManager(), isStatic, meshComponent, skeletonComponent);
+
+				const ECSTransformComponent* transformComponent = SceneManager::GetECSManager()->GetEntityComponents().Get(entityID).Read<ECSTransformComponent>(ECSComponentType::Transform);
+				mesh->GenerateMeshComponent(SceneManager::GetECSManager(), isStatic, transformComponent, meshComponent, skeletonComponent);
 				component = meshComponent;
 			}
 				break;
@@ -341,7 +349,7 @@ namespace BaldLion
 				glm::vec3 specularColor = DeserializeVec3(yamlComponent, YAML_KEY_SPECULARCOLOR);
 				glm::vec3 direction = DeserializeVec3(yamlComponent, YAML_KEY_LIGHTDIRECTION);
 
-				component = SceneManager::GetECSManager()->AddComponent<ECS::ECSDirectionalLightComponent>(
+				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSDirectionalLightComponent>(
 					ECS::ECSComponentType::DirectionalLight,
 					ambientColor,
 					diffuseColor,
@@ -360,7 +368,7 @@ namespace BaldLion
 				StringId animatorID = yamlComponent[YAML_KEY_ANIMATOR_PATH].as<StringId>();
 				StringId initAnimationID = Animation::AnimationManager::GetAnimator(animatorID)->GetInitialAnimationID();
 
-				component = SceneManager::GetECSManager()->AddComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentType::Animation, animatorID, initAnimationID);					
+				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentType::Animation, animatorID, initAnimationID);
 			}
 				break;
 
@@ -375,7 +383,7 @@ namespace BaldLion
 
 				float mass = yamlComponent[YAML_KEY_PHYSICS_MASS].as<float>();
 
-				component = SceneManager::GetECSManager()->AddComponent<ECSPhysicsBodyComponent>(ECS::ECSComponentType::PhysicsBody, shape, bodyType, colliderSize, position, rotation, mass);
+				component = SceneManager::GetECSManager()->CreateComponent<ECSPhysicsBodyComponent>(ECS::ECSComponentType::PhysicsBody, shape, bodyType, colliderSize, position, rotation, mass);
 			}
 			break;
 

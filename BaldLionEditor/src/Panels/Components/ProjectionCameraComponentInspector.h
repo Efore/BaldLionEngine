@@ -33,7 +33,8 @@ namespace BaldLion
 
 				if (showDebugFrustrum && sceneHierarchyPanel->GetSelectedEntityID() > 0)
 				{
-					ECS::ECSTransformComponent* entityTransformComponent = (ECS::ECSTransformComponent*)SceneManager::GetECSManager()->GetEntityComponents().Get(sceneHierarchyPanel->GetSelectedEntityID())[(ui32)ECS::ECSComponentType::Transform];
+					const ECS::ECSTransformComponent* entityTransformComponent = 
+						SceneManager::GetECSManager()->GetEntityComponents().Get(sceneHierarchyPanel->GetSelectedEntityID()).Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
 
 					const glm::mat4 viewMatrix = glm::inverse(entityTransformComponent->GetTransformMatrix());
 

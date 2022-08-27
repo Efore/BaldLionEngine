@@ -48,8 +48,10 @@ namespace BaldLion
 				return result;
 			}
 
-			static void DrawVec3Handler(char const* label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f, bool adjustable = true)
+			static bool DrawVec3Handler(char const* label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f, bool editable = true)
 			{
+				bool isActive = false;
+
 				ImGuiIO& io = ImGui::GetIO();
 				auto boldFont = io.Fonts->Fonts[0];
 
@@ -74,9 +76,10 @@ namespace BaldLion
 				
 				if (ImGui::Button("X", buttonSize))
 				{
-					if (adjustable)
+					if (editable)
 					{
 						values.x = resetValue;
+						isActive = true;
 					}
 				}				
 
@@ -85,9 +88,13 @@ namespace BaldLion
 
 				ImGui::SameLine();
 
-				if (adjustable)
+				if (editable)
 				{
 					ImGui::DragFloat("##x", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+					if (ImGui::IsItemActive())
+					{
+						isActive = true;
+					}
 				}
 				else 
 				{
@@ -104,9 +111,10 @@ namespace BaldLion
 
 				if (ImGui::Button("Y", buttonSize))
 				{
-					if (adjustable)
+					if (editable)
 					{
 						values.y = resetValue;
+						isActive = true;
 					}
 				}
 
@@ -115,9 +123,13 @@ namespace BaldLion
 
 				ImGui::SameLine();
 
-				if (adjustable)
+				if (editable)
 				{
 					ImGui::DragFloat("##y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
+					if (ImGui::IsItemActive())
+					{
+						isActive = true;
+					}
 				}
 				else 
 				{
@@ -134,9 +146,10 @@ namespace BaldLion
 
 				if (ImGui::Button("Z", buttonSize))
 				{
-					if (adjustable)
+					if (editable)
 					{
 						values.z = resetValue;
+						isActive = true;
 					}
 				}
 
@@ -145,9 +158,13 @@ namespace BaldLion
 
 				ImGui::SameLine();
 
-				if (adjustable)
+				if (editable)
 				{
 					ImGui::DragFloat("##z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
+					if (ImGui::IsItemActive())
+					{
+						isActive = true;
+					}
 				}
 				else
 				{
@@ -161,6 +178,8 @@ namespace BaldLion
 				ImGui::Columns(1);
 
 				ImGui::PopID();
+
+				return isActive;
 			}
 
 			static bool GetMousePosInWindow( ui32 windowID, glm::vec2& result)

@@ -68,19 +68,15 @@ namespace BaldLion
 
 			inline static RendererPlatformInterface::RendererPlatform GetAPI() { return RendererPlatformInterface::GetAPI(); }
 
-			static void ParallelAddStaticMeshToBatch(Material* material, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);
-			static void ParallelAddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
-			static void ParallelAddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
-
 			static void AddStaticMeshToBatch(Material* material, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);
 			static void AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
 			static void AddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
 
 			static void RegisterMaterial(Material* material);
 
-			static void DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
+			static void DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::mat4& transformMatrix, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebugSphere(const glm::vec3& center, float radius, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
-			static void DrawDebugCapsule(const glm::vec3& center, float radius, float height, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
+			static void DrawDebugCapsule(const glm::vec3& center, const glm::mat4& transformMatrix, float radius, float height, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, bool arrow = false, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebugFrustrum(const glm::mat4& invClipMatrix, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 
@@ -115,10 +111,6 @@ namespace BaldLion
 			static Shader* s_depthMapSkinnedShader;
 
 			static glm::mat4 s_lightViewProjection;
-
-			static std::mutex s_geometryToBatchMutex;
-			static std::mutex s_dynamicMeshesToRenderMutex;
-			static std::mutex s_shadowCastingMeshesMutex;
 		};
 	}
 }
