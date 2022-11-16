@@ -49,8 +49,8 @@ namespace BaldLion
 		void Populate(const T& value);
 		void Populate(T&& value);
 
-		int FindIndex(const T& element);
-		bool Contains(const T& element);
+		int FindIndex(const T& element) const;
+		bool Contains(const T& element) const;
 
 		bool IsEmpty() const { return m_size == 0; }
 
@@ -470,7 +470,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	int BaldLion::DynamicArray<T>::FindIndex(const T& element)
+	int BaldLion::DynamicArray<T>::FindIndex(const T& element) const
 	{
 		for (ui32 i = 0; i < m_size; ++i)
 		{
@@ -483,7 +483,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	bool BaldLion::DynamicArray<T>::Contains(const T& element)
+	bool BaldLion::DynamicArray<T>::Contains(const T& element) const
 	{
 		return FindIndex(element) != -1;
 	}
@@ -562,12 +562,14 @@ namespace BaldLion
 	#define BL_DYNAMICARRAY_FOREACH(dynamicArrayToIterate) \
 		for(ui32 i = 0, size = (dynamicArrayToIterate).Size(); i < size; ++i)
 
+	#define BL_DYNAMICARRAY_INVERSE_FOREACH(dynamicArrayToIterate) \
+		for(i32 i = (dynamicArrayToIterate).Size() - 1; i >= 0; --i)
 
 	#define BL_DYNAMICARRAY_FOR(iteratorName, dynamicArrayToIterate, startValue) \
 		for(ui32 iteratorName = startValue, size = (dynamicArrayToIterate).Size(); iteratorName < size; ++iteratorName)
 
 	#define BL_DYNAMICARRAY_INVERSE_FOR(iteratorName, dynamicArrayToIterate, endValue) \
-		for(ui32 iteratorName = (dynamicArrayToIterate).Size() - 1; iteratorName >= endValue; --iteratorName)
+		for(i32 iteratorName = (dynamicArrayToIterate).Size() - 1; iteratorName >= endValue; --iteratorName)
 
 	#define BL_DYNAMICARRAY_FOR_RANGE(iteratorName, dynamicArrayToIterate, startValue, endValue) \
 		for(ui32 iteratorName = startValue, size = (dynamicArrayToIterate).Size(); iteratorName < size && iteratorName < endValue; ++iteratorName)

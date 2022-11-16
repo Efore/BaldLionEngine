@@ -1,7 +1,6 @@
 #pragma once
 #include "EditorViewportPanel.h"
-#include <BaldLion.h>
-#include <imgui/imgui.h>
+
 #include "ImGuizmo.h"
 #include "EditorUtils.h"
 
@@ -9,6 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/random.hpp>
+#include <BaldLion.h>
 
 namespace BaldLion {
 
@@ -40,7 +40,7 @@ namespace BaldLion {
 		void EditorViewportPanel::SetupViewportCamera()
 		{
 			m_viewportCameraTransform = BaldLion::Memory::MemoryManager::New<ECS::ECSTransformComponent>("Editor camera transform", AllocationType::FreeList_ECS,
-				glm::vec3(0, 5, 180),
+				glm::vec3(0, 10, -50),
 				MathUtils::Vector3Zero,
 				glm::vec3(1.0f));
 
@@ -56,7 +56,7 @@ namespace BaldLion {
 
 			m_prevX = 0.0f;
 			m_prevY = 0.0f;
-			m_cameraYaw = 0.0f;
+			m_cameraYaw = 180.0f;
 			m_cameraPitch = 0.0f;
 
 			ECS::SingletonComponents::ECSProjectionCameraSingleton::Init();
@@ -186,7 +186,11 @@ namespace BaldLion {
 						SceneManager::GetECSManager()->MarkEntityAsChangedInHierarchy(selectedEntityID);							
 					}					
 				}
-			}			
+			}	
+			else 
+			{
+				m_isManipulatingGizmo = false;
+			}
 			
 			ImGui::End();			
 		
@@ -214,10 +218,10 @@ namespace BaldLion {
 				}
 			}
 			
-			/*if (!m_isManipulatingGizmo && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			if (!m_isManipulatingGizmo && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 			{
 				CheckSelectEntity();
-			}*/
+			}
 
 			MoveViewportCamera();			
 		}
@@ -281,8 +285,7 @@ namespace BaldLion {
 		}
 
 		void EditorViewportPanel::CheckSelectEntity()
-		{
-			//glm::vec2 windowsPos = glm::vec2(ImGui::GetWindowViewport()->Pos.x, ImGui::GetWindowViewport()->Pos.y);
+		{			
 			glm::vec2 mouseInWindow;
 			if (EditorUtils::GetMouseRelativePosInWindow(m_panelID, mouseInWindow))
 			{	
@@ -296,7 +299,7 @@ namespace BaldLion {
 				//Renderer::DrawDebugLine(rayOrigin, rayDirection * 5000.0f, glm::vec3(1.0f, 0.0f, 0.0f), false, 5000);
 
 				ECS::ECSEntityID closestEntityID = 0;
-				float sqrClosestDistance = 10000;
+				float sqrClosestDistance = FLT_MAX;
 				
 				BL_HASHTABLE_FOR(SceneManager::GetECSManager()->GetEntityComponents(), it)
 				{

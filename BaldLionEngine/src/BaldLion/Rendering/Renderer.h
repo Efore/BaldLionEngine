@@ -79,6 +79,7 @@ namespace BaldLion
 			static void DrawDebugCapsule(const glm::vec3& center, const glm::mat4& transformMatrix, float radius, float height, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, bool arrow = false, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebugFrustrum(const glm::mat4& invClipMatrix, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
+			static void DrawDebug3DText(const std::string& text, const glm::vec3& worldPos, const glm::vec3& color, int viewportCoordX, int viewportCoordY, int viewportWidth, int viewportHeight, float scaling = 1.0f, int durationMs = 0);
 
 		private:
 			

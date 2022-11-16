@@ -92,6 +92,7 @@ namespace BaldLion {
 						s_cvDependencyFinished.wait(dependencyLock, [jobDependencyID] { return !s_activeJobs.Contains(jobDependencyID); });
 					}
 
+					//Perform task
 					task();
 
 					//After the task has been processed, if it has children, wait until all of them are processed 

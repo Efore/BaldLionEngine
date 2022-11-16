@@ -229,6 +229,12 @@
     <Filter Include="vendor\stb_image">
       <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\BaldLion\AI">
+      <UniqueIdentifier>{6a1a6f7c-6b23-4745-9527-711c248775e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\AI\Navigation">
+      <UniqueIdentifier>{979dad6f-865f-4523-989a-44bbfc158733}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h">
@@ -2439,6 +2445,14 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.h">
+      <Filter>src\BaldLion\AI\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationPolygon.h">
+      <Filter>src\BaldLion\AI\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\Navigation\AStarPathfinding.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\Heap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -2890,6 +2904,9 @@
     </ClCompile>
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.cpp">
+      <Filter>src\BaldLion\AI\Navigation</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

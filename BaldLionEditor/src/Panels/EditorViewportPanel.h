@@ -1,6 +1,5 @@
 #pragma once
 #include "ViewportPanel.h"
-#include <glm/glm.hpp>
 
 namespace BaldLion {
 
@@ -16,6 +15,8 @@ namespace BaldLion {
 			virtual void SetupViewportCamera() override;
 
 			virtual void OnImGuiRender() override;
+
+			const glm::vec2& GetViewportSize() const { return m_viewportSize; }
 
 		private:
 			void HandleInput();

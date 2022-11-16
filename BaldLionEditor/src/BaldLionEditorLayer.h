@@ -7,6 +7,7 @@
 #include "Panels/RenderingDataPanel.h"
 #include "Panels/ResourcesPanel.h"
 #include "Panels/AnimatorPanel.h"
+#include "Panels/NavigationPanel.h"
 
 namespace BaldLion
 {
@@ -35,7 +36,7 @@ namespace BaldLion
 			void SaveScene();
 			void SaveSceneAs();
 			void NewScene();
-
+			
 		private:
 
 			ECS::ECSManager* m_ecsManager;
@@ -48,6 +49,7 @@ namespace BaldLion
 			MemoryAllocationPanel m_memoryAllocationPanel;
 			ResourcesPanel m_resourcesPanel;
 			AnimatorPanel m_animatorPanel;
+			NavigationPanel m_navigationPanel;
 
 			std::string m_currentScenePathFile;
 		};

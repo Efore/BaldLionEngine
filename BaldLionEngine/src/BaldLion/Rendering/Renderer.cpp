@@ -503,11 +503,17 @@ namespace BaldLion
 			});
 		}
 
+		void Renderer::DrawDebug3DText(const std::string& text, const glm::vec3& worldPos, const glm::vec3& color, int viewportCoordX, int viewportCoordY, int viewportWidth, int viewportHeight, float scaling, int durationMs /*= 0*/)
+		{
+			ScheduleDebugDrawCommand([text, worldPos, color, viewportCoordX, viewportCoordY, viewportWidth, viewportHeight, scaling, durationMs]
+			{	
+				dd::projectedText(text.c_str(), (float*)&worldPos, (float*)&color, (float*)&s_sceneData.viewProjectionMatrix, viewportCoordX, viewportCoordY, viewportWidth, viewportHeight, scaling, durationMs);
+			});
+		}
+
 		void Renderer::ScheduleDebugDrawCommand(std::function<void()> debugDrawCommand)
 		{
 			s_scheduledDebugDrawCommands.EmplaceBack(debugDrawCommand);
 		}
-
-
 	}
 }

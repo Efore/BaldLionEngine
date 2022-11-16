@@ -49,6 +49,8 @@ namespace BaldLion
 			Vertex& operator* (const glm::mat4& transform)
 			{
 				position = transform * glm::vec4(position,1.0f);
+				normal = transform * glm::vec4(normal, 1.0f);
+				tangent = transform * glm::vec4(tangent, 1.0f);
 				return *this;
 			}
 
@@ -56,6 +58,9 @@ namespace BaldLion
 			{
 				Vertex result = vertex;
 				result.position = transform * glm::vec4(vertex.position,1.0f);
+				result.normal = transform * glm::vec4(vertex.normal, 1.0f);
+				result.tangent = transform * glm::vec4(vertex.tangent, 1.0f);
+
 				return result;
 			}
 		};	

@@ -33,6 +33,7 @@
 #include "BaldLion/Core/Containers/DynamicArray.h"
 #include "BaldLion/Core/Containers/HashTable.h"
 #include "BaldLion/Core/Containers/HashMap.h"
+#include "BaldLion/Core/Containers/Heap.h"
 
 //---------------- Threading ------------------
 

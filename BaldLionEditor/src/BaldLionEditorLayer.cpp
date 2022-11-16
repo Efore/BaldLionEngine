@@ -35,7 +35,7 @@ namespace BaldLion
 					glm::vec3(0.0f),
 					glm::vec3(1.0f),
 					glm::vec3(0.2f),
-					glm::vec3(-1.0f, -1.0f, -1.0f));
+					glm::vec3(-1.0f, -1.0f, 1.0f));
 
 				m_ecsManager->AddComponentToEntity(directionalLight, directionalLightComponent);
 
@@ -48,6 +48,7 @@ namespace BaldLion
 			m_entityPropertiesPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);						
 			m_editorViewportPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);
 			m_editorViewportPanel.SetupViewportCamera();
+			m_navigationPanel.SetEditorViewportPanel(&m_editorViewportPanel);
 		}
 
 		void BaldLionEditorLayer::OnDetach()
@@ -82,6 +83,7 @@ namespace BaldLion
 			m_renderingDataPanel.OnImGuiRender();
 			m_resourcesPanel.OnImGuiRender();
 			m_animatorPanel.OnImGuiRender();
+			m_navigationPanel.OnImGuiRender();
 		}
 
 		void BaldLionEditorLayer::OnEvent(Event& e)

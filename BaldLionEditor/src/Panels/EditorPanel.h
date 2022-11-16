@@ -1,4 +1,7 @@
 #pragma once
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
+#include <glm/glm.hpp>
 
 namespace BaldLion {
 
@@ -12,14 +15,22 @@ namespace BaldLion {
 			}
 
 			virtual ~EditorPanel(){}
-			virtual void OnImGuiRender()
-			{
-			}
+			virtual void OnImGuiRender(){}
 			virtual void OnKeyPressed(int keycode){}
 
-			protected:
+			glm::vec2 GetPanelCoords() {
+				ImGuiWindow* window = ImGui::FindWindowByID(m_panelID);				
+				return glm::vec2(window->Pos.x, window->Pos.y);				
+			}
 
-			bool m_viewportFocused;		
+			glm::vec2 GetPanelSize() const {
+				ImGuiWindow* window = ImGui::FindWindowByID(m_panelID);
+				return glm::vec2(window->Size.x, window->Size.y);
+			}
+
+		protected:
+
+			bool m_viewportFocused;
 			StringId m_panelName;
 			ui32 m_panelID;
 		};

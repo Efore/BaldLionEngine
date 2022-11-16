@@ -23,9 +23,9 @@ namespace BaldLion {
 
 			bool IsIntersectedByRayFast(const glm::vec3& rayOrigin, const glm::vec3& rayDirection) const
 			{				
-				const glm::vec3 toCentre = center - rayOrigin;
+				const glm::vec3 toCentre = center - rayOrigin;			
 
-				float proyectionDistance = glm::dot(toCentre, rayDirection);
+				float proyectionDistance = glm::dot(glm::normalize(rayDirection), toCentre);
 
 				float sqrRejection = glm::length2(toCentre) - (proyectionDistance * proyectionDistance);
 				
