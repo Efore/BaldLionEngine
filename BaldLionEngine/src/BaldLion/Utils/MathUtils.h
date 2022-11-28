@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/vector_angle.hpp>
 #include <assimp/scene.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -108,5 +109,41 @@ namespace BaldLion
 
 			return true;
 		}		
+
+		static bool LineIntersects2D(const glm::vec3& lineStartA, const glm::vec3& lineEndA, const glm::vec3& lineStartB, const glm::vec3& lineEndB)
+		{
+			//Vector3 a = endLineA - startLineA;
+			const float ax = lineEndA.x - lineStartA.x;
+			const float az = lineEndA.z - lineStartA.z;
+
+			//Vector3 b = startLineB - endLineB;
+			const float bx = lineStartB.x - lineEndB.x;
+			const float bz = lineStartB.z - lineEndB.z;
+			const float denominator = az * bx - ax * bz;
+
+			if (denominator == 0) {
+				return false;
+			}
+			else {
+
+				//Vector3 c = startLineA - startLineB;
+				const float cx = lineStartA.x - lineStartB.x;
+				const float cz = lineStartA.z - lineStartB.z;
+
+				const float alphaNumerator = bz * cx - bx * cz;
+				const float betaNumerator = ax * cz - az * cx;
+
+				if (denominator > 0) {
+
+					if (alphaNumerator < 0 || alphaNumerator > denominator || betaNumerator < 0 || betaNumerator > denominator) {
+						return false;
+					}
+				}
+				else if (alphaNumerator > 0 || alphaNumerator < denominator || betaNumerator > 0 || betaNumerator < denominator) {
+					return false;
+				}
+			}
+			return true;
+		}
 	} 
 }

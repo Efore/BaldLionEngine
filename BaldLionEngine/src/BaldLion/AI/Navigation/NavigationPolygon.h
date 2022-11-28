@@ -14,18 +14,27 @@ namespace BaldLion::AI::Navigation
 
 	struct NavigationPolygon
 	{		
+		PolygonAdjacency adjacentPolygonsData[3];
+		
 		glm::vec3 center;
 		glm::vec3 normal;
 
-		DynamicArray<ui32> vertexIndices;
-		DynamicArray<ui32> adjacentPolygonsIndices;
-		DynamicArray<PolygonAdjacency> adjacentPolygonsData;
-		
-		~NavigationPolygon() 
+		ui32 vertexIndices[3];
+		ui32 adjacentPolygonIndices[3];
+		ui32 edgesIndices[3];
+
+	};
+
+	struct NavigationPolygonEdge 
+	{
+		ui32 vertexIndexA;
+		ui32 vertexIndexB;
+		bool isNavigationMeshEdge;
+
+		bool operator==(const NavigationPolygonEdge& other)
 		{
-			vertexIndices.Delete();
-			adjacentPolygonsIndices.Delete();
-			adjacentPolygonsData.Delete();
+			return (this->vertexIndexA == other.vertexIndexA && this->vertexIndexB == other.vertexIndexB) ||
+				(this->vertexIndexA == other.vertexIndexB && this->vertexIndexB == other.vertexIndexA);
 		}
 	};
 
@@ -33,11 +42,13 @@ namespace BaldLion::AI::Navigation
 
 		DynamicArray<glm::vec3> polygonVertices;
 		DynamicArray<NavigationPolygon> polygons;
+		DynamicArray<NavigationPolygonEdge> polygonEdges;
 
 		~NavigationMeshData()
 		{
 			polygonVertices.Delete();
 			polygons.Delete();
+			polygonEdges.Delete();
 		}
 
 	};

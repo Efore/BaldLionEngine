@@ -87,7 +87,7 @@ namespace BaldLion::AI::Navigation
 
 				const NavigationPolygon& currentNavigationPolygon = navMeshData.polygons[currentNode.nodeID];
 
-				BL_DYNAMICARRAY_FOREACH(currentNavigationPolygon.adjacentPolygonsIndices)
+				/*BL_DYNAMICARRAY_FOREACH(currentNavigationPolygon.adjacentPolygonsIndices)
 				{
 					const ui32 adjacentPolygonIdx = currentNavigationPolygon.adjacentPolygonsIndices[i];
 
@@ -115,7 +115,7 @@ namespace BaldLion::AI::Navigation
 						polygonsBestCosts[adjacentPolygonIdx].bestPreviousNodeID = currentNode.nodeID;
 						polygonsBestCosts[adjacentPolygonIdx].cost = currentGScore;
 					}
-				}
+				}*/
 
 				closedNodes.EmplaceBack(currentNode.nodeID);
 			}
@@ -134,7 +134,7 @@ namespace BaldLion::AI::Navigation
 			ui32 nextIndex = finalNavigationPoylgonIdx;
 			while (nextIndex != initialNavigationPolygonIdx)
 			{
-				const ui32 bestPrevious = polygonsBestCosts[nextIndex].bestPreviousNodeID;
+				/*const ui32 bestPrevious = polygonsBestCosts[nextIndex].bestPreviousNodeID;
 				const ui32 indexOfBestAdjacent = navMeshData.polygons[nextIndex].adjacentPolygonsIndices.FindIndex(bestPrevious);
 
 				const ui32 vertexIndex1 = navMeshData.polygons[nextIndex].adjacentPolygonsData[indexOfBestAdjacent].firstVertexIndex;
@@ -149,12 +149,12 @@ namespace BaldLion::AI::Navigation
 				{
 					pathResult.EmplaceBack(vertex1);
 				}
-				else 
+				else
 				{
 					pathResult.EmplaceBack(vertex2);
-				}				
+				}
 
-				nextIndex = bestPrevious;
+				nextIndex = bestPrevious;*/
 			}
 
 			pathResult.EmplaceBack(goalPosition);

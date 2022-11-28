@@ -75,43 +75,53 @@ namespace BaldLion {
 				bool showingAdjacence = false;
 				BL_IMGUI_LEFT_LABEL(ImGui::Checkbox, "Show NavMesh", &showNavMesh);
 
-				for (ui32 i = 0; i < NavigationMeshGenerator::GetNavMeshData().polygons.Size(); ++i)
-				{
-					ImGui::Checkbox(std::to_string(i).c_str(), &adjacences[i]);					
-				}
+				//for (ui32 i = 0; i < NavigationMeshGenerator::GetNavMeshData().polygons.Size(); ++i)
+				//{
+				//	ImGui::Checkbox(std::to_string(i).c_str(), &adjacences[i]);					
+				//}
 
-				i32 firstIndex = -1;
-				i32 secondIndex = -1;
-				
-				for (ui32 i = 0; i < NavigationMeshGenerator::GetNavMeshData().polygons.Size(); ++i)
-				{
-					if (adjacences[i])
-					{
-						if (firstIndex < 0)
-						{
-							firstIndex = i;
-						}
-						else {
-							secondIndex = i;
-						}
-					}
-				}
+				//i32 firstIndex = -1;
+				//i32 secondIndex = -1;
+				//
+				//for (ui32 i = 0; i < NavigationMeshGenerator::GetNavMeshData().polygons.Size(); ++i)
+				//{
+				//	if (adjacences[i])
+				//	{
+				//		if (firstIndex < 0)
+				//		{
+				//			firstIndex = i;
+				//		}
+				//		else {
+				//			secondIndex = i;
+				//		}
+				//	}
+				//}
 
-				if (firstIndex >= 0 && secondIndex >= 0)
-				{
-					DynamicArray<glm::vec3> navMeshPath(Memory::AllocationType::Linear_Frame, NavigationMeshGenerator::GetNavMeshData().polygons.Size());
-					if (NavigationMeshGenerator::FindPath(firstIndex, secondIndex, navMeshPath))
-					{
-						for (ui32 i = 0; i < navMeshPath.Size() - 1; ++i)
-						{
-							Renderer::DrawDebugLine(navMeshPath[i], navMeshPath[i + 1], glm::vec3(1.0f, 1.0f, 0.2f), false);
-						}
-					}
-				}
+				//if (firstIndex >= 0 && secondIndex >= 0)
+				//{
+				//	DynamicArray<glm::vec3> navMeshPath(Memory::AllocationType::Linear_Frame, NavigationMeshGenerator::GetNavMeshData().polygons.Size());
+				//	if (NavigationMeshGenerator::FindPath(firstIndex, secondIndex, navMeshPath))
+				//	{
+				//		for (ui32 i = 0; i < navMeshPath.Size() - 1; ++i)
+				//		{
+				//			Renderer::DrawDebugLine(navMeshPath[i], navMeshPath[i + 1], glm::vec3(1.0f, 1.0f, 0.2f), false);
+				//		}
+				//	}
+				//}
 
 				if (showNavMesh)
 				{
-					BL_DYNAMICARRAY_FOREACH(NavigationMeshGenerator::GetNavMeshData().polygons)
+					BL_DYNAMICARRAY_FOREACH(NavigationMeshGenerator::GetNavMeshData().polygonEdges)
+					{
+						const ui32 startPositionIndex = NavigationMeshGenerator::GetNavMeshData().polygonEdges[i].vertexIndexA;
+						const ui32 endPositionIndex = NavigationMeshGenerator::GetNavMeshData().polygonEdges[i].vertexIndexB;
+
+						const glm::vec3 startPosition = NavigationMeshGenerator::GetNavMeshData().polygonVertices[startPositionIndex] + MathUtils::Vector3UnitY * 0.1f;
+						const glm::vec3 endPosition = NavigationMeshGenerator::GetNavMeshData().polygonVertices[endPositionIndex] + MathUtils::Vector3UnitY * 0.1f;
+
+						Renderer::DrawDebugLine(startPosition, endPosition, glm::vec3(1.0f, 0.2f, 0.2f), false);
+					}
+					/*BL_DYNAMICARRAY_FOREACH(NavigationMeshGenerator::GetNavMeshData().polygons)
 					{
 						BL_DYNAMICARRAY_FOR(j, NavigationMeshGenerator::GetNavMeshData().polygons[i].vertexIndices, 0)
 						{
@@ -125,7 +135,7 @@ namespace BaldLion {
 
 							Renderer::DrawDebugLine(startPosition, endPosition, glm::vec3(1.0f, 0.2f, 0.2f), false);
 						}
-					}
+					}*/
 				}
 				
 			}
