@@ -368,7 +368,7 @@ namespace BaldLion
 
 			Material::MaterialProperties materialProperties
 			{
-				aimesh->HasBones() ? BL_STRING_TO_STRINGID("assets/gameAssets/shaders/SkinnedLit.glsl") : BL_STRING_TO_STRINGID("assets/gameAssets/shaders/BaseLit.glsl"),
+				aimesh->HasBones() ? BL_STRING_TO_STRINGID("assets/editorAssets/shaders/SkinnedLit.glsl") : BL_STRING_TO_STRINGID("assets/editorAssets/shaders/BaseLit.glsl"),
 				glm::vec3(ambientColor.r, ambientColor.g, ambientColor.b),
 				glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b),
 				glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b),

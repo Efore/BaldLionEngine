@@ -234,7 +234,7 @@ namespace BaldLion
 		{
 			Material::MaterialProperties materialProperties
 			{
-				BL_STRING_TO_STRINGID("assets/gameAssets/shaders/BaseLit.glsl"),
+				BL_STRING_TO_STRINGID("assets/editorAssets/shaders/BaseLit.glsl"),
 				glm::vec3(0.5f),
 				glm::vec3(0.5f),
 				glm::vec3(0.5f),
