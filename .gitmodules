@@ -14,3 +14,6 @@
 [submodule "BaldLionEngine/vendor/imgui"]
 	path = BaldLionEngine/vendor/imgui
 	url = https://github.com/Efore/imgui
+[submodule "BaldLionEngine/vendor/GLFW"]
+	path = BaldLionEngine/vendor/GLFW
+	url = https://github.com/Efore/glfw
