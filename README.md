@@ -7,7 +7,7 @@
 
 Hello, fellow visitor.
 
-BaldLionEngine is a game engine built for the sole purpose of learning C++. Hence, the code that you will find here is far from perfect, and the way some challenges were approached might not be the most optimal, but I have learnt a lot in the process, and therefore I consider that a victory :)
+BaldLionEngine is a work-in-progress game engine built for the sole purpose of learning C++. Hence, the code that you will find here is far from perfect, and the way some challenges were approached might not be the most optimal, but I have learnt a lot in the process, and therefore I consider that a victory :)
 
 <!-- GETTING STARTED -->
 ## Getting Started
