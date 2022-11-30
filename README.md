@@ -9,8 +9,6 @@ Greetings, fellow visitor.
 
 BaldLionEngine is a work-in-progress game engine built for the sole purpose of learning C++. Hence, the code that you will find here is far from perfect, and the way some challenges were approached might not be the most optimal, but I have learnt a lot in the process, and therefore I consider that a victory :)
 
-![Engine Architecture][architecture]
-
 ## Implemented systems so far
 
 * 3D Render System
@@ -21,6 +19,9 @@ BaldLionEngine is a work-in-progress game engine built for the sole purpose of l
 * 3D Physics System
 * Job System & Thread Pool
 * Memory Manager
+* Editor with Scene Serialziation support
+
+![Engine Architecture][architecture]
 
 ## Third Party Libraries
 
