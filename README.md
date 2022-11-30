@@ -40,15 +40,18 @@ BaldLionEngine is a work-in-progress game engine built for the sole purpose of l
 
 ## Plans for the near future (non specific order)
 
-* Improved Navigation Mesh generation
+* Improve compiling times
+* Improve NavigationMesh generation
 * Clean up Third Parties folder structure
-* Renderer overhaul
-* Scripting languages support
+* Overhaul renderer
+* Implement support for some scripting language
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
 ### Installation
+
+The project has been tested to compile in Visual Studio 2017
 
 1. Clone the repo
    ```sh
