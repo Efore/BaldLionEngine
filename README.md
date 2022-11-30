@@ -1,6 +1,5 @@
 # BaldLionEngine
-BaldLion Engine
-
+<img src="Docu/BaldLion Editor.jpg" alt="Screenshot" width="80" height="80">
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
