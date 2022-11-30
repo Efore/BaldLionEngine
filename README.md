@@ -56,6 +56,8 @@ The project has been tested to compile in Visual Studio 2017
 1. Clone the repo
    ```sh
    git clone https://github.com/Efore/BaldLionEngine
+   git submodule init
+   git submodule update
    ```
 2. After cloning is finished, click on "GenerateProjects.bat"
 3. After generation is finished, open the VS Solution and compile the project (you may need to retarget the Solution). Mind the step 4!
