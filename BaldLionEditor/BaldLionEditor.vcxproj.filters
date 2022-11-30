@@ -60,6 +60,9 @@
     <ClInclude Include="src\Panels\MemoryAllocationPanel.h">
       <Filter>src\Panels</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\NavigationPanel.h">
+      <Filter>src\Panels</Filter>
+    </ClInclude>
     <ClInclude Include="src\Panels\RenderingDataPanel.h">
       <Filter>src\Panels</Filter>
     </ClInclude>
@@ -74,9 +77,6 @@
     </ClInclude>
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
       <Filter>vendor\ImGuizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Panels\NavigationPanel.h">
-      <Filter>src\Panels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +98,9 @@
     <ClCompile Include="src\Panels\MemoryAllocationPanel.cpp">
       <Filter>src\Panels</Filter>
     </ClCompile>
+    <ClCompile Include="src\Panels\NavigationPanel.cpp">
+      <Filter>src\Panels</Filter>
+    </ClCompile>
     <ClCompile Include="src\Panels\RenderingDataPanel.cpp">
       <Filter>src\Panels</Filter>
     </ClCompile>
@@ -109,9 +112,6 @@
     </ClCompile>
     <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
       <Filter>vendor\ImGuizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Panels\NavigationPanel.cpp">
-      <Filter>src\Panels</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
