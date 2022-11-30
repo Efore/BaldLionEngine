@@ -1,7 +1,3 @@
-[submodule "BaldLionEngine/vendor/GLFW"]
-	path = BaldLionEngine/vendor/GLFW
-	url = https://github.com/Efore/glfw
-	ignore = dirty
 [submodule "BaldLionEngine/vendor/spdlog"]
 	path = BaldLionEngine/vendor/spdlog
 	url = https://github.com/Efore/spdlog
