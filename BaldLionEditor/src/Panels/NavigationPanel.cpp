@@ -74,6 +74,7 @@ namespace BaldLion {
 				
 				bool showingAdjacence = false;
 				BL_IMGUI_LEFT_LABEL(ImGui::Checkbox, "Show NavMesh", &showNavMesh);
+				ImGui::Text("Select two polygons to find the shortest path between them");
 
 				for (ui32 i = 0; i < NavigationMeshGenerator::GetNavMeshData().polygons.Size(); ++i)
 				{
@@ -104,7 +105,7 @@ namespace BaldLion {
 					{
 						for (ui32 i = 0; i < navMeshPath.Size() - 1; ++i)
 						{
-							Renderer::DrawDebugLine(navMeshPath[i], navMeshPath[i + 1], glm::vec3(1.0f, 1.0f, 0.2f), false);
+							Renderer::DrawDebugLine(navMeshPath[i] + MathUtils::Vector3UnitY * 0.2f, navMeshPath[i + 1] + +MathUtils::Vector3UnitY * 0.2f, glm::vec3(1.0f, 1.0f, 0.2f), false);
 						}
 					}
 				}
