@@ -1,4 +1,4 @@
-# BaldLionEngine
+# BaldLion Engine
 
 ![Product Name Screen Shot][product-screenshot]
 
