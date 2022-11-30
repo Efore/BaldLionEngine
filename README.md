@@ -1,7 +1,10 @@
 # BaldLionEngine
-<img src="Docu/BaldLion Editor.jpg" alt="Screenshot" width="80" height="80">
+
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+
+
+![Product Name Screen Shot][product-screenshot]
 
 Hello, fellow visitor.
 
@@ -19,3 +22,6 @@ BaldLionEngine is a game engine built for the sole purpose of learning C++. Henc
 2. After finished cloning, click on "GenerateProjects.bat"
 3. After generation is finished, open the VS Solution and compile the project (you may need to retarget the Solution). Mind the step 4!
 4. After compilation is finished, click on "ClickAfterCompilation.bat"
+
+
+[product-screenshot]: Docs/screenshot.png
