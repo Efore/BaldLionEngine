@@ -7,7 +7,6 @@
 [submodule "BaldLionEngine/vendor/yaml"]
 	path = BaldLionEngine/vendor/yaml
 	url = https://github.com/Efore/yaml-cpp
-	ignore = dirty
 [submodule "BaldLionEditor/vendor/ImGuizmo"]
 	path = BaldLionEditor/vendor/ImGuizmo
 	url = https://github.com/Efore/ImGuizmo
