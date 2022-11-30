@@ -2,6 +2,7 @@ if not exist bin goto failstate
 if not exist bin\Debug-windows-x86_64\BaldLionEditor\assets mkdir bin\Debug-windows-x86_64\BaldLionEditor\assets
 xcopy /s BaldLionEditor\assets bin\Debug-windows-x86_64\BaldLionEditor\assets
 xcopy BaldLionEngine\vendor\assimp\lib\assimp-vc142-mtd.dll bin\Debug-windows-x86_64\BaldLionEditor
+xcopy BaldLionEditor\imgui.ini bin\Debug-windows-x86_64\BaldLionEditor
 goto commonexit
 
 :failstate
