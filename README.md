@@ -1,10 +1,9 @@
 # BaldLionEngine
 
+![Product Name Screen Shot][product-screenshot]
+
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-
-![Product Name Screen Shot][product-screenshot]
 
 Hello, fellow visitor.
 
