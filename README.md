@@ -13,8 +13,6 @@ BaldLionEngine is a game engine built for the sole purpose of learning C++. Henc
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
-
 1. Clone the repo
    ```sh
    git clone https://github.com/Efore/BaldLionEngine
