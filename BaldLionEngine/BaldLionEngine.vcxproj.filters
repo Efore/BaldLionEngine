@@ -7,6 +7,12 @@
     <Filter Include="src\BaldLion">
       <UniqueIdentifier>{A16421C3-8DC7-B067-364D-E91D228F7CEA}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\BaldLion\AI">
+      <UniqueIdentifier>{9AFDAF32-0689-1DF7-0F9A-A0EB7BA479F7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\AI\Navigation">
+      <UniqueIdentifier>{996FBD07-857F-69D8-EE38-CEF6DA675871}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\BaldLion\Animation">
       <UniqueIdentifier>{D01A5164-BC14-7AB6-A581-10C7911AE022}</UniqueIdentifier>
     </Filter>
@@ -233,6 +239,15 @@
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\Navigation\AStarPathfinding.h">
+      <Filter>src\BaldLion\AI\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.h">
+      <Filter>src\BaldLion\AI\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationPolygon.h">
+      <Filter>src\BaldLion\AI\Navigation</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Animation\AnimationClip.h">
       <Filter>src\BaldLion\Animation</Filter>
@@ -2444,6 +2459,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.cpp">
+      <Filter>src\BaldLion\AI\Navigation</Filter>
+    </ClCompile>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
       <Filter>src\BaldLion\Animation</Filter>
     </ClCompile>

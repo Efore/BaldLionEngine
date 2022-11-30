@@ -144,6 +144,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h" />
+    <ClInclude Include="src\BaldLion\AI\Navigation\AStarPathfinding.h" />
+    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.h" />
+    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationPolygon.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationClip.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationManager.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationUtils.h" />
@@ -882,6 +885,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.cpp" />
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp" />
     <ClCompile Include="src\BaldLion\Animation\Animator.cpp" />
     <ClCompile Include="src\BaldLion\Animation\AnimatorTransition.cpp" />

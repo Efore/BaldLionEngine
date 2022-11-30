@@ -68,7 +68,7 @@ project "BaldLionEngine"
 	}	
 	
 	removefiles {
-		"%{prj.name}/src/BaldLion/AI/**",
+		"%{prj.name}/src/BaldLion/AI/FSM/**",
 		"%{prj.name}/vendor/optick/src/optick_gpu.d3d12.**",
 		"%{prj.name}/vendor/optick/src/optick_gpu.vulkan.**",
 	}
