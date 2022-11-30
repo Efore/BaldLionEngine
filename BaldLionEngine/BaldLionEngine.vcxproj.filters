@@ -2442,9 +2442,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\AI\Navigation\AStarPathfinding.h" />
-    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.h" />
-    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationPolygon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
@@ -2897,6 +2894,5 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.cpp" />
   </ItemGroup>
 </Project>
