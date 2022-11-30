@@ -60,8 +60,8 @@ The project has been tested to compile in Visual Studio 2017
    git submodule update
    ```
 2. After cloning is finished, click on "GenerateProjects.bat"
-3. After generation is finished, open the VS Solution and compile the project (you may need to retarget the Solution). Mind the step 4!
-4. After compilation is finished, click on "ClickAfterCompilation.bat"
+3. After generation is finished, open the .sln file and build the Solution (you may need to retarget it). Mind the step 4!
+4. After the Solution is built, click on "ClickAfterCompilation.bat"
 
 
 
