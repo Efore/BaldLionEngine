@@ -23,21 +23,6 @@ BaldLionEngine is a work-in-progress game engine built for the sole purpose of l
 
 ![Engine Architecture][architecture]
 
-## Third Party Libraries
-
-* [Dear ImGui](https://github.com/ocornut/imgui)
-* [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo)
-* [debug-draw](https://github.com/glampert/debug-draw)
-* [glm](https://github.com/g-truc/glm)
-* [Glad](https://glad.dav1d.de/)
-* [GLFW](https://github.com/glfw/glfw)
-* [YAML](https://github.com/jbeder/yaml-cpp)
-* [Optick](https://github.com/bombomby/optick)
-* [ReactPhysics3D](https://github.com/DanielChappuis/reactphysics3d)
-* [spdlog](https://github.com/gabime/spdlog)
-* [stb_image](https://github.com/nothings/stb)
-* [assimp](https://github.com/assimp/assimp)
-
 ## Plans for the near future (non specific order)
 
 * Improve compiling times
@@ -63,8 +48,20 @@ The project has been tested to compile in Visual Studio 2017
 3. After generation is finished, open the .sln file and build the Solution (you may need to retarget it). Mind the step 4!
 4. After the Solution is built, click on "ClickAfterCompilation.bat" to copy all necessary files into the /bin folder
 
+## Third Party Libraries
 
-
+* [Dear ImGui](https://github.com/ocornut/imgui)
+* [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo)
+* [debug-draw](https://github.com/glampert/debug-draw)
+* [glm](https://github.com/g-truc/glm)
+* [Glad](https://glad.dav1d.de/)
+* [GLFW](https://github.com/glfw/glfw)
+* [YAML](https://github.com/jbeder/yaml-cpp)
+* [Optick](https://github.com/bombomby/optick)
+* [ReactPhysics3D](https://github.com/DanielChappuis/reactphysics3d)
+* [spdlog](https://github.com/gabime/spdlog)
+* [stb_image](https://github.com/nothings/stb)
+* [assimp](https://github.com/assimp/assimp)
 
 
 [product-screenshot]: Docs/screenshot.png
