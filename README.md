@@ -48,6 +48,8 @@ The project has been tested to compile in Visual Studio 2017
 3. After generation is finished, open the .sln file and build the Solution (you may need to retarget it). Mind the step 4!
 4. After the Solution is built, click on "ClickAfterCompilation.bat" to copy all necessary files into the /bin folder
 
+If you get a dll missing error while trying to start the Editor, either by clicking on the executable (BaldLionEditor.exe) or by launching the program through VS, you may need to install VS 2019.
+
 ## Third Party Libraries
 
 * [Dear ImGui](https://github.com/ocornut/imgui)
