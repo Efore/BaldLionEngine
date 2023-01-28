@@ -22,6 +22,7 @@ namespace BaldLion::AI::Navigation {
 
 		static const DynamicArray<ECS::ECSEntityID>& GetEntitiesToBake();
 
+		static ui32 GetPolygonIndex(const glm::vec3& position);
 		static bool FindPath(ui32 initialPolygonIndex, ui32 finalPolygonIndex, DynamicArray<glm::vec3>& path);
 
 		static const NavigationMeshData& GetNavMeshData() { return s_navmeshData; }

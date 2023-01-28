@@ -16,6 +16,7 @@ namespace BaldLion
 			DirectionalLight,
 			Animation,
 			PhysicsBody,
+			NavMeshAgent,
 			PointLight,
 
 			Count

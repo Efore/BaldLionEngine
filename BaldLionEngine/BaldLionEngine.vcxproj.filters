@@ -2457,6 +2457,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSNavMeshAgentComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSPathfindingSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.cpp">
@@ -2912,5 +2914,6 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSPathfindingSystem.cpp" />
   </ItemGroup>
 </Project>

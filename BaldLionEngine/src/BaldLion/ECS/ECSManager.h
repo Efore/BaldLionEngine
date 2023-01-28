@@ -112,6 +112,7 @@ namespace BaldLion {
 			DynamicArray<class ECSAnimationComponent> m_animationComponentPool;
 			DynamicArray<class ECSSkeletonComponent> m_skeletonComponentPool;			
 			DynamicArray<class ECSPhysicsBodyComponent> m_physicsBodyComponentPool;
+			DynamicArray<class ECSNavMeshAgentComponent> m_navMeshAgentComponentPool;
 
 			static ui32 m_entityIDProvider;
 			static ui32 m_componentIDProvider;

@@ -17,7 +17,7 @@
 namespace BaldLion
 {
 	namespace Animation
-	{
+	{		
 		using namespace Compression;
 
 		#define ROTATION_STRIDE 3

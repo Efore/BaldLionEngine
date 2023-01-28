@@ -31,6 +31,7 @@ namespace BaldLion
 			//	5-DirectionalLight
 			//	6-Animation
 			//	7-PhysicsBody
+			//	8-NavMeshAgent
 
 			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_ECS, 1000);
 			m_componentsPool.EmplaceBack(&m_transformComponentPool);
@@ -52,6 +53,9 @@ namespace BaldLion
 
 			m_physicsBodyComponentPool = DynamicArray<ECSPhysicsBodyComponent>(AllocationType::FreeList_ECS, 40);
 			m_componentsPool.EmplaceBack(&m_physicsBodyComponentPool);
+
+			m_navMeshAgentComponentPool = DynamicArray<ECSNavMeshAgentComponent>(AllocationType::FreeList_ECS, 40);
+			m_componentsPool.EmplaceBack(&m_navMeshAgentComponentPool);
 
 			m_entityIDProvider = 1;
 			m_componentIDProvider = 1;
@@ -78,6 +82,7 @@ namespace BaldLion
 			CleanComponentPool<ECSDirectionalLightComponent>(ECSComponentType::DirectionalLight);
 			CleanComponentPool<ECSAnimationComponent>(ECSComponentType::Animation);
 			CleanComponentPool<ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);
+			CleanComponentPool<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent);
 
 			m_componentsPool.Delete();
 		}

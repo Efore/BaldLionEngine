@@ -567,4 +567,9 @@ namespace BaldLion::AI::Navigation
 		return AStarPathfinding::FindPath(s_navmeshData, initialPolygonIndex, finalPolygonIndex, path);
 	}
 
+	ui32 NavigationMeshGenerator::GetPolygonIndex(const glm::vec3& position)
+	{
+		return 0;
+	}
+
 }

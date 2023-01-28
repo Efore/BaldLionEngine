@@ -85,7 +85,7 @@ namespace BaldLion {
 					s_queueMutex.unlock();
 
 					//IF this job depends on another to start, wait until the other job is no longer active
-					if (job.JobDependencyName > 0)
+					if (job.JobDependencyName != 0)
 					{
 						std::unique_lock<std::mutex> dependencyLock(s_queueMutex);
 						const StringId jobDependencyID = job.JobDependencyName;

@@ -185,6 +185,7 @@
     <ClInclude Include="src\BaldLion\ECS\Components\ECSDirectionalLightComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSHierarchyComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSNavMeshAgentComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSPhysicsBodyComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSProjectionCameraComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSSkeletonComponent.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="src\BaldLion\ECS\ECSSystemsInclude.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSUtils.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSPathfindingSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSRenderSystem.h" />
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h" />
@@ -910,6 +912,7 @@
     <ClCompile Include="src\BaldLion\ECS\ECSManager.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ECSSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSPathfindingSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSRenderSystem.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
