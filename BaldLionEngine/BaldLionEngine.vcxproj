@@ -78,7 +78,7 @@
       <PrecompiledHeaderFile>blpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;BL_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;BL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\optick\include;vendor\debug-draw;vendor\yaml\include;vendor\ReactPhysics3D\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\optick\include;vendor\debug-draw;vendor\yaml\include;vendor\ReactPhysics3D\include;vendor\Recast\Detour\include;vendor\Recast\DetourCrowd\include;vendor\Recast\DetourTileCache\include;vendor\Recast\Recast\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -99,7 +99,7 @@
       <PrecompiledHeaderFile>blpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;BL_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;BL_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\optick\include;vendor\debug-draw;vendor\yaml\include;vendor\ReactPhysics3D\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\optick\include;vendor\debug-draw;vendor\yaml\include;vendor\ReactPhysics3D\include;vendor\Recast\Detour\include;vendor\Recast\DetourCrowd\include;vendor\Recast\DetourTileCache\include;vendor\Recast\Recast\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -124,7 +124,7 @@
       <PrecompiledHeaderFile>blpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;BL_PLATFORM_WINDOWS;GLFW_INCLUDE_NONE;BL_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\optick\include;vendor\debug-draw;vendor\yaml\include;vendor\ReactPhysics3D\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\assimp\include;vendor\optick\include;vendor\debug-draw;vendor\yaml\include;vendor\ReactPhysics3D\include;vendor\Recast\Detour\include;vendor\Recast\DetourCrowd\include;vendor\Recast\DetourTileCache\include;vendor\Recast\Recast\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -145,9 +145,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h" />
-    <ClInclude Include="src\BaldLion\AI\Navigation\AStarPathfinding.h" />
-    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.h" />
-    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationPolygon.h" />
+    <ClInclude Include="src\BaldLion\AI\Navigation\NavMeshBuilder.h" />
+    <ClInclude Include="src\BaldLion\AI\Navigation\RecastClasses\BuildContext.h" />
+    <ClInclude Include="src\BaldLion\AI\Navigation\RecastClasses\ChunkyTriMesh.h" />
+    <ClInclude Include="src\BaldLion\AI\Navigation\RecastClasses\InputGeom.h" />
+    <ClInclude Include="src\BaldLion\AI\Navigation\RecastClasses\MeshLoaderObj.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationClip.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationManager.h" />
     <ClInclude Include="src\BaldLion\Animation\AnimationUtils.h" />
@@ -361,6 +363,26 @@
     <ClInclude Include="vendor\ReactPhysics3D\include\reactphysics3d\utils\DefaultLogger.h" />
     <ClInclude Include="vendor\ReactPhysics3D\include\reactphysics3d\utils\Logger.h" />
     <ClInclude Include="vendor\ReactPhysics3D\include\reactphysics3d\utils\Profiler.h" />
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourAlloc.h" />
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourAssert.h" />
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourCommon.h" />
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourMath.h" />
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourNavMesh.h" />
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourNavMeshBuilder.h" />
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourNavMeshQuery.h" />
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourNode.h" />
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourStatus.h" />
+    <ClInclude Include="vendor\Recast\DetourCrowd\Include\DetourCrowd.h" />
+    <ClInclude Include="vendor\Recast\DetourCrowd\Include\DetourLocalBoundary.h" />
+    <ClInclude Include="vendor\Recast\DetourCrowd\Include\DetourObstacleAvoidance.h" />
+    <ClInclude Include="vendor\Recast\DetourCrowd\Include\DetourPathCorridor.h" />
+    <ClInclude Include="vendor\Recast\DetourCrowd\Include\DetourPathQueue.h" />
+    <ClInclude Include="vendor\Recast\DetourCrowd\Include\DetourProximityGrid.h" />
+    <ClInclude Include="vendor\Recast\DetourTileCache\Include\DetourTileCache.h" />
+    <ClInclude Include="vendor\Recast\DetourTileCache\Include\DetourTileCacheBuilder.h" />
+    <ClInclude Include="vendor\Recast\Recast\Include\Recast.h" />
+    <ClInclude Include="vendor\Recast\Recast\Include\RecastAlloc.h" />
+    <ClInclude Include="vendor\Recast\Recast\Include\RecastAssert.h" />
     <ClInclude Include="vendor\assimp\include\assimp\Base64.hpp" />
     <ClInclude Include="vendor\assimp\include\assimp\BaseImporter.h" />
     <ClInclude Include="vendor\assimp\include\assimp\Bitmap.h" />
@@ -888,7 +910,11 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.cpp" />
+    <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp" />
+    <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\BuildContext.cpp" />
+    <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\ChunkyTriMesh.cpp" />
+    <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\InputGeom.cpp" />
+    <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\MeshLoaderObj.cpp" />
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp" />
     <ClCompile Include="src\BaldLion\Animation\Animator.cpp" />
     <ClCompile Include="src\BaldLion\Animation\AnimatorTransition.cpp" />
@@ -1198,6 +1224,78 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="vendor\ReactPhysics3D\src\utils\Profiler.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Detour\Source\DetourAlloc.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Detour\Source\DetourCommon.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Detour\Source\DetourNavMesh.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Detour\Source\DetourNavMeshBuilder.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Detour\Source\DetourNavMeshQuery.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Detour\Source\DetourNode.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourCrowd\Source\DetourCrowd.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourCrowd\Source\DetourLocalBoundary.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourCrowd\Source\DetourObstacleAvoidance.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourCrowd\Source\DetourPathCorridor.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourCrowd\Source\DetourPathQueue.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourCrowd\Source\DetourProximityGrid.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourTileCache\Source\DetourTileCache.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourTileCache\Source\DetourTileCacheBuilder.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\Recast.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastAlloc.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastArea.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastContour.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastFilter.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastLayers.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastMesh.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastMeshDetail.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastRasterization.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastRegion.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="vendor\optick\src\optick_capi.cpp">

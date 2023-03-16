@@ -13,6 +13,9 @@
     <Filter Include="src\BaldLion\AI\Navigation">
       <UniqueIdentifier>{996FBD07-857F-69D8-EE38-CEF6DA675871}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\BaldLion\AI\Navigation\RecastClasses">
+      <UniqueIdentifier>{1867211F-04E4-1462-2D61-1576193DB1F5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\BaldLion\Animation">
       <UniqueIdentifier>{D01A5164-BC14-7AB6-A581-10C7911AE022}</UniqueIdentifier>
     </Filter>
@@ -184,6 +187,45 @@
     <Filter Include="vendor\ReactPhysics3D\src\utils">
       <UniqueIdentifier>{62F0F075-CED3-FFB5-D7D6-2DF24339C606}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\Recast">
+      <UniqueIdentifier>{A4B79DD4-1078-190B-D9B2-628845325EE7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Recast\Detour">
+      <UniqueIdentifier>{E6574B13-D2E6-D4DC-7B05-E9D76773E582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Recast\Detour\Include">
+      <UniqueIdentifier>{396DC57B-2528-B527-CEDF-2D72BA79FFB7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Recast\Detour\Source">
+      <UniqueIdentifier>{26C7109F-92D4-3E85-1BBB-3A7087C70A3C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Recast\DetourCrowd">
+      <UniqueIdentifier>{850C79E8-F1CE-AC72-3A7F-3BFFA6808550}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Recast\DetourCrowd\Include">
+      <UniqueIdentifier>{D850B106-44BF-0686-8DA8-C185F955FC21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Recast\DetourCrowd\Source">
+      <UniqueIdentifier>{E5322F46-D183-1A88-FAE7-084AE697ADF1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Recast\DetourTileCache">
+      <UniqueIdentifier>{A8F56EBA-140E-56E4-DDBA-E57D4992EA7D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Recast\DetourTileCache\Include">
+      <UniqueIdentifier>{FBAC832D-6771-821D-30D7-B2E79C5A1E53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Recast\DetourTileCache\Source">
+      <UniqueIdentifier>{A81645EA-94FD-06E2-3D4E-6DFF29148048}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Recast\Recast">
+      <UniqueIdentifier>{7502EA33-6191-73FD-0AB0-87F8F61D84A3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Recast\Recast\Include">
+      <UniqueIdentifier>{C836F10E-B4F1-E0BA-5DA9-590549432B4B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Recast\Recast\Source">
+      <UniqueIdentifier>{D51A12D2-4128-40B8-CA0E-3CA3361B0C6F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor\assimp">
       <UniqueIdentifier>{6F57A1F8-DB17-1D2F-A452-66AC10D2610B}</UniqueIdentifier>
     </Filter>
@@ -240,14 +282,20 @@
     <ClInclude Include="src\BaldLion.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\AI\Navigation\AStarPathfinding.h">
+    <ClInclude Include="src\BaldLion\AI\Navigation\NavMeshBuilder.h">
       <Filter>src\BaldLion\AI\Navigation</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.h">
-      <Filter>src\BaldLion\AI\Navigation</Filter>
+    <ClInclude Include="src\BaldLion\AI\Navigation\RecastClasses\BuildContext.h">
+      <Filter>src\BaldLion\AI\Navigation\RecastClasses</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationPolygon.h">
-      <Filter>src\BaldLion\AI\Navigation</Filter>
+    <ClInclude Include="src\BaldLion\AI\Navigation\RecastClasses\ChunkyTriMesh.h">
+      <Filter>src\BaldLion\AI\Navigation\RecastClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\Navigation\RecastClasses\InputGeom.h">
+      <Filter>src\BaldLion\AI\Navigation\RecastClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\Navigation\RecastClasses\MeshLoaderObj.h">
+      <Filter>src\BaldLion\AI\Navigation\RecastClasses</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Animation\AnimationClip.h">
       <Filter>src\BaldLion\Animation</Filter>
@@ -887,6 +935,66 @@
     </ClInclude>
     <ClInclude Include="vendor\ReactPhysics3D\include\reactphysics3d\utils\Profiler.h">
       <Filter>vendor\ReactPhysics3D\include\reactphysics3d\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourAlloc.h">
+      <Filter>vendor\Recast\Detour\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourAssert.h">
+      <Filter>vendor\Recast\Detour\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourCommon.h">
+      <Filter>vendor\Recast\Detour\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourMath.h">
+      <Filter>vendor\Recast\Detour\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourNavMesh.h">
+      <Filter>vendor\Recast\Detour\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourNavMeshBuilder.h">
+      <Filter>vendor\Recast\Detour\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourNavMeshQuery.h">
+      <Filter>vendor\Recast\Detour\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourNode.h">
+      <Filter>vendor\Recast\Detour\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\Detour\Include\DetourStatus.h">
+      <Filter>vendor\Recast\Detour\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\DetourCrowd\Include\DetourCrowd.h">
+      <Filter>vendor\Recast\DetourCrowd\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\DetourCrowd\Include\DetourLocalBoundary.h">
+      <Filter>vendor\Recast\DetourCrowd\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\DetourCrowd\Include\DetourObstacleAvoidance.h">
+      <Filter>vendor\Recast\DetourCrowd\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\DetourCrowd\Include\DetourPathCorridor.h">
+      <Filter>vendor\Recast\DetourCrowd\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\DetourCrowd\Include\DetourPathQueue.h">
+      <Filter>vendor\Recast\DetourCrowd\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\DetourCrowd\Include\DetourProximityGrid.h">
+      <Filter>vendor\Recast\DetourCrowd\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\DetourTileCache\Include\DetourTileCache.h">
+      <Filter>vendor\Recast\DetourTileCache\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\DetourTileCache\Include\DetourTileCacheBuilder.h">
+      <Filter>vendor\Recast\DetourTileCache\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\Recast\Include\Recast.h">
+      <Filter>vendor\Recast\Recast\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\Recast\Include\RecastAlloc.h">
+      <Filter>vendor\Recast\Recast\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Recast\Recast\Include\RecastAssert.h">
+      <Filter>vendor\Recast\Recast\Include</Filter>
     </ClInclude>
     <ClInclude Include="vendor\assimp\include\assimp\Base64.hpp">
       <Filter>vendor\assimp\include\assimp</Filter>
@@ -2465,8 +2573,20 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\BaldLion\AI\Navigation\NavigationMeshGenerator.cpp">
+    <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp">
       <Filter>src\BaldLion\AI\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\BuildContext.cpp">
+      <Filter>src\BaldLion\AI\Navigation\RecastClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\ChunkyTriMesh.cpp">
+      <Filter>src\BaldLion\AI\Navigation\RecastClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\InputGeom.cpp">
+      <Filter>src\BaldLion\AI\Navigation\RecastClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\MeshLoaderObj.cpp">
+      <Filter>src\BaldLion\AI\Navigation\RecastClasses</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Animation\AnimationManager.cpp">
       <Filter>src\BaldLion\Animation</Filter>
@@ -2896,6 +3016,78 @@
     </ClCompile>
     <ClCompile Include="vendor\ReactPhysics3D\src\utils\Profiler.cpp">
       <Filter>vendor\ReactPhysics3D\src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Detour\Source\DetourAlloc.cpp">
+      <Filter>vendor\Recast\Detour\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Detour\Source\DetourCommon.cpp">
+      <Filter>vendor\Recast\Detour\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Detour\Source\DetourNavMesh.cpp">
+      <Filter>vendor\Recast\Detour\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Detour\Source\DetourNavMeshBuilder.cpp">
+      <Filter>vendor\Recast\Detour\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Detour\Source\DetourNavMeshQuery.cpp">
+      <Filter>vendor\Recast\Detour\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Detour\Source\DetourNode.cpp">
+      <Filter>vendor\Recast\Detour\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourCrowd\Source\DetourCrowd.cpp">
+      <Filter>vendor\Recast\DetourCrowd\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourCrowd\Source\DetourLocalBoundary.cpp">
+      <Filter>vendor\Recast\DetourCrowd\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourCrowd\Source\DetourObstacleAvoidance.cpp">
+      <Filter>vendor\Recast\DetourCrowd\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourCrowd\Source\DetourPathCorridor.cpp">
+      <Filter>vendor\Recast\DetourCrowd\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourCrowd\Source\DetourPathQueue.cpp">
+      <Filter>vendor\Recast\DetourCrowd\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourCrowd\Source\DetourProximityGrid.cpp">
+      <Filter>vendor\Recast\DetourCrowd\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourTileCache\Source\DetourTileCache.cpp">
+      <Filter>vendor\Recast\DetourTileCache\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\DetourTileCache\Source\DetourTileCacheBuilder.cpp">
+      <Filter>vendor\Recast\DetourTileCache\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\Recast.cpp">
+      <Filter>vendor\Recast\Recast\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastAlloc.cpp">
+      <Filter>vendor\Recast\Recast\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastArea.cpp">
+      <Filter>vendor\Recast\Recast\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastContour.cpp">
+      <Filter>vendor\Recast\Recast\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastFilter.cpp">
+      <Filter>vendor\Recast\Recast\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastLayers.cpp">
+      <Filter>vendor\Recast\Recast\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastMesh.cpp">
+      <Filter>vendor\Recast\Recast\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastMeshDetail.cpp">
+      <Filter>vendor\Recast\Recast\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastRasterization.cpp">
+      <Filter>vendor\Recast\Recast\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\Recast\Recast\Source\RecastRegion.cpp">
+      <Filter>vendor\Recast\Recast\Source</Filter>
     </ClCompile>
     <ClCompile Include="vendor\optick\src\optick_capi.cpp">
       <Filter>vendor\optick\src</Filter>

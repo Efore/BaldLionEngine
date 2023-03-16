@@ -22,6 +22,10 @@ IncludeDir["ImGuizmo"] = "BaldLionEditor/vendor/ImGuizmo"
 IncludeDir["debug_draw"] = "BaldLionEngine/vendor/debug-draw"
 IncludeDir["yaml"] = "BaldLionEngine/vendor/yaml/include"
 IncludeDir["ReactPhysics3D"] = "BaldLionEngine/vendor/ReactPhysics3D/include"
+IncludeDir["RecastDetour"] = "BaldLionEngine/vendor/Recast/Detour/include"
+IncludeDir["RecastDetourCrowd"] = "BaldLionEngine/vendor/Recast/DetourCrowd/include"
+IncludeDir["RecastDetourTileCache"] = "BaldLionEngine/vendor/Recast/DetourTileCache/include"
+IncludeDir["RecastRecast"] = "BaldLionEngine/vendor/Recast/Recast/include"
 
 group "Dependencies"
 	include "BaldLionEngine/vendor/GLFW"
@@ -64,11 +68,13 @@ project "BaldLionEngine"
 		"%{prj.name}/vendor/assimp/**.inl",
 		
 		"%{prj.name}/vendor/ReactPhysics3D/**.h",
-		"%{prj.name}/vendor/ReactPhysics3D/**.cpp"
+		"%{prj.name}/vendor/ReactPhysics3D/**.cpp",
+		
+		"%{prj.name}/vendor/Recast/**.h",		
+		"%{prj.name}/vendor/Recast/**.cpp"
 	}	
 	
 	removefiles {
-		"%{prj.name}/src/BaldLion/AI/FSM/**",
 		"%{prj.name}/vendor/optick/src/optick_gpu.d3d12.**",
 		"%{prj.name}/vendor/optick/src/optick_gpu.vulkan.**",
 	}
@@ -91,7 +97,11 @@ project "BaldLionEngine"
 		"%{IncludeDir.optick}",
 		"%{IncludeDir.debug_draw}",		
 		"%{IncludeDir.yaml}",
-		"%{IncludeDir.ReactPhysics3D}"
+		"%{IncludeDir.ReactPhysics3D}",
+		"%{IncludeDir.RecastDetour}",
+		"%{IncludeDir.RecastDetourCrowd}",
+		"%{IncludeDir.RecastDetourTileCache}",
+		"%{IncludeDir.RecastRecast}"
 	}	
 		
 	libdirs 
@@ -108,10 +118,7 @@ project "BaldLionEngine"
 		"yaml-cpp",
 		--"reactphysics3d.lib",
 		"assimp-vc142-mtd.lib",
-	}
-
-	filter "files:BaldLionEngine/vendor/ReactPhysics3D/**.cpp"
-		flags {"NoPCH"}
+	}	
 		
 	filter "system:windows"		
 		systemversion "latest"
@@ -138,6 +145,12 @@ project "BaldLionEngine"
 		optimize "on"
 		
 	filter "files:BaldLionEngine/vendor/optick/**.cpp"
+		flags {"NoPCH"}
+		
+	filter "files:BaldLionEngine/vendor/ReactPhysics3D/**.cpp"
+		flags {"NoPCH"}
+		
+	filter "files:BaldLionEngine/vendor/Recast/**.cpp"
 		flags {"NoPCH"}
 
 project "BaldLionEditor"
@@ -183,6 +196,10 @@ project "BaldLionEditor"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.yaml}",
 		"%{IncludeDir.ReactPhysics3D}",
+		"%{IncludeDir.RecastDetour}",
+		"%{IncludeDir.RecastDetourCrowd}",
+		"%{IncludeDir.RecastDetourTileCache}",
+		"%{IncludeDir.RecastRecast}"
 	}
 	
 	-- libdirs 
