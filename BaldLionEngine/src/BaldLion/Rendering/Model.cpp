@@ -15,13 +15,12 @@ namespace BaldLion
 	namespace Rendering
 	{
 		Model::Model(const std::string& modelPath) : 
-			ResourceManagement::Resource(BL_STRING_TO_STRINGID(modelPath), StringUtils::GetFileNameFromPath(modelPath), ResourceManagement::ResourceType::Model)
+			ResourceManagement::Resource(BL_STRING_TO_STRINGID(modelPath), modelPath, ResourceManagement::ResourceType::Model)
 		{
 			BL_PROFILE_FUNCTION(); 
 
 			// Extracting folder path from filePath
 
-			m_modelPath = BL_STRING_TO_STRINGID(modelPath);
 			auto lastSlash = modelPath.find_last_of("/\\");		
 			m_modelFolderPath = BL_STRING_TO_STRINGID(modelPath.substr(0, lastSlash + 1));
 			m_subMeshes = DynamicArray<Mesh*>(AllocationType::FreeList_Renderer, 5);
@@ -40,7 +39,7 @@ namespace BaldLion
 
 			Assimp::Importer import;			
 
-			const aiScene *scene = import.ReadFile(BL_STRINGID_TO_STR_C(m_modelPath), m_importFlags);
+			const aiScene *scene = import.ReadFile(BL_STRINGID_TO_STR_C(m_resourcePath), m_importFlags);
 
 			if (!scene || !scene->mRootNode)
 			{
@@ -67,7 +66,7 @@ namespace BaldLion
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 				
-				m_subMeshes.PushBack(Model::ProcessMesh(mesh, scene, m_modelPath));
+				m_subMeshes.PushBack(Model::ProcessMesh(mesh, scene, m_resourcePath));
 			}
 			// then do the same for each of its children
 			for (ui32 i = 0; i < node->mNumChildren; i++)
@@ -406,7 +405,7 @@ namespace BaldLion
 				
 			if (!mesh) 
 			{
-				mesh = MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer, meshMaterial, meshPath);
+				mesh = MemoryManager::New<Mesh>("Mesh", AllocationType::FreeList_Renderer, meshMaterial, BL_STRINGID_TO_STRING(modelPath), meshPath);
 				ResourceManagement::ResourceManager::AddResource(mesh);
 			}
 

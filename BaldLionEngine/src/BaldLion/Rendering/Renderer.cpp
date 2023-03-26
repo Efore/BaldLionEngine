@@ -28,7 +28,6 @@ namespace BaldLion
 		DynamicArray<RenderMeshData> Renderer::s_shadowCastingMeshes;
 		DynamicArray<RenderMeshData> Renderer::s_dynamicMeshes;
 		DynamicArray<VertexArray*> Renderer::s_disposableVertexArrays;
-		DynamicArray<std::function<void()>> Renderer::s_scheduledDebugDrawCommands;
 
 		Framebuffer* Renderer::s_framebuffer;
 
@@ -77,8 +76,7 @@ namespace BaldLion
 			s_dynamicMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
 			s_shadowCastingMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
 			s_disposableVertexArrays = DynamicArray<VertexArray*>(AllocationType::FreeList_Renderer, 100);
-			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::FreeList_Renderer, 100);
-			s_scheduledDebugDrawCommands = DynamicArray<std::function<void()>>(AllocationType::FreeList_Renderer, 1000);			
+			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::FreeList_Renderer, 100);		
 
 			s_debugDrawRender = DebugDrawRenderProvider::Create();
 			s_debugDrawRender->Init();
@@ -365,14 +363,7 @@ namespace BaldLion
 		void Renderer::DrawDebugCommands()
 		{
 			s_debugDrawRender->SetMvpMatrix(s_sceneData.viewProjectionMatrix);
-
-			BL_DYNAMICARRAY_FOR(i, s_scheduledDebugDrawCommands, 0)			
-			{
-				s_scheduledDebugDrawCommands[i]();
-			}
-
 			dd::flush((int)Time::GetCurrentTimeInMilliseconds());
-			s_scheduledDebugDrawCommands.Clear();
 		}
 
 		void Renderer::AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
@@ -433,87 +424,68 @@ namespace BaldLion
 		}
 		
 		void Renderer::DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::mat4& transformMatrix, const glm::vec3& color, int durationMs, bool depthEnabled /*= true*/)
-		{
-			ScheduleDebugDrawCommand([center, transformMatrix, color, size, durationMs, depthEnabled]
-			{
-				dd::box((float*)&center, (float*)&transformMatrix, (float*)&color, size[0], size[1], size[2], durationMs, depthEnabled);
-			});
+		{			
+			dd::box((float*)&center, (float*)&transformMatrix, (float*)&color, size[0], size[1], size[2], durationMs, depthEnabled);			
 		}
 
 		void Renderer::DrawDebugSphere(const glm::vec3& center, float radius, const glm::vec3& color, int durationMs, bool depthEnabled /*= true*/)
-		{
-			ScheduleDebugDrawCommand([center, radius, color, durationMs, depthEnabled]
-			{
-				dd::sphere((float*)&center, (float*)&color, radius, durationMs, depthEnabled);
-			});
+		{			
+			dd::sphere((float*)&center, (float*)&color, radius, durationMs, depthEnabled);			
 		}
 
 		void Renderer::DrawDebugCapsule(const glm::vec3& center, const glm::mat4& transformMatrix, float radius, float height, const glm::vec3& color, int durationMs /*= 0*/, bool depthEnabled /*= true*/)
 		{
-			glm::vec3 transformedCenter = transformMatrix * glm::vec4(center, 1.0f);
-			glm::vec3 circleNormal = transformMatrix * glm::vec4(MathUtils::Vector3UnitY, 1.0f);
+			const glm::vec3 transformedCenter = transformMatrix * glm::vec4(center, 1.0f);
+			const glm::vec3 circleNormal = transformMatrix * glm::vec4(MathUtils::Vector3UnitY, 1.0f);			
+			glm::vec3 position = transformedCenter + circleNormal * ((height * 0.5f) - radius);
 
-			ScheduleDebugDrawCommand([transformedCenter, circleNormal, radius, height, color, durationMs, depthEnabled]
-			{
-				glm::vec3 position = transformedCenter + circleNormal * ((height * 0.5f) - radius);
-				dd::sphere((float*)&position, (float*)&color, radius, durationMs, depthEnabled);
-			});
+			dd::sphere((float*)&position, (float*)&color, radius, durationMs, depthEnabled);			
 
-			ui32 numCircles = (ui32)(height / 0.5f);
+			const ui32 numCircles = (ui32)(height / 0.5f);
 
 			glm::vec3 circlesStartPosition = transformedCenter - circleNormal * ((height * 0.5f) - radius);
 
 			for (ui32 i = 0; i < numCircles; ++i)
 			{
-				circlesStartPosition += circleNormal * (i * 0.5f);
-				ScheduleDebugDrawCommand([transformedCenter, circleNormal, radius, color, durationMs, depthEnabled]
-				{					
-					dd::circle((float*)&transformedCenter, (float*)&circleNormal, (float*)&color, radius, 32, durationMs, depthEnabled);
-				});
+				circlesStartPosition += circleNormal * (i * 0.5f);								
+				dd::circle((float*)&transformedCenter, (float*)&circleNormal, (float*)&color, radius, 32, durationMs, depthEnabled);				
 			}
-
-			ScheduleDebugDrawCommand([transformedCenter, circleNormal, radius, height, color, durationMs, depthEnabled]
-			{
-				glm::vec3 position = transformedCenter - circleNormal * ((height * 0.5f) - radius);
-				dd::sphere((float*)&position, (float*)&color, radius, durationMs, depthEnabled);
-			});
-
+			
+			position = transformedCenter - circleNormal * ((height * 0.5f) - radius);
+			dd::sphere((float*)&position, (float*)&color, radius, durationMs, depthEnabled);	
 		}
 
-		void Renderer::DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, bool arrow, int durationMs, bool depthEnabled /*= true*/)
-		{
-			ScheduleDebugDrawCommand([from, to, color, arrow, durationMs, depthEnabled]
+		void Renderer::DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, float arrowSize, int durationMs, bool depthEnabled /*= true*/)
+		{			
+			if (arrowSize > 0.0f)
 			{
-				if (arrow) 
-				{
-					dd::arrow((float*)&from, (float*)&to, (float*)&color, 1.0f, durationMs, depthEnabled);
-				}
-				else 
-				{
-					dd::line((float*)&from, (float*)&to, (float*)&color, durationMs, depthEnabled);
-				}				
-			});
+				dd::arrow((float*)&from, (float*)&to, (float*)&color, arrowSize, durationMs, depthEnabled);
+			}
+			else
+			{
+				dd::line((float*)&from, (float*)&to, (float*)&color, durationMs, depthEnabled);
+			}			
 		}
 
 		void Renderer::DrawDebugFrustrum(const glm::mat4& invClipMatrix, const glm::vec3& color, int durationMs, bool depthEnabled /*= true*/)
-		{
-			ScheduleDebugDrawCommand([invClipMatrix, color, durationMs, depthEnabled]
-			{
-				dd::frustum((float*)&invClipMatrix, (float*)&color, durationMs, depthEnabled);
-			});
+		{			
+			dd::frustum((float*)&invClipMatrix, (float*)&color, durationMs, depthEnabled);			
 		}
 
 		void Renderer::DrawDebug3DText(const std::string& text, const glm::vec3& worldPos, const glm::vec3& color, int viewportCoordX, int viewportCoordY, int viewportWidth, int viewportHeight, float scaling, int durationMs /*= 0*/)
-		{
-			ScheduleDebugDrawCommand([text, worldPos, color, viewportCoordX, viewportCoordY, viewportWidth, viewportHeight, scaling, durationMs]
-			{	
-				dd::projectedText(text.c_str(), (float*)&worldPos, (float*)&color, (float*)&s_sceneData.viewProjectionMatrix, viewportCoordX, viewportCoordY, viewportWidth, viewportHeight, scaling, durationMs);
-			});
+		{	
+			dd::projectedText(text.c_str(), (float*)&worldPos, (float*)&color, (float*)&s_sceneData.viewProjectionMatrix, viewportCoordX, viewportCoordY, viewportWidth, viewportHeight, scaling, durationMs);
 		}
 
-		void Renderer::ScheduleDebugDrawCommand(std::function<void()> debugDrawCommand)
+		void Renderer::DrawDebugTriangle(const glm::vec3& vertex1, const glm::vec3& vertex2, const glm::vec3& vertex3, const glm::vec3& color, float alpha, int durationMs /*= 0*/, bool depthEnabled /*= true*/)
 		{
-			s_scheduledDebugDrawCommands.EmplaceBack(debugDrawCommand);
+			dd::triangle((float*)&vertex1, (float*)&vertex2, (float*)&vertex3, (float*)&color, alpha, durationMs, depthEnabled);
 		}
+
+		void Renderer::DrawDebugPoint(const glm::vec3& position, const glm::vec3& color, float size /*= 15.0f*/, int durationMs /*= 0*/, bool depthEnabled /*= true*/)
+		{
+			dd::point((float*)&position, (float*)&color, size, durationMs, depthEnabled);
+		}
+
 	}
 }

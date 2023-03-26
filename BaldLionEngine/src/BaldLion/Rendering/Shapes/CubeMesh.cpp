@@ -7,7 +7,7 @@ namespace BaldLion
 	namespace Rendering
 	{
 		CubeMesh::CubeMesh(Material* material, float size, const std::string& meshName) :
-			Mesh(material,meshName),	m_size(size)
+			Mesh(material, meshName, meshName),	m_size(size)
 		{
 
 		} 

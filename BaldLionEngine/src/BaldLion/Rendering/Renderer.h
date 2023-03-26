@@ -77,17 +77,18 @@ namespace BaldLion
 			static void DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::mat4& transformMatrix, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebugSphere(const glm::vec3& center, float radius, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebugCapsule(const glm::vec3& center, const glm::mat4& transformMatrix, float radius, float height, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
-			static void DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, bool arrow = false, int durationMs = 0, bool depthEnabled = true);
+			static void DrawDebugLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, float arrowSize = 0.0f, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebugFrustrum(const glm::mat4& invClipMatrix, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebug3DText(const std::string& text, const glm::vec3& worldPos, const glm::vec3& color, int viewportCoordX, int viewportCoordY, int viewportWidth, int viewportHeight, float scaling = 1.0f, int durationMs = 0);
+			static void DrawDebugTriangle(const glm::vec3& vertex1, const glm::vec3& vertex2, const glm::vec3& vertex3, const glm::vec3& color, float alpha = 1.0f, int durationMs = 0, bool depthEnabled = true);
+			static void DrawDebugPoint(const glm::vec3& position, const glm::vec3& color, float size = 5.0f, int durationMs = 0, bool depthEnabled = true);
 
 		private:
 			
 			static void DrawShadowMap();
 			static void DrawDynamicMeshes();
 			static void DrawBatchedMeshes();
-			static void DrawDebugCommands();
-			static void ScheduleDebugDrawCommand(std::function<void()> debugDrawCommand);			
+			static void DrawDebugCommands();		
 
 		private:
 
@@ -100,7 +101,6 @@ namespace BaldLion
 			static DynamicArray<RenderMeshData> s_shadowCastingMeshes;
 			static DynamicArray<RenderMeshData> s_dynamicMeshes;
 			static HashTable<Material*, GeometryData*> s_geometryToBatch;
-			static DynamicArray<std::function<void()>> s_scheduledDebugDrawCommands;
 
 			static DynamicArray<VertexArray*> s_disposableVertexArrays;	 
 

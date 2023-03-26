@@ -65,7 +65,6 @@ namespace BaldLion
 			
 
 		protected:
-			StringId m_modelPath;
 			StringId m_modelFolderPath;
 			int m_importFlags;
 			DynamicArray<Mesh*> m_subMeshes;			

@@ -16,10 +16,11 @@ namespace BaldLion
 
 	namespace Rendering
 	{
-		class Mesh : public ResourceManagement::Resource{
+		class Mesh : public ResourceManagement::Resource
+		{
 
 		public:
-			Mesh(Material* material, const std::string& meshPath, bool isPrimitive = false);
+			Mesh(Material* material, const std::string& modelPath, const std::string& meshPath, bool isPrimitive = false);
 			~Mesh();
 
 			void SetUpMesh(const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);
@@ -52,6 +53,8 @@ namespace BaldLion
 
 			ECS::ECSEntityID GenerateEntity(ECS::ECSManager* ecsManager, bool isStatic) const;
 
+			inline StringId GetModelPath() const { return m_modelPath; }
+
 		protected:
 
 			GeometryData* m_geometryData;
@@ -59,6 +62,7 @@ namespace BaldLion
 			Material* m_material;
 			Skeleton* m_skeleton;
 			DynamicArray<VertexBone> m_vertexBones;
+			StringId m_modelPath;
 			bool m_isPrimitive = false;
 		};
 	}

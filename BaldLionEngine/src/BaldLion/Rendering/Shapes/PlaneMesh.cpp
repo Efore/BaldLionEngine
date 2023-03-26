@@ -7,7 +7,7 @@ namespace BaldLion
 	{
 
 		PlaneMesh::PlaneMesh(Material* material, float size, const std::string& meshName) :
-			Mesh(material, meshName, true),
+			Mesh(material, meshName, meshName, true),
 			m_size(size)
 		{
 		}		

@@ -10,11 +10,12 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		Mesh::Mesh(Material* material, const std::string& meshPath, bool isPrimitive) :
+		Mesh::Mesh(Material* material, const std::string& modelPath, const std::string& meshPath, bool isPrimitive) :
 			ResourceManagement::Resource(BL_STRING_TO_STRINGID(meshPath), meshPath, ResourceManagement::ResourceType::Mesh),
 			m_material(material), 
 			m_skeleton(nullptr),
-			m_isPrimitive(isPrimitive)
+			m_isPrimitive(isPrimitive),
+			m_modelPath(BL_STRING_TO_STRINGID(modelPath))
 		{	
 		}
 

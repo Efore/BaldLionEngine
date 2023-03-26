@@ -35,12 +35,43 @@ namespace BaldLion {
 			{
 				glDeleteProgram(m_linePointProgram);
 				glDeleteProgram(m_textProgram);
+				glDeleteProgram(m_triangleProgram);
 
 				glDeleteVertexArrays(1, &m_linePointVAO);
 				glDeleteBuffers(1, &m_linePointVBO);
 
 				glDeleteVertexArrays(1, &m_textVAO);
 				glDeleteBuffers(1, &m_textVBO);
+
+				glDeleteVertexArrays(1, &m_triangleVAO);
+				glDeleteBuffers(1, &m_triangleVBO);
+			}
+
+			void drawTriangleList(const dd::DrawVertex * vertices, int vertexCount, bool depthEnabled) override
+			{
+				assert(vertices != nullptr);
+				assert(vertexCount > 0 && vertexCount <= DEBUG_DRAW_VERTEX_BUFFER_SIZE);
+
+				glBindVertexArray(m_triangleVAO);
+
+				glUseProgram(m_triangleProgram);
+				glUniformMatrix4fv(m_triangleProgram_MvpMatrixLocation, 1, GL_FALSE, (float*)(&m_mvpMatrix[0][0]));
+
+				glEnable(GL_DEPTH_TEST);
+
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+				glBindBuffer(GL_ARRAY_BUFFER, m_triangleVBO);
+				glBufferSubData(GL_ARRAY_BUFFER, 0, vertexCount * sizeof(dd::DrawVertex), vertices);
+
+				glDrawArrays(GL_TRIANGLES, 0, vertexCount); // Issue the draw call
+				
+				glUseProgram(0);
+				glBindVertexArray(0);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+				checkGLError(__FILE__, __LINE__);
 			}
 
 			void drawPointList(const dd::DrawVertex * points, int count, bool depthEnabled) override
@@ -189,8 +220,8 @@ namespace BaldLion {
 			void setupShaderPrograms()
 			{
 				//
-			// Line/point drawing shader:
-			//
+				// Line/point drawing shader:
+				//
 				{
 					GLuint linePointVS = glCreateShader(GL_VERTEX_SHADER);
 					glShaderSource(linePointVS, 1, &linePointVertShaderSrc, nullptr);
@@ -237,10 +268,36 @@ namespace BaldLion {
 					m_textProgram_ScreenDimensions = glGetUniformLocation(m_textProgram, "u_screenDimensions");
 
 				}
+
+				//
+				// Triangle drawing shader:
+				//
+				{
+					GLuint triangleVS = glCreateShader(GL_VERTEX_SHADER);
+					glShaderSource(triangleVS, 1, &triVertShaderSrc, nullptr);
+					compileShader(triangleVS);
+
+					GLint triangleFS = glCreateShader(GL_FRAGMENT_SHADER);
+					glShaderSource(triangleFS, 1, &triFragShaderSrc, nullptr);
+					compileShader(triangleFS);
+
+					m_triangleProgram = glCreateProgram();
+					glAttachShader(m_triangleProgram, triangleVS);
+					glAttachShader(m_triangleProgram, triangleFS);
+
+					glBindAttribLocation(m_triangleProgram, 0, "in_Position");
+					glBindAttribLocation(m_triangleProgram, 1, "in_Color");
+					linkProgram(m_triangleProgram);
+
+					m_triangleProgram_MvpMatrixLocation = glGetUniformLocation(m_triangleProgram, "u_MvpMatrix");
+					checkGLError(__FILE__, __LINE__);
+				}
+
 			}
 
 			void setupVertexBuffers()
 			{
+				
 				// Lines/points vertex buffer:
 			//
 				{
@@ -269,7 +326,7 @@ namespace BaldLion {
 						/* offset    = */ reinterpret_cast<void *>(offset));
 					offset += sizeof(float) * 3;
 
-					glEnableVertexAttribArray(1); // in_ColorPointSize (vec4)
+					glEnableVertexAttribArray(1); // in_ColorPointSize (vec3)
 					glVertexAttribPointer(
 						/* index     = */ 1,
 						/* size      = */ 4,
@@ -339,6 +396,52 @@ namespace BaldLion {
 					glBindVertexArray(0);
 					glBindBuffer(GL_ARRAY_BUFFER, 0);
 				}
+
+				//
+				// Triangles vertex buffer:
+				//
+				{
+					glGenVertexArrays(1, &m_triangleVAO);
+					glGenBuffers(1, &m_triangleVBO);
+					checkGLError(__FILE__, __LINE__);
+
+					glBindVertexArray(m_triangleVAO);
+					glBindBuffer(GL_ARRAY_BUFFER, m_triangleVBO);
+
+					// RenderInterface will never be called with a batch larger than
+					// DEBUG_DRAW_VERTEX_BUFFER_SIZE vertexes, so we can allocate the same amount here.
+					glBufferData(GL_ARRAY_BUFFER, DEBUG_DRAW_VERTEX_BUFFER_SIZE * sizeof(dd::DrawVertex), nullptr, GL_STREAM_DRAW);
+					checkGLError(__FILE__, __LINE__);
+
+					// Set the vertex format expected by 3D points and lines:
+					std::size_t offset = 0;
+
+					glEnableVertexAttribArray(0); // in_Position (vec3)
+					glVertexAttribPointer(
+						/* index     = */ 0,
+						/* size      = */ 3,
+						/* type      = */ GL_FLOAT,
+						/* normalize = */ GL_FALSE,
+						/* stride    = */ sizeof(dd::DrawVertex),
+						/* offset    = */ reinterpret_cast<void *>(offset));
+					offset += sizeof(float) * 3;
+
+					glEnableVertexAttribArray(1); // in_Color (vec3)
+					glVertexAttribPointer(
+						/* index     = */ 1,
+						/* size      = */ 4,
+						/* type      = */ GL_FLOAT,
+						/* normalize = */ GL_FALSE,
+						/* stride    = */ sizeof(dd::DrawVertex),
+						/* offset    = */ reinterpret_cast<void *>(offset));
+
+					checkGLError(__FILE__, __LINE__);
+
+					// VAOs can be a pain in the neck if left enabled...
+					glBindVertexArray(0);
+					glBindBuffer(GL_ARRAY_BUFFER, 0);
+				}
+
 			}
 
 			static GLuint handleToGL(dd::GlyphTextureHandle handle)
@@ -358,7 +461,7 @@ namespace BaldLion {
 				GLenum err;
 				while ((err = glGetError()) != GL_NO_ERROR)
 				{
-					BL_LOG_ERROR("%s(%d) : GL_CORE_ERROR=0x%X - %s", file, line, err);
+					BL_LOG_ERROR("{0}({1}) : GL_CORE_ERROR=0x{2}", file, line, err);
 				}
 			}
 
@@ -391,13 +494,18 @@ namespace BaldLion {
 				{
 					GLchar strInfoLog[1024] = { 0 };
 					glGetProgramInfoLog(program, sizeof(strInfoLog) - 1, nullptr, strInfoLog);
+					BL_LOG_CORE_ERROR("{0}", strInfoLog);
 				}
+				checkGLError(__FILE__, __LINE__);
 			}
 
 		private:
 
 			GLuint m_linePointProgram;
 			GLint  m_linePointProgram_MvpMatrixLocation;
+
+			GLuint m_triangleProgram;
+			GLint  m_triangleProgram_MvpMatrixLocation;
 
 			GLuint m_textProgram;
 			GLint  m_textProgram_GlyphTextureLocation;
@@ -409,13 +517,46 @@ namespace BaldLion {
 			GLuint m_textVAO;
 			GLuint m_textVBO;
 
+			GLuint m_triangleVAO;
+			GLuint m_triangleVBO;
+
+
 			static const char * linePointVertShaderSrc;
 			static const char * linePointFragShaderSrc;
 
 			static const char * textVertShaderSrc;
 			static const char * textFragShaderSrc;
 
+			static const char * triVertShaderSrc;
+			static const char * triFragShaderSrc;
+
 		};
+
+		const char * OpenGLDebugRenderInterface::triVertShaderSrc = "\n"
+			"#version 150\n"
+			"\n"
+			"in vec3 in_Position;\n"
+			"in vec4 in_Color;\n"
+			"\n"
+			"out vec4 v_Color;\n"
+			"uniform mat4 u_MvpMatrix;\n"
+			"\n"
+			"void main()\n"
+			"{\n"
+			"    gl_Position  = u_MvpMatrix * vec4(in_Position, 1.0);\n"			
+			"    v_Color      = in_Color;\n"
+			"}\n";
+
+		const char * OpenGLDebugRenderInterface::triFragShaderSrc = "\n"
+			"#version 150\n"
+			"\n"
+			"in  vec4 v_Color;\n"
+			"out vec4 out_FragColor;\n"
+			"\n"
+			"void main()\n"
+			"{\n"
+			"    out_FragColor = v_Color;\n"
+			"}\n";
 
 		const char * OpenGLDebugRenderInterface::linePointVertShaderSrc = "\n"
 			"#version 150\n"
@@ -429,7 +570,7 @@ namespace BaldLion {
 			"void main()\n"
 			"{\n"
 			"    gl_Position  = u_MvpMatrix * vec4(in_Position, 1.0);\n"
-			"    gl_PointSize = 15.0;\n"
+			"    gl_PointSize = in_ColorPointSize.w;\n"
 			"    v_Color      = vec4(in_ColorPointSize.xyz, 1.0);\n"
 			"}\n";
 

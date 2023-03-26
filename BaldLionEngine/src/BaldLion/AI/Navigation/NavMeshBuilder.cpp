@@ -2,6 +2,7 @@
 #include "NavMeshBuilder.h"
 #include "RecastClasses/InputGeom.h"
 #include "DetourNavMeshBuilder.h"
+#include "BaldLion/Core/JobManagement/JobManager.h"
 
 
 namespace BaldLion::AI::Navigation
@@ -21,14 +22,76 @@ namespace BaldLion::AI::Navigation
 	rcConfig NavMeshBuilder::m_cfg;
 	NavMeshBuildSettings NavMeshBuilder::navMeshConfig;
 
-	bool NavMeshBuilder::BuildNavMesh(const char* filepath)
-	{		
+	float NavMeshBuilder::m_lastBuiltTileBmax[3];
+	float NavMeshBuilder::m_lastBuiltTileBmin[3];
+
+	float NavMeshBuilder::m_tileMemUsage;
+	float NavMeshBuilder::m_tileBuildTime;
+	float NavMeshBuilder::m_totalBuildTimeMs;
+	int NavMeshBuilder::m_tileTriCount;
+
+	void NavMeshBuilder::Init()
+	{
+		navMeshConfig.cellSize = 0.3f;
+		navMeshConfig.cellHeight = 0.2f;
+		navMeshConfig.agentHeight = 2.0f;
+		navMeshConfig.agentRadius = 0.6f;
+		navMeshConfig.agentMaxClimb = 0.9f;
+		navMeshConfig.agentMaxSlope = 45.0f;
+		navMeshConfig.regionMinSize = 8.0f;
+		navMeshConfig.regionMergeSize = 20.0f;
+		navMeshConfig.edgeMaxLen = 12.0f;
+		navMeshConfig.edgeMaxError = 1.3f;
+		navMeshConfig.vertsPerPoly = 6.0f;
+		navMeshConfig.detailSampleDist = 6.0f;
+		navMeshConfig.detailSampleMaxError = 1.0f;
+		navMeshConfig.partitionType = 0;
+		navMeshConfig.maxTiles = 0;
+		navMeshConfig.tileSize = 32;
+		navMeshConfig.maxPolys = 0;
+
+		m_navQuery = dtAllocNavMeshQuery();
+
+		m_totalBuildTimeMs = 0;
+		m_triareas = 0;
+		m_solid = 0;
+		m_chf = 0;
+		m_cset = 0;
+		m_pmesh = 0;
+		m_dmesh = 0;		
+		m_tileBuildTime = 0;
+		m_tileMemUsage = 0;
+		m_tileTriCount = 0;
+
+		memset(m_lastBuiltTileBmin, 0, sizeof(m_lastBuiltTileBmin));
+		memset(m_lastBuiltTileBmax, 0, sizeof(m_lastBuiltTileBmax));
+	}
+
+	void NavMeshBuilder::Stop()
+	{
+		CleanUp();
+
+		if (m_navQuery != nullptr)
+		{
+			dtFreeNavMeshQuery(m_navQuery);
+			m_navQuery = nullptr;
+		}
+
+		if (m_navMesh != nullptr)
+		{
+			dtFreeNavMesh(m_navMesh);
+			m_navMesh = nullptr;
+		}
+	}
+
+	bool NavMeshBuilder::LoadGeom(const char* filepath)
+	{
 		if (m_ctx.GetInitialized())
 		{
 			m_ctx.Stop();
 		}
 		m_ctx.Init();
-		
+
 		if (m_geom != nullptr)
 		{
 			MemoryManager::Delete(m_geom);
@@ -37,7 +100,7 @@ namespace BaldLion::AI::Navigation
 		m_geom = MemoryManager::New<InputGeom>("NavMesh Geom", AllocationType::FreeList_ECS);
 
 		BuildSettings buildSettings;
-		
+
 		buildSettings.cellSize = navMeshConfig.cellSize;
 		buildSettings.cellHeight = navMeshConfig.cellHeight;
 		buildSettings.agentHeight = navMeshConfig.agentHeight;
@@ -52,7 +115,8 @@ namespace BaldLion::AI::Navigation
 		buildSettings.detailSampleDist = navMeshConfig.detailSampleDist;
 		buildSettings.detailSampleMaxError = navMeshConfig.detailSampleMaxError;
 		buildSettings.partitionType = navMeshConfig.partitionType;
-		
+		buildSettings.tileSize = navMeshConfig.tileSize;
+
 		m_geom->saveGeomSet(&buildSettings);
 
 		if (!m_geom->load(&m_ctx, filepath))
@@ -61,17 +125,138 @@ namespace BaldLion::AI::Navigation
 			m_geom = nullptr;
 			return false;
 		}
+	}
+
+	bool NavMeshBuilder::BuildNavMesh()
+	{	
+		if (m_geom == nullptr)
+		{
+			return false;
+		}
+
+		InternalBuildNavMesh(true);
+
+		return true;
+	}	
+	
+	bool NavMeshBuilder::InternalBuildNavMesh(bool parallelize)
+	{
+		if (!m_geom || !m_geom->getMesh())
+		{
+			m_ctx.log(RC_LOG_ERROR, "buildTiledNavigation: No vertices and triangles.");
+			return false;
+		}
+
+		dtFreeNavMesh(m_navMesh);
+
+		m_navMesh = dtAllocNavMesh();
+		if (!m_navMesh)
+		{
+			m_ctx.log(RC_LOG_ERROR, "buildTiledNavigation: Could not allocate navmesh.");
+			return false;
+		}
+
+		dtNavMeshParams params;
+		rcVcopy(params.orig, m_geom->getNavMeshBoundsMin());
+		params.tileWidth = navMeshConfig.tileSize *  navMeshConfig.cellSize;
+		params.tileHeight = navMeshConfig.tileSize *  navMeshConfig.cellSize;
+		params.maxTiles = navMeshConfig.maxTiles;
+		params.maxPolys = navMeshConfig.maxPolys;
+
+		dtStatus status;
+
+		status = m_navMesh->init(&params);
+		if (dtStatusFailed(status))
+		{
+			m_ctx.log(RC_LOG_ERROR, "buildTiledNavigation: Could not init navmesh.");
+			return false;
+		}
+
+		status = m_navQuery->init(m_navMesh, 2048);
+		if (dtStatusFailed(status))
+		{
+			m_ctx.log(RC_LOG_ERROR, "buildTiledNavigation: Could not init Detour navmesh query");
+			return false;
+		}
+
+		JobManagement::Job systemUpdateJob("Bake Nav Mesh");
+
+		systemUpdateJob.Task = [] {
+
+			BuildAllTiles();
+		};
+
+		JobManagement::JobManager::QueueJob(systemUpdateJob);
+
+		return true;
+	}
+
+	void NavMeshBuilder::BuildAllTiles()
+	{
+		if (!m_geom) return;
+		if (!m_navMesh) return;
 
 		const float* bmin = m_geom->getNavMeshBoundsMin();
 		const float* bmax = m_geom->getNavMeshBoundsMax();
+		int gw = 0, gh = 0;
+		rcCalcGridSize(bmin, bmax, navMeshConfig.cellSize, &gw, &gh);
+		const int ts = (int)navMeshConfig.tileSize;
+		const int tw = (gw + ts - 1) / ts;
+		const int th = (gh + ts - 1) / ts;
+		const float tcs = navMeshConfig.tileSize * navMeshConfig.cellSize;
+
+		// Start the build process.
+		m_ctx.startTimer(RC_TIMER_TEMP);
+
+		for (int y = 0; y < th; ++y)
+		{
+			for (int x = 0; x < tw; ++x)
+			{
+				m_lastBuiltTileBmin[0] = bmin[0] + x * tcs;
+				m_lastBuiltTileBmin[1] = bmin[1];
+				m_lastBuiltTileBmin[2] = bmin[2] + y * tcs;
+
+				m_lastBuiltTileBmax[0] = bmin[0] + (x + 1)*tcs;
+				m_lastBuiltTileBmax[1] = bmax[1];
+				m_lastBuiltTileBmax[2] = bmin[2] + (y + 1)*tcs;
+
+				int dataSize = 0;
+				unsigned char* data = BuildTileMesh(x, y, m_lastBuiltTileBmin, m_lastBuiltTileBmax, dataSize);
+				if (data)
+				{
+					// Remove any previous data (navmesh owns and deletes the data).
+					m_navMesh->removeTile(m_navMesh->getTileRefAt(x, y, 0), 0, 0);
+					// Let the navmesh own the data.
+					dtStatus status = m_navMesh->addTile(data, dataSize, DT_TILE_FREE_DATA, 0, 0);
+					if (dtStatusFailed(status))
+						dtFree(data);
+				}
+			}
+		}
+
+		// Start the build process.	
+		m_ctx.stopTimer(RC_TIMER_TEMP);
+
+		m_totalBuildTimeMs = m_ctx.getAccumulatedTime(RC_TIMER_TEMP) / 1000.0f;
+	}
+
+	unsigned char* NavMeshBuilder::BuildTileMesh(const int tx, const int ty, const float* bmin, const float* bmax, int& dataSize)
+	{
+		if (!m_geom || !m_geom->getMesh() || !m_geom->getChunkyMesh())
+		{
+			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Input mesh is not specified.");
+			return 0;
+		}
+
+		m_tileMemUsage = 0;
+		m_tileBuildTime = 0;
+
+		CleanUp();
+
 		const float* verts = m_geom->getMesh()->getVerts();
 		const int nverts = m_geom->getMesh()->getVertCount();
-		const int* tris = m_geom->getMesh()->getTris();
 		const int ntris = m_geom->getMesh()->getTriCount();
-
-		//
-		// Step 1. Initialize build config.
-		//
+		const rcChunkyTriMesh* chunkyMesh = m_geom->getChunkyMesh();
 
 		// Init build configuration from GUI
 		memset(&m_cfg, 0, sizeof(m_cfg));
@@ -86,86 +271,112 @@ namespace BaldLion::AI::Navigation
 		m_cfg.minRegionArea = (int)rcSqr(navMeshConfig.regionMinSize);		// Note: area = size*size
 		m_cfg.mergeRegionArea = (int)rcSqr(navMeshConfig.regionMergeSize);	// Note: area = size*size
 		m_cfg.maxVertsPerPoly = (int)navMeshConfig.vertsPerPoly;
+		m_cfg.tileSize = (int)navMeshConfig.tileSize;
+		m_cfg.borderSize = m_cfg.walkableRadius + 3; // Reserve enough padding.
+		m_cfg.width = m_cfg.tileSize + m_cfg.borderSize * 2;
+		m_cfg.height = m_cfg.tileSize + m_cfg.borderSize * 2;
 		m_cfg.detailSampleDist = navMeshConfig.detailSampleDist < 0.9f ? 0 : navMeshConfig.cellSize * navMeshConfig.detailSampleDist;
-		m_cfg.detailSampleMaxError = navMeshConfig.cellHeight * navMeshConfig.detailSampleMaxError;
+		m_cfg.detailSampleMaxError = navMeshConfig.cellHeight * navMeshConfig.detailSampleDist;
 
-		// Set the area where the navigation will be build.
-		// Here the bounds of the input mesh are used, but the
-		// area could be specified by an user defined box, etc.
+		// Expand the heighfield bounding box by border size to find the extents of geometry we need to build this tile.
+		//
+		// This is done in order to make sure that the navmesh tiles connect correctly at the borders,
+		// and the obstacles close to the border work correctly with the dilation process.
+		// No polygons (or contours) will be created on the border area.
+		//
+		// IMPORTANT!
+		//
+		//   :''''''''':
+		//   : +-----+ :
+		//   : |     | :
+		//   : |     |<--- tile to build
+		//   : |     | :  
+		//   : +-----+ :<-- geometry needed
+		//   :.........:
+		//
+		// You should use this bounding box to query your input geometry.
+		//
+		// For example if you build a navmesh for terrain, and want the navmesh tiles to match the terrain tile size
+		// you will need to pass in data from neighbour terrain tiles too! In a simple case, just pass in all the 8 neighbours,
+		// or use the bounding box below to only pass in a sliver of each of the 8 neighbours.
 		rcVcopy(m_cfg.bmin, bmin);
 		rcVcopy(m_cfg.bmax, bmax);
-		rcCalcGridSize(m_cfg.bmin, m_cfg.bmax, m_cfg.cs, &m_cfg.width, &m_cfg.height);
-
+		m_cfg.bmin[0] -= m_cfg.borderSize*m_cfg.cs;
+		m_cfg.bmin[2] -= m_cfg.borderSize*m_cfg.cs;
+		m_cfg.bmax[0] += m_cfg.borderSize*m_cfg.cs;
+		m_cfg.bmax[2] += m_cfg.borderSize*m_cfg.cs;
 
 		// Reset build times gathering.
 		m_ctx.resetTimers();
 
-		// Start the build process.	
+		// Start the build process.
 		m_ctx.startTimer(RC_TIMER_TOTAL);
 
 		m_ctx.log(RC_LOG_PROGRESS, "Building navigation:");
 		m_ctx.log(RC_LOG_PROGRESS, " - %d x %d cells", m_cfg.width, m_cfg.height);
 		m_ctx.log(RC_LOG_PROGRESS, " - %.1fK verts, %.1fK tris", nverts / 1000.0f, ntris / 1000.0f);
 
-		//
-		// Step 2. Rasterize input polygon soup.
-		//
-
 		// Allocate voxel heightfield where we rasterize our input data to.
 		m_solid = rcAllocHeightfield();
 		if (!m_solid)
 		{
 			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Out of memory 'solid'.");
-			return false;
+			return 0;
 		}
 		if (!rcCreateHeightfield(&m_ctx, *m_solid, m_cfg.width, m_cfg.height, m_cfg.bmin, m_cfg.bmax, m_cfg.cs, m_cfg.ch))
 		{
 			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not create solid heightfield.");
-			return false;
+			return 0;
 		}
 
-		// Allocate array that can hold triangle area types.
+		// Allocate array that can hold triangle flags.
 		// If you have multiple meshes you need to process, allocate
 		// and array which can hold the max number of triangles you need to process.
-		m_triareas = new unsigned char[ntris];
+		m_triareas = new unsigned char[chunkyMesh->maxTrisPerChunk];
 		if (!m_triareas)
 		{
-			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Out of memory 'm_triareas' (%d).", ntris);
-			return false;
+			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Out of memory 'm_triareas' (%d).", chunkyMesh->maxTrisPerChunk);
+			return 0;
 		}
 
-		// Find triangles which are walkable based on their slope and rasterize them.
-		// If your input data is multiple meshes, you can transform them here, calculate
-		// the are type for each of the meshes and rasterize them.
-		memset(m_triareas, 0, ntris * sizeof(unsigned char));
-		rcMarkWalkableTriangles(&m_ctx, m_cfg.walkableSlopeAngle, verts, nverts, tris, ntris, m_triareas);
-		if (!rcRasterizeTriangles(&m_ctx, verts, nverts, tris, m_triareas, ntris, *m_solid, m_cfg.walkableClimb))
+		float tbmin[2], tbmax[2];
+		tbmin[0] = m_cfg.bmin[0];
+		tbmin[1] = m_cfg.bmin[2];
+		tbmax[0] = m_cfg.bmax[0];
+		tbmax[1] = m_cfg.bmax[2];
+		int cid[512];// TODO: Make grow when returning too many items.
+		const int ncid = rcGetChunksOverlappingRect(chunkyMesh, tbmin, tbmax, cid, 512);
+		if (!ncid)
+			return 0;
+
+		m_tileTriCount = 0;
+
+		for (int i = 0; i < ncid; ++i)
 		{
-			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not rasterize triangles.");
-			return false;
+			const rcChunkyTriMeshNode& node = chunkyMesh->nodes[cid[i]];
+			const int* ctris = &chunkyMesh->tris[node.i * 3];
+			const int nctris = node.n;
+
+			m_tileTriCount += nctris;
+
+			memset(m_triareas, 0, nctris * sizeof(unsigned char));
+			rcMarkWalkableTriangles(&m_ctx, m_cfg.walkableSlopeAngle,
+				verts, nverts, ctris, nctris, m_triareas);
+
+			if (!rcRasterizeTriangles(&m_ctx, verts, nverts, ctris, m_triareas, nctris, *m_solid, m_cfg.walkableClimb))
+				return 0;
 		}
 
-		/*if (!m_keepInterResults)
-		{
-			delete[] m_triareas;
-			m_triareas = 0;
-		}*/
+		delete[] m_triareas;
+		m_triareas = 0;
+		
 
-		//
-		// Step 3. Filter walkables surfaces.
-		//
-
-		// Once all geoemtry is rasterized, we do initial pass of filtering to
+		// Once all geometry is rasterized, we do initial pass of filtering to
 		// remove unwanted overhangs caused by the conservative rasterization
 		// as well as filter spans where the character cannot possibly stand.
 		rcFilterLowHangingWalkableObstacles(&m_ctx, m_cfg.walkableClimb, *m_solid);
 		rcFilterLedgeSpans(&m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid);
 		rcFilterWalkableLowHeightSpans(&m_ctx, m_cfg.walkableHeight, *m_solid);
-
-
-		//
-		// Step 4. Partition walkable surface to simple regions.
-		//
 
 		// Compact the heightfield so that it is faster to handle from now on.
 		// This will result more cache coherent data as well as the neighbours
@@ -174,25 +385,24 @@ namespace BaldLion::AI::Navigation
 		if (!m_chf)
 		{
 			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Out of memory 'chf'.");
-			return false;
+			return 0;
 		}
 		if (!rcBuildCompactHeightfield(&m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid, *m_chf))
 		{
 			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not build compact data.");
-			return false;
+			return 0;
 		}
 
-		//if (!m_keepInterResults)
-		//{
-		//	rcFreeHeightField(m_solid);
-		//	m_solid = 0;
-		//}
+		
+		rcFreeHeightField(m_solid);
+		m_solid = 0;
+		
 
 		// Erode the walkable area by agent radius.
 		if (!rcErodeWalkableArea(&m_ctx, m_cfg.walkableRadius, *m_chf))
 		{
 			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not erode.");
-			return false;
+			return 0;
 		}
 
 		// (Optional) Mark areas.
@@ -227,114 +437,104 @@ namespace BaldLion::AI::Navigation
 		//     if you have large open areas with small obstacles (not a problem if you use tiles)
 		//   * good choice to use for tiled navmesh with medium and small sized tiles
 
-		//if (navMeshConfig.partitionType == SAMPLE_PARTITION_WATERSHED)
-		//{
-		//	// Prepare for region partitioning, by calculating distance field along the walkable surface.
-		//	if (!rcBuildDistanceField(m_ctx, *m_chf))
-		//	{
-		//		m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not build distance field.");
-		//		return false;
-		//	}
-
-		//	// Partition the walkable surface into simple regions without holes.
-		//	if (!rcBuildRegions(m_ctx, *m_chf, 0, m_cfg.minRegionArea, m_cfg.mergeRegionArea))
-		//	{
-		//		m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not build watershed regions.");
-		//		return false;
-		//	}
-		//}
-		//else if (m_partitionType == SAMPLE_PARTITION_MONOTONE)
-		//{
-		//	// Partition the walkable surface into simple regions without holes.
-		//	// Monotone partitioning does not need distancefield.
-		//	if (!rcBuildRegionsMonotone(m_ctx, *m_chf, 0, m_cfg.minRegionArea, m_cfg.mergeRegionArea))
-		//	{
-		//		m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not build monotone regions.");
-		//		return false;
-		//	}
-		//}
-		//else // SAMPLE_PARTITION_LAYERS
+		if (navMeshConfig.partitionType == SAMPLE_PARTITION_WATERSHED)
 		{
-			// Partition the walkable surface into simple regions without holes.
-			if (!rcBuildLayerRegions(&m_ctx, *m_chf, 0, m_cfg.minRegionArea))
+			// Prepare for region partitioning, by calculating distance field along the walkable surface.
+			if (!rcBuildDistanceField(&m_ctx, *m_chf))
 			{
-				m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not build layer regions.");
-				return false;
+				m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not build distance field.");
+				return 0;
+			}
+
+			// Partition the walkable surface into simple regions without holes.
+			if (!rcBuildRegions(&m_ctx, *m_chf, m_cfg.borderSize, m_cfg.minRegionArea, m_cfg.mergeRegionArea))
+			{
+				m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not build watershed regions.");
+				return 0;
 			}
 		}
-
-		//
-		// Step 5. Trace and simplify region contours.
-		//
+		else if (navMeshConfig.partitionType == SAMPLE_PARTITION_MONOTONE)
+		{
+			// Partition the walkable surface into simple regions without holes.
+			// Monotone partitioning does not need distancefield.
+			if (!rcBuildRegionsMonotone(&m_ctx, *m_chf, m_cfg.borderSize, m_cfg.minRegionArea, m_cfg.mergeRegionArea))
+			{
+				m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not build monotone regions.");
+				return 0;
+			}
+		}
+		else // SAMPLE_PARTITION_LAYERS
+		{
+			// Partition the walkable surface into simple regions without holes.
+			if (!rcBuildLayerRegions(&m_ctx, *m_chf, m_cfg.borderSize, m_cfg.minRegionArea))
+			{
+				m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not build layer regions.");
+				return 0;
+			}
+		}
 
 		// Create contours.
 		m_cset = rcAllocContourSet();
 		if (!m_cset)
 		{
 			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Out of memory 'cset'.");
-			return false;
+			return 0;
 		}
 		if (!rcBuildContours(&m_ctx, *m_chf, m_cfg.maxSimplificationError, m_cfg.maxEdgeLen, *m_cset))
 		{
 			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not create contours.");
-			return false;
+			return 0;
 		}
 
-		//
-		// Step 6. Build polygons mesh from contours.
-		//
+		if (m_cset->nconts == 0)
+		{
+			return 0;
+		}
 
 		// Build polygon navmesh from the contours.
 		m_pmesh = rcAllocPolyMesh();
 		if (!m_pmesh)
 		{
 			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Out of memory 'pmesh'.");
-			return false;
+			return 0;
 		}
 		if (!rcBuildPolyMesh(&m_ctx, *m_cset, m_cfg.maxVertsPerPoly, *m_pmesh))
 		{
 			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not triangulate contours.");
-			return false;
+			return 0;
 		}
 
-		//
-		// Step 7. Create detail mesh which allows to access approximate height on each polygon.
-		//
-
+		// Build detail mesh.
 		m_dmesh = rcAllocPolyMeshDetail();
 		if (!m_dmesh)
 		{
-			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Out of memory 'pmdtl'.");
-			return false;
+			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Out of memory 'dmesh'.");
+			return 0;
 		}
 
-		if (!rcBuildPolyMeshDetail(&m_ctx, *m_pmesh, *m_chf, m_cfg.detailSampleDist, m_cfg.detailSampleMaxError, *m_dmesh))
+		if (!rcBuildPolyMeshDetail(&m_ctx, *m_pmesh, *m_chf,
+			m_cfg.detailSampleDist, m_cfg.detailSampleMaxError,
+			*m_dmesh))
 		{
-			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could not build detail mesh.");
-			return false;
+			m_ctx.log(RC_LOG_ERROR, "buildNavigation: Could build polymesh detail.");
+			return 0;
 		}
+		
+		rcFreeCompactHeightfield(m_chf);
+		m_chf = 0;
+		rcFreeContourSet(m_cset);
+		m_cset = 0;		
 
-		//if (!m_keepInterResults)
-		//{
-		//	rcFreeCompactHeightfield(m_chf);
-		//	m_chf = 0;
-		//	rcFreeContourSet(m_cset);
-		//	m_cset = 0;
-		//}
-
-		// At this point the navigation mesh data is ready, you can access it from m_pmesh.
-		// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
-
-		//
-		// (Optional) Step 8. Create Detour data from Recast poly mesh.
-		//
-
-		// The GUI may allow more max points per polygon than Detour can handle.
-		// Only build the detour navmesh if we do not exceed the limit.
+		unsigned char* navData = 0;
+		int navDataSize = 0;
 		if (m_cfg.maxVertsPerPoly <= DT_VERTS_PER_POLYGON)
 		{
-			unsigned char* navData = 0;
-			int navDataSize = 0;
+			if (m_pmesh->nverts >= 0xffff)
+			{
+				// The vertex indices are ushorts, and cannot point to more than 0xffff vertices.
+				m_ctx.log(RC_LOG_ERROR, "Too many vertices per tile %d (max: %d).", m_pmesh->nverts, 0xffff);
+				return 0;
+			}
 
 			// Update poly flags from areas.
 			for (int i = 0; i < m_pmesh->npolys; ++i)
@@ -357,7 +557,6 @@ namespace BaldLion::AI::Navigation
 					m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
 				}
 			}
-
 
 			dtNavMeshCreateParams params;
 			memset(&params, 0, sizeof(params));
@@ -383,6 +582,9 @@ namespace BaldLion::AI::Navigation
 			params.walkableHeight = navMeshConfig.agentHeight;
 			params.walkableRadius = navMeshConfig.agentRadius;
 			params.walkableClimb = navMeshConfig.agentMaxClimb;
+			params.tileX = tx;
+			params.tileY = ty;
+			params.tileLayer = 0;
 			rcVcopy(params.bmin, m_pmesh->bmin);
 			rcVcopy(params.bmax, m_pmesh->bmax);
 			params.cs = m_cfg.cs;
@@ -392,43 +594,21 @@ namespace BaldLion::AI::Navigation
 			if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
 			{
 				m_ctx.log(RC_LOG_ERROR, "Could not build Detour navmesh.");
-				return false;
-			}
-
-			m_navMesh = dtAllocNavMesh();
-			if (!m_navMesh)
-			{
-				dtFree(navData);
-				m_ctx.log(RC_LOG_ERROR, "Could not create Detour navmesh");
-				return false;
-			}
-
-			dtStatus status;
-
-			status = m_navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA);
-			if (dtStatusFailed(status))
-			{
-				dtFree(navData);
-				m_ctx.log(RC_LOG_ERROR, "Could not init Detour navmesh");
-				return false;
-			}
-
-			status = m_navQuery->init(m_navMesh, 2048);
-			if (dtStatusFailed(status))
-			{
-				m_ctx.log(RC_LOG_ERROR, "Could not init Detour navmesh query");
-				return false;
+				return 0;
 			}
 		}
+		m_tileMemUsage = navDataSize / 1024.0f;
 
 		m_ctx.stopTimer(RC_TIMER_TOTAL);
 
 		// Show performance stats.
-		LogBuildTimes(m_ctx, m_ctx.getAccumulatedTime(RC_TIMER_TOTAL));
+		//duLogBuildTimes(m_ctx, m_ctx.getAccumulatedTime(RC_TIMER_TOTAL));
 		m_ctx.log(RC_LOG_PROGRESS, ">> Polymesh: %d vertices  %d polygons", m_pmesh->nverts, m_pmesh->npolys);
 
+		m_tileBuildTime = m_ctx.getAccumulatedTime(RC_TIMER_TOTAL) / 1000.0f;
 
-		return true;
+		dataSize = navDataSize;
+		return navData;
 	}
 
 	void NavMeshBuilder::LogLine(rcContext& ctx, rcTimerLabel label, const char* name, const float pc)
@@ -476,6 +656,31 @@ namespace BaldLion::AI::Navigation
 		return m_geom;
 	}
 
+	bool NavMeshBuilder::NavMeshIsValid()
+	{
+		return m_navMesh && m_navQuery;
+	}
+
+	const dtNavMesh* NavMeshBuilder::GetNavMesh()
+	{
+		return m_navMesh;
+	}
+
+	void NavMeshBuilder::CleanUp()
+	{
+		delete[] m_triareas;
+		m_triareas = 0;
+		rcFreeHeightField(m_solid);
+		m_solid = 0;
+		rcFreeCompactHeightfield(m_chf);
+		m_chf = 0;
+		rcFreeContourSet(m_cset);
+		m_cset = 0;
+		rcFreePolyMesh(m_pmesh);
+		m_pmesh = 0;
+		rcFreePolyMeshDetail(m_dmesh);
+		m_dmesh = 0;
+	}
 
 
 }

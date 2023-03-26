@@ -196,6 +196,13 @@
 #define DEBUG_DRAW_MAX_LINES 32768
 #endif // DEBUG_DRAW_MAX_LINES
 
+
+#ifndef DEBUG_DRAW_MAX_TRIANGLES
+#define DEBUG_DRAW_MAX_TRIANGLES 8192
+#endif // DEBUG_DRAW_MAX_LINES
+
+
+
 //
 // Size in vertexes of a local buffer we use to sort elements
 // drawn with and without depth testing before submitting them to
@@ -480,6 +487,16 @@ namespace dd
 // - Positions are in world-space, unless stated otherwise.
 // ========================================================
 
+
+	void triangle(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx, )
+		ddVec3_In vertex1,
+		ddVec3_In vertex2,
+		ddVec3_In vertex3,
+		ddVec3_In color,
+		float alpha,
+		int durationMillis = 0,
+		bool depthEnabled = true);
+
 // Add a point in 3D space to the debug draw queue.
 // Point is expressed in world-space coordinates.
 // Note that not all renderer support configurable point
@@ -740,6 +757,7 @@ namespace dd
 		virtual void drawPointList(const DrawVertex * points, int count, bool depthEnabled);
 		virtual void drawLineList(const DrawVertex * lines, int count, bool depthEnabled);
 		virtual void drawGlyphList(const DrawVertex * glyphs, int count, GlyphTextureHandle glyphTex);
+		virtual void drawTriangleList(const DrawVertex * vertices, int vertexCount, bool depthEnabled);
 
 		// User defined cleanup. Nothing by default.
 		virtual ~RenderInterface() = 0;
@@ -755,7 +773,8 @@ namespace dd
 		FlushPoints = 1 << 1,
 		FlushLines = 1 << 2,
 		FlushText = 1 << 3,
-		FlushAll = (FlushPoints | FlushLines | FlushText)
+		FlushTriangle = 1 << 4,
+		FlushAll = (FlushPoints | FlushLines | FlushText | FlushTriangle)
 	};
 
 	// Initialize with the user-supplied renderer interface.
@@ -1839,12 +1858,24 @@ namespace dd
 		bool         depthEnabled;
 	};
 
+	struct DebugTriangle
+	{
+		std::int64_t expiryDateMillis;
+		ddVec3       vertexPos1;
+		ddVec3       vertexPos2;
+		ddVec3       vertexPos3;
+		ddVec3       color;
+		float		 alpha;
+		bool         depthEnabled;
+	};
+
 	struct InternalContext DD_EXPLICIT_CONTEXT_ONLY(: public OpaqueContextType)
 	{
 		int                vertexBufferUsed;
 		int                debugStringsCount;
 		int                debugPointsCount;
 		int                debugLinesCount;
+		int				   debugTrianglesCount;
 		std::int64_t       currentTimeMillis;                           // Latest time value (in milliseconds) from dd::flush().
 		GlyphTextureHandle glyphTexHandle;                              // Our built-in glyph bitmap. If kept null, no text is rendered.
 		RenderInterface *  renderInterface;                             // Ref to the external renderer. Can be null for a no-op debug draw.
@@ -1852,12 +1883,14 @@ namespace dd
 		DebugString        debugStrings[DEBUG_DRAW_MAX_STRINGS];        // Debug strings queue (2D screen-space strings + 3D projected labels).
 		DebugPoint         debugPoints[DEBUG_DRAW_MAX_POINTS];          // 3D debug points queue.
 		DebugLine          debugLines[DEBUG_DRAW_MAX_LINES];            // 3D debug lines queue.
+		DebugTriangle	   debugTriangles[DEBUG_DRAW_MAX_TRIANGLES];	// 3D debug filled triangles
 
 		InternalContext(RenderInterface * renderer)
 			: vertexBufferUsed(0)
 			, debugStringsCount(0)
 			, debugPointsCount(0)
 			, debugLinesCount(0)
+			, debugTrianglesCount(0)
 			, currentTimeMillis(0)
 			, glyphTexHandle(nullptr)
 			, renderInterface(renderer)
@@ -2144,7 +2177,8 @@ namespace dd
 	{
 		DrawModePoints,
 		DrawModeLines,
-		DrawModeText
+		DrawModeText,
+		DrawModeTriangles
 	};
 
 	static void flushDebugVerts(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx, ) const DrawMode mode, const bool depthEnabled)
@@ -2171,11 +2205,54 @@ namespace dd
 				DD_CONTEXT->vertexBufferUsed,
 				DD_CONTEXT->glyphTexHandle);
 			break;
+		case DrawModeTriangles:
+			DD_CONTEXT->renderInterface->drawTriangleList(DD_CONTEXT->vertexBuffer,
+				DD_CONTEXT->vertexBufferUsed,
+				depthEnabled);
+			break;
 		} // switch (mode)
 
 		DD_CONTEXT->vertexBufferUsed = 0;
 	}
 
+	static void pushTriangleVert(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx, ) const DebugTriangle & triangle)
+	{
+		// Make room for 3 more verts:
+		if ((DD_CONTEXT->vertexBufferUsed + 3) >= DEBUG_DRAW_VERTEX_BUFFER_SIZE)
+		{
+			flushDebugVerts(DD_EXPLICIT_CONTEXT_ONLY(ctx, ) DrawModeTriangles, triangle.depthEnabled);
+		}
+
+		DrawVertex & v0 = DD_CONTEXT->vertexBuffer[DD_CONTEXT->vertexBufferUsed++];
+		DrawVertex & v1 = DD_CONTEXT->vertexBuffer[DD_CONTEXT->vertexBufferUsed++];
+		DrawVertex & v2 = DD_CONTEXT->vertexBuffer[DD_CONTEXT->vertexBufferUsed++];
+
+		v0.point.x = triangle.vertexPos1[X];
+		v0.point.y = triangle.vertexPos1[Y];
+		v0.point.z = triangle.vertexPos1[Z];
+		v0.point.r = triangle.color[X];
+		v0.point.g = triangle.color[Y];
+		v0.point.b = triangle.color[Z];
+		v0.point.size = triangle.alpha;
+
+		v1.point.x = triangle.vertexPos2[X];
+		v1.point.y = triangle.vertexPos2[Y];
+		v1.point.z = triangle.vertexPos2[Z];
+		v1.point.r = triangle.color[X];
+		v1.point.g = triangle.color[Y];
+		v1.point.b = triangle.color[Z];
+		v1.point.size = triangle.alpha;
+
+		v2.point.x = triangle.vertexPos3[X];
+		v2.point.y = triangle.vertexPos3[Y];
+		v2.point.z = triangle.vertexPos3[Z];
+		v2.point.r = triangle.color[X];
+		v2.point.g = triangle.color[Y];
+		v2.point.b = triangle.color[Z];
+		v2.point.size = triangle.alpha;
+	}
+
+	
 	static void pushPointVert(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx, ) const DebugPoint & point)
 	{
 		// Make room for one more vert:
@@ -2450,6 +2527,48 @@ namespace dd
 		}
 	}
 
+	static void drawDebugTriangles(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx))
+	{
+		const int count = DD_CONTEXT->debugTrianglesCount;
+		if (count == 0)
+		{
+			return;
+		}
+
+		const DebugTriangle * const debugTriangles = DD_CONTEXT->debugTriangles;
+
+		//
+		// First pass, triangles with depth test ENABLED:
+		//
+		int numDepthlessTriangles = 0;
+		for (int i = 0; i < count; ++i)
+		{
+			const DebugTriangle &triangle = debugTriangles[i];
+			if (triangle.depthEnabled)
+			{
+				pushTriangleVert(DD_EXPLICIT_CONTEXT_ONLY(ctx, ) triangle);
+			}
+			numDepthlessTriangles += !triangle.depthEnabled;
+		}
+		flushDebugVerts(DD_EXPLICIT_CONTEXT_ONLY(ctx, ) DrawModeTriangles, true);
+
+		//
+		// Second pass draws triangles with depth DISABLED:
+		//
+		if (numDepthlessTriangles > 0)
+		{
+			for (int i = 0; i < count; ++i)
+			{
+				const DebugTriangle &triangle = debugTriangles[i];
+				if (!triangle.depthEnabled)
+				{
+					pushTriangleVert(DD_EXPLICIT_CONTEXT_ONLY(ctx, ) triangle);
+				}
+			}
+			flushDebugVerts(DD_EXPLICIT_CONTEXT_ONLY(ctx, ) DrawModeTriangles, false);
+		}
+	}
+
 	template<typename T>
 	static void clearDebugQueue(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx, ) T * queue, int & queueCount)
 	{
@@ -2582,7 +2701,7 @@ namespace dd
 		{
 			return false;
 		}
-		return (DD_CONTEXT->debugStringsCount + DD_CONTEXT->debugPointsCount + DD_CONTEXT->debugLinesCount) > 0;
+		return (DD_CONTEXT->debugStringsCount + DD_CONTEXT->debugPointsCount + DD_CONTEXT->debugLinesCount + DD_CONTEXT->debugTrianglesCount) > 0;
 	}
 
 	void flush(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx, ) const std::int64_t currTimeMillis, const std::uint32_t flags)
@@ -2602,6 +2721,7 @@ namespace dd
 		if (flags & FlushLines) { drawDebugLines(DD_EXPLICIT_CONTEXT_ONLY(ctx)); }
 		if (flags & FlushPoints) { drawDebugPoints(DD_EXPLICIT_CONTEXT_ONLY(ctx)); }
 		if (flags & FlushText) { drawDebugStrings(DD_EXPLICIT_CONTEXT_ONLY(ctx)); }
+		if (flags & FlushTriangle) { drawDebugTriangles(DD_EXPLICIT_CONTEXT_ONLY(ctx)); }
 
 		// And cleanup if needed.
 		DD_CONTEXT->renderInterface->endDraw();
@@ -2610,6 +2730,7 @@ namespace dd
 		clearDebugQueue(DD_EXPLICIT_CONTEXT_ONLY(ctx, ) DD_CONTEXT->debugStrings, DD_CONTEXT->debugStringsCount);
 		clearDebugQueue(DD_EXPLICIT_CONTEXT_ONLY(ctx, ) DD_CONTEXT->debugPoints, DD_CONTEXT->debugPointsCount);
 		clearDebugQueue(DD_EXPLICIT_CONTEXT_ONLY(ctx, ) DD_CONTEXT->debugLines, DD_CONTEXT->debugLinesCount);
+		clearDebugQueue(DD_EXPLICIT_CONTEXT_ONLY(ctx, ) DD_CONTEXT->debugTriangles, DD_CONTEXT->debugTrianglesCount);
 	}
 
 	void clear(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx))
@@ -2631,6 +2752,27 @@ namespace dd
 		DD_CONTEXT->debugStringsCount = 0;
 		DD_CONTEXT->debugPointsCount = 0;
 		DD_CONTEXT->debugLinesCount = 0;
+		DD_CONTEXT->debugTrianglesCount = 0;
+	}
+
+	void triangle(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx, )
+		ddVec3_In vertex1,
+		ddVec3_In vertex2,
+		ddVec3_In vertex3,
+		ddVec3_In color,
+		float alpha,
+		int durationMillis,
+		bool depthEnabled)
+	{
+		DebugTriangle & triangle = DD_CONTEXT->debugTriangles[DD_CONTEXT->debugTrianglesCount++];
+		triangle.expiryDateMillis = DD_CONTEXT->currentTimeMillis + durationMillis;
+		triangle.depthEnabled = depthEnabled;		
+		triangle.alpha = alpha;
+
+		vecCopy(triangle.vertexPos1, vertex1);
+		vecCopy(triangle.vertexPos2, vertex2);
+		vecCopy(triangle.vertexPos3, vertex3);
+		vecCopy(triangle.color, color);
 	}
 
 	void point(DD_EXPLICIT_CONTEXT_ONLY(ContextHandle ctx, ) ddVec3_In pos, ddVec3_In color,
@@ -2643,7 +2785,7 @@ namespace dd
 
 		if (DD_CONTEXT->debugPointsCount == DEBUG_DRAW_MAX_POINTS)
 		{
-			DEBUG_DRAW_OVERFLOWED("DEBUG_DRAW_MAX_POINTS limit reached! Dropping further debug point draws.");
+			//DEBUG_DRAW_OVERFLOWED("DEBUG_DRAW_MAX_POINTS limit reached! Dropping further debug point draws.");
 			return;
 		}
 
@@ -2666,7 +2808,7 @@ namespace dd
 
 		if (DD_CONTEXT->debugLinesCount == DEBUG_DRAW_MAX_LINES)
 		{
-			DEBUG_DRAW_OVERFLOWED("DEBUG_DRAW_MAX_LINES limit reached! Dropping further debug line draws.");
+			//DEBUG_DRAW_OVERFLOWED("DEBUG_DRAW_MAX_LINES limit reached! Dropping further debug line draws.");
 			return;
 		}
 
@@ -2694,7 +2836,7 @@ namespace dd
 
 		if (DD_CONTEXT->debugStringsCount == DEBUG_DRAW_MAX_STRINGS)
 		{
-			DEBUG_DRAW_OVERFLOWED("DEBUG_DRAW_MAX_STRINGS limit reached! Dropping further debug string draws.");
+			//DEBUG_DRAW_OVERFLOWED("DEBUG_DRAW_MAX_STRINGS limit reached! Dropping further debug string draws.");
 			return;
 		}
 
@@ -2724,7 +2866,7 @@ namespace dd
 
 		if (DD_CONTEXT->debugStringsCount == DEBUG_DRAW_MAX_STRINGS)
 		{
-			DEBUG_DRAW_OVERFLOWED("DEBUG_DRAW_MAX_STRINGS limit reached! Dropping further debug string draws.");
+			//DEBUG_DRAW_OVERFLOWED("DEBUG_DRAW_MAX_STRINGS limit reached! Dropping further debug string draws.");
 			return;
 		}
 
@@ -3321,6 +3463,7 @@ namespace dd
 	void RenderInterface::endDraw() { }
 	void RenderInterface::drawPointList(const DrawVertex *, int, bool) { }
 	void RenderInterface::drawLineList(const DrawVertex *, int, bool) { }
+	void RenderInterface::drawTriangleList(const DrawVertex *, int, bool) { }
 	void RenderInterface::drawGlyphList(const DrawVertex *, int, GlyphTextureHandle) { }
 	void RenderInterface::destroyGlyphTexture(GlyphTextureHandle) { }
 	GlyphTextureHandle RenderInterface::createGlyphTexture(int, int, const void *) { return nullptr; }

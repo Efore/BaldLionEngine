@@ -24,20 +24,32 @@ namespace BaldLion::AI::Navigation
 		float detailSampleDist;
 		float detailSampleMaxError;
 		int partitionType;
+		float tileSize;
+		int maxTiles;
+		int maxPolys;
 	};
 
 	class NavMeshBuilder
 	{
 
 	public:
+		static void Init();
+		static void Stop();
 
-		static bool BuildNavMesh(const char* pathfilepath);		
+		static bool LoadGeom(const char* filepath);
+		static bool BuildNavMesh();
 		static const InputGeom* GetInputGeom();
+		static const dtNavMesh* GetNavMesh();
+		static bool NavMeshIsValid();
 
 	private:
 
+		static bool InternalBuildNavMesh(bool parallelize);
+		static void BuildAllTiles();
 		static void LogLine(rcContext& ctx, rcTimerLabel label, const char* name, const float pc);
 		static void LogBuildTimes(rcContext& ctx, const int totalTimeUsec);
+		static unsigned char* BuildTileMesh(const int tx, const int ty, const float* bmin, const float* bmax, int& dataSize);
+		static void CleanUp();
 
 	public:
 		static NavMeshBuildSettings navMeshConfig;
@@ -57,6 +69,14 @@ namespace BaldLion::AI::Navigation
 
 		static rcConfig m_cfg;
 		static BuildContext m_ctx;
+
+		static float m_lastBuiltTileBmin[3];
+		static float m_lastBuiltTileBmax[3];
+
+		static float m_totalBuildTimeMs;
+		static float m_tileBuildTime;
+		static float m_tileMemUsage;
+		static int m_tileTriCount;
 	};
 }
 
