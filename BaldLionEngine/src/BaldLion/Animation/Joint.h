@@ -82,7 +82,7 @@ namespace BaldLion
 			Count
 		};
 
-		struct Joint
+		struct AnimationJoint
 		{
 			glm::mat4 jointOffsetTransform;
 			glm::mat4 jointLocalSpaceTransform;

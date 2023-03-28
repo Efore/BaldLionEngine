@@ -6,6 +6,26 @@ namespace BaldLion
 {
 	namespace Memory
 	{
+		inline void* AddPointerOffset(void* p, size_t x)
+		{
+			return (void*)(reinterpret_cast<uintptr_t>(p) + x);
+		}
+
+		inline const void* AddPointerOffset(const void* p, size_t x)
+		{
+			return (const void*)(reinterpret_cast<uintptr_t>(p) + x);
+		}
+
+		inline void* SubstractPointerOffset(void* p, size_t x)
+		{
+			return (void*)(reinterpret_cast<uintptr_t>(p) - x);
+		}
+
+		inline const void* SubstractPointerOffset(const void* p, size_t x)
+		{
+			return (const void*)(reinterpret_cast<uintptr_t>(p) - x);
+		}
+
 		template <class T> 
 		T* AllocateArray(Allocator& allocator, size_t length)
 		{
@@ -126,26 +146,7 @@ namespace BaldLion
 			return adjustment;
 		}
 
-		inline void* AddPointerOffset(void* p, size_t x)
-		{
-			return (void*)(reinterpret_cast<uintptr_t>(p) + x);
-		}
-
-		inline const void* AddPointerOffset(const void* p, size_t x)
-		{
-			return (const void*)(reinterpret_cast<uintptr_t>(p) + x);
-		}
-
-		inline void* SubstractPointerOffset(void* p, size_t x)
-		{
-			return (void*)(reinterpret_cast<uintptr_t>(p) - x);
-		}
-
-		inline const void* SubstractPointerOffset(const void* p, size_t x)
-		{
-			return (const void*)(reinterpret_cast<uintptr_t>(p) - x);
-		}
-
+	
 		inline bool IsAligned(const void* address, uint8_t alignment)
 		{
 			return AlignForwardAdjustment(address, alignment) == 0;

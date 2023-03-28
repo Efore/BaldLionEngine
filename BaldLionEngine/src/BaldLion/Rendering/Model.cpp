@@ -4,6 +4,7 @@
 #include "BaldLion/Animation/AnimationManager.h"
 #include "BaldLion/Utils/GeometryUtils.h"
 #include "BaldLion/Utils/MathUtils.h"
+#include "BaldLion/ResourceManagement/ResourceManager.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -276,7 +277,7 @@ namespace BaldLion
 		}
 
 		void Model::FillJointData(HashTable<StringId, JointType>& jointMapping,
-			Animation::Joint* jointsData,
+			Animation::AnimationJoint* jointsData,
 			const HashMap<StringId, glm::mat4>& jointOffsetMapping,
 			const JointType parentJointType,
 			const aiNode* node)
@@ -414,7 +415,7 @@ namespace BaldLion
 				DynamicArray<VertexBone> verticesBoneData(AllocationType::Linear_Frame, aimesh->mNumVertices);
 				verticesBoneData.Populate();				
 
-				Animation::Joint jointsData[(ui32)JointType::Count];
+				Animation::AnimationJoint jointsData[(ui32)JointType::Count];
 				for (ui32 i = 0; i < (ui32)JointType::Count; ++i)
 				{
 					jointsData[i].jointModelSpaceTransform = jointsData[i].jointOffsetTransform = jointsData[i].jointLocalSpaceTransform = glm::mat4(1.0f);
@@ -454,7 +455,7 @@ namespace BaldLion
 
 		JointType Model::ParseNodeName(const char *nodeName)
 		{
-			static char* jointNames[] = {
+			static const char* jointNames[] = {
 			"Hips",
 			"Spine",
 			"Spine1",

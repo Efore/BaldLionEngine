@@ -82,7 +82,7 @@ namespace BaldLion
 					ImGui::Separator();
 
 					EditorUtils::DrawVec3Handler("Local Position", localPosition, 0.0f, 110.0f, false);
-					EditorUtils::DrawVec3Handler("Local Rotation", glm::degrees(localRotation), 0.0f, 110.0f, false);
+					EditorUtils::DrawVec3Handler("Local Rotation", (glm::vec3&)glm::degrees(localRotation), 0.0f, 110.0f, false);
 					EditorUtils::DrawVec3Handler("Local Scale", localScale, 0.0f, 110.0f, false);
 				}
 

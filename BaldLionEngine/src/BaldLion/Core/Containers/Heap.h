@@ -16,8 +16,8 @@ namespace BaldLion
 
 		~Heap();
 
-		ui32 Size() const { return m_size; }
-		ui32 Capacity() const { return m_capacity; }
+		ui32 Size() const { return m_content.Size(); }
+		ui32 Capacity() const { return m_content.Capacity(); }
 
 		void Clear();
 		void Delete();

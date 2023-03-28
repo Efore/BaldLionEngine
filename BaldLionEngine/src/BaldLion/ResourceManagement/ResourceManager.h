@@ -2,6 +2,8 @@
 
 #include "BaldLion/Core/Containers/HashMap.h"
 #include "Resource.h"
+#include "BaldLion/Rendering/Material.h"
+#include "BaldLion/Rendering/Model.h"
 #include <filesystem>
 
 namespace BaldLion
@@ -75,7 +77,7 @@ namespace BaldLion
 			switch (resourceType)
 			{
 			case ResourceType::Texture:
-
+				
 				result = Rendering::Texture2D::Create(formatedPath);
 				break;
 

@@ -1,6 +1,7 @@
 #include "blpch.h"
 #include "OpenGLMaterial.h"
 #include "BaldLion/Rendering/Renderer.h"
+#include "BaldLion/ResourceManagement/ResourceManager.h"
 
 #include <glad/glad.h>
 

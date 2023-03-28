@@ -25,7 +25,7 @@ namespace BaldLion {
 			}
 
 		public:
-			Joint joints[(ui32)JointType::Count];
+			AnimationJoint joints[(ui32)JointType::Count];
 			DynamicArray<Rendering::VertexBone> boneData;
 			ui32 skeletonResourceID;
 		};

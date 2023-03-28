@@ -12,15 +12,15 @@ namespace BaldLion {
 		public:
 			Skeleton() = default;
 
-			Skeleton(const Joint* joints, const std::string& resourceName);
+			Skeleton(const AnimationJoint* joints, const std::string& resourceName);
 
 			~Skeleton();
 
-			const Joint* GetJoints() const { return m_joints; }
-			Joint* GetJoints() { return m_joints; }
+			const AnimationJoint* GetJoints() const { return m_joints; }
+			AnimationJoint* GetJoints() { return m_joints; }
 
 		private:
-			Joint m_joints[(ui32)JointType::Count];
+			AnimationJoint m_joints[(ui32)JointType::Count];
 		};
 	}
 }

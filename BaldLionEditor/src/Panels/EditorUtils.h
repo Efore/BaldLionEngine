@@ -47,7 +47,7 @@ namespace BaldLion
 
 				return result;
 			}
-
+			
 			static bool DrawVec3Handler(char const* label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f, bool editable = true)
 			{
 				bool isActive = false;

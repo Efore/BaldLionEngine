@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
+# Visual Studio Version 17
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaldLionEditor", "BaldLionEditor\BaldLionEditor.vcxproj", "{F18E594B-DD5C-4D51-C6F0-BD77B25D29B6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaldLionEngine", "BaldLionEngine\BaldLionEngine.vcxproj", "{403C0D4C-2C0A-0152-159E-7178010BDDB6}"

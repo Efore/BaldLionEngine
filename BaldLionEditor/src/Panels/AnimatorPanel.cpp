@@ -220,7 +220,7 @@ namespace BaldLion {
 
 				ImGui::Separator();
 
-				if (parameterName != "" && ImGui::Button("Create"))
+				if (!strlen(parameterName) == 0 && ImGui::Button("Create"))
 				{
 					AnimatorParameter parameter;
 					parameter.Type = parameterValueType;

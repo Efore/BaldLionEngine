@@ -7,8 +7,11 @@
 #include "BaldLion/ECS/ComponentsSingleton/ECSProjectionCameraSingleton.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
 
+#include "BaldLion/ResourceManagement/ResourceManager.h"
+
 #include "DebugDrawRenderInterface.h"
 #include "DebugDrawRenderProvider.h"
+
 
 const ui32 maxMeshesToProcess = 5u;
 
@@ -239,7 +242,7 @@ namespace BaldLion
 					s_depthMapSkinnedShader->SetUniform(UNIFORM_LIGHT_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_lightViewProjection));
 					s_depthMapSkinnedShader->SetUniform(UNIFORM_MODEL_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_shadowCastingMeshes[i].transformMatrix));
 
-					const Animation::Joint* joints = s_shadowCastingMeshes[i].skeletonComponent->joints;
+					const Animation::AnimationJoint* joints = s_shadowCastingMeshes[i].skeletonComponent->joints;
 					
 					for (ui32 j = 0; j < (ui32)JointType::Count; ++j)					
 					{
@@ -306,7 +309,7 @@ namespace BaldLion
 
 				if (s_dynamicMeshes[i].skeletonComponent != nullptr) {
 
-					const Animation::Joint* joints = (s_dynamicMeshes[i].skeletonComponent->joints);
+					const Animation::AnimationJoint* joints = (s_dynamicMeshes[i].skeletonComponent->joints);
 
 					for (ui32 j = 0; j < (ui32)JointType::Count; ++j)
 					{

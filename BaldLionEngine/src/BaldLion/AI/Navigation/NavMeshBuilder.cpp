@@ -125,6 +125,7 @@ namespace BaldLion::AI::Navigation
 			m_geom = nullptr;
 			return false;
 		}
+		return true;
 	}
 
 	bool NavMeshBuilder::BuildNavMesh()

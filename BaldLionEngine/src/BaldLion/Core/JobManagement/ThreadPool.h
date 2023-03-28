@@ -36,7 +36,7 @@ namespace BaldLion
 
 			Job(const Job& other) : JobName(other.JobName), Task(other.Task), JobDependencyName(other.JobDependencyName), JobParentName(other.JobParentName), ChildrenCount(other.ChildrenCount){}
 
-			Job& Job::operator=(Job&& other) noexcept
+			Job& operator=(Job&& other) noexcept
 			{
 				if (&other == this)
 					return *this;
@@ -51,7 +51,7 @@ namespace BaldLion
 				return *this;
 			}
 
-			Job& Job::operator=(const Job& other) noexcept
+			Job& operator=(const Job& other) noexcept
 			{
 				if (&other == this)
 					return *this;

@@ -6,7 +6,7 @@
 #include "GeometryData.h"
 #include "BaldLion/ECS/Components/ECSMeshComponent.h"
 #include "BaldLion/ECS/ECSManager.h"
-#include "BaldLion/ResourceManagement/ResourceManager.h"
+#include "BaldLion/ResourceManagement/Resource.h"
 #include "BaldLion/Animation/Skeleton.h"
 
 namespace BaldLion

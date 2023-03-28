@@ -53,7 +53,7 @@ namespace BaldLion
 				HashMap<StringId, glm::mat4>& jointOffsetMapping);
 
 			static void FillJointData(HashTable<StringId, JointType>& jointMapping,
-				Animation::Joint* jointData,
+				Animation::AnimationJoint* jointData,
 				const HashMap<StringId, glm::mat4>& jointOffsetMapping,
 				const JointType parentID,
 				const aiNode* node);

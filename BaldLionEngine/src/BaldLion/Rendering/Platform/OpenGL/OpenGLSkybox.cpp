@@ -3,6 +3,7 @@
 #include "OpenGLTextureCubemap.h"
 #include "OpenGLShader.h"
 #include "BaldLion/Rendering/Renderer.h"
+#include "BaldLion/ResourceManagement/ResourceManager.h"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
