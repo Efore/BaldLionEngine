@@ -63,6 +63,8 @@ namespace BaldLion
 			glm::vec3 m_currentTarget;
 
 			EditorViewportPanel* m_editorViewportPanel;
+
+			bool m_manageAgents;
 		};		
 	}
 }

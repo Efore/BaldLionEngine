@@ -17,7 +17,7 @@ namespace BaldLion
 
 	namespace Editor 
 	{
-		NavigationPanel::NavigationPanel() : EditorPanel("Navigation"),m_agentCount(0), m_currentTarget(0.0f)
+		NavigationPanel::NavigationPanel() : EditorPanel("Navigation"),m_agentCount(0), m_currentTarget(0.0f), m_manageAgents(false)
 		{
 		}
 
@@ -163,11 +163,15 @@ namespace BaldLion
 				DrawNavMesh();
 				DrawAgents();	
 				
+				ImGui::Checkbox("Manage Agents", &m_manageAgents);
 			}
 
 			ImGui::End();
 
-			HandleInput();
+			if (m_manageAgents)
+			{
+				HandleInput();
+			}
 		}
 
 		void NavigationPanel::DrawAgents()
