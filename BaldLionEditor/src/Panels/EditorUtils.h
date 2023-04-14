@@ -16,6 +16,10 @@ namespace BaldLion
 
 		namespace EditorUtils
 		{
+			const glm::vec3 ColorRed	= glm::vec3(1.0f, 0.0f, 0.0f);
+			const glm::vec3 ColorGreen	= glm::vec3(0.0f, 1.0f, 0.0f);
+			const glm::vec3 ColorBlue	= glm::vec3(0.0f, 0.0f, 1.0f);
+
 			template<typename T>
 			static T* RenderResourceInspectorPopup(const char* popupName, ResourceManagement::ResourceType resourceType)
 			{
@@ -236,6 +240,7 @@ namespace BaldLion
 
 				return false;
 			}
+			
 		}
 	}
 }

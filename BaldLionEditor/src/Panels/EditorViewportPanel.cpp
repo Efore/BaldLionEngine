@@ -19,11 +19,6 @@ namespace BaldLion {
 
 		}
 
-		EditorViewportPanel::EditorViewportPanel(SceneHierarchyPanel* sceneHierarchyPanel) : ViewportPanel(sceneHierarchyPanel, "Viewport"), m_viewportFocused(false), m_imGuizmoOperation(0)
-		{
-		
-		}
-
 		EditorViewportPanel::~EditorViewportPanel()
 		{
 			if (m_viewportCameraTransform) 

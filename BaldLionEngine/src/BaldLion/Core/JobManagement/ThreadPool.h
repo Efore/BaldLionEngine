@@ -22,7 +22,7 @@ namespace BaldLion
 			std::function<void()> Task;
 			StringId JobDependencyName;
 			StringId JobParentName;
-			ui32 ChildrenCount;
+			ui32 ChildrenCount;			
 
 			Job(){}
 

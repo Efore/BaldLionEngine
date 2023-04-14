@@ -9,7 +9,7 @@ namespace BaldLion
 		class ECSComponent {
 
 		public:
-			ECSComponent(ECSComponentType componentType) : m_componentType(componentType){}
+			ECSComponent(ECSComponentType componentType) : m_componentType(componentType), m_componentID(0){}
 
 			const ECSComponentType GetComponentType() const { return m_componentType; }	
 			void SetComponentID(ui32 componentID) { m_componentID = componentID; }

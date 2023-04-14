@@ -6,7 +6,7 @@
 #include "BaldLion/SceneManagement/SceneManager.h"
 #include "BaldLion/ResourceManagement/ResourceManager.h"
 #include "BaldLion/Physics/PhysicsManager.h"
-#include "BaldLion/AI/Navigation/NavMeshBuilder.h"
+#include "BaldLion/AI/Navigation/NavigationManager.h"
 
 #include <GLFW/glfw3.h>
 
@@ -27,8 +27,8 @@ namespace BaldLion
 
 		Memory::MemoryManager::Init(0);
 		JobManagement::JobManager::Init();
-		ResourceManagement::ResourceManager::Init();
-		AI::Navigation::NavMeshBuilder::Init();
+		ResourceManagement::ResourceManager::Init();		
+		AI::Navigation::NavigationManager::Init();
 
 		m_window = Window::Create(WindowProps(applicationName));
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
@@ -61,7 +61,7 @@ namespace BaldLion
 
 		Time::Stop();
 
-		AI::Navigation::NavMeshBuilder::Stop();
+		AI::Navigation::NavigationManager::Stop();
 		ResourceManagement::ResourceManager::Stop();
 		JobManagement::JobManager::Stop();
 		Memory::MemoryManager::Stop();

@@ -18,14 +18,21 @@ namespace BaldLion {
 			virtual void OnImGuiRender(){}
 			virtual void OnKeyPressed(int keycode){}
 
-			glm::vec2 GetPanelCoords() {
+			glm::vec2 GetPanelCoords() 
+			{
 				ImGuiWindow* window = ImGui::FindWindowByID(m_panelID);				
 				return glm::vec2(window->Pos.x, window->Pos.y);				
 			}
 
-			glm::vec2 GetPanelSize() const {
+			glm::vec2 GetPanelSize() const 
+			{
 				ImGuiWindow* window = ImGui::FindWindowByID(m_panelID);
 				return glm::vec2(window->Size.x, window->Size.y);
+			}
+
+			ui32 GetPanelID() const
+			{
+				return m_panelID;
 			}
 
 		protected:

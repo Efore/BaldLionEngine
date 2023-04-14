@@ -390,7 +390,7 @@ namespace BaldLion
 
 		void ECSManager::RemoveSystem(ECSSystem* system)
 		{
-			m_systems.RemoveFast(system);
+			m_systems.Remove(system);
 		}
 
 		void ECSManager::FrameStart()

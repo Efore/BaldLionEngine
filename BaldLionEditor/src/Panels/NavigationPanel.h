@@ -4,9 +4,8 @@
 
 struct dtMeshTile;
 
-namespace BaldLion {	
-
-
+namespace BaldLion 
+{
 	namespace Editor 
 	{
 		class NavigationPanel : public EditorPanel {
@@ -15,19 +14,21 @@ namespace BaldLion {
 			NavigationPanel();
 			~NavigationPanel();
 
-			void SetEditorViewportPanel(EditorViewportPanel* editorViewportPanel) 
-			{
-				m_editorViewportPanel = editorViewportPanel;
-			}
-
+			void SetNavigationPanel(EditorViewportPanel* editorViewPortPanel);
 			virtual void OnImGuiRender() override;
 
 		private:
 
+			void DrawAgents();
 			void DrawNavMesh();
 			void DrawMeshTile(const dtMeshTile* tile);
 			void DrawPolygonBoundaries(const dtMeshTile* tile, bool innerBoundaries);
 			void DrawVertices(const dtMeshTile* tile);
+
+			void HandleInput();
+			void CreateAgent(const glm::vec3& pos);
+			void SetAgentsTarget(const glm::vec3& pos);
+			void SetCrowdTargetPosition(const glm::vec3& pos);
 
 			float DistancePtLine2d(const float* pt, const float* p, const float* q);
 
@@ -43,7 +44,6 @@ namespace BaldLion {
 				return v;
 			}
 
-
 			inline unsigned int ilog2(unsigned int v)
 			{
 				unsigned int r;
@@ -58,8 +58,11 @@ namespace BaldLion {
 
 		private:
 
-			EditorViewportPanel* m_editorViewportPanel;
 
+			ui32 m_agentCount;
+			glm::vec3 m_currentTarget;
+
+			EditorViewportPanel* m_editorViewportPanel;
 		};		
 	}
 }

@@ -38,8 +38,9 @@ namespace BaldLion::AI::Navigation
 
 		static bool LoadGeom(const char* filepath);
 		static bool BuildNavMesh();
-		static const InputGeom* GetInputGeom();
-		static const dtNavMesh* GetNavMesh();
+		static InputGeom* GetInputGeom();		
+		static dtNavMesh* GetNavMesh();
+		static dtNavMeshQuery* GetNavMeshQuery();
 		static bool NavMeshIsValid();
 
 	private:
@@ -56,27 +57,27 @@ namespace BaldLion::AI::Navigation
 		
 
 	private:	
-		static InputGeom* m_geom;
-		static dtNavMesh* m_navMesh;
-		static dtNavMeshQuery* m_navQuery;		
+		static InputGeom* s_geom;
+		static dtNavMesh* s_navMesh;
+		static dtNavMeshQuery* s_navQuery;		
 
-		static unsigned char* m_triareas;
-		static rcHeightfield* m_solid;
-		static rcCompactHeightfield* m_chf;
-		static rcContourSet* m_cset;
-		static rcPolyMesh* m_pmesh;
-		static rcPolyMeshDetail* m_dmesh;
+		static unsigned char* s_triareas;
+		static rcHeightfield* s_solid;
+		static rcCompactHeightfield* s_chf;
+		static rcContourSet* s_cset;
+		static rcPolyMesh* s_pmesh;
+		static rcPolyMeshDetail* s_dmesh;
 
-		static rcConfig m_cfg;
-		static BuildContext m_ctx;
+		static rcConfig s_cfg;
+		static BuildContext s_ctx;
 
-		static float m_lastBuiltTileBmin[3];
-		static float m_lastBuiltTileBmax[3];
+		static float s_lastBuiltTileBmin[3];
+		static float s_lastBuiltTileBmax[3];
 
-		static float m_totalBuildTimeMs;
-		static float m_tileBuildTime;
-		static float m_tileMemUsage;
-		static int m_tileTriCount;
+		static float s_totalBuildTimeMs;
+		static float s_tileBuildTime;
+		static float s_tileMemUsage;
+		static int s_tileTriCount;
 	};
 }
 

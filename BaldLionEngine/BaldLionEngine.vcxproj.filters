@@ -459,7 +459,7 @@
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\Systems\ECSPathfindingSystem.h">
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.h">
@@ -2571,6 +2571,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp">
@@ -2660,7 +2661,7 @@
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.cpp">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\ECS\Systems\ECSPathfindingSystem.cpp">
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.cpp">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.cpp">
@@ -3113,5 +3114,6 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\AI\Navigation\NavigationManager.cpp" />
   </ItemGroup>
 </Project>

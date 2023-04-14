@@ -9,7 +9,6 @@ namespace BaldLion {
 
 		public:
 			EditorViewportPanel();
-			EditorViewportPanel(SceneHierarchyPanel* sceneHierarchyPanel);
 			~EditorViewportPanel();
 
 			virtual void SetupViewportCamera() override;
@@ -17,6 +16,8 @@ namespace BaldLion {
 			virtual void OnImGuiRender() override;
 
 			const glm::vec2& GetViewportSize() const { return m_viewportSize; }
+
+			bool GetViewportIsFocused() const { return m_viewportFocused; }
 
 		private:
 			void HandleInput();

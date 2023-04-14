@@ -29,6 +29,7 @@ namespace BaldLion {
 				return;
 
 			Physics::PhysicsManager::UpdatePhysics();
+
 			ECSSystem::OnUpdate();
 		}
 

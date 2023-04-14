@@ -7,21 +7,27 @@
 #include "BaldLion/SceneManagement/SceneManager.h"
 #include "BaldLion/Core/StringId.h"
 #include "BaldLion/Rendering/Renderer.h"
-#include "BaldLion/ECS/ComponentsSingleton/ECSProjectionCameraSingleton.h"
+#include "BaldLion/AI/Navigation/NavigationManager.h"
 #include "BaldLion/AI/Navigation/NavMeshBuilder.h"
 
-namespace BaldLion {
 
+namespace BaldLion 
+{
 	using namespace BaldLion::AI::Navigation;
 
 	namespace Editor 
 	{
-		NavigationPanel::NavigationPanel() : EditorPanel("Navigation")
+		NavigationPanel::NavigationPanel() : EditorPanel("Navigation"),m_agentCount(0), m_currentTarget(0.0f)
 		{
 		}
 
 		NavigationPanel::~NavigationPanel()
 		{
+		}
+
+		void NavigationPanel::SetNavigationPanel(EditorViewportPanel* editorViewPortPanel)
+		{
+			m_editorViewportPanel = editorViewPortPanel;
 		}
 
 		void NavigationPanel::OnImGuiRender()
@@ -148,15 +154,43 @@ namespace BaldLion {
 				if (ImGui::Button("Bake NavMesh"))
 				{
 					NavMeshBuilder::BuildNavMesh();
+					NavigationManager::InitCrowd();
 				}
 			}
 
 			if (NavMeshBuilder::NavMeshIsValid())
 			{
 				DrawNavMesh();
+				DrawAgents();	
+				
 			}
 
 			ImGui::End();
+
+			HandleInput();
+		}
+
+		void NavigationPanel::DrawAgents()
+		{
+			BL_HASHTABLE_FOR(SceneManager::GetECSManager()->GetEntityComponents(), it)
+			{
+				const ECS::ECSNavMeshAgentComponent* navMeshAgentComponent = it.GetValue().Read<ECS::ECSNavMeshAgentComponent>(ECS::ECSComponentType::NavMeshAgent);
+				const ECS::ECSTransformComponent* transformComponent = it.GetValue().Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
+
+				if (navMeshAgentComponent != nullptr && transformComponent != nullptr)
+				{
+					const dtCrowdAgent* agent = NavigationManager::GetCrowdAgent(navMeshAgentComponent->crowdAgentIdx);
+
+					const glm::vec3 arrowFrom = transformComponent->position + BaldLion::MathUtils::Vector3UnitY;
+					const glm::vec3 arrowToVel = arrowFrom + *(glm::vec3*)agent->nvel;
+					Renderer::DrawDebugLine(arrowFrom, arrowToVel, EditorUtils::ColorBlue, 0.1f);
+
+					const glm::vec3 arrowToDVel = arrowFrom + *(glm::vec3*)agent->dvel;
+					Renderer::DrawDebugLine(arrowFrom, arrowToDVel, EditorUtils::ColorGreen, 0.1f);
+
+					Renderer::DrawDebugSphere(transformComponent->position, NavMeshBuilder::navMeshConfig.agentRadius, EditorUtils::ColorRed);
+				}
+			}			
 		}
 
 		void NavigationPanel::DrawNavMesh()
@@ -307,6 +341,109 @@ namespace BaldLion {
 			{
 				const float* v = &tile->verts[i * 3];
 				Renderer::DrawDebugPoint(*(glm::vec3*)&tile->verts[i * 3], glm::vec3(0.0f));				
+			}
+		}
+
+		void NavigationPanel::HandleInput()
+		{
+			if (!NavMeshBuilder::NavMeshIsValid() || !m_editorViewportPanel->GetViewportIsFocused())
+			{
+				return;
+			}
+
+			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			{
+				glm::vec2 mouseInWindow;
+				if (EditorUtils::GetMouseRelativePosInWindow(m_editorViewportPanel->GetPanelID(), mouseInWindow))
+				{
+					const glm::vec3 rayOrigin = m_editorViewportPanel->GetViewportCameraTransform()->position;
+
+					const glm::vec4 rayClip = glm::vec4(mouseInWindow.x, mouseInWindow.y, 1.0f, 1.0f);
+
+					glm::vec3 rayDirection = glm::inverse(m_editorViewportPanel->GetViewportCamera()->viewProjectionMatrix) * rayClip;
+					rayDirection = glm::normalize(rayDirection);
+
+					const glm::vec3 rayEnd = rayOrigin + rayDirection * 5000.0f;
+
+					float hitTime;
+					bool hit = NavMeshBuilder::GetInputGeom()->raycastMesh((float*)&rayOrigin, (float*)&rayEnd, hitTime);
+
+					if (hit)
+					{
+						const glm::vec3 hitPos = rayOrigin + rayDirection * 5000.0f * hitTime;
+						CreateAgent(hitPos);
+					}
+				}
+			}
+			
+			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			{
+				glm::vec2 mouseInWindow;
+				if (EditorUtils::GetMouseRelativePosInWindow(m_editorViewportPanel->GetPanelID(), mouseInWindow))
+				{
+					const glm::vec3 rayOrigin = m_editorViewportPanel->GetViewportCameraTransform()->position;
+
+					const glm::vec4 rayClip = glm::vec4(mouseInWindow.x, mouseInWindow.y, 1.0f, 1.0f);
+
+					glm::vec3 rayDirection = glm::inverse(m_editorViewportPanel->GetViewportCamera()->viewProjectionMatrix) * rayClip;
+					rayDirection = glm::normalize(rayDirection);
+
+					const glm::vec3 rayEnd = rayOrigin + rayDirection * 5000.0f;
+
+					float hitTime;
+					bool hit = NavMeshBuilder::GetInputGeom()->raycastMesh((float*)&rayOrigin, (float*)&rayEnd, hitTime);
+
+					if (hit)
+					{
+						const glm::vec3 hitPos = rayOrigin + rayDirection * 5000.0f * hitTime;
+						SetAgentsTarget(hitPos);
+					}
+				}
+			}
+		}
+
+		void NavigationPanel::CreateAgent(const glm::vec3& pos)
+		{
+			const std::string agentName = "Agent" + std::to_string(m_agentCount++);
+			ECS::ECSEntityID agentEntityID = SceneManager::GetECSManager()->AddEntity(agentName.c_str());
+
+			ECS::ECSTransformComponent* transformComponent = SceneManager::GetECSManager()->CreateComponent<ECS::ECSTransformComponent>(
+				ECS::ECSComponentType::Transform,
+				pos,
+				glm::vec3(0.0f),
+				glm::vec3(1.0f));
+
+			ECS::ECSNavMeshAgentComponent* navMeshAgentComponent = SceneManager::GetECSManager()->CreateComponent<ECS::ECSNavMeshAgentComponent>(
+				ECS::ECSComponentType::NavMeshAgent,
+				pos);
+
+			SceneManager::GetECSManager()->AddComponentToEntity(agentEntityID, transformComponent);
+			SceneManager::GetECSManager()->AddComponentToEntity(agentEntityID, navMeshAgentComponent);
+
+			const dtCrowdAgent* agent = NavigationManager::GetCrowdAgent(navMeshAgentComponent->crowdAgentIdx);
+			
+			if (m_currentTarget != BaldLion::MathUtils::Vector3Zero)
+			{				
+				SetCrowdTargetPosition(m_currentTarget);
+			}
+		}
+
+		void NavigationPanel::SetAgentsTarget(const glm::vec3& pos)
+		{
+			m_currentTarget = pos;
+			SetCrowdTargetPosition(m_currentTarget);
+		}
+
+		void NavigationPanel::SetCrowdTargetPosition(const glm::vec3& pos)
+		{
+			BL_HASHTABLE_FOR(SceneManager::GetECSManager()->GetEntityComponents(), it)
+			{
+				const ECS::ECSNavMeshAgentComponent* navMeshAgentComponent = it.GetValue().Read<ECS::ECSNavMeshAgentComponent>(ECS::ECSComponentType::NavMeshAgent);
+
+				if (navMeshAgentComponent != nullptr)
+				{
+					NavigationManager::RequestMoveTarget(navMeshAgentComponent->crowdAgentIdx, pos);
+				}
 			}
 		}
 

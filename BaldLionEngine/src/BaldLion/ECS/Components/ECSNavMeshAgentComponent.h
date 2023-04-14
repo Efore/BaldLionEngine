@@ -1,8 +1,7 @@
 #pragma once
 
 #include "BaldLion/ECS/ECSComponent.h"
-#include "BaldLion/Core/StringId.h"
-#include "BaldLion/Animation/AnimationManager.h"
+#include "BaldLion/AI/Navigation/NavigationManager.h"
 
 namespace BaldLion 
 {
@@ -12,33 +11,21 @@ namespace BaldLion
 
 		public:
 
-			ECSNavMeshAgentComponent(float movementSpeed, float rotationSpeed) :
-				ECSComponent(ECSComponentType::NavMeshAgent), movementSpeed(movementSpeed), rotationSpeed(rotationSpeed), currentPathIndex(0)
+			ECSNavMeshAgentComponent(const glm::vec3& startPosition) :
+				ECSComponent(ECSComponentType::NavMeshAgent), agentMaxSpeed(3.5f), agentMaxAcceleration(8.0f)
 			{
-				navMeshPath = DynamicArray<glm::vec3>(AllocationType::FreeList_ECS, 10);
+				crowdAgentIdx = AI::Navigation::NavigationManager::CreateCrowdAgent(startPosition, agentMaxSpeed, agentMaxAcceleration);
 			}
 
-			void SetDestination(const glm::vec3 origin, const glm::vec3& destination)
+			~ECSNavMeshAgentComponent() 
 			{
-				pathStart = origin;
-				pathEnd = destination;
-				currentState = NavMeshAgentState::FindingPath;
+				AI::Navigation::NavigationManager::DestroyCrowdAgent(crowdAgentIdx);
 			}
-
 		public:	
 			
-			glm::vec3 pathStart;
-			glm::vec3 pathEnd;
-			float movementSpeed;
-			float rotationSpeed;
-			DynamicArray<glm::vec3> navMeshPath;
-			ui32 currentPathIndex;
-
-			enum class NavMeshAgentState {
-				None,
-				FindingPath,
-				PathFound
-			} currentState;
+			i32 crowdAgentIdx;
+			float agentMaxSpeed;
+			float agentMaxAcceleration;
 		};
 	}
 }

@@ -16,6 +16,9 @@ namespace BaldLion {
 
 			void SetHierarchyPanel(SceneHierarchyPanel* sceneHierarchyPanel) { m_sceneHierarchyPanel = sceneHierarchyPanel; }
 
+			ECS::ECSProjectionCameraComponent* GetViewportCamera() const { return m_viewportCamera; }
+			ECS::ECSTransformComponent* GetViewportCameraTransform() const { return m_viewportCameraTransform; }
+
 		protected:
 
 			glm::mat4 m_staticSelectedLastTransform;

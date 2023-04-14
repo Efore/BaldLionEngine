@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h" />
+    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationManager.h" />
     <ClInclude Include="src\BaldLion\AI\Navigation\NavMeshBuilder.h" />
     <ClInclude Include="src\BaldLion\AI\Navigation\RecastClasses\BuildContext.h" />
     <ClInclude Include="src\BaldLion\AI\Navigation\RecastClasses\ChunkyTriMesh.h" />
@@ -206,7 +207,7 @@
     <ClInclude Include="src\BaldLion\ECS\ECSSystemsInclude.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSUtils.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.h" />
-    <ClInclude Include="src\BaldLion\ECS\Systems\ECSPathfindingSystem.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSRenderSystem.h" />
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h" />
@@ -912,6 +913,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\BaldLion\AI\Navigation\NavigationManager.cpp" />
     <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp" />
     <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\BuildContext.cpp" />
     <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\ChunkyTriMesh.cpp" />
@@ -941,7 +943,7 @@
     <ClCompile Include="src\BaldLion\ECS\ECSManager.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ECSSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.cpp" />
-    <ClCompile Include="src\BaldLion\ECS\Systems\ECSPathfindingSystem.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSRenderSystem.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />

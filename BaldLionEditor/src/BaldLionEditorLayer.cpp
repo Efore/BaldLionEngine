@@ -42,13 +42,12 @@ namespace BaldLion
 				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
 			}		
 
-			//END ECS setup			
-			
+			//Panel Setup
 			m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
 			m_entityPropertiesPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);						
 			m_editorViewportPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);
 			m_editorViewportPanel.SetupViewportCamera();
-			m_navigationPanel.SetEditorViewportPanel(&m_editorViewportPanel);
+			m_navigationPanel.SetNavigationPanel(&m_editorViewportPanel);
 		}
 
 		void BaldLionEditorLayer::OnDetach()
