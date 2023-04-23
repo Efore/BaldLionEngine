@@ -29,6 +29,9 @@ namespace BaldLion {
 
 			void UpdateLocalBoundingBox() {
 
+				if (vertices.Size() == 0)
+					return;
+
 				glm::vec3 minPointInLocalSpace = vertices[0].position;
 				glm::vec3 maxPointInLocalSpace = vertices[0].position;
 

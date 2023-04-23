@@ -343,7 +343,9 @@ namespace BaldLion
 		node.nodeValue = std::move(value);
 
 		if (tableIndex < m_beginIterator.GetTableIndex())
-			m_beginIterator = HashTable<K, V>::Iterator(this, (ui32)tableIndex); 
+		{
+			m_beginIterator = HashTable<K, V>::Iterator(this, (ui32)tableIndex);
+		}
 
 		m_endIterator = HashTable<K, V>::Iterator(this, m_capacity);
 	}
@@ -531,6 +533,9 @@ namespace BaldLion
 		m_table = std::move(newTable);
 		m_capacity = capacity;
 		newTable.Delete();
+
+		m_beginIterator = HashTable<K, V>::Iterator(this, FindFirstElementIndex());
+		m_endIterator = HashTable<K, V>::Iterator(this, m_capacity);
 	}
 
 	template <typename K, typename V>

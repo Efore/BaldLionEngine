@@ -12,9 +12,6 @@
 #include "DebugDrawRenderInterface.h"
 #include "DebugDrawRenderProvider.h"
 
-
-const ui32 maxMeshesToProcess = 5u;
-
 namespace BaldLion
 {
 	namespace Rendering
@@ -372,6 +369,7 @@ namespace BaldLion
 		void Renderer::AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
 		{
 			BL_PROFILE_FUNCTION();
+			const std::lock_guard<std::mutex> lock(s_addDynamicMeshMutex);
 			s_dynamicMeshes.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
 		}
 
@@ -391,13 +389,37 @@ namespace BaldLion
 			if (s_geometryToBatch.TryGet(material, batch))
 			{
 				BL_PROFILE_SCOPE("Emplace vertices and indices", Optick::Category::Rendering);
-				const ui32 verticesInBatch = batch->vertices.Size();
+				
+				ui32 startVerticesIndex = 0;
+				ui32 startIndicesIndex = 0;
 
-				batch->vertices.PushBackRange(vertices);				
+				{
+					const std::lock_guard<std::mutex> lock(batch->geometryDataMutex);
 
+					//mutex
+					startVerticesIndex = batch->verticesCurrentIndex;
+					batch->verticesCurrentIndex += numVertices;					
+					if (batch->verticesCurrentIndex > batch->vertices.Capacity())
+					{
+						batch->vertices.Reallocate(batch->verticesCurrentIndex * 2);						
+					}
+					batch->vertices.SetSize(batch->verticesCurrentIndex);
+
+
+					startIndicesIndex = batch->indicesCurrentIndex;
+					batch->indicesCurrentIndex += numIndices;
+					if (batch->indicesCurrentIndex > batch->indices.Capacity())
+					{
+						batch->indices.Reallocate(batch->indicesCurrentIndex * 2);						
+					}
+					batch->indices.SetSize(batch->indicesCurrentIndex);
+				}
+
+				memcpy(&(batch->vertices.Data()[startVerticesIndex]), vertices.Data(), numVertices * sizeof(Vertex));
+				
 				for (ui32 i = 0; i < numIndices; ++i)
 				{
-					batch->indices.EmplaceBack(indices[i] + verticesInBatch);
+					batch->indices.Data()[startIndicesIndex + i] = indices[i] + startVerticesIndex;
 				}
 			}
 		}
@@ -421,6 +443,8 @@ namespace BaldLion
 				batch = MemoryManager::New<GeometryData>("Batch", AllocationType::FreeList_Renderer);
 				batch->vertices = DynamicArray<Vertex>(AllocationType::FreeList_Renderer, 100);
 				batch->indices = DynamicArray<ui32>(AllocationType::FreeList_Renderer, 150);
+				batch->verticesCurrentIndex = 0;
+				batch->indicesCurrentIndex = 0;
 
 				s_geometryToBatch.Emplace(material, std::move(batch));
 			}

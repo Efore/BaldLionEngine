@@ -595,6 +595,10 @@ namespace BaldLion
 		m_capacity = capacity;
 
 		newTable.DeleteNoDestructor();
+
+		ui32 firstElement = FindFirstElementIndex();
+		m_beginIterator = HashMap<K, V>::Iterator(this, firstElement, m_table[firstElement]);
+		m_endIterator = HashMap<K, V>::Iterator(this, m_capacity, nullptr);
 	}
 
 	template <typename K, typename V>

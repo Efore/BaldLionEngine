@@ -112,6 +112,8 @@ namespace BaldLion
 			static Shader* s_depthMapSkinnedShader;
 
 			static glm::mat4 s_lightViewProjection;
+
+			static std::mutex s_addDynamicMeshMutex;
 		};
 	}
 }

@@ -44,7 +44,7 @@ namespace BaldLion {
 
 		void ResourcesPanel::AddResource()
 		{
-			std::string filepath = FileDialogs::OpenFile("Add Resource \0*.fbx\0");
+			std::string filepath = FileDialogs::OpenFile("Add Fbx (.fbx) \0*.fbx\0Add Obj (.obj)\0*.obj\0");
 
 			if (!filepath.empty())
 			{

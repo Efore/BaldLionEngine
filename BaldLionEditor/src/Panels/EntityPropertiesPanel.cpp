@@ -54,7 +54,8 @@ namespace BaldLion {
 										"Skeleton",
 										"DirectionalLight",										
 										"Animation",
-										"Physics Body"
+										"Physics Body",
+										"NavMesh Agent"
 									};
 
 				const char* physicsBodyShapes[] = {
@@ -148,6 +149,19 @@ namespace BaldLion {
 
 									case ECS::ECSComponentType::PhysicsBody:
 										ImGui::OpenPopup(physicsBodyPopup);
+										break;
+
+									case ECS::ECSComponentType::NavMeshAgent:
+
+										const ECS::ECSTransformComponent* transformComponent =
+											m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityComponents().Get(selectedEntityID).Read<ECS::ECSTransformComponent>(ECSComponentType::Transform);
+
+										if (transformComponent != nullptr)
+										{
+											newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent,
+												transformComponent->position);
+										}
+
 										break;
 									
 									}

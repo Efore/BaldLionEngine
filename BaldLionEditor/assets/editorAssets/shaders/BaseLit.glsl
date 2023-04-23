@@ -172,7 +172,7 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec4 posLig
     vec3 diffuse  = light.diffuseColor  * diff * u_material.diffuseColor * diffuseTexResult;
     vec3 specular = light.specularColor * spec * u_material.specularColor * specularTexResult;
     
-	return (ambient + ((1.0 - shadow) * (diffuse + specular)));	
+	return diffuseTexResult;//(ambient + ((1.0 - shadow) * (diffuse + specular)));	
 }  
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)

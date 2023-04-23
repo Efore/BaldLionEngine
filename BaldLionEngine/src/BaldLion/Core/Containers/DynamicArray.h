@@ -19,6 +19,8 @@ namespace BaldLion
 		~DynamicArray();
 
 		ui32 Size() const { return m_size; }
+		void SetSize(ui32 size) { m_size = size; }
+
 		ui32 Capacity() const { return m_capacity; }
 
 		void Clear();
@@ -52,6 +54,12 @@ namespace BaldLion
 		int FindIndex(const T& element) const;
 		bool Contains(const T& element) const;
 
+		T* Data();
+		const T* Data() const;
+
+		void Reallocate(ui32 newCapacity);
+
+
 		bool IsEmpty() const { return m_size == 0; }
 
 		T& Begin() { return m_elements[0]; }
@@ -75,10 +83,9 @@ namespace BaldLion
 		DynamicArray<T>& operator= (const DynamicArray<T>& other);
 		DynamicArray<T>& operator= (DynamicArray<T>&& other) noexcept;
 
-	private:
 
+	private:
 		void Reserve(ui32 capacity);
-		void Reallocate(ui32 newCapacity);
 
 	private:
 
@@ -89,6 +96,17 @@ namespace BaldLion
 		AllocationType m_allocationType;
 	};	
 
+	template <typename T>
+	T* BaldLion::DynamicArray<T>::Data()
+	{
+		return m_elements;
+	}
+
+	template <typename T>
+	const T* BaldLion::DynamicArray<T>::Data() const
+	{
+		return m_elements;
+	}
 
 	template <typename T>
 	BaldLion::DynamicArray<T>::DynamicArray(Memory::AllocationType allocationType, ui32 capacity)

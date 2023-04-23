@@ -12,16 +12,16 @@ namespace BaldLion
 
 		ECSManager::ECSManager()
 		{
-			m_entityComponents = HashTable<ECSEntityID, ECSComponentLookUp>(AllocationType::FreeList_ECS,100);
-			m_entitySignatures = HashTable<ECSEntityID, ECSSignature>(AllocationType::FreeList_ECS, 100);
-			m_entitiyMap = HashTable<ECSEntityID, ECSEntity*>(AllocationType::FreeList_ECS, 100);
+			m_entityComponents = HashTable<ECSEntityID, ECSComponentLookUp>(AllocationType::FreeList_ECS,1000);
+			m_entitySignatures = HashTable<ECSEntityID, ECSSignature>(AllocationType::FreeList_ECS, 1000);
+			m_entitiyMap = HashTable<ECSEntityID, ECSEntity*>(AllocationType::FreeList_ECS, 1000);
 
-			m_entities = DynamicArray<ECSEntity>(AllocationType::FreeList_ECS,100);			
+			m_entities = DynamicArray<ECSEntity>(AllocationType::FreeList_ECS,1000);			
 			m_systems = DynamicArray<ECSSystem*>(AllocationType::FreeList_ECS,100);
 
 			m_componentsPool = DynamicArray<void*>(AllocationType::FreeList_ECS, (ui32)ECSComponentType::Count);
 
-			m_cachedEntityHierarchy = DynamicArray<ECSTransformHierarchyEntry>(AllocationType::FreeList_ECS, 30);
+			m_cachedEntityHierarchy = DynamicArray<ECSTransformHierarchyEntry>(AllocationType::FreeList_ECS, 1000);
 
 			//Pools initialization in ecscomponenttype order: 
 			//	1-Transform
