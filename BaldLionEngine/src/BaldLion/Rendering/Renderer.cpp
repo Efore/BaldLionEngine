@@ -40,6 +40,9 @@ namespace BaldLion
 
 		glm::mat4 Renderer::s_lightViewProjection;
 
+		std::mutex Renderer::s_addDynamicMeshMutex;
+		std::mutex Renderer::s_addShadowCastingMeshMutex;
+
 		void Renderer::Init(ui32 width, ui32 height)
 		{
 			BL_PROFILE_FUNCTION();
@@ -426,6 +429,8 @@ namespace BaldLion
 
 		void Renderer::AddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
 		{
+			const std::lock_guard<std::mutex> lock(s_addShadowCastingMeshMutex);
+
 			if (meshComponent->vertices.Size() == 0)
 				return;
 

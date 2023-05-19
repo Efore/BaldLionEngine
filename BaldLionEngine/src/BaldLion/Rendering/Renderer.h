@@ -114,6 +114,7 @@ namespace BaldLion
 			static glm::mat4 s_lightViewProjection;
 
 			static std::mutex s_addDynamicMeshMutex;
+			static std::mutex s_addShadowCastingMeshMutex;
 		};
 	}
 }

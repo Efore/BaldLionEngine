@@ -34,12 +34,10 @@ namespace BaldLion
 			std::va_list argsComponents;
 			va_start(argsComponents, count);
 
-			ECSComponentType componentType = va_arg(argsComponents, ECSComponentType);
-
+			ECSComponentType componentType = ECSComponentType::Count;
 			ECSSignature result;
-			result.set((ui32)componentType);
 
-			for (ui32 i = 1; i < count; ++i)
+			for (ui32 i = 0; i < count; ++i)
 			{
 				componentType = va_arg(argsComponents, ECSComponentType);
 				result.set((ui32)componentType);

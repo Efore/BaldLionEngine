@@ -39,7 +39,7 @@ namespace BaldLion
 			m_projectionCameraComponentPool = DynamicArray<ECSProjectionCameraComponent>(AllocationType::FreeList_ECS, 10);
 			m_componentsPool.EmplaceBack(&m_projectionCameraComponentPool);
 
-			m_meshComponentPool = DynamicArray<ECSMeshComponent>(AllocationType::FreeList_ECS, 100);
+			m_meshComponentPool = DynamicArray<ECSMeshComponent>(AllocationType::FreeList_ECS, 1000);
 			m_componentsPool.EmplaceBack(&m_meshComponentPool);
 
 			m_skeletonComponentPool = DynamicArray<ECSSkeletonComponent>(AllocationType::FreeList_ECS, 40);
