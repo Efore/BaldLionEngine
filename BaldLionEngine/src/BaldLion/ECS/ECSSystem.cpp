@@ -48,7 +48,7 @@ namespace BaldLion {
 				{
 					const std::string systemOperation = std::to_string(m_systemName) + std::to_string(i);
 
-					JobManagement::Job systemUpdateJob(systemOperation.c_str());
+					JobManagement::Job systemUpdateJob(systemOperation.c_str(), JobManagement::Job::JobType::ECS);
 
 					systemUpdateJob.Task = [this, componentLookUp] {
 
@@ -65,7 +65,7 @@ namespace BaldLion {
 
 			if (m_parallelize && m_waitForUpdatesOperationsToFinish)
 			{
-				JobManagement::JobManager::WaitForJobs();
+				JobManagement::JobManager::WaitForJobs(1 << JobManagement::Job::JobType::ECS);
 			}
 		}
 

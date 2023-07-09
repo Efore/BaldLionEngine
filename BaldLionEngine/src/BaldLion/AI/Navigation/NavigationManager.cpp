@@ -81,7 +81,7 @@ namespace BaldLion::AI::Navigation
 			return;
 		}
 
-		JobManagement::Job navigationUpdateJob("Update navigation job");
+		JobManagement::Job navigationUpdateJob("Update navigation job", JobManagement::Job::JobType::Navigation);
 
 		navigationUpdateJob.Task = [] {
 			BL_PROFILE_SCOPE("Crowd update",Optick::Category::GameLogic);

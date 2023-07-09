@@ -108,5 +108,14 @@ namespace BaldLion
 
 			return true;
 		}		
+
+		static void GetRotationFromMatrix(const glm::mat4& transform, glm::quat& rotation)
+		{
+			glm::vec3 scale;
+			glm::vec3 translation;
+			glm::vec3 skew;
+			glm::vec4 perspective;
+			glm::decompose(transform, scale, rotation, translation, skew, perspective);
+		}
 	} 
 }

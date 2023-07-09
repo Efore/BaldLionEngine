@@ -126,7 +126,7 @@ class InputGeom
 	///@}
 	
 	bool loadMesh(class rcContext* ctx, const std::string& filepath);
-	bool loadGeomSet(class rcContext* ctx, const std::string& filepath);
+	bool loadGeomSet(class rcContext* ctx, const std::string& filepath);	
 public:
 	InputGeom();
 	~InputGeom();
@@ -134,7 +134,11 @@ public:
 	
 	bool load(class rcContext* ctx, const std::string& filepath);
 	bool saveGeomSet(const BuildSettings* settings);
-	
+
+	bool prepareMesh(rcContext* ctx);
+	void addVerticesToMesh(rcContext* ctx, const void* vertices, ui32 verticesSize, const ui32* indices, ui32 indicesSize);
+	bool closeMesh(rcContext* ctx);
+
 	/// Method to return static mesh data.
 	const rcMeshLoaderObj* getMesh() const { return m_mesh; }
 	const float* getMeshBoundsMin() const { return m_meshBMin; }

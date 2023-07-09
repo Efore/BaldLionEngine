@@ -9,21 +9,33 @@ namespace BaldLion {
 		HashTable<StringId, ui32> ThreadPool::s_activeJobs;
 		DynamicArray<std::thread> ThreadPool::s_threads;
 
-		bool ThreadPool::s_jobsFinished;
+		ui32 ThreadPool::s_activeJobsByType[Job::JobType::Count];
+		ui32 ThreadPool::s_queuedJobsByType[Job::JobType::Count];
 
-		std::mutex ThreadPool::s_queueMutex;	
-		std::mutex ThreadPool::s_jobsFinishedMutex;
+		ui32 ThreadPool::s_finishedTypes;
+
+		std::mutex ThreadPool::s_jobManagingMutex;
+		std::mutex ThreadPool::s_finishedTypesMutex;
 
 		std::condition_variable ThreadPool::s_cvDependencyFinished;
 		std::condition_variable ThreadPool::s_cvChildrenFinished;
-		std::condition_variable ThreadPool::s_cvJobsFinished;
+		std::condition_variable ThreadPool::s_cvFinishedType;
+
+		ui32 Job::AllJobTypesMask =
+			(1 << Job::JobType::Unknown) |
+			(1 << Job::JobType::ECS) |
+			(1 << Job::JobType::Navigation) |
+			(1 << Job::JobType::Editor);
+
 
 		void ThreadPool::Init(ui32 workersCount /*= std::thread::hardware_concurrency()*/)
 		{
 			s_jobQueue = Queue<Job>(AllocationType::FreeList_Main, 1000);
 			s_activeJobs = HashTable<StringId, ui32>(AllocationType::FreeList_Main, 1000);
 			s_threads = DynamicArray<std::thread>(AllocationType::FreeList_Main, workersCount);
-			s_jobsFinished = true;
+			memset(&s_activeJobsByType, 0, sizeof(s_activeJobsByType));
+			memset(&s_queuedJobsByType, 0, sizeof(s_queuedJobsByType));
+			s_finishedTypes = 0;
 
 			//Starting threads
 			for (ui32 i = 0; i < workersCount; ++i)
@@ -41,17 +53,18 @@ namespace BaldLion {
 		{
 			BL_ASSERT("Job has no task", job.Task != nullptr);
 
-			s_jobsFinishedMutex.lock();
+			s_finishedTypesMutex.lock();			
 			
-			s_jobsFinished = false;			
+			s_finishedTypes |= (1 << job.Type);
 
 			//Enqueuing job
-			s_queueMutex.lock();
+			s_jobManagingMutex.lock();
 
 			s_jobQueue.EmplaceBack(job);
+			++s_queuedJobsByType[job.Type];
 
-			s_queueMutex.unlock();
-			s_jobsFinishedMutex.unlock();			
+			s_jobManagingMutex.unlock();
+			s_finishedTypesMutex.unlock();			
 		}	
 
 		void* ThreadPool::ThreadProcess(ui32 threadIndex)
@@ -63,18 +76,19 @@ namespace BaldLion {
 				std::function<void()> task = nullptr;
 
 				//Taking next job in queue and assigning Task
-				s_queueMutex.lock();
+				s_jobManagingMutex.lock();
 
 				if (!s_jobQueue.IsEmpty())
 				{
 					job = s_jobQueue.Front();
 					task = job.Task;
 					s_jobQueue.Pop();
+					--s_queuedJobsByType[job.Type];
 				}
 
 				if (!task)
 				{
-					s_queueMutex.unlock();
+					s_jobManagingMutex.unlock();
 				}
 				else
 				{
@@ -82,12 +96,14 @@ namespace BaldLion {
 
 					//Adding JobID and its number off children to the active Job map
 					s_activeJobs.Emplace(job.JobName, std::move(job.ChildrenCount));
-					s_queueMutex.unlock();
+					++s_activeJobsByType[job.Type];
+
+					s_jobManagingMutex.unlock();
 
 					//IF this job depends on another to start, wait until the other job is no longer active
 					if (job.JobDependencyName != 0)
 					{
-						std::unique_lock<std::mutex> dependencyLock(s_queueMutex);
+						std::unique_lock<std::mutex> dependencyLock(s_jobManagingMutex);
 						const StringId jobDependencyID = job.JobDependencyName;
 						s_cvDependencyFinished.wait(dependencyLock, [jobDependencyID] { return !s_activeJobs.Contains(jobDependencyID); });
 					}
@@ -98,19 +114,18 @@ namespace BaldLion {
 					//After the task has been processed, if it has children, wait until all of them are processed 
 					if (job.ChildrenCount > 0)
 					{
-						std::unique_lock<std::mutex> checkChildrenLock(s_queueMutex);
+						std::unique_lock<std::mutex> checkChildrenLock(s_jobManagingMutex);
 						s_cvChildrenFinished.wait(checkChildrenLock, [job] { return s_activeJobs.Get(job.JobName) == 0; });
 					}
 
 					//Closure of the job logic, making sure that only one thread closes its job at the same time
-					s_jobsFinishedMutex.lock();					
+					s_finishedTypesMutex.lock();					
 
 					//Removing the job from the active jobs map
-					s_queueMutex.lock();
-					
-					bool jobQueueEmpty = s_jobQueue.IsEmpty();										
-					
+					s_jobManagingMutex.lock();																
+
 					s_activeJobs.Remove(job.JobName);
+					--s_activeJobsByType[job.Type];					
 
 					//If this job has a parent, reduce its pending children in one
 					if (job.JobParentName > 0) {
@@ -118,30 +133,30 @@ namespace BaldLion {
 						s_activeJobs.Set(job.JobParentName, children);
 					}
 
-					bool activeJobsEmpty = s_activeJobs.Size() == 0;
+					s_jobManagingMutex.unlock();		
 
-					s_queueMutex.unlock();		
-
-					//Checking if all jobs are finished
-					s_jobsFinished = jobQueueEmpty && activeJobsEmpty;
+					if (s_activeJobsByType[job.Type] == 0 && s_queuedJobsByType[job.Type] == 0)
+					{
+						s_finishedTypes = s_finishedTypes & ~(1 << job.Type);
+					}
 
 					//Closure is finished
-					s_jobsFinishedMutex.unlock();
+					s_finishedTypesMutex.unlock();
 					
 					//Notifying dependency and children condition variables
 					s_cvDependencyFinished.notify_all();
 					s_cvChildrenFinished.notify_all();
 
 					//Notifying job finished condition variable
-					s_cvJobsFinished.notify_all();
+					s_cvFinishedType.notify_all();
 				}
 			}
 		}
 
-		void ThreadPool::WaitForJobs()
+		void ThreadPool::WaitForJobs(ui32 jobTypeMask)
 		{	
-			std::unique_lock<std::mutex> waitActiveJobsLock(s_jobsFinishedMutex);
-			s_cvJobsFinished.wait(waitActiveJobsLock, [] { return s_jobsFinished; });									
+			std::unique_lock<std::mutex> waitActiveJobsLock(s_finishedTypesMutex);
+			s_cvFinishedType.wait(waitActiveJobsLock, [jobTypeMask] { return (s_finishedTypes & jobTypeMask) == 0; });
 		}
 	}
 }

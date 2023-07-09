@@ -14,7 +14,7 @@ namespace BaldLion
 			
 			static void QueueJob(Job& job);
 			static void SetJobDependency(StringId jobIDs);
-			static void WaitForJobs();
+			static void WaitForJobs(ui32 jobType);
 
 		private:
 			static std::mutex s_currentJobToWaitForMutex;

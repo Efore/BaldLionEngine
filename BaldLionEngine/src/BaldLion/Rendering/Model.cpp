@@ -105,11 +105,17 @@ namespace BaldLion
 				}
 
 				glm::vec3 tangent = glm::vec3(0.0f);
-				if (aimesh->HasTangentsAndBitangents())
+				const glm::vec3 c1 = glm::cross(normal, glm::vec3(0.0, 0.0, 1.0));
+				const glm::vec3 c2 = glm::cross(normal, glm::vec3(0.0, 1.0, 0.0));
+
+				if (glm::length2(c1) > glm::length2(c2))
 				{
-					tangent.x = aimesh->mTangents[i].x;
-					tangent.y = aimesh->mTangents[i].y;
+					tangent = c1;
 				}
+				else
+				{
+					tangent = c2;
+				}				
 
 				vertices.EmplaceBack(position, normal, texCoord, tangent);
 			}
@@ -342,7 +348,7 @@ namespace BaldLion
 
 			}
 
-			delete jointsAssigned;
+			delete[] jointsAssigned;
 		}
 	
 

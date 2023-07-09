@@ -36,13 +36,14 @@ public:
 	int getTriCount() const { return m_triCount; }
 	const std::string& getFileName() const { return m_filename; }
 
+	void addVertex(float x, float y, float z, int& cap);
+	void addTriangle(int a, int b, int c, int& cap);
+	void calculateNormals();
+
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
 	rcMeshLoaderObj(const rcMeshLoaderObj&);
-	rcMeshLoaderObj& operator=(const rcMeshLoaderObj&);
-	
-	void addVertex(float x, float y, float z, int& cap);
-	void addTriangle(int a, int b, int c, int& cap);
+	rcMeshLoaderObj& operator=(const rcMeshLoaderObj&);	
 	
 	std::string m_filename;
 	float m_scale;	

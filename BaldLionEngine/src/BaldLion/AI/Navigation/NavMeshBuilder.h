@@ -36,7 +36,7 @@ namespace BaldLion::AI::Navigation
 		static void Init();
 		static void Stop();
 
-		static bool LoadGeom(const char* filepath);
+		static bool LoadGeom();
 		static bool BuildNavMesh();
 		static InputGeom* GetInputGeom();		
 		static dtNavMesh* GetNavMesh();
@@ -45,7 +45,7 @@ namespace BaldLion::AI::Navigation
 
 	private:
 
-		static bool InternalBuildNavMesh(bool parallelize);
+		static bool InternalBuildNavMesh();
 		static void BuildAllTiles();
 		static void LogLine(rcContext& ctx, rcTimerLabel label, const char* name, const float pc);
 		static void LogBuildTimes(rcContext& ctx, const int totalTimeUsec);

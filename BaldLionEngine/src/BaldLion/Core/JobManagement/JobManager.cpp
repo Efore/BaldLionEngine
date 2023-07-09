@@ -35,9 +35,9 @@ namespace BaldLion
 			s_currentJobToWaitForMutex.unlock();
 		}
 
-		void JobManager::WaitForJobs()
+		void JobManager::WaitForJobs(ui32 jobType)
 		{
-			ThreadPool::WaitForJobs();
+			ThreadPool::WaitForJobs(jobType);
 		}
 
 	}

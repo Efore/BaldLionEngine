@@ -47,8 +47,8 @@ namespace BaldLion
 	}
 
 	Application::~Application()
-	{
-		JobManagement::JobManager::WaitForJobs();
+	{		
+		JobManagement::JobManager::WaitForJobs(JobManagement::Job::AllJobTypesMask);
 
 		m_layerStack.PopOverlay(m_imGuiLayer);
 		m_layerStack.Delete();

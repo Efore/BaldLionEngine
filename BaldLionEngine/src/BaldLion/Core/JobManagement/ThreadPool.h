@@ -18,6 +18,18 @@ namespace BaldLion
 
 		struct Job
 		{
+			enum JobType : ui32
+			{
+				Unknown,
+				ECS,
+				Navigation,
+				Editor,
+
+				Count
+			} Type;
+
+			static ui32 AllJobTypesMask;
+
 			StringId JobName;
 			std::function<void()> Task;
 			StringId JobDependencyName;
@@ -26,15 +38,16 @@ namespace BaldLion
 
 			Job(){}
 
-			Job(const char* cName, StringId jobParentID = 0, ui32 childrenCount = 0)
+			Job(const char* cName, JobType type = JobType::Unknown, StringId jobParentID = 0, ui32 childrenCount = 0 )
 			{
 				JobParentName = jobParentID;
 				JobDependencyName = 0;
+				Type = type;
 				ChildrenCount = childrenCount;
 				JobName = BL_STRING_TO_STRINGID(cName);
 			}
 
-			Job(const Job& other) : JobName(other.JobName), Task(other.Task), JobDependencyName(other.JobDependencyName), JobParentName(other.JobParentName), ChildrenCount(other.ChildrenCount){}
+			Job(const Job& other) : JobName(other.JobName), Type(other.Type), Task(other.Task), JobDependencyName(other.JobDependencyName), JobParentName(other.JobParentName), ChildrenCount(other.ChildrenCount){}
 
 			Job& operator=(Job&& other) noexcept
 			{
@@ -42,6 +55,7 @@ namespace BaldLion
 					return *this;
 
 				JobName = other.JobName;
+				Type = other.Type;
 				Task = other.Task;
 				other.Task = nullptr;
 				JobDependencyName = other.JobDependencyName;
@@ -57,6 +71,7 @@ namespace BaldLion
 					return *this;
 
 				JobName = other.JobName;
+				Type = other.Type;
 				Task = other.Task;
 				JobDependencyName = other.JobDependencyName;
 				JobParentName = other.JobParentName;
@@ -65,6 +80,7 @@ namespace BaldLion
 				return *this;
 			}
 		};
+
 
 		class ThreadPool
 		{	
@@ -75,7 +91,7 @@ namespace BaldLion
 			static void Init(ui32 threadsCount);
 			static void Stop();
 			static void QueueJob(const Job& job);
-			static void WaitForJobs();
+			static void WaitForJobs(ui32 jobTypeMask);
 
 			static void *ThreadProcess(ui32 threadIndex);
 						
@@ -83,14 +99,17 @@ namespace BaldLion
 			static DynamicArray<std::thread> s_threads;
 			static HashTable<StringId,ui32> s_activeJobs;	
 
-			static bool s_jobsFinished;
+			static ui32 s_activeJobsByType[Job::JobType::Count];
+			static ui32 s_queuedJobsByType[Job::JobType::Count];
 
-			static std::mutex s_queueMutex;
-			static std::mutex s_jobsFinishedMutex;
+			static ui32 s_finishedTypes;
+
+			static std::mutex s_jobManagingMutex;
+			static std::mutex s_finishedTypesMutex;
 
 			static std::condition_variable s_cvDependencyFinished;
 			static std::condition_variable s_cvChildrenFinished;
-			static std::condition_variable s_cvJobsFinished;
+			static std::condition_variable s_cvFinishedType;
 		};
 	}
 

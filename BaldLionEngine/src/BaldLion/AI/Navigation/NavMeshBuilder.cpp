@@ -3,6 +3,9 @@
 #include "RecastClasses/InputGeom.h"
 #include "DetourNavMeshBuilder.h"
 #include "BaldLion/Core/JobManagement/JobManager.h"
+#include "BaldLion/SceneManagement/SceneManager.h"
+#include "BaldLion/ECS/ECSManager.h"
+#include "BaldLion/ECS/Components/ECSMeshComponent.h"
 
 
 namespace BaldLion::AI::Navigation
@@ -84,8 +87,11 @@ namespace BaldLion::AI::Navigation
 		}
 	}
 
-	bool NavMeshBuilder::LoadGeom(const char* filepath)
+	bool NavMeshBuilder::LoadGeom()
 	{
+		if (SceneManagement::SceneManager::GetECSManager()->GetComponentPool<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh)->Size() == 0)
+			return false;
+
 		if (s_ctx.GetInitialized())
 		{
 			s_ctx.Stop();
@@ -119,12 +125,39 @@ namespace BaldLion::AI::Navigation
 
 		s_geom->saveGeomSet(&buildSettings);
 
-		if (!s_geom->load(&s_ctx, filepath))
+
+		JobManagement::Job loadGeomJob("Load Geom", JobManagement::Job::JobType::Editor);
+
+		loadGeomJob.Task = [] 
 		{
-			MemoryManager::Delete(s_geom);
-			s_geom = nullptr;
-			return false;
-		}
+
+			BL_PROFILE_SCOPE("Load Geom for Navmesh", Optick::Category::Navigation);
+			if (!s_geom->prepareMesh(&s_ctx)) 
+			{
+				MemoryManager::Delete(s_geom);
+				s_geom = nullptr;
+			}
+
+			BL_HASHTABLE_FOR(SceneManagement::SceneManager::GetECSManager()->GetEntityComponents(), it)
+			{
+				const ECS::ECSMeshComponent* meshComponent = it.GetValue().Read<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh);
+
+				if (meshComponent != nullptr && meshComponent->isStatic)
+				{
+					s_geom->addVerticesToMesh(&s_ctx, (void*)meshComponent->vertices.Data(), meshComponent->vertices.Size(), meshComponent->indices.Data(), meshComponent->indices.Size());					
+				}
+			}
+
+			if(!s_geom->closeMesh(&s_ctx))
+			{
+				MemoryManager::Delete(s_geom);
+				s_geom = nullptr;
+			}
+		};
+
+		JobManagement::JobManager::QueueJob(loadGeomJob);
+		
+
 		return true;
 	}
 
@@ -135,12 +168,12 @@ namespace BaldLion::AI::Navigation
 			return false;
 		}
 
-		InternalBuildNavMesh(true);
+		InternalBuildNavMesh();
 
 		return true;
 	}	
 	
-	bool NavMeshBuilder::InternalBuildNavMesh(bool parallelize)
+	bool NavMeshBuilder::InternalBuildNavMesh()
 	{
 		if (!s_geom || !s_geom->getMesh())
 		{
@@ -180,14 +213,15 @@ namespace BaldLion::AI::Navigation
 			return false;
 		}
 
-		JobManagement::Job systemUpdateJob("Bake Nav Mesh");
+		JobManagement::Job bakeNavMeshJob("Bake Nav Mesh", JobManagement::Job::JobType::Editor);
 
-		systemUpdateJob.Task = [] {
+		bakeNavMeshJob.Task = [] {
 
 			BuildAllTiles();
 		};
 
-		JobManagement::JobManager::QueueJob(systemUpdateJob);
+		JobManagement::JobManager::WaitForJobs(1 << JobManagement::Job::JobType::Editor);
+		JobManagement::JobManager::QueueJob(bakeNavMeshJob);
 
 		return true;
 	}

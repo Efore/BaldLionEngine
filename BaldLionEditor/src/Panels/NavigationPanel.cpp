@@ -19,10 +19,12 @@ namespace BaldLion
 	{
 		NavigationPanel::NavigationPanel() : EditorPanel("Navigation"),m_agentCount(0), m_currentTarget(0.0f), m_manageAgents(false)
 		{
+			m_tileIndexToDraw = DynamicArray<ui32>(Memory::AllocationType::FreeList_Main, 10);
 		}
 
 		NavigationPanel::~NavigationPanel()
 		{
+			m_tileIndexToDraw.Delete();
 		}
 
 		void NavigationPanel::SetNavigationPanel(EditorViewportPanel* editorViewPortPanel)
@@ -32,8 +34,13 @@ namespace BaldLion
 
 		void NavigationPanel::OnImGuiRender()
 		{
-			
 			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
+
+			if (ImGui::Button("Load Geometry"))
+			{
+				NavMeshBuilder::LoadGeom();
+			}
+
 			ImGui::SliderFloat("Cell Size", &(NavMeshBuilder::navMeshConfig.cellSize), 0.1f, 1.0f, "%.2f");
 			ImGui::SliderFloat("Cell Height", &(NavMeshBuilder::navMeshConfig.cellHeight), 0.1f, 1.0f, "%.2f");
 
@@ -50,6 +57,15 @@ namespace BaldLion
 				char text[64];
 				snprintf(text, 64, "Voxels  %d x %d", gw, gh);
 				ImGui::Text(text);
+
+				if (geom->getMesh() != nullptr)
+				{
+					char text2[64];
+					snprintf(text2, 64, "Verts: %.1fk  Tris: %.1fk",
+						geom->getMesh()->getVertCount() / 1000.0f,
+						geom->getMesh()->getTriCount() / 1000.0f);
+					ImGui::Text(text2);
+				}
 			}
 
 			ImGui::Separator();
@@ -103,6 +119,8 @@ namespace BaldLion
 
 			ImGui::SliderFloat("Tile Size", &(NavMeshBuilder::navMeshConfig.tileSize), 16.0f, 1024.0f, "%16.0f");
 			
+			ImGui::Separator();
+
 			if (geom != nullptr)
 			{
 				char text[64];
@@ -127,27 +145,10 @@ namespace BaldLion
 				ImGui::Text(text);
 				snprintf(text, 64, "Max Polys  %d", NavMeshBuilder::navMeshConfig.maxPolys);
 				ImGui::Text(text);
-			}
 
-			if (ImGui::Button("Load Geometry")) 
-			{
-				ui32 meshResourceID = 0;
-				BL_HASHTABLE_FOR(SceneManagement::SceneManager::GetECSManager()->GetEntityComponents(), it)
-				{
-					const ECS::ECSMeshComponent* meshComponent = it.GetValue().Read<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh);
-
-					if (meshComponent != nullptr && meshComponent->isStatic)
-					{
-						meshResourceID = meshComponent->meshResourceID;
-						break;
-					}
-				}
-				ResourceManagement::Resource* meshResource = nullptr;
-				if (ResourceManagement::ResourceManager::GetResourceMap().TryGet(meshResourceID, meshResource))
-				{
-					NavMeshBuilder::LoadGeom(BL_STRINGID_TO_STR_C(((Rendering::Mesh*)meshResource)->GetModelPath()));
-				}				
+				ImGui::Separator();
 			}
+			
 
 			if (geom != nullptr)
 			{
@@ -160,7 +161,7 @@ namespace BaldLion
 
 			if (NavMeshBuilder::NavMeshIsValid())
 			{
-				DrawNavMesh();
+				//DrawNavMesh();
 				DrawAgents();	
 				
 				ImGui::Checkbox("Manage Agents", &m_manageAgents);
@@ -176,6 +177,8 @@ namespace BaldLion
 
 		void NavigationPanel::DrawAgents()
 		{
+			const dtNavMesh* mesh = NavMeshBuilder::GetNavMesh();			
+
 			BL_HASHTABLE_FOR(SceneManager::GetECSManager()->GetEntityComponents(), it)
 			{
 				const ECS::ECSNavMeshAgentComponent* navMeshAgentComponent = it.GetValue().Read<ECS::ECSNavMeshAgentComponent>(ECS::ECSComponentType::NavMeshAgent);
@@ -183,6 +186,38 @@ namespace BaldLion
 
 				if (navMeshAgentComponent != nullptr && transformComponent != nullptr)
 				{
+					static const int MAX_NEIS = 32;
+					const dtMeshTile* neis[MAX_NEIS];
+					ui32 tilesToDraw = 0;
+					int tx, ty;
+					mesh->calcTileLoc((float*)&transformComponent->position, &tx, &ty);
+
+				
+
+					for (ui32 i = 0; i < 9; ++i)
+					{
+						int nx = tx, ny = ty;
+						switch (i)
+						{
+						case 0: nx++; break;
+						case 1: nx++; ny++; break;
+						case 2: ny++; break;
+						case 3: nx--; ny++; break;
+						case 4: nx--; break;
+						case 5: nx--; ny--; break;
+						case 6: ny--; break;
+						case 7: nx++; ny--; break;
+						case 8: break;
+						};
+
+						tilesToDraw = mesh->getTilesAt(nx, ny, neis, MAX_NEIS);
+
+						for (ui32 j = 0; j < tilesToDraw; ++j)
+						{
+							DrawMeshTile(neis[j]);
+						}
+					}
+
 					const dtCrowdAgent* agent = NavigationManager::GetCrowdAgent(navMeshAgentComponent->crowdAgentIdx);
 
 					const glm::vec3 arrowFrom = transformComponent->position + BaldLion::MathUtils::Vector3UnitY;
@@ -194,16 +229,17 @@ namespace BaldLion
 
 					Renderer::DrawDebugSphere(transformComponent->position, NavMeshBuilder::navMeshConfig.agentRadius, EditorUtils::ColorRed);
 				}
-			}			
+			}	
+
 		}
 
 		void NavigationPanel::DrawNavMesh()
 		{
 			const dtNavMesh* mesh = NavMeshBuilder::GetNavMesh();
 
-			for (int i = 0; i < mesh->getMaxTiles(); ++i)
+			BL_DYNAMICARRAY_FOREACH(m_tileIndexToDraw)
 			{
-				const dtMeshTile* tile = mesh->getTile(i);
+				const dtMeshTile* tile = mesh->getTile(m_tileIndexToDraw[i]);
 				if (!tile->header) continue;
 				
 				DrawMeshTile(tile);

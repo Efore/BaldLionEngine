@@ -30,6 +30,7 @@
 //#include "DebugDraw.h"
 //#include "RecastDebugDraw.h"
 #include "DetourNavMesh.h"
+#include "glm/glm.hpp"
 
 static bool intersectSegmentTriangle(const float* sp, const float* sq,
 									 const float* a, const float* b, const float* c,
@@ -366,6 +367,76 @@ bool InputGeom::saveGeomSet(const BuildSettings* settings)
 	
 	fclose(fp);
 	
+	return true;
+}
+
+
+bool InputGeom::prepareMesh(rcContext* ctx)
+{
+	if (m_mesh)
+	{
+		delete m_chunkyMesh;
+		m_chunkyMesh = 0;
+		delete m_mesh;
+		m_mesh = 0;
+	}
+	m_offMeshConCount = 0;
+	m_volumeCount = 0;
+
+	m_mesh = new rcMeshLoaderObj;
+	if (!m_mesh)
+	{
+		ctx->log(RC_LOG_ERROR, "loadMesh: Out of memory 'm_mesh'.");
+		return false;
+	}
+
+	return true;
+}
+
+void InputGeom::addVerticesToMesh(rcContext* ctx, const void* vertices, ui32 verticesSize, const ui32* indices, ui32 indicesSize)
+{	
+	int vcap = m_mesh->getVertCount();
+	int tcap = m_mesh->getTriCount();	
+
+	const ui32 currentVertcount = vcap;
+	const ui32 stride = 3 + 3 + 3 + 2; //Vertex -> vec3 vec3 vec3 vec2
+
+	for (ui32 i = 0; i < indicesSize; i += 3)
+	{
+		ui32 index1 = indices[i];
+		ui32 vertexPositionStride = index1 * stride;
+		m_mesh->addVertex(((float*)vertices)[vertexPositionStride], ((float*)vertices)[vertexPositionStride + 1], ((float*)vertices)[vertexPositionStride + 2], vcap);
+
+		ui32 index2 = indices[i + 1];
+		vertexPositionStride = index2 * stride;
+		m_mesh->addVertex(((float*)vertices)[vertexPositionStride], ((float*)vertices)[vertexPositionStride + 1], ((float*)vertices)[vertexPositionStride + 2], vcap);
+
+		ui32 index3 = indices[i + 2];
+		vertexPositionStride = index3 * stride;
+		m_mesh->addVertex(((float*)vertices)[vertexPositionStride], ((float*)vertices)[vertexPositionStride + 1], ((float*)vertices)[vertexPositionStride + 2], vcap);
+
+		m_mesh->addTriangle(currentVertcount + i, currentVertcount + i + 1, currentVertcount + i + 2, tcap);
+	}
+}
+
+bool InputGeom::closeMesh(rcContext* ctx)
+{
+	//m_mesh->calculateNormals();
+
+	rcCalcBounds(m_mesh->getVerts(), m_mesh->getVertCount(), m_meshBMin, m_meshBMax);
+
+	m_chunkyMesh = new rcChunkyTriMesh;
+	if (!m_chunkyMesh)
+	{
+		ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Out of memory 'm_chunkyMesh'.");
+		return false;
+	}
+	if (!rcCreateChunkyTriMesh(m_mesh->getVerts(), m_mesh->getTris(), m_mesh->getTriCount(), 512, m_chunkyMesh))
+	{
+		ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Failed to build chunky mesh.");
+		return false;
+	}
+
 	return true;
 }
 

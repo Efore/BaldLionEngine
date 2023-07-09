@@ -39,7 +39,10 @@ namespace BaldLion {
 			ECSEntityID AddEntity(const char* entityName);
 			void RemoveEntity(ECSEntityID entityID);			
 
-			//Components
+			//Components		
+			template <typename T>
+			const DynamicArray<T>* GetComponentPool(ECSComponentType componentType) const;
+
 			template <typename T, typename... Args >
 			T* CreateComponent(ECSComponentType componentID, Args&&... args);
 			void AddComponentToEntity(ECSEntityID entityID, ECSComponent* component);
@@ -117,7 +120,16 @@ namespace BaldLion {
 			static ui32 m_entityIDProvider;
 			static ui32 m_componentIDProvider;
 		};
-	
+
+		template <typename T>
+		const DynamicArray<T>*
+			BaldLion::ECS::ECSManager::GetComponentPool(ECSComponentType componentType) const
+		{
+			static_assert(std::is_base_of<ECSComponent, T>::value, "T must inherit from Component");
+			return static_cast<const DynamicArray<T>*>(m_componentsPool[(ui32)componentType]);			
+		}
+
+
 		template<typename T>
 		void BaldLion::ECS::ECSManager::CleanComponentPool(ECSComponentType componentType)
 		{

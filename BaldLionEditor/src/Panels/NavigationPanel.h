@@ -58,11 +58,12 @@ namespace BaldLion
 
 		private:
 
-
 			ui32 m_agentCount;
 			glm::vec3 m_currentTarget;
 
 			EditorViewportPanel* m_editorViewportPanel;
+
+			DynamicArray<ui32> m_tileIndexToDraw;
 
 			bool m_manageAgents;
 		};		
