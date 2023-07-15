@@ -337,28 +337,15 @@ namespace BaldLion
 					if(iterator.GetValue()->vertices.Size() == 0)
 						continue;
 
-					VertexArray* vertexArray = VertexArray::Create();
-
-					IndexBuffer* indexBuffer = IndexBuffer::Create(&iterator.GetValue()->indices[0], (ui32)iterator.GetValue()->indices.Size());
-					VertexBuffer* vertexBuffer = VertexBuffer::Create(iterator.GetValue()->vertices[0].GetFirstElement(), (ui32)(iterator.GetValue()->vertices.Size() * sizeof(Vertex)));
-
-					vertexBuffer->SetLayout({
-						{ ShaderDataType::Float3, "vertex_position"},
-						{ ShaderDataType::Float3, "vertex_normal"},
-						{ ShaderDataType::Float3, "vertex_tangent"},
-						{ ShaderDataType::Float2, "vertex_texcoord"}
-					});
-
-					vertexArray->AddIndexBuffer(indexBuffer);
-					vertexArray->AddVertexBuffer(vertexBuffer);
+					VertexArray* vertexArray = iterator.GetValue()->vertexArray;
+					vertexArray->GetIndexBuffer()->SetBufferData(&iterator.GetValue()->indices[0], (ui32)iterator.GetValue()->indices.Size());
+					vertexArray->GetVertexBuffers()[0]->SetBufferData(iterator.GetValue()->vertices[0].GetFirstElement(), (ui32)(iterator.GetValue()->vertices.Size() * sizeof(Vertex)));
 
 					const Material* mat = iterator.GetKey();
 
 					mat->Bind();
 					Draw(vertexArray, mat->GetShader(), mat->GetReceiveShadows());
 					mat->Unbind();
-
-					s_disposableVertexArrays.PushBack(vertexArray);
 				}
 			}
 		}
@@ -450,6 +437,21 @@ namespace BaldLion
 				batch->indices = DynamicArray<ui32>(AllocationType::FreeList_Renderer, 150);
 				batch->verticesCurrentIndex = 0;
 				batch->indicesCurrentIndex = 0;
+
+				batch->vertexArray = VertexArray::Create();
+
+				IndexBuffer* indexBuffer = IndexBuffer::Create(batch->indices.Data(), batch->indices.Size());
+				VertexBuffer* vertexBuffer = VertexBuffer::Create(batch->vertices.Data(), (ui32)(batch->vertices.Size() * sizeof(Vertex)));
+
+				vertexBuffer->SetLayout({
+					{ ShaderDataType::Float3, "vertex_position"},
+					{ ShaderDataType::Float3, "vertex_normal"},
+					{ ShaderDataType::Float3, "vertex_tangent"},
+					{ ShaderDataType::Float2, "vertex_texcoord"}
+					});
+
+				batch->vertexArray->AddIndexBuffer(indexBuffer);
+				batch->vertexArray->AddVertexBuffer(vertexBuffer);
 
 				s_geometryToBatch.Emplace(material, std::move(batch));
 			}

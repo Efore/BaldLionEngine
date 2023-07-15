@@ -15,6 +15,8 @@ namespace BaldLion
 			virtual void Bind() const override;
 			virtual void Unbind() const override;
 
+			virtual void SetBufferData(const void* vertices, ui32 size) override;
+
 			virtual const BufferLayout& GetLayout() const override { return m_layout; };
 			virtual void SetLayout(const BufferLayout& layout) override { m_layout = layout; }
 
@@ -31,6 +33,8 @@ namespace BaldLion
 
 			virtual void Bind() const override;
 			virtual void Unbind() const override;
+
+			virtual void SetBufferData(const ui32* indices, ui32 count) override;
 
 			inline virtual ui32 GetCount() const override { return m_count; }
 

@@ -2,9 +2,10 @@
 
 #include "BaldLion/Core/Containers/DynamicArray.h"
 #include "BaldLion/Rendering/Vertex.h"
+#include "BaldLion/Rendering/Buffer.h"
 
 namespace BaldLion {
-	namespace Rendering {
+	namespace Rendering {		
 
 		struct GeometryData {
 			
@@ -13,11 +14,11 @@ namespace BaldLion {
 			ui32 verticesCurrentIndex;
 			ui32 indicesCurrentIndex;
 			std::mutex geometryDataMutex;
-
+			VertexArray* vertexArray;
 
 			GeometryData(){}
 
-			GeometryData(const DynamicArray<Vertex>& vert, const DynamicArray<ui32>& ind) : vertices(vert), indices(ind), verticesCurrentIndex(0), indicesCurrentIndex(0){}
+			GeometryData(const DynamicArray<Vertex>& vert, const DynamicArray<ui32>& ind) : vertices(vert), indices(ind), verticesCurrentIndex(0), indicesCurrentIndex(0), vertexArray(nullptr){}
 
 			~GeometryData(){}
 
@@ -27,6 +28,10 @@ namespace BaldLion {
 				indices.Delete();
 				verticesCurrentIndex = 0;
 				indicesCurrentIndex = 0;
+				if (vertexArray != nullptr)
+				{
+					VertexArray::Destroy(vertexArray);
+				}
 			}
 
 			void ClearGeometryData()

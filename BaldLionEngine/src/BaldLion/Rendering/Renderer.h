@@ -103,7 +103,7 @@ namespace BaldLion
 			static DynamicArray<RenderMeshData> s_dynamicMeshes;
 			static HashTable<Material*, GeometryData*> s_geometryToBatch;
 
-			static DynamicArray<VertexArray*> s_disposableVertexArrays;	 
+			static DynamicArray<VertexArray*> s_disposableVertexArrays;
 
 			static Framebuffer* s_framebuffer;
 			static Framebuffer* s_shadowFramebuffer;

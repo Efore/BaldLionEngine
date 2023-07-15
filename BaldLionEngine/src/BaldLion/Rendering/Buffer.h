@@ -100,6 +100,7 @@ namespace BaldLion
 
 			virtual const BufferLayout& GetLayout() const = 0;
 			virtual void SetLayout(const BufferLayout& layout) = 0;
+			virtual void SetBufferData(const void* vertices, ui32 size) = 0;
 
 			static VertexBuffer* Create(const void* vertices, ui32 size);
 		};
@@ -114,6 +115,9 @@ namespace BaldLion
 			virtual void Unbind() const = 0;
 
 			virtual ui32 GetCount() const = 0;
+
+			virtual void SetBufferData(const ui32* indices, ui32 count) = 0;
+
 			static IndexBuffer* Create(const ui32* indices, ui32 count);
 		};
 	}

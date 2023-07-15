@@ -20,7 +20,10 @@ namespace BaldLion
 			virtual void AddIndexBuffer(IndexBuffer* indexBuffer) override;
 
 			virtual const DynamicArray<VertexBuffer*>& GetVertexBuffers() const override { return m_vertexBuffers; }
-			virtual const IndexBuffer* GetIndexBuffer() const { return m_indexBuffer; }
+			virtual DynamicArray<VertexBuffer*>& GetVertexBuffers() override { return m_vertexBuffers; }
+
+			virtual const IndexBuffer* GetIndexBuffer() const override { return m_indexBuffer; }
+			virtual IndexBuffer* GetIndexBuffer() override { return m_indexBuffer; }
 
 		private:
 			ui32 m_rendererID;

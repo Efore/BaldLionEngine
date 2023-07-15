@@ -19,7 +19,10 @@ namespace BaldLion
 			virtual void AddIndexBuffer(IndexBuffer* indexBuffer) = 0;
 
 			virtual const DynamicArray<VertexBuffer*> & GetVertexBuffers() const = 0;
+			virtual DynamicArray<VertexBuffer*>& GetVertexBuffers() = 0;
+
 			virtual const IndexBuffer* GetIndexBuffer() const = 0;
+			virtual IndexBuffer* GetIndexBuffer() = 0;
 
 			static VertexArray* Create();
 			static void Destroy(VertexArray* vertexArray);
