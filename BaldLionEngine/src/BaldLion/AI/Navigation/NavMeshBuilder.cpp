@@ -33,6 +33,8 @@ namespace BaldLion::AI::Navigation
 	float NavMeshBuilder::s_totalBuildTimeMs;
 	int NavMeshBuilder::s_tileTriCount;
 
+	bool NavMeshBuilder::s_isBakingNavmesh = false;
+
 	void NavMeshBuilder::Init()
 	{
 		navMeshConfig.cellSize = 0.3f;
@@ -216,8 +218,9 @@ namespace BaldLion::AI::Navigation
 		JobManagement::Job bakeNavMeshJob("Bake Nav Mesh", JobManagement::Job::JobType::Editor);
 
 		bakeNavMeshJob.Task = [] {
-
+			s_isBakingNavmesh = true;
 			BuildAllTiles();
+			s_isBakingNavmesh = false;
 		};
 
 		JobManagement::JobManager::WaitForJobs(1 << JobManagement::Job::JobType::Editor);
@@ -721,5 +724,11 @@ namespace BaldLion::AI::Navigation
 	{
 		return s_navQuery;
 	}
+
+	bool NavMeshBuilder::NavMeshIsBaking()
+	{
+		return s_isBakingNavmesh;
+	}
+
 
 }

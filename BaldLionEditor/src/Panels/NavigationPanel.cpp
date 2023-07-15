@@ -159,7 +159,7 @@ namespace BaldLion
 				}
 			}
 
-			if (NavMeshBuilder::NavMeshIsValid())
+			if (NavMeshBuilder::NavMeshIsValid() && !NavMeshBuilder::NavMeshIsBaking())
 			{
 				//DrawNavMesh();
 				DrawAgents();	
@@ -227,7 +227,7 @@ namespace BaldLion
 					const glm::vec3 arrowToDVel = arrowFrom + *(glm::vec3*)agent->dvel;
 					Renderer::DrawDebugLine(arrowFrom, arrowToDVel, EditorUtils::ColorGreen, 0.1f);
 
-					Renderer::DrawDebugSphere(transformComponent->position, NavMeshBuilder::navMeshConfig.agentRadius, EditorUtils::ColorRed);
+					Renderer::DrawDebugCircle(transformComponent->position + BaldLion::MathUtils::Vector3UnitY * 0.1f, BaldLion::MathUtils::Vector3UnitY, NavMeshBuilder::navMeshConfig.agentRadius, 10, EditorUtils::ColorRed);
 				}
 			}	
 

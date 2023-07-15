@@ -42,6 +42,7 @@ namespace BaldLion::AI::Navigation
 		static dtNavMesh* GetNavMesh();
 		static dtNavMeshQuery* GetNavMeshQuery();
 		static bool NavMeshIsValid();
+		static bool NavMeshIsBaking();
 
 	private:
 
@@ -78,6 +79,8 @@ namespace BaldLion::AI::Navigation
 		static float s_tileBuildTime;
 		static float s_tileMemUsage;
 		static int s_tileTriCount;
+
+		static bool s_isBakingNavmesh;
 	};
 }
 

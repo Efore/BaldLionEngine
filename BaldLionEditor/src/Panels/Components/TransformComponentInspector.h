@@ -27,7 +27,7 @@ namespace BaldLion
 				glm::vec3 newPosition = componentTransform->position;	
 				if (EditorUtils::DrawVec3Handler("World Position", newPosition, 0.0f, 110.0f))
 				{
-					if(!positionEdited)
+					if(glm::any(glm::epsilonNotEqual(newPosition, componentTransform->position, glm::epsilon<float>())) && !positionEdited)
 					{ 
 						matTransformBeforeChange = componentTransform->GetTransformMatrix();
 						positionEdited = true;
@@ -39,10 +39,10 @@ namespace BaldLion
 				}
 				componentTransform->position = newPosition;
 				
-				glm::vec3 rotation = glm::degrees(componentTransform->rotation);
-				if (EditorUtils::DrawVec3Handler("World Rotation", rotation, 0.0f, 110.0f))
+				glm::vec3 newRotation = glm::degrees(componentTransform->rotation);
+				if (EditorUtils::DrawVec3Handler("World Rotation", newRotation, 0.0f, 110.0f))
 				{
-					if (!rotationEdited)
+					if (glm::any(glm::epsilonNotEqual(newRotation, componentTransform->rotation, glm::epsilon<float>())) && !rotationEdited)
 					{
 						matTransformBeforeChange = componentTransform->GetTransformMatrix();
 						rotationEdited = true;
@@ -52,12 +52,12 @@ namespace BaldLion
 				{
 					modified = true;
 				}
-				componentTransform->rotation = glm::radians(rotation);
+				componentTransform->rotation = glm::radians(newRotation);
 
 				glm::vec3 newScale = componentTransform->scale;
 				if (EditorUtils::DrawVec3Handler("World Scale", newScale, 1.0f, 110.0f))
 				{	
-					if (!scaleEdited)
+					if (glm::any(glm::epsilonNotEqual(newScale, componentTransform->scale, glm::epsilon<float>())) && !scaleEdited)
 					{
 						matTransformBeforeChange = componentTransform->GetTransformMatrix();
 						scaleEdited = true;
