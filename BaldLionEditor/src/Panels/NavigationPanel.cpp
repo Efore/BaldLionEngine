@@ -391,30 +391,30 @@ namespace BaldLion
 				return;
 			}
 
-			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-			{
-				glm::vec2 mouseInWindow;
-				if (EditorUtils::GetMouseRelativePosInWindow(m_editorViewportPanel->GetPanelID(), mouseInWindow))
-				{
-					const glm::vec3 rayOrigin = m_editorViewportPanel->GetViewportCameraTransform()->position;
+			//if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			//{
+			//	glm::vec2 mouseInWindow;
+			//	if (EditorUtils::GetMouseRelativePosInWindow(m_editorViewportPanel->GetPanelID(), mouseInWindow))
+			//	{
+			//		const glm::vec3 rayOrigin = m_editorViewportPanel->GetViewportCameraTransform()->position;
 
-					const glm::vec4 rayClip = glm::vec4(mouseInWindow.x, mouseInWindow.y, 1.0f, 1.0f);
+			//		const glm::vec4 rayClip = glm::vec4(mouseInWindow.x, mouseInWindow.y, 1.0f, 1.0f);
 
-					glm::vec3 rayDirection = glm::inverse(m_editorViewportPanel->GetViewportCamera()->viewProjectionMatrix) * rayClip;
-					rayDirection = glm::normalize(rayDirection);
+			//		glm::vec3 rayDirection = glm::inverse(m_editorViewportPanel->GetViewportCamera()->viewProjectionMatrix) * rayClip;
+			//		rayDirection = glm::normalize(rayDirection);
 
-					const glm::vec3 rayEnd = rayOrigin + rayDirection * 5000.0f;
+			//		const glm::vec3 rayEnd = rayOrigin + rayDirection * 5000.0f;
 
-					float hitTime;
-					bool hit = NavMeshBuilder::GetInputGeom()->raycastMesh((float*)&rayOrigin, (float*)&rayEnd, hitTime);
+			//		float hitTime;
+			//		bool hit = NavMeshBuilder::GetInputGeom()->raycastMesh((float*)&rayOrigin, (float*)&rayEnd, hitTime);
 
-					if (hit)
-					{
-						const glm::vec3 hitPos = rayOrigin + rayDirection * 5000.0f * hitTime;
-						CreateAgent(hitPos);
-					}
-				}
-			}
+			//		if (hit)
+			//		{
+			//			const glm::vec3 hitPos = rayOrigin + rayDirection * 5000.0f * hitTime;
+			//			CreateAgent(hitPos);
+			//		}
+			//	}
+			//}
 			
 			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 			{

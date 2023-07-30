@@ -110,7 +110,7 @@ namespace BaldLion
 					Material::BlendMode::None,
 					Material::DepthBufferMode::TestAndWrite,
 					Material::CullingMode::Back,
-					(ui8)Material::ShadowsSettingsBitMask::CastShadows
+					(ui8)Material::ShadowsSettingsBitMask::CastShadows | (ui8)Material::ShadowsSettingsBitMask::ReceiveShadows
 				};
 
 				result = Material::Create(formatedPath, materialProperties);

@@ -388,7 +388,7 @@ namespace BaldLion
 				Material::BlendMode::None,
 				Material::DepthBufferMode::TestAndWrite,
 				Material::CullingMode::Back,
-				(ui8)Material::ShadowsSettingsBitMask::CastShadows
+				(ui8)Material::ShadowsSettingsBitMask::CastShadows | (ui8)Material::ShadowsSettingsBitMask::ReceiveShadows
 			};
 						
 			const std::string matPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STRING(modelPath)) + (aiscene->mMaterials[aimesh->mMaterialIndex]->GetName().data) + ResourceManager::GetResourceSuffixFromType(ResourceType::Material);

@@ -129,7 +129,7 @@ namespace BaldLion
 			Renderer::RegisterMaterial(m_material);
 
 			if (isStatic)
-			{			
+			{	
 				meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices.Size());
 
 				const glm::mat4 meshTransformMatrix = transformComponent->GetTransformMatrix();
@@ -138,7 +138,8 @@ namespace BaldLion
 					meshComponent->vertices.EmplaceBack(m_geometryData->vertices[i] * meshTransformMatrix);
 				}
 			}
-			else {
+			else 
+			{
 				meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices);
 			}
 

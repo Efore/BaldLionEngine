@@ -49,10 +49,10 @@ namespace BaldLion {
 				}
 			}
 
-			if (meshComponent->material->GetCastShadows())
-			{	
-				//Renderer::AddShadowCastingMesh(meshComponent, meshTransform, skeletonComponent);				
-			}
+			//if (meshComponent->material->GetCastShadows())
+			//{	
+			//	Renderer::AddShadowCastingMesh(meshComponent, meshTransform, skeletonComponent);				
+			//}
 		}
 	}
 }

@@ -139,6 +139,9 @@ namespace BaldLion
 			bool GetCastShadows() const { return (m_materialProperties.shadowSettings & (ui8)Material::ShadowsSettingsBitMask::CastShadows) > 0; }
 			bool GetReceiveShadows() const { return (m_materialProperties.shadowSettings & (ui8)Material::ShadowsSettingsBitMask::ReceiveShadows) > 0; }
 
+			void SetCastShadows(bool castShadows);
+			void SetReceiveShadows(bool receiveShadows);
+
 			virtual ~Material() = default;
 
 			virtual void Bind() const = 0;

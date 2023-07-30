@@ -24,5 +24,30 @@ namespace BaldLion
 			BL_CORE_ASSERT(false, "Unknown RenderAPI!");
 			return nullptr;
 		}		
+
+		void Material::SetCastShadows(bool castShadows)
+		{
+			if (castShadows)
+			{
+				m_materialProperties.shadowSettings = m_materialProperties.shadowSettings | (ui8)Material::ShadowsSettingsBitMask::CastShadows;
+			}
+			else 
+			{
+				m_materialProperties.shadowSettings = m_materialProperties.shadowSettings & ~(ui8)Material::ShadowsSettingsBitMask::CastShadows;
+			}
+		}
+
+		void Material::SetReceiveShadows(bool receiveShadows)
+		{
+			if (receiveShadows)
+			{
+				m_materialProperties.shadowSettings = m_materialProperties.shadowSettings | (ui8)Material::ShadowsSettingsBitMask::ReceiveShadows;
+			}
+			else 
+			{
+				m_materialProperties.shadowSettings = m_materialProperties.shadowSettings & ~(ui8)Material::ShadowsSettingsBitMask::ReceiveShadows;
+			}
+		}
+
 	}
 }
