@@ -2572,6 +2572,8 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\AI\Navigation\NavigationManager.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSLocomotionComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp">
@@ -3115,5 +3117,6 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\AI\Navigation\NavigationManager.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.cpp" />
   </ItemGroup>
 </Project>

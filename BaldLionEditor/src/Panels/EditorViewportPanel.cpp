@@ -320,6 +320,12 @@ namespace BaldLion {
 
 				if (closestEntityID > 0)
 				{
+					ECS::ECSEntity* closestEntity = SceneManager::GetECSManager()->GetEntityMap().Get(closestEntityID);
+					while (closestEntity->GetParentID() > 0)
+					{
+						closestEntity = SceneManager::GetECSManager()->GetEntityMap().Get(closestEntity->GetParentID());
+						closestEntityID = closestEntity->GetEntityID();
+					}
 					m_sceneHierarchyPanel->SetSelectedEntityID(closestEntityID);
 				}
 				else {

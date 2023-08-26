@@ -464,7 +464,7 @@ namespace BaldLion
 
 		void Renderer::DrawDebugCircle(const glm::vec3& center, const glm::vec3& normal, float radius, ui32 numSteps, const glm::vec3& color, int durationMs /*= 0*/, bool depthEnabled /*= true*/)
 		{
-			dd::circle((float*)&center, (float*)&normal, (float*)&color, radius, numSteps, durationMs, depthEnabled);
+			dd::circle((float*)&center, (float*)&normal, (float*)&color, radius, (float)numSteps, durationMs, depthEnabled);
 		}
 
 		void Renderer::DrawDebugSphere(const glm::vec3& center, float radius, const glm::vec3& color, int durationMs, bool depthEnabled /*= true*/)

@@ -32,6 +32,7 @@ namespace BaldLion
 			//	6-Animation
 			//	7-PhysicsBody
 			//	8-NavMeshAgent
+			//	9-Locomotion
 
 			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_ECS, 1000);
 			m_componentsPool.EmplaceBack(&m_transformComponentPool);
@@ -56,6 +57,9 @@ namespace BaldLion
 
 			m_navMeshAgentComponentPool = DynamicArray<ECSNavMeshAgentComponent>(AllocationType::FreeList_ECS, 40);
 			m_componentsPool.EmplaceBack(&m_navMeshAgentComponentPool);
+
+			m_locomotionComponentPool = DynamicArray<ECSLocomotionComponent>(AllocationType::FreeList_ECS, 40);
+			m_componentsPool.EmplaceBack(&m_locomotionComponentPool);
 
 			m_entityIDProvider = 1;
 			m_componentIDProvider = 1;
@@ -83,6 +87,7 @@ namespace BaldLion
 			CleanComponentPool<ECSAnimationComponent>(ECSComponentType::Animation);
 			CleanComponentPool<ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);
 			CleanComponentPool<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent);
+			CleanComponentPool<ECSLocomotionComponent>(ECSComponentType::Locomotion);
 
 			m_componentsPool.Delete();
 		}
@@ -300,25 +305,31 @@ namespace BaldLion
 				if (m_cachedEntityHierarchy[i].parentIndex > -1 && m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].hasChanged)
 				{
 					ECS::ECSTransformComponent* transformComponent = m_cachedEntityHierarchy[i].transformComponent;
-
 					const glm::mat4 transformMatrix = transformComponent->GetTransformMatrix();
 
-					const glm::mat4 relativeToParentTransform = glm::inverse(m_cachedEntityHierarchy[i].parentWorldTransform) * transformMatrix;
-					const glm::mat4 parentWorldTransform = m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].transformComponent->GetTransformMatrix();
-					const glm::mat4 newWorldTransform = parentWorldTransform * relativeToParentTransform;
-
-					glm::vec3 deltaPosition;
-					glm::quat deltaRotationQuat;
-					glm::vec3 deltaScale;
+					glm::vec3 oldParentPosition;
+					glm::quat oldParentRotation;
+					glm::vec3 oldParentScale;
 					glm::vec3 skew;
 					glm::vec4 perspective;
-					glm::decompose(newWorldTransform, deltaScale, deltaRotationQuat, deltaPosition, skew, perspective);
+					glm::decompose(m_cachedEntityHierarchy[i].parentWorldTransform, oldParentScale, oldParentRotation, oldParentPosition, skew, perspective);
 
-					transformComponent->position = deltaPosition;
-					transformComponent->rotation = glm::eulerAngles(deltaRotationQuat);
-					transformComponent->scale = deltaScale;
+					const glm::vec3 relativePosition = transformComponent->position - oldParentPosition;
+					const glm::vec3 relativeRotation = transformComponent->rotation - glm::eulerAngles(oldParentRotation);
+					const glm::vec3 relativeScale = transformComponent->scale - oldParentScale;
 
-					m_cachedEntityHierarchy[i].parentWorldTransform = parentWorldTransform;
+					const glm::mat4 newParentWorldTransform = m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].transformComponent->GetTransformMatrix();
+
+					glm::vec3 newParentPosition;
+					glm::quat newParentRotation;
+					glm::vec3 newParentScale;	
+					glm::decompose(newParentWorldTransform, newParentScale, newParentRotation, newParentPosition, skew, perspective);
+
+					transformComponent->position = newParentPosition + relativePosition;
+					transformComponent->rotation = glm::eulerAngles(newParentRotation) + relativeRotation;
+					transformComponent->scale = newParentScale + relativeScale;
+
+					m_cachedEntityHierarchy[i].parentWorldTransform = newParentWorldTransform;
 					m_cachedEntityHierarchy[i].hasChanged = true;
 
 					//Mesh update
@@ -336,14 +347,6 @@ namespace BaldLion
 						}
 
 						meshComponent->UpdateLocalBoundingBox();
-					}
-
-					//Physic body update
-					{
-						/*ECS::ECSPhysicsBodyComponent* physicsBodyComponent = m_entityComponents.Get(m_cachedEntityHierarchy[i].entityID).Write<ECS::ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);
-
-
-						physicsBodyComponent->rigidBody->getTransform().setPosition(BaldLion::Physics::FromGlmVec3(transformComponent->position));*/
 					}
 				}
 			}

@@ -146,6 +146,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.h" />
     <ClInclude Include="src\BaldLion.h" />
     <ClInclude Include="src\BaldLion\AI\Navigation\NavigationManager.h" />
     <ClInclude Include="src\BaldLion\AI\Navigation\NavMeshBuilder.h" />
@@ -190,6 +191,7 @@
     <ClInclude Include="src\BaldLion\ECS\Components\ECSAnimationComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSDirectionalLightComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSHierarchyComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSLocomotionComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSNavMeshAgentComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSPhysicsBodyComponent.h" />
@@ -913,6 +915,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.cpp" />
     <ClCompile Include="src\BaldLion\AI\Navigation\NavigationManager.cpp" />
     <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp" />
     <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\BuildContext.cpp" />

@@ -26,6 +26,7 @@ namespace BaldLion
 			i32 crowdAgentIdx;
 			float agentMaxSpeed;
 			float agentMaxAcceleration;
+			float rotationSpeed;
 		};
 	}
 }

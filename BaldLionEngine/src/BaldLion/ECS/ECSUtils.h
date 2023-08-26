@@ -17,7 +17,7 @@ namespace BaldLion
 			Animation,
 			PhysicsBody,
 			NavMeshAgent,
-			PointLight,
+			Locomotion,
 
 			Count
 		};

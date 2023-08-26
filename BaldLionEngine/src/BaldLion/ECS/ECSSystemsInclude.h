@@ -4,3 +4,4 @@
 #include "BaldLion/ECS/Systems/ECSRenderSystem.h"
 #include "BaldLion/ECS/Systems/ECSPhysicsSystem.h"
 #include "BaldLion/ECS/Systems/ECSNavigationSystem.h"
+#include "BaldLion/ECS/Systems/ECSLocomotionSystem.h"

@@ -52,6 +52,12 @@ using namespace BaldLion::ECS;
 #define YAML_KEY_PHYSICS_BODY_ROTATION	"PhyisicsBodyRotation"
 #define YAML_KEY_PHYSICS_MASS			"PhyisicsMass"
 
+//Locomotion
+#define YAML_KEY_LOCOMOTION_ROTSPEED	"LocomotionRotationSpeed"
+
+//NavMeshAgent
+#define YAML_KEY_NAVMESHAGENTID		"NavMeshAgentID"
+
 //Hierarchy
 #define YAML_KEY_PARENTID			"ParentEntityID"
 #define YAML_KEY_CHILDENTITIES		"ChildEntities"
@@ -246,7 +252,11 @@ namespace BaldLion
 			}
 			break;
 
-			case ECS::ECSComponentType::PointLight:
+			case ECS::ECSComponentType::Locomotion:
+			{
+				ECSLocomotionComponent* locomotionComponent = (ECSLocomotionComponent*)component;
+				out << YAML::Key << YAML_KEY_LOCOMOTION_ROTSPEED << YAML::Value << locomotionComponent->rotationSpeed;
+			}
 				break;
 
 			case ECS::ECSComponentType::Animation:
@@ -360,7 +370,19 @@ namespace BaldLion
 			}
 				break;
 
-			case BaldLion::ECS::ECSComponentType::PointLight:
+			case BaldLion::ECS::ECSComponentType::Locomotion:
+			{
+				float rotSpeed = yamlComponent[YAML_KEY_LOCOMOTION_ROTSPEED].as<float>();
+				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSLocomotionComponent>(
+					ECS::ECSComponentType::DirectionalLight,
+					rotSpeed);
+			}
+				break;
+
+			case BaldLion::ECS::ECSComponentType::NavMeshAgent:
+				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSNavMeshAgentComponent>(
+					ECS::ECSComponentType::NavMeshAgent,
+					glm::vec3(0.0f));
 				break;
 
 			case BaldLion::ECS::ECSComponentType::Animation:

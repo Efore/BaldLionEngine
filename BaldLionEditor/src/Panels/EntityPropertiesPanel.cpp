@@ -8,6 +8,7 @@
 #include "Components/AnimationComponentInspector.h"
 #include "Components/MeshComponentInspector.h"
 #include "Components/PhyisicsBodyComponentInspector.h"
+#include "Components/LocomotionComponentInspector.h"
 
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
@@ -55,7 +56,8 @@ namespace BaldLion {
 										"DirectionalLight",										
 										"Animation",
 										"Physics Body",
-										"NavMesh Agent"
+										"NavMesh Agent",
+										"Locomotion"
 									};
 
 				const char* physicsBodyShapes[] = {
@@ -140,7 +142,9 @@ namespace BaldLion {
 											
 										break;
 
-									case ECS::ECSComponentType::PointLight:
+									case ECS::ECSComponentType::Locomotion:
+										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECSLocomotionComponent>(ECSComponentType::Locomotion,
+											0.0f);
 										break;
 
 									case ECS::ECSComponentType::Animation:
@@ -160,6 +164,16 @@ namespace BaldLion {
 										{
 											newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent,
 												transformComponent->position);
+
+											ECS::ECSLocomotionComponent* locomotionComponent =
+												m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityComponents().Get(selectedEntityID).Write<ECS::ECSLocomotionComponent>(ECSComponentType::Locomotion);
+
+											if (locomotionComponent == nullptr)
+											{
+												locomotionComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECSLocomotionComponent>(ECSComponentType::Locomotion,
+													5.0f);
+												m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponentToEntity(selectedEntityID, locomotionComponent);
+											}
 										}
 
 										break;
@@ -297,9 +311,8 @@ namespace BaldLion {
 					ComponentInspector::EndComponentRender();
 					break;
 
-				case ECS::ECSComponentType::PointLight:
-					ComponentInspector::BeginComponentRender("Point Light Component", ECS::ECSComponentType::PointLight, m_sceneHierarchyPanel, GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f);
-					ComponentInspector::EndComponentRender();
+				case ECS::ECSComponentType::Locomotion:
+					LocomotionComponentInspector::OnImGuiRender(component, m_sceneHierarchyPanel);
 					break;
 
 				case ECS::ECSComponentType::Animation:
