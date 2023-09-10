@@ -1,7 +1,7 @@
 #include "blpch.h"
 #include "ECSManager.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
-#include <glm/gtx/matrix_decompose.hpp>
+#include "BaldLion/Utils/MathUtils.h"
 
 namespace BaldLion 
 {
@@ -308,25 +308,24 @@ namespace BaldLion
 					const glm::mat4 transformMatrix = transformComponent->GetTransformMatrix();
 
 					glm::vec3 oldParentPosition;
-					glm::quat oldParentRotation;
+					glm::vec3 oldParentRotation;
 					glm::vec3 oldParentScale;
-					glm::vec3 skew;
-					glm::vec4 perspective;
-					glm::decompose(m_cachedEntityHierarchy[i].parentWorldTransform, oldParentScale, oldParentRotation, oldParentPosition, skew, perspective);
+					
+					MathUtils::DecomposeTransformMatrix(m_cachedEntityHierarchy[i].parentWorldTransform, oldParentPosition, oldParentRotation, oldParentScale);
 
 					const glm::vec3 relativePosition = transformComponent->position - oldParentPosition;
-					const glm::vec3 relativeRotation = transformComponent->rotation - glm::eulerAngles(oldParentRotation);
+					const glm::vec3 relativeRotation = transformComponent->rotation - oldParentRotation;
 					const glm::vec3 relativeScale = transformComponent->scale - oldParentScale;
 
 					const glm::mat4 newParentWorldTransform = m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].transformComponent->GetTransformMatrix();
 
 					glm::vec3 newParentPosition;
-					glm::quat newParentRotation;
+					glm::vec3 newParentRotation;
 					glm::vec3 newParentScale;	
-					glm::decompose(newParentWorldTransform, newParentScale, newParentRotation, newParentPosition, skew, perspective);
+					MathUtils::DecomposeTransformMatrix(newParentWorldTransform, newParentPosition, newParentRotation, newParentScale);
 
 					transformComponent->position = newParentPosition + relativePosition;
-					transformComponent->rotation = glm::eulerAngles(newParentRotation) + relativeRotation;
+					transformComponent->rotation = newParentRotation + relativeRotation;
 					transformComponent->scale = newParentScale + relativeScale;
 
 					m_cachedEntityHierarchy[i].parentWorldTransform = newParentWorldTransform;

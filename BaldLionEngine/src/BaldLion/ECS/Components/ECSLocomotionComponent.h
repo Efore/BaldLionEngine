@@ -22,6 +22,7 @@ namespace BaldLion
 
 		public:						
 			float rotationSpeed;		
+			glm::vec3 nextPosition;
 			glm::vec3 currentVelocity;
 			glm::vec3 desiredVelocity;
 		};

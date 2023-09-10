@@ -24,18 +24,18 @@ namespace BaldLion
 			const ECSLocomotionComponent* locomotionComponent = componentLookUp->Read<ECSLocomotionComponent>(ECSComponentType::Locomotion);
 			ECSTransformComponent* transformComponent = componentLookUp->Write<ECSTransformComponent>(ECSComponentType::Transform);
 			
-			transformComponent->position += locomotionComponent->desiredVelocity * Time::GetDeltaTime();
+			transformComponent->position = locomotionComponent->nextPosition;
 
 			if (glm::length2(locomotionComponent->desiredVelocity) > FLT_EPSILON * FLT_EPSILON)
-			{
-				const glm::vec3 velocityXZ = glm::normalize(locomotionComponent->desiredVelocity * glm::vec3(1.0f,0.0f,1.0f));
+			{				
+				const glm::mat4 transformMatrix = transformComponent->GetTransformMatrix();
+				const glm::vec3 velocity = glm::normalize(locomotionComponent->desiredVelocity);
+				const glm::vec3 forward = glm::normalize(MathUtils::GetTransformForwardDirection(transformMatrix));
 
-				const glm::quat lookAtQuat = glm::quatLookAt(velocityXZ, MathUtils::Vector3UnitY);
+				const float angle = glm::orientedAngle(forward, velocity, MathUtils::Vector3UnitY) * glm::clamp(Time::GetDeltaTime() * locomotionComponent->rotationSpeed, 0.0f, 1.0f);
 
-				const float delta = glm::clamp(locomotionComponent->rotationSpeed * Time::GetDeltaTime(), 0.0f, 1.0f);
-				const glm::quat newRot = glm::mix(glm::quat(transformComponent->rotation), lookAtQuat, delta);
-				
-				transformComponent->rotation = glm::eulerAngles(newRot);
+				const glm::mat4 rotatedMatrix = glm::rotate(transformMatrix, angle, MathUtils::Vector3UnitY);
+				MathUtils::DecomposeTransformMatrix(rotatedMatrix, transformComponent->position, transformComponent->rotation, transformComponent->scale);
 			}
 		}
 	}

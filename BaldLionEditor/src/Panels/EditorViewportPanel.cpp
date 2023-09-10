@@ -215,7 +215,7 @@ namespace BaldLion {
 			
 			if (!m_isManipulatingGizmo && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 			{
-				CheckSelectEntity();
+				//CheckSelectEntity();
 			}
 
 			MoveViewportCamera();			
