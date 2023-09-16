@@ -31,7 +31,6 @@ namespace BaldLion
 
 			virtual void ProcessNode(const aiNode *node, const aiScene *scene);
 			static Mesh* ProcessMesh(const aiMesh *aimesh, const aiScene *aiscene, const StringId modelFolderPath);
-			static JointType ParseNodeName(const char *nodeName);
 
 			static void FillVertexArrayData(const aiMesh *aimesh, DynamicArray<Vertex>& vertices, DynamicArray<ui32>& indices);
 
@@ -49,17 +48,14 @@ namespace BaldLion
 				Texture*& normalTex);
 
 			static void GenerateJointMapping(const aiMesh *aimesh,
-				HashTable<StringId, JointType>& jointMapping,
 				HashMap<StringId, glm::mat4>& jointOffsetMapping);
 
-			static void FillJointData(HashTable<StringId, JointType>& jointMapping,
-				Animation::AnimationJoint* jointData,
+			static void FillJointData(Animation::AnimationJoint* jointData,
 				const HashMap<StringId, glm::mat4>& jointOffsetMapping,
 				const JointType parentID,
 				const aiNode* node);
 
 			static void FillVertexWeightData(const aiMesh* aimesh,
-				const HashTable<StringId, JointType>& jointMapping,
 				DynamicArray<VertexBone>& verticesBoneData);
 
 			

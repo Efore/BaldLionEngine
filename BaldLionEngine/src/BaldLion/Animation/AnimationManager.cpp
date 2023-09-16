@@ -19,8 +19,76 @@ namespace BaldLion
 
 	namespace Animation
 	{
-
+		HashTable<StringId, JointType> AnimationManager::s_jointMapping;
 		HashTable<ui32, Animator*> AnimationManager::s_registeredAnimators;
+
+		const char* AnimationManager::s_jointNames[65] = {
+			"Hips",
+			"Spine",
+			"Spine1",
+			"Spine2",
+			"Neck",
+			"Head",
+			"HeadTop_End",
+			"LeftShoulder",
+			"LeftArm",
+			"LeftForearm",
+			"LeftHand",
+			"LeftHandThumb1",
+			"LeftHandThumb2",
+			"LeftHandThumb3",
+			"LeftHandThumb4",
+			"LeftHandIndex1",
+			"LeftHandIndex2",
+			"LeftHandIndex3",
+			"LeftHandIndex4",
+			"LeftHandMiddle1",
+			"LeftHandMiddle2",
+			"LeftHandMiddle3",
+			"LeftHandMiddle4",
+			"LeftHandRing1",
+			"LeftHandRing2",
+			"LeftHandRing3",
+			"LeftHandRing4",
+			"LeftHandPinky1",
+			"LeftHandPinky2",
+			"LeftHandPinky3",
+			"LeftHandPinky4",
+			"RightShoulder",
+			"RightArm",
+			"RightForearm",
+			"RightHand",
+			"RightHandThumb1",
+			"RightHandThumb2",
+			"RightHandThumb3",
+			"RightHandThumb4",
+			"RightHandIndex1",
+			"RightHandIndex2",
+			"RightHandIndex3",
+			"RightHandIndex4",
+			"RightHandMiddle1",
+			"RightHandMiddle2",
+			"RightHandMiddle3",
+			"RightHandMiddle4",
+			"RightHandRing1",
+			"RightHandRing2",
+			"RightHandRing3",
+			"RightHandRing4",
+			"RightHandPinky1",
+			"RightHandPinky2",
+			"RightHandPinky3",
+			"RightHandPinky4",
+			"LeftUpLeg",
+			"LeftLeg",
+			"LeftFoot",
+			"LeftToeBase",
+			"LeftToe_End",
+			"RightUpLeg",
+			"RightLeg",
+			"RightFoot",
+			"RightToeBase",
+			"RightToe_End"
+		};
 
 		bool AnimationManager::s_initialized = false;
 
@@ -30,6 +98,12 @@ namespace BaldLion
 			{
 				s_initialized = true;
 				s_registeredAnimators = HashTable<ui32, Animator*>(AllocationType::FreeList_Main, 10);
+				s_jointMapping = HashTable<StringId, JointType>(AllocationType::FreeList_Main, 130);
+
+				for (ui32 i = 0; i < 65; ++i)
+				{					
+					s_jointMapping.Emplace(BL_STRING_TO_STRINGID(s_jointNames[i]), (JointType)i);
+				}
 			}
 		}
 
@@ -39,29 +113,35 @@ namespace BaldLion
 			s_registeredAnimators.DeleteNoDestructor();
 		}
 
-		void AnimationManager::GenerateAnimator(const aiScene *scene, std::string& animatorPath, const HashTable<StringId, JointType>& jointMapping)
+		void AnimationManager::GenerateAnimator(const aiScene* scene, std::string& animatorPath)
+		{
+			Animator* animator = nullptr;
+			std::string animatorName = animatorPath + ResourceManager::GetResourceSuffixFromType(ResourceType::Animator);
+			if (!s_registeredAnimators.TryGet(BL_STRING_TO_STRINGID(animatorName), animator))
+			{
+				animator = MemoryManager::New<Animator>(animatorName.c_str(), AllocationType::FreeList_Resources, animatorName);
+
+				ResourceManagement::ResourceManager::AddResource(animator);
+				RegisterAnimator(animator);
+			}
+
+			if (!ResourceManagement::ResourceManager::HasMetafile(animator))
+			{
+				SerializeAnimator(animator->GetResourceID());
+			}
+		}
+
+		void AnimationManager::GenerateAnimations(const aiScene* scene, const std::string& animationFolderPath)
 		{
 			if (scene->HasAnimations())
-			{	
-				std::string animatorName = animatorPath + ResourceManager::GetResourceSuffixFromType(ResourceType::Animator);
-				
+			{
 				glm::mat4 rootTransform = MathUtils::AiMat4ToGlmMat4(scene->mRootNode->mTransformation);
-
-				Animator* animator = nullptr;
-
-				if (!s_registeredAnimators.TryGet(BL_STRING_TO_STRINGID(animatorName), animator))
-				{
-					animator = MemoryManager::New<Animator>(animatorName.c_str(), AllocationType::FreeList_Resources, animatorName);
-
-					ResourceManagement::ResourceManager::AddResource(animator);
-					RegisterAnimator(animator);
-				}
 
 				for (ui32 i = 0; i < scene->mNumAnimations; ++i)
 				{
 					const char* animationName = strlen(scene->mAnimations[i]->mName.C_Str()) == 0 ? "unnamedAnimation" : scene->mAnimations[i]->mName.C_Str();
 
-					std::string animationPath = animatorPath + "\\" + animationName + ResourceManager::GetResourceSuffixFromType(ResourceType::Animation);
+					std::string animationPath = animationFolderPath + animationName + ResourceManager::GetResourceSuffixFromType(ResourceType::Animation);
 
 					AnimationClip* animationClip = MemoryManager::New<AnimationClip>(animationPath.c_str(), AllocationType::FreeList_Resources,
 						animationPath,
@@ -77,7 +157,7 @@ namespace BaldLion
 					{
 						JointType jointNodeIndex = JointType::Count;
 
-						if (jointMapping.TryGet(BL_STRING_TO_STRINGID(scene->mAnimations[i]->mChannels[j]->mNodeName.data), jointNodeIndex)) {
+						if (s_jointMapping.TryGet(AnimationManager::BoneNameToJointName(scene->mAnimations[i]->mChannels[j]->mNodeName.data), jointNodeIndex)) {
 
 							//Calculating position ranges;
 							float minXPos = scene->mAnimations[i]->mChannels[j]->mPositionKeys[0].mValue.x, maxXPos = scene->mAnimations[i]->mChannels[j]->mPositionKeys[0].mValue.x;
@@ -160,14 +240,14 @@ namespace BaldLion
 										valueB,
 										valueC);
 								}
-								else 
+								else
 								{
 									//If there are less rotationkeys than frames, we take the last three entries
 									valueA = animationClip->AnimationData[animationClip->AnimationData.Size() - 3];
 									valueB = animationClip->AnimationData[animationClip->AnimationData.Size() - 2];
 									valueC = animationClip->AnimationData[animationClip->AnimationData.Size() - 1];
 								}
-								
+
 								animationClip->AnimationData.EmplaceBack(valueA);
 								animationClip->AnimationData.EmplaceBack(valueB);
 								animationClip->AnimationData.EmplaceBack(valueC);
@@ -187,7 +267,7 @@ namespace BaldLion
 										break;
 									}
 								}
-								else 
+								else
 								{
 
 									//If there are less positionkeys than frames, we take the last three entries
@@ -215,7 +295,7 @@ namespace BaldLion
 										break;
 									}
 								}
-								else 
+								else
 								{
 									//If there are less positionkeys than frames, we take the last three entries
 									ui16 valueX = animationClip->AnimationData[animationClip->AnimationData.Size() - 3];
@@ -227,18 +307,34 @@ namespace BaldLion
 									animationClip->AnimationData.EmplaceBack(valueZ);
 								}
 							}
-						}						
+						}
 					}
-
-					animator->AddAnimation(animationClip);
-				}		
-
-				if (!ResourceManagement::ResourceManager::HasMetafile(animator))
-				{
-					SerializeAnimator(animator->GetResourceID());
 				}
+
 			}
 		}
+
+		StringId AnimationManager::BoneNameToJointName(const char* boneName)
+		{
+			std::string lowerNodeName = boneName;
+			std::transform(lowerNodeName.begin(), lowerNodeName.end(), lowerNodeName.begin(), ::tolower);
+			size_t pos = lowerNodeName.rfind(':');
+			lowerNodeName = lowerNodeName.substr(pos + 1);
+
+			for (i32 i = ((i32)JointType::Count) - 1; i >= 0; --i)
+			{
+				std::string lowerJointName = AnimationManager::s_jointNames[i];
+				std::transform(lowerJointName.begin(), lowerJointName.end(), lowerJointName.begin(), ::tolower);
+
+				if (lowerNodeName == lowerJointName)
+				{
+					return BL_STRING_TO_STRINGID(AnimationManager::s_jointNames[i]);
+				}
+			}
+
+			return 0;
+		}
+
 
 		Animator* AnimationManager::GetAnimator(const ui32 animatorID)
 		{
@@ -282,6 +378,8 @@ namespace BaldLion
 		{			
 			AnimatorSerializer::DeserializeAnimator(animatorMetaFilePath);			
 		}
+
+		
 
 	}
 }

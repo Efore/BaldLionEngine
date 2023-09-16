@@ -25,7 +25,7 @@ namespace BaldLion
 			auto lastSlash = modelPath.find_last_of("/\\");		
 			m_modelFolderPath = BL_STRING_TO_STRINGID(modelPath.substr(0, lastSlash + 1));
 			m_subMeshes = DynamicArray<Mesh*>(AllocationType::FreeList_Renderer, 5);
-			m_importFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes | aiProcess_GlobalScale;
+			m_importFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes | aiProcess_GlobalScale;			
 			
 		}
 
@@ -49,6 +49,15 @@ namespace BaldLion
 			}
 
 			ProcessNode(scene->mRootNode, scene);
+
+			if (scene->HasAnimations())
+			{				
+				AnimationManager::GenerateAnimations(scene, StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STRING(m_resourcePath)));
+				if (!scene->HasMeshes())
+				{
+					m_resourceType = ResourceType::Animation;
+				}
+			}			
 		}
 
 		void Model::Draw() const
@@ -69,6 +78,7 @@ namespace BaldLion
 				
 				m_subMeshes.PushBack(Model::ProcessMesh(mesh, scene, m_resourcePath));
 			}
+
 			// then do the same for each of its children
 			for (ui32 i = 0; i < node->mNumChildren; i++)
 			{
@@ -268,31 +278,30 @@ namespace BaldLion
 			}
 		}
 
-		void Model::GenerateJointMapping(const aiMesh *aimesh, HashTable<StringId, JointType>& jointMapping, HashMap<StringId, glm::mat4>& jointOffsetMapping)
+		void Model::GenerateJointMapping(const aiMesh* aimesh, HashMap<StringId, glm::mat4>& jointOffsetMapping)
 		{
 			for (ui32 i = 0; i < aimesh->mNumBones; ++i)
 			{
-				JointType jointType = ParseNodeName(aimesh->mBones[i]->mName.data);
+				StringId parsedName = AnimationManager::BoneNameToJointName(aimesh->mBones[i]->mName.data);
 
-				if (jointType != JointType::Count)
+				if (parsedName > 0)
 				{					
-					jointMapping.Emplace(BL_STRING_TO_STRINGID(aimesh->mBones[i]->mName.data), std::move(jointType));
-					jointOffsetMapping.Emplace(BL_STRING_TO_STRINGID(aimesh->mBones[i]->mName.data), MathUtils::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
+					jointOffsetMapping.Emplace(parsedName, MathUtils::AiMat4ToGlmMat4(aimesh->mBones[i]->mOffsetMatrix));
 				}
 			}
 		}
 
-		void Model::FillJointData(HashTable<StringId, JointType>& jointMapping,
+		void Model::FillJointData(
 			Animation::AnimationJoint* jointsData,
 			const HashMap<StringId, glm::mat4>& jointOffsetMapping,
 			const JointType parentJointType,
 			const aiNode* node)
 		{
-			const StringId jointName = BL_STRING_TO_STRINGID(node->mName.data);
+			const StringId jointName = AnimationManager::BoneNameToJointName(node->mName.data);
 
 			JointType jointType = parentJointType;
 
-			if (jointMapping.TryGet(jointName, jointType))
+			if (AnimationManager::s_jointMapping.TryGet(jointName, jointType) && jointOffsetMapping.Contains(jointName))
 			{					
 				jointsData[(ui32)jointType].parentJointType = parentJointType;
 				jointsData[(ui32)jointType].jointOffsetTransform = jointOffsetMapping.Get(jointName);
@@ -301,12 +310,11 @@ namespace BaldLion
 
 			for (ui32 i = 0; i < node->mNumChildren; ++i)
 			{	
-				FillJointData(jointMapping, jointsData, jointOffsetMapping, jointType, node->mChildren[i]);
+				FillJointData(jointsData, jointOffsetMapping, jointType, node->mChildren[i]);
 			}
 		}
 
-		void Model::FillVertexWeightData(const aiMesh* aimesh,
-			const HashTable<StringId, JointType>& jointMapping,
+		void Model::FillVertexWeightData(const aiMesh* aimesh,			
 			DynamicArray<VertexBone>& vertices)
 		{
 			ui32* jointsAssigned = new ui32[aimesh->mNumVertices]{ 0 };
@@ -318,11 +326,11 @@ namespace BaldLion
 				{
 					ui32 vertexID = aimesh->mBones[i]->mWeights[j].mVertexId;
 
-					const StringId jointName = BL_STRING_TO_STRINGID(aimesh->mBones[i]->mName.data);
+					const StringId jointName = AnimationManager::BoneNameToJointName(aimesh->mBones[i]->mName.data);
 					
 					JointType jointType = JointType::Count;
 
-					if (jointMapping.TryGet(jointName, jointType))
+					if (AnimationManager::s_jointMapping.TryGet(jointName, jointType))
 					{
 						switch (jointsAssigned[vertexID])
 						{
@@ -428,14 +436,13 @@ namespace BaldLion
 					jointsData[i].parentJointType = JointType::Count;
 				}
 
-				HashTable<StringId, JointType> jointMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);
 				HashMap<StringId, glm::mat4> jointOffsetMapping(AllocationType::Linear_Frame, aimesh->mNumBones * 2);				
 
-				GenerateJointMapping(aimesh, jointMapping, jointOffsetMapping);
+				GenerateJointMapping(aimesh, jointOffsetMapping);
 
-				FillJointData(jointMapping, jointsData, jointOffsetMapping, JointType::Count, aiscene->mRootNode);
+				FillJointData(jointsData, jointOffsetMapping, JointType::Count, aiscene->mRootNode);
 
-				FillVertexWeightData(aimesh, jointMapping, verticesBoneData);
+				FillVertexWeightData(aimesh, verticesBoneData);
 
 				const std::string skeletonName = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STRING(modelPath)) + (aimesh->mName.C_Str()) + ResourceManager::GetResourceSuffixFromType(ResourceType::Skeleton);
 
@@ -451,101 +458,12 @@ namespace BaldLion
 				mesh->SetVertexBones(verticesBoneData);
 
 				std::string animatorPath = StringUtils::GetPathWithoutExtension(BL_STRINGID_TO_STRING(modelPath)) + aiMeshName;
-				Animation::AnimationManager::GenerateAnimator(aiscene, animatorPath, jointMapping);
+				Animation::AnimationManager::GenerateAnimator(aiscene, animatorPath);
 			}
 
 			mesh->SetUpMesh(vertices, indices);
 
 			return mesh;
-		}
-
-		JointType Model::ParseNodeName(const char *nodeName)
-		{
-			static const char* jointNames[] = {
-			"Hips",
-			"Spine",
-			"Spine1",
-			"Spine2",
-			"Neck",
-			"Head",
-			"HeadTop_End",
-			"LeftShoulder",
-			"LeftArm",
-			"LeftForearm",
-			"LeftHand",
-			"LeftHandThumb1",
-			"LeftHandThumb2",
-			"LeftHandThumb3",
-			"LeftHandThumb4",
-			"LeftHandIndex1",
-			"LeftHandIndex2",
-			"LeftHandIndex3",
-			"LeftHandIndex4",
-			"LeftHandMiddle1",
-			"LeftHandMiddle2",
-			"LeftHandMiddle3",
-			"LeftHandMiddle4",
-			"LeftHandRing1",
-			"LeftHandRing2",
-			"LeftHandRing3",
-			"LeftHandRing4",
-			"LeftHandPinky1",
-			"LeftHandPinky2",
-			"LeftHandPinky3",
-			"LeftHandPinky4",
-			"RightShoulder",
-			"RightArm",
-			"RightForearm",
-			"RightHand",
-			"RightHandThumb1",
-			"RightHandThumb2",
-			"RightHandThumb3",
-			"RightHandThumb4",
-			"RightHandIndex1",
-			"RightHandIndex2",
-			"RightHandIndex3",
-			"RightHandIndex4",
-			"RightHandMiddle1",
-			"RightHandMiddle2",
-			"RightHandMiddle3",
-			"RightHandMiddle4",
-			"RightHandRing1",
-			"RightHandRing2",
-			"RightHandRing3",
-			"RightHandRing4",
-			"RightHandPinky1",
-			"RightHandPinky2",
-			"RightHandPinky3",
-			"RightHandPinky4",
-			"LeftUpLeg",
-			"LeftLeg",
-			"LeftFoot",
-			"LeftToeBase",
-			"LeftToe_End",
-			"RightUpLeg",
-			"RightLeg",
-			"RightFoot",
-			"RightToeBase",
-			"RightToe_End"
-			};
-
-			for (i32 i = ((i32)JointType::Count) - 1; i >= 0; --i)
-			{
-				std::string lowerNodeName = nodeName;				
-				std::transform(lowerNodeName.begin(), lowerNodeName.end(), lowerNodeName.begin(), ::tolower);
-				size_t pos = lowerNodeName.rfind(':');
-				lowerNodeName = lowerNodeName.substr(pos + 1);
-
-				std::string lowerJointName = jointNames[i]; 
-				std::transform(lowerJointName.begin(), lowerJointName.end(), lowerJointName.begin(), ::tolower);
-
-				if (lowerNodeName == lowerJointName)
-				{
-					return (JointType)i;
-				}
-			}
-
-			return JointType::Count;
 		}
 
 		void Model::GenerateEntities(ECS::ECSManager* ecsManager, bool isStatic) const

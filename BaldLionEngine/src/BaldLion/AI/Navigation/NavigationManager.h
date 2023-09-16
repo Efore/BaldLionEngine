@@ -27,6 +27,7 @@ namespace BaldLion::AI::Navigation
 
 		static const dtCrowdAgent* GetCrowdAgent(i32 agentIdx);
 		static void RequestMoveTarget(i32 agentIndex, const glm::vec3& targetPos);
+		static void UpdateCrowdAgent(i32 agentIndex, float maxSpeed, float maxAcceleration);
 
 	private:
 		

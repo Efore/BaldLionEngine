@@ -33,10 +33,13 @@ namespace BaldLion
 			i32 agentIdx = navMeshAgent->crowdAgentIdx;
 			if (agentIdx != -1)
 			{
-				const dtCrowdAgent* agent = NavigationManager::GetCrowdAgent(agentIdx);		
+				const dtCrowdAgent* agent = NavigationManager::GetCrowdAgent(agentIdx);			
+				
 				locomotionComponent->nextPosition = *(glm::vec3*)agent->npos;
 				locomotionComponent->currentVelocity = *(glm::vec3*)agent->vel;
 				locomotionComponent->desiredVelocity = *(glm::vec3*)agent->nvel;
+
+				NavigationManager::UpdateCrowdAgent(agentIdx, navMeshAgent->agentMaxSpeed, navMeshAgent->agentMaxAcceleration);
 			}
 		}
 	}

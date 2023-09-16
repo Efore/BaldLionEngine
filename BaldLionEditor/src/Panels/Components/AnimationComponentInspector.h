@@ -56,11 +56,13 @@ namespace BaldLion
 
 					const AnimatorTransition* currentTransition = animator->CheckTransition(animationComponent->currentAnimationID, animationComponent->currentAnimationTime, animationComponent->animatorParameters);
 
+					if (currentTransition != nullptr)
+					{
+						//ImGui::Text("Transition");
+						float progress = animationComponent->currentTransitionTime / currentTransition->GetTransitionTime();
 
-					//ImGui::Text("Transition");
-					float progress = animationComponent->currentTransitionTime / currentTransition->GetTransitionTime();
-
-					ImGui::ProgressBar(progress, ImVec2(0.f, 0.f));
+						ImGui::ProgressBar(progress, ImVec2(0.f, 0.f));
+					}
 
 				}
 				else {

@@ -3,6 +3,9 @@
 
 #include "BaldLion/ECS/Components/ECSLocomotionComponent.h"
 #include "BaldLion/ECS/Components/ECSTransformComponent.h"
+#include "BaldLion/ECS/Components/ECSAnimationComponent.h"
+
+#include "BaldLion/Animation/AnimationManager.h"
 
 #include "BaldLion/Utils/MathUtils.h"
 #include <glm/gtx/vector_angle.hpp>
@@ -36,6 +39,16 @@ namespace BaldLion
 
 				const glm::mat4 rotatedMatrix = glm::rotate(transformMatrix, angle, MathUtils::Vector3UnitY);
 				MathUtils::DecomposeTransformMatrix(rotatedMatrix, transformComponent->position, transformComponent->rotation, transformComponent->scale);
+			}
+
+			ECSAnimationComponent* animationComponent = componentLookUp->Write<ECSAnimationComponent>(ECSComponentType::Animation);
+			if (animationComponent != nullptr)
+			{
+				Animation::AnimatorParameter *parameter = nullptr;
+				if (animationComponent->animatorParameters.TryGet(BL_STRING_TO_STRINGID("Speed"), parameter))
+				{
+					parameter->Value.floating = glm::length(locomotionComponent->currentVelocity);
+				}
 			}
 		}
 	}

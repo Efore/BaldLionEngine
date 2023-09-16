@@ -140,4 +140,16 @@ namespace BaldLion::AI::Navigation
 		s_crowd->requestMoveTarget(agentIndex, targetRef, targetPosition);
 	}
 
+	void NavigationManager::UpdateCrowdAgent(i32 agentIndex, float maxSpeed, float maxAcceleration)
+	{
+		const dtCrowdAgent* ag = s_crowd->getAgent(agentIndex);
+		if (!ag->active) return;
+
+		dtCrowdAgentParams params = ag->params;
+		params.maxSpeed = maxSpeed;
+		params.maxAcceleration = maxAcceleration;
+
+		s_crowd->updateAgentParameters(agentIndex, &params);
+	}
+
 }
