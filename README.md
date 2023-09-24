@@ -15,12 +15,13 @@ BaldLionEngine is a work-in-progress game engine built for the sole purpose of l
 * ECS Gameplay architecture
 * Resource Management
 * Navigation System
+* Locomotion System
 * Animation System
 * 3D Physics System
 * Job System & Thread Pool
 * Memory Manager
 * Editor with Scene Serialziation support
-
+(The following graph is outdated, but it helps to get the idea of how the architecture is implemented)
 ![Engine Architecture][architecture]
 
 ## Plans for the near future (non specific order)
