@@ -65,6 +65,7 @@ If you get a dll missing error while trying to start the Editor, either by click
 * [spdlog](https://github.com/gabime/spdlog)
 * [stb_image](https://github.com/nothings/stb)
 * [assimp](https://github.com/assimp/assimp)
+* [recast](https://github.com/benjamn/recast)
 
 
 [product-screenshot]: Docs/screenshot.png
