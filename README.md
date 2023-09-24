@@ -21,6 +21,7 @@ BaldLionEngine is a work-in-progress game engine built for the sole purpose of l
 * Job System & Thread Pool
 * Memory Manager
 * Editor with Scene Serialziation support
+
 (The following graph is outdated, but it helps to get the idea of how the architecture is implemented)
 ![Engine Architecture][architecture]
 
