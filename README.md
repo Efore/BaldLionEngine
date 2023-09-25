@@ -49,8 +49,6 @@ The project has been tested to compile in Visual Studio 2022
 2. After cloning is finished, click on "GenerateProjects.bat"
 3. After generation is finished, open the .sln file and build the Solution (you may need to retarget it).
 
-If you get a dll missing error while trying to start the Editor, either by clicking on the executable (BaldLionEditor.exe) or by launching the program through VS, you may need to install VS 2019.
-
 ## Third Party Libraries
 
 * [Dear ImGui](https://github.com/ocornut/imgui)
