@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaldLion/Core/Layer.h"
+#include "BaldLion/Core/GameStateLayer.h"
 
 #include "BaldLion/Events/KeyEvent.h"
 #include "BaldLion/Events/MouseEvent.h"
@@ -8,7 +8,7 @@
 
 namespace BaldLion
 {
-	class  ImGuiLayer : public Layer
+	class  ImGuiLayer : public GameStateLayer
 	{
 	public:
 		ImGuiLayer();

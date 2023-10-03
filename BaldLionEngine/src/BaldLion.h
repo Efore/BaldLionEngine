@@ -3,7 +3,7 @@
 //For use by BaldLion application
 
 #include "BaldLion/Core/Application.h"
-#include "BaldLion/Core/Layer.h"
+#include "BaldLion/Core/GameStateLayer.h"
 #include "BaldLion/Core/Log.h"
 #include "BaldLion/Core/Time.h"
 #include "BaldLion/Core/Input.h"

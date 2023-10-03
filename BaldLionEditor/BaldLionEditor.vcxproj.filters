@@ -79,6 +79,7 @@
       <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="src\Panels\Components\LocomotionComponentInspector.h" />
+    <ClInclude Include="src\Panels\Components\NavMeshAgentComponentInspector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp">

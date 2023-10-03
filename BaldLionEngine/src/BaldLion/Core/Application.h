@@ -4,7 +4,7 @@
 #include "Window.h"
 
 #include "BaldLion/Events/ApplicationEvent.h"
-#include "BaldLion/Core/LayerStack.h"
+#include "BaldLion/Core/GameStateLayerStack.h"
 
 #include "BaldLion/ImGui/ImGuiLayer.h"
 
@@ -19,8 +19,8 @@ namespace BaldLion
 
 		void OnEvent(Event& e);
 
-		void PushLayer(Layer* layer);
-		void PushOverlay(Layer* overlay);
+		void PushLayer(GameStateLayer* layer);
+		void PushOverlay(GameStateLayer* overlay);
 
 		inline Window& GetWindow() const { return *m_window; }
 
@@ -41,7 +41,7 @@ namespace BaldLion
 		bool m_running = true;
 		bool m_minimized = false;
 
-		LayerStack m_layerStack;
+		GameStateLayerStack m_layerStack;
 
 		static Application* s_instance;
 	};

@@ -16,12 +16,9 @@ namespace BaldLion
 	{	
 		BaldLionEditorLayer::BaldLionEditorLayer()			
 		{
-			
-		}
+			SetupEditorCamera();
 
-		void BaldLionEditorLayer::OnAttach()
-		{
-			BL_PROFILE_FUNCTION();		
+			BL_PROFILE_FUNCTION();
 			Physics::PhysicsManager::SetIsPhysicsActive(false);
 			SceneManagement::SceneManager::AddScene("UnNamed Scene");
 			m_currentScenePathFile = "";
@@ -40,19 +37,38 @@ namespace BaldLion
 				m_ecsManager->AddComponentToEntity(directionalLight, directionalLightComponent);
 
 				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
-			}		
+			}
 
 			//Panel Setup
 			m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
-			m_entityPropertiesPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);						
-			m_editorViewportPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);
-			m_editorViewportPanel.SetupViewportCamera();
+			m_entityPropertiesPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);
+			m_editorViewportPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);			
 			m_navigationPanel.SetNavigationPanel(&m_editorViewportPanel);
 		}
 
-		void BaldLionEditorLayer::OnDetach()
+		BaldLionEditorLayer::~BaldLionEditorLayer()
 		{
-			SceneManagement::SceneManager::Stop();			
+			SceneManagement::SceneManager::Stop();
+
+			if (m_viewportCameraTransform)
+			{
+				BaldLion::Memory::MemoryManager::Delete(m_viewportCameraTransform);
+			}
+
+			if (m_viewportCamera)
+			{
+				BaldLion::Memory::MemoryManager::Delete(m_viewportCamera);
+			}
+		}
+
+		void BaldLionEditorLayer::OnAttach()
+		{
+			ECS::SingletonComponents::ECSProjectionCameraSingleton::Init();
+			ECS::SingletonComponents::ECSProjectionCameraSingleton::SetMainCamera(m_viewportCamera, m_viewportCameraTransform);
+		}
+
+		void BaldLionEditorLayer::OnDetach()
+		{		
 		}
 
 		void BaldLionEditorLayer::OnUpdate()
@@ -83,6 +99,8 @@ namespace BaldLion
 			m_resourcesPanel.OnImGuiRender();
 			m_animatorPanel.OnImGuiRender();
 			m_navigationPanel.OnImGuiRender();
+
+			HandleInput();
 		}
 
 		void BaldLionEditorLayer::OnEvent(Event& e)
@@ -91,6 +109,29 @@ namespace BaldLion
 			
 			dispatcher.Dispatch<BaldLion::WindowResizeEvent>(BL_BIND_FUNCTION(BaldLionEditorLayer::OnWindowResizeEvent));
 			dispatcher.Dispatch<BaldLion::KeyPressedEvent>(BL_BIND_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
+		}
+
+		void BaldLionEditorLayer::SetupEditorCamera()
+		{
+			m_viewportCameraTransform = BaldLion::Memory::MemoryManager::New<ECS::ECSTransformComponent>("Editor camera transform", AllocationType::FreeList_ECS,
+				glm::vec3(0, 10, -50),
+				MathUtils::Vector3Zero,
+				glm::vec3(1.0f));
+
+			m_viewportCamera = BaldLion::Memory::MemoryManager::New<ECS::ECSProjectionCameraComponent>("Editor camera", AllocationType::FreeList_ECS,
+				45.0f,
+				(float)Application::GetInstance().GetWindow().GetWidth(),
+				(float)Application::GetInstance().GetWindow().GetHeight(),
+				0.1f,
+				50000.0f);
+
+			m_cameraMovementSpeed = 50.0f;
+			m_cameraRotationSpeed = 1.0f;
+
+			m_prevX = 0.0f;
+			m_prevY = 0.0f;
+			m_cameraYaw = 180.0f;
+			m_cameraPitch = 0.0f;
 		}
 
 		void BaldLionEditorLayer::RenderDockSpace()
@@ -295,5 +336,68 @@ namespace BaldLion
 			m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
 		}
 
+
+		void BaldLionEditorLayer::HandleInput()
+		{
+			MoveViewportCamera();
+		}
+
+		void BaldLionEditorLayer::MoveViewportCamera()
+		{
+			BL_PROFILE_FUNCTION();
+
+			glm::mat4 cameraMatrixTransform = m_viewportCameraTransform->GetTransformMatrix();
+
+			glm::vec3 cameraMovement;
+
+			CalculateCameraMovement(m_cameraMovementSpeed, cameraMatrixTransform, cameraMovement);
+			CalculateCameraRotation(m_cameraMovementSpeed, m_prevX, m_prevY, m_cameraYaw, m_cameraPitch);
+
+			m_viewportCameraTransform->position += cameraMovement;
+			m_viewportCameraTransform->rotation = glm::vec3(glm::radians(m_cameraPitch), glm::radians(m_cameraYaw), 0.0f);
+
+			cameraMatrixTransform = m_viewportCameraTransform->GetTransformMatrix();
+
+			const glm::mat4 viewMatrix = glm::inverse(cameraMatrixTransform);
+			const glm::mat4 projectionMatrix = glm::perspective(glm::radians(m_viewportCamera->fov), m_viewportCamera->width / m_viewportCamera->height, m_viewportCamera->nearPlane, m_viewportCamera->farPlane);
+
+			m_viewportCamera->viewProjectionMatrix = projectionMatrix * viewMatrix;
+		}
+
+		void BaldLionEditorLayer::CalculateCameraMovement(const float cameraMovementSpeed, const glm::mat4& cameraTransform, glm::vec3& cameraMovement)
+		{
+			cameraMovement = glm::vec3(0, 0, 0);
+
+			if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
+			{
+				if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
+					cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * Time::GetDeltaTime() * cameraMovementSpeed;
+				else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
+					cameraMovement += MathUtils::GetTransformForwardDirection(cameraTransform) * Time::GetDeltaTime() * cameraMovementSpeed;
+
+				if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
+					cameraMovement -= MathUtils::GetTransformRightDirection(cameraTransform) * Time::GetDeltaTime() * cameraMovementSpeed;
+				else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
+					cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * Time::GetDeltaTime() * cameraMovementSpeed;
+
+				if (BaldLion::Input::IsKeyPressed(BL_KEY_LEFT_SHIFT))
+					cameraMovement *= 2;
+			}
+		}
+
+		void BaldLionEditorLayer::CalculateCameraRotation(const float cameraRotationSpeed, float& prevX, float& prevY, float& cameraYaw, float& cameraPitch)
+		{
+			if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
+			{
+				float deltaX = BaldLion::Input::GetMouseX() - prevX;
+				float deltaY = BaldLion::Input::GetMouseY() - prevY;
+
+				cameraYaw -= deltaX * cameraRotationSpeed * Time::GetDeltaTime();
+				cameraPitch -= deltaY * cameraRotationSpeed * Time::GetDeltaTime();
+			}
+
+			prevX = BaldLion::Input::GetMouseX();
+			prevY = BaldLion::Input::GetMouseY();
+		}
 	}
 }

@@ -4,11 +4,11 @@
 
 namespace BaldLion
 {
-	class  Layer
+	class  GameStateLayer
 	{
 	public:
-		Layer();
-		virtual ~Layer();
+		GameStateLayer();
+		virtual ~GameStateLayer();
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}

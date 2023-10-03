@@ -174,8 +174,8 @@
     <ClInclude Include="src\BaldLion\Core\JobManagement\JobManager.h" />
     <ClInclude Include="src\BaldLion\Core\JobManagement\ThreadPool.h" />
     <ClInclude Include="src\BaldLion\Core\KeyCodes.h" />
-    <ClInclude Include="src\BaldLion\Core\Layer.h" />
-    <ClInclude Include="src\BaldLion\Core\LayerStack.h" />
+    <ClInclude Include="src\BaldLion\Core\GameStateLayer.h" />
+    <ClInclude Include="src\BaldLion\Core\GameStateLayerStack.h" />
     <ClInclude Include="src\BaldLion\Core\Log.h" />
     <ClInclude Include="src\BaldLion\Core\Memory\Allocator.h" />
     <ClInclude Include="src\BaldLion\Core\Memory\FreeListAllocator.h" />
@@ -930,8 +930,8 @@
     <ClCompile Include="src\BaldLion\Core\Application.cpp" />
     <ClCompile Include="src\BaldLion\Core\JobManagement\JobManager.cpp" />
     <ClCompile Include="src\BaldLion\Core\JobManagement\ThreadPool.cpp" />
-    <ClCompile Include="src\BaldLion\Core\Layer.cpp" />
-    <ClCompile Include="src\BaldLion\Core\LayerStack.cpp" />
+    <ClCompile Include="src\BaldLion\Core\GameStateLayer.cpp" />
+    <ClCompile Include="src\BaldLion\Core\GameStateLayerStack.cpp" />
     <ClCompile Include="src\BaldLion\Core\Log.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\Allocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\FreeListAllocator.cpp" />

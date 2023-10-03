@@ -159,6 +159,7 @@ copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Dist-windows-x86_64\
     <ClInclude Include="src\Panels\Components\DirectionalLightComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\LocomotionComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\MeshComponentInspector.h" />
+    <ClInclude Include="src\Panels\Components\NavMeshAgentComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\PhyisicsBodyComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\ProjectionCameraComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\TransformComponentInspector.h" />

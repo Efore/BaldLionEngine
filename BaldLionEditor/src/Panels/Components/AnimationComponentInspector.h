@@ -65,8 +65,9 @@ namespace BaldLion
 					}
 
 				}
-				else {
-					//ImGui::Text("Current animation: %s", BL_STRINGID_TO_STR_C(currentAnimation->GetResourceName()));
+				else if (currentAnimation != nullptr)
+				{
+					ImGui::Text("Current animation: %s", BL_STRINGID_TO_STR_C(currentAnimation->GetResourceName()));
 
 					int frame = (int)(glm::floor((animationComponent->currentAnimationTime / currentAnimation->AnimationTimeLength) * currentAnimation->NumFrames));
 					float progress = animationComponent->currentAnimationTime / currentAnimation->AnimationTimeLength;

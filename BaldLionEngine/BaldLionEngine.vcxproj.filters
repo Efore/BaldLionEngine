@@ -357,10 +357,10 @@
     <ClInclude Include="src\BaldLion\Core\KeyCodes.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\Layer.h">
+    <ClInclude Include="src\BaldLion\Core\GameStateLayer.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\LayerStack.h">
+    <ClInclude Include="src\BaldLion\Core\GameStateLayerStack.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Log.h">
@@ -2615,10 +2615,10 @@
     <ClCompile Include="src\BaldLion\Core\JobManagement\ThreadPool.cpp">
       <Filter>src\BaldLion\Core\JobManagement</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\Layer.cpp">
+    <ClCompile Include="src\BaldLion\Core\GameStateLayer.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\LayerStack.cpp">
+    <ClCompile Include="src\BaldLion\Core\GameStateLayerStack.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Log.cpp">

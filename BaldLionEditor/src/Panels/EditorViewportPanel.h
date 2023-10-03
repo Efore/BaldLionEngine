@@ -11,8 +11,6 @@ namespace BaldLion {
 			EditorViewportPanel();
 			~EditorViewportPanel();
 
-			virtual void SetupViewportCamera() override;
-
 			virtual void OnImGuiRender() override;
 
 			const glm::vec2& GetViewportSize() const { return m_viewportSize; }
@@ -20,10 +18,8 @@ namespace BaldLion {
 			bool GetViewportIsFocused() const { return m_viewportFocused; }
 
 		private:
+			
 			void HandleInput();
-			void MoveViewportCamera();
-			void CalculateCameraMovement(const float cameraMovementSpeed, const glm::mat4& cameraTransform, glm::vec3& cameraMovement);
-			void CalculateCameraRotation(const float cameraRotationSpeed, float& prevX, float& prevY, float& cameraYaw, float& cameraPitch);
 			void CheckSelectEntity();
 
 		private:
@@ -32,16 +28,6 @@ namespace BaldLion {
 			bool m_viewportFocused;
 			bool m_isManipulatingGizmo;
 			ui32 m_imGuizmoOperation;
-
-			float m_cameraMovementSpeed;
-			float m_cameraRotationSpeed;
-			float m_prevX;
-			float m_prevY;
-			float m_cameraYaw;
-			float m_cameraPitch;
-			glm::mat4 m_cameraProjection;
-			glm::mat4 m_cameraView;
-
 		};
 	}
 }

@@ -9,6 +9,7 @@
 #include "Components/MeshComponentInspector.h"
 #include "Components/PhyisicsBodyComponentInspector.h"
 #include "Components/LocomotionComponentInspector.h"
+#include "Components/NavMeshAgentComponentInspector.h"
 
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
@@ -260,6 +261,9 @@ namespace BaldLion {
 
 				ImGui::Separator();			
 				
+				ImGui::Text("Entity ID: %i", selectedEntityID);
+
+				ImGui::Separator();
 
 				ECS::ECSComponentLookUp selectedEntityComponents;
 
@@ -324,8 +328,7 @@ namespace BaldLion {
 					break;
 
 				case ECS::ECSComponentType::NavMeshAgent:
-					ComponentInspector::BeginComponentRender("NavMeshAgent Component", ECS::ECSComponentType::NavMeshAgent, m_sceneHierarchyPanel, GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f);
-					ComponentInspector::EndComponentRender();
+					NavMeshAgentComponentInspector::OnImGuiRender(component, m_sceneHierarchyPanel);
 					break;
 				
 				default:

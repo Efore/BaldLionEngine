@@ -69,14 +69,14 @@ namespace BaldLion
 		OPTICK_SHUTDOWN();
 	}
 
-	void Application::PushLayer(Layer * layer)
+	void Application::PushLayer(GameStateLayer * layer)
 	{
 		BL_PROFILE_FUNCTION();
 
 		m_layerStack.PushLayer(layer);		
 	}
 
-	void Application::PushOverlay(Layer * overlay)
+	void Application::PushOverlay(GameStateLayer * overlay)
 	{
 		BL_PROFILE_FUNCTION();
 
