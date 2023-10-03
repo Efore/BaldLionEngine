@@ -15,12 +15,14 @@ BaldLionEngine is a work-in-progress game engine built for the sole purpose of l
 * ECS Gameplay architecture
 * Resource Management
 * Navigation System
+* Locomotion System
 * Animation System
 * 3D Physics System
 * Job System & Thread Pool
 * Memory Manager
 * Editor with Scene Serialziation support
 
+(The following graph is outdated, but it helps to get the idea of how the architecture is implemented)
 ![Engine Architecture][architecture]
 
 ## Plans for the near future (non specific order)
@@ -47,8 +49,6 @@ The project has been tested to compile in Visual Studio 2022
 2. After cloning is finished, click on "GenerateProjects.bat"
 3. After generation is finished, open the .sln file and build the Solution (you may need to retarget it).
 
-If you get a dll missing error while trying to start the Editor, either by clicking on the executable (BaldLionEditor.exe) or by launching the program through VS, you may need to install VS 2019.
-
 ## Third Party Libraries
 
 * [Dear ImGui](https://github.com/ocornut/imgui)
@@ -63,6 +63,7 @@ If you get a dll missing error while trying to start the Editor, either by click
 * [spdlog](https://github.com/gabime/spdlog)
 * [stb_image](https://github.com/nothings/stb)
 * [assimp](https://github.com/assimp/assimp)
+* [recast](https://github.com/benjamn/recast)
 
 
 [product-screenshot]: Docs/screenshot.png
