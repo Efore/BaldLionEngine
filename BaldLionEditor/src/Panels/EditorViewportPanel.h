@@ -11,7 +11,7 @@ namespace BaldLion {
 			EditorViewportPanel();
 			~EditorViewportPanel();
 
-			virtual void OnImGuiRender() override;
+			virtual void OnImGuiRender(float deltaTime) override;
 
 			const glm::vec2& GetViewportSize() const { return m_viewportSize; }
 

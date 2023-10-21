@@ -33,7 +33,7 @@ namespace BaldLion {
 			m_componentLookUps.Delete();
 		}
 
-		void ECSSystem::OnUpdate()
+		void ECSSystem::OnUpdate(float deltaTime)
 		{	
 			BL_PROFILE_FUNCTION();
 
@@ -50,16 +50,16 @@ namespace BaldLion {
 
 					JobManagement::Job systemUpdateJob(systemOperation.c_str(), JobManagement::Job::JobType::ECS);
 
-					systemUpdateJob.Task = [this, componentLookUp] {
+					systemUpdateJob.Task = [this, componentLookUp, deltaTime] {
 
-						this->UpdateComponents(componentLookUp);
+						this->UpdateComponents(componentLookUp, deltaTime);
 					};
 
 					JobManagement::JobManager::QueueJob(systemUpdateJob);
 				}
 				else 
 				{
-					this->UpdateComponents(componentLookUp);
+					this->UpdateComponents(componentLookUp, deltaTime);
 				}
 			}
 

@@ -17,39 +17,11 @@ namespace BaldLion
 		BaldLionEditorLayer::BaldLionEditorLayer()			
 		{
 			SetupEditorCamera();
-
-			BL_PROFILE_FUNCTION();
-			Physics::PhysicsManager::SetIsPhysicsActive(false);
-			SceneManagement::SceneManager::AddScene("UnNamed Scene");
-			m_currentScenePathFile = "";
-			m_ecsManager = SceneManagement::SceneManager::GetECSManager();
-
-			{//Directional Light setup
-
-				ECS::ECSEntityID directionalLight = m_ecsManager->AddEntity("Directional Light");
-				ECS::ECSDirectionalLightComponent* directionalLightComponent = m_ecsManager->CreateComponent<ECS::ECSDirectionalLightComponent>(
-					ECS::ECSComponentType::DirectionalLight,
-					glm::vec3(0.0f),
-					glm::vec3(1.0f),
-					glm::vec3(0.2f),
-					glm::vec3(-1.0f, -1.0f, 1.0f));
-
-				m_ecsManager->AddComponentToEntity(directionalLight, directionalLightComponent);
-
-				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
-			}
-
-			//Panel Setup
-			m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
-			m_entityPropertiesPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);
-			m_editorViewportPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);			
-			m_navigationPanel.SetNavigationPanel(&m_editorViewportPanel);
+			m_baldLionGameLayer = MemoryManager::New<BaldLion::Game::BaldLionGameLayer>("BaldLionGameLayer", AllocationType::FreeList_Main);
 		}
 
 		BaldLionEditorLayer::~BaldLionEditorLayer()
 		{
-			SceneManagement::SceneManager::Stop();
-
 			if (m_viewportCameraTransform)
 			{
 				BaldLion::Memory::MemoryManager::Delete(m_viewportCameraTransform);
@@ -61,14 +33,34 @@ namespace BaldLion
 			}
 		}
 
-		void BaldLionEditorLayer::OnAttach()
+		void BaldLionEditorLayer::OnActivate()
 		{
-			ECS::SingletonComponents::ECSProjectionCameraSingleton::Init();
-			ECS::SingletonComponents::ECSProjectionCameraSingleton::SetMainCamera(m_viewportCamera, m_viewportCameraTransform);
+			BL_PROFILE_FUNCTION();
+
+			m_isActive = true;
+			Physics::PhysicsManager::SetIsPhysicsActive(false);
+
+			if (SceneManagement::SceneManager::GetMainScenePathFile().empty())
+			{
+				NewScene();
+			}
+			else
+			{
+				SceneManagement::SceneManager::OpenScene(SceneManagement::SceneManager::GetMainScenePathFile().c_str());
+			}
+			m_ecsManager = SceneManagement::SceneManager::GetECSManager();
+
+			//Panel Setup
+			m_entityPropertiesPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);
+			m_editorViewportPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);
+			m_navigationPanel.SetNavigationPanel(&m_editorViewportPanel);
+
+			ECS::SingletonComponents::CameraSystem::SetMainCamera(m_viewportCamera, m_viewportCameraTransform);
 		}
 
-		void BaldLionEditorLayer::OnDetach()
+		void BaldLionEditorLayer::OnDeactivate()
 		{		
+			m_isActive = false;
 		}
 
 		void BaldLionEditorLayer::OnUpdate()
@@ -76,13 +68,15 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 
 			SceneManagement::SceneManager::FrameStart();
-			SceneManagement::SceneManager::Update();
+			SceneManagement::SceneManager::Update(m_gameStateTimer.GetDeltaTime());
 				
 			Renderer::BeginScene();			
 			Renderer::DrawScene();
 			Renderer::EndScene();		
 
 			SceneManagement::SceneManager::FrameEnd();
+
+			HandleInput();
 		}
 
 		void BaldLionEditorLayer::OnImGuiRender()
@@ -91,16 +85,16 @@ namespace BaldLion
 
 			RenderDockSpace();			
 
-			m_sceneHierarchyPanel.OnImGuiRender();
-			m_editorViewportPanel.OnImGuiRender();
-			m_entityPropertiesPanel.OnImGuiRender(); 
-			m_memoryAllocationPanel.OnImGuiRender();
-			m_renderingDataPanel.OnImGuiRender();
-			m_resourcesPanel.OnImGuiRender();
-			m_animatorPanel.OnImGuiRender();
-			m_navigationPanel.OnImGuiRender();
+			const float deltaTime = m_gameStateTimer.GetDeltaTime();
 
-			HandleInput();
+			m_sceneHierarchyPanel.OnImGuiRender(deltaTime);
+			m_editorViewportPanel.OnImGuiRender(deltaTime);
+			m_entityPropertiesPanel.OnImGuiRender(deltaTime);
+			m_memoryAllocationPanel.OnImGuiRender(deltaTime);
+			m_renderingDataPanel.OnImGuiRender(deltaTime);
+			m_resourcesPanel.OnImGuiRender(deltaTime);
+			m_animatorPanel.OnImGuiRender(deltaTime);
+			m_navigationPanel.OnImGuiRender(deltaTime);
 		}
 
 		void BaldLionEditorLayer::OnEvent(Event& e)
@@ -207,23 +201,25 @@ namespace BaldLion
 					ImGui::EndMenu();
 				}
 
-
-				if (ImGui::BeginMenu("Physics"))
+				if (ImGui::BeginMenu("Game"))
 				{
-					if (ImGui::MenuItem("Activate Phyisics"))
+					if (m_isActive)
 					{
-						Physics::PhysicsManager::SetIsPhysicsActive(true);
+						if (ImGui::MenuItem("Start Game"))
+						{
+							StartGame();
+						}
 					}
-
-					if (ImGui::MenuItem("Deactivate Phyisics"))
+					else 
 					{
-						Physics::PhysicsManager::SetIsPhysicsActive(false);
+						if (ImGui::MenuItem("Stop Game"))
+						{
+							StopGame();
+						}
 					}
 
 					ImGui::EndMenu();
 				}
-
-				ImGui::EndMenuBar();
 			}
 
 			ImGui::End();
@@ -234,7 +230,7 @@ namespace BaldLion
 			ui32 width = e.GetWidth();
 			ui32 height = e.GetHeight();
 
-			ECS::SingletonComponents::ECSProjectionCameraSingleton::SetCameraSize((float)width, (float)height);
+			ECS::SingletonComponents::CameraSystem::SetCameraSize((float)width, (float)height);
 
 			Renderer::OnWindowResize(width, height);
 
@@ -281,7 +277,6 @@ namespace BaldLion
 				break;
 			}
 
-
 			m_sceneHierarchyPanel.OnKeyPressed(e.GetKeyCode());
 			m_editorViewportPanel.OnKeyPressed(e.GetKeyCode());
 			m_entityPropertiesPanel.OnKeyPressed(e.GetKeyCode());
@@ -298,17 +293,15 @@ namespace BaldLion
 			if (!filepath.empty())
 			{
 				SceneManagement::SceneManager::OpenScene(filepath.c_str());
-				m_ecsManager = SceneManagement::SceneManager::GetECSManager();
-				m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
-				m_currentScenePathFile = filepath;
+				m_ecsManager = SceneManagement::SceneManager::GetECSManager();			
 			}
 		}
 
 		void BaldLionEditorLayer::SaveScene()
 		{
-			if (!m_currentScenePathFile.empty())
+			if (!SceneManagement::SceneManager::GetMainScenePathFile().empty())
 			{
-				SceneManagement::SceneManager::SaveScene(m_currentScenePathFile.c_str());
+				SceneManagement::SceneManager::SaveScene(SceneManagement::SceneManager::GetMainScenePathFile().c_str());
 			}
 			else
 			{
@@ -322,20 +315,41 @@ namespace BaldLion
 			if (!filepath.empty())
 			{
 				SceneManagement::SceneManager::GetMainScene()->SetSceneName(StringUtils::GetFileNameFromPath(filepath).c_str());
-				SceneManagement::SceneManager::SaveScene(filepath.c_str());
-				m_currentScenePathFile = filepath;
+				SceneManagement::SceneManager::SaveScene(filepath.c_str());				
 			}
 		}
 
 		void BaldLionEditorLayer::NewScene()
 		{
-			m_currentScenePathFile = "";
-
+			SceneManagement::SceneManager::SetMainScenePathFile("");
 			SceneManagement::SceneManager::AddScene("UnNamed Scene");
 			m_ecsManager = SceneManagement::SceneManager::GetECSManager();
-			m_sceneHierarchyPanel.SetSceneContext(SceneManagement::SceneManager::GetMainScene());
+
+			{//Directional Light setup
+
+				ECS::ECSEntityID directionalLight = m_ecsManager->AddEntity("Directional Light");
+				ECS::ECSDirectionalLightComponent* directionalLightComponent = m_ecsManager->CreateComponent<ECS::ECSDirectionalLightComponent>(
+					ECS::ECSComponentType::DirectionalLight,
+					glm::vec3(0.0f),
+					glm::vec3(1.0f),
+					glm::vec3(0.2f),
+					glm::vec3(-1.0f, -1.0f, 1.0f));
+
+				m_ecsManager->AddComponentToEntity(directionalLight, directionalLightComponent);
+
+				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
+			}
 		}
 
+		void BaldLionEditorLayer::StartGame()
+		{
+			Application::GetInstance("").PushLayer(m_baldLionGameLayer);
+		}
+
+		void BaldLionEditorLayer::StopGame()
+		{
+			Application::GetInstance("").PopLayer(m_baldLionGameLayer);
+		}
 
 		void BaldLionEditorLayer::HandleInput()
 		{
@@ -371,14 +385,14 @@ namespace BaldLion
 			if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 			{
 				if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
-					cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * Time::GetDeltaTime() * cameraMovementSpeed;
+					cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 				else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
-					cameraMovement += MathUtils::GetTransformForwardDirection(cameraTransform) * Time::GetDeltaTime() * cameraMovementSpeed;
+					cameraMovement += MathUtils::GetTransformForwardDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 
 				if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
-					cameraMovement -= MathUtils::GetTransformRightDirection(cameraTransform) * Time::GetDeltaTime() * cameraMovementSpeed;
+					cameraMovement -= MathUtils::GetTransformRightDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 				else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
-					cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * Time::GetDeltaTime() * cameraMovementSpeed;
+					cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 
 				if (BaldLion::Input::IsKeyPressed(BL_KEY_LEFT_SHIFT))
 					cameraMovement *= 2;
@@ -392,8 +406,8 @@ namespace BaldLion
 				float deltaX = BaldLion::Input::GetMouseX() - prevX;
 				float deltaY = BaldLion::Input::GetMouseY() - prevY;
 
-				cameraYaw -= deltaX * cameraRotationSpeed * Time::GetDeltaTime();
-				cameraPitch -= deltaY * cameraRotationSpeed * Time::GetDeltaTime();
+				cameraYaw -= deltaX * cameraRotationSpeed * m_gameStateTimer.GetDeltaTime();
+				cameraPitch -= deltaY * cameraRotationSpeed * m_gameStateTimer.GetDeltaTime();
 			}
 
 			prevX = BaldLion::Input::GetMouseX();

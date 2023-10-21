@@ -14,8 +14,8 @@ namespace BaldLion
 		ImGuiLayer();
 		~ImGuiLayer();
 
-		virtual void OnAttach() override;
-		virtual void OnDetach() override;
+		virtual void OnActivate() override;
+		virtual void OnDeactivate() override;
 		virtual void OnImGuiRender() override;
 
 		void Begin();

@@ -8,6 +8,7 @@
 #include "Panels/ResourcesPanel.h"
 #include "Panels/AnimatorPanel.h"
 #include "Panels/NavigationPanel.h"
+#include "../../BaldLionGame/src/BaldLionGameLayer.h"
 
 namespace BaldLion
 {
@@ -20,19 +21,15 @@ namespace BaldLion
 			BaldLionEditorLayer();
 			virtual ~BaldLionEditorLayer();
 
-			virtual void OnAttach() override;
-			virtual void OnDetach() override;
+			virtual void OnActivate() override;
+			virtual void OnDeactivate() override;
 
 			virtual void OnUpdate() override;
 			virtual void OnImGuiRender() override;
 			virtual void OnEvent(Event& e) override;
 
-			void SetupEditorCamera();
-
-			ECS::ECSProjectionCameraComponent* GetViewportCamera() const { return m_viewportCamera; }
-			ECS::ECSTransformComponent* GetViewportCameraTransform() const { return m_viewportCameraTransform; }
-
 		private:
+			void SetupEditorCamera();
 			void RenderDockSpace();
 			bool OnWindowResizeEvent(WindowResizeEvent& e);
 			bool OnKeyPressedEvent(KeyPressedEvent& e);
@@ -42,6 +39,9 @@ namespace BaldLion
 			void SaveSceneAs();
 			void NewScene();
 
+			void StartGame();
+			void StopGame();
+
 			void HandleInput();
 			void MoveViewportCamera();
 			void CalculateCameraMovement(const float cameraMovementSpeed, const glm::mat4& cameraTransform, glm::vec3& cameraMovement);
@@ -49,7 +49,7 @@ namespace BaldLion
 			
 		private:
 
-			ECS::ECSManager* m_ecsManager;
+			ECS::ECSManager* m_ecsManager = nullptr;
 
 			//Panels
 			SceneHierarchyPanel m_sceneHierarchyPanel;
@@ -61,10 +61,9 @@ namespace BaldLion
 			AnimatorPanel m_animatorPanel;
 			NavigationPanel m_navigationPanel;
 
-			std::string m_currentScenePathFile;
-
 			ECS::ECSProjectionCameraComponent* m_viewportCamera;
 			ECS::ECSTransformComponent* m_viewportCameraTransform;
+			BaldLion::Game::BaldLionGameLayer* m_baldLionGameLayer;
 
 			float m_cameraMovementSpeed;
 			float m_cameraRotationSpeed;
@@ -74,6 +73,8 @@ namespace BaldLion
 			float m_cameraPitch;
 			glm::mat4 m_cameraProjection;
 			glm::mat4 m_cameraView;
+
+			bool m_isActive = false;
 		};
 	}
 }

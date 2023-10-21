@@ -37,6 +37,7 @@ namespace BaldLion {
 
 			//Entities
 			ECSEntityID AddEntity(const char* entityName);
+			void AddEntity(const char* entityName, ECSEntityID entityID);
 			void RemoveEntity(ECSEntityID entityID);			
 
 			//Components		
@@ -60,7 +61,7 @@ namespace BaldLion {
 			//Main loop
 			void StartSystems();
 			void FrameStart();
-			void UpdateSystems();
+			void UpdateSystems(float deltaTime);
 			void FrameEnd();
 			void StopSystems();
 
@@ -78,9 +79,14 @@ namespace BaldLion {
 
 			const DynamicArray<ECSTransformHierarchyEntry>& GetCachedEntityHierarchy() const { return m_cachedEntityHierarchy; }
 
-			static ui32 GetNextEntityID() { return m_entityIDProvider++; }
-			static ui32 GetNextComponentID() { return m_componentIDProvider++; }
+			static ui32 GetNextEntityID() { return s_entityIDProvider++; }
+			static ui32 GetNextComponentID() { return s_componentIDProvider++; }
 
+			static ui32 GetLatestEntityID() { return s_entityIDProvider; }
+			static ui32 GetLatestComponentID() { return s_componentIDProvider; }
+
+			static void SetEntityIDProvider(ui32 value) { s_entityIDProvider = value; }
+			static void SetComponentIDProvider(ui32 value) { s_componentIDProvider = value; }
 
 		private:
 
@@ -118,8 +124,8 @@ namespace BaldLion {
 			DynamicArray<class ECSNavMeshAgentComponent> m_navMeshAgentComponentPool;
 			DynamicArray<class ECSLocomotionComponent> m_locomotionComponentPool;
 
-			static ui32 m_entityIDProvider;
-			static ui32 m_componentIDProvider;
+			static ui32 s_entityIDProvider;
+			static ui32 s_componentIDProvider;
 		};
 
 		template <typename T>

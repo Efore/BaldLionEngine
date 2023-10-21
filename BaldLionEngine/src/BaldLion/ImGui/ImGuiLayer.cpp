@@ -15,15 +15,6 @@ namespace BaldLion
 
 	ImGuiLayer::ImGuiLayer() 
 	{
-	}
-
-	ImGuiLayer::~ImGuiLayer()
-	{
-	}
-
-	void ImGuiLayer::OnAttach()
-	{
-		BL_PROFILE_FUNCTION();
 
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
@@ -53,14 +44,27 @@ namespace BaldLion
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 
-	void ImGuiLayer::OnDetach()
+	ImGuiLayer::~ImGuiLayer()
 	{
-		BL_PROFILE_FUNCTION();
 
 		// Cleanup
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
+
+	}
+
+	void ImGuiLayer::OnActivate()
+	{
+		BL_PROFILE_FUNCTION();
+
+		
+	}
+
+	void ImGuiLayer::OnDeactivate()
+	{
+		BL_PROFILE_FUNCTION();
+
 	}
 
 	void ImGuiLayer::Begin()

@@ -153,9 +153,9 @@ project "BaldLionEngine"
 	filter "files:BaldLionEngine/vendor/Recast/**.cpp"
 		flags {"NoPCH"}
 
-project "BaldLionEditor"
-	location "BaldLionEditor"
-	kind "ConsoleApp"
+project "BaldLionGame"
+	location "BaldLionGame"
+	kind "StaticLib"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
@@ -178,9 +178,7 @@ project "BaldLionEditor"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
-		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"		
+		"%{prj.name}/src/**.cpp"
 	}
 
 	includedirs
@@ -188,6 +186,7 @@ project "BaldLionEditor"
 		"BaldLionEngine/vendor/spdlog/include",
 		"BaldLionEngine/src",
 		"BaldLionEngine/vendor",
+		"BaldLionGame/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.optick}",	
@@ -241,4 +240,96 @@ project "BaldLionEditor"
 		defines "BL_DIST"
 		runtime "Release"
 		optimize "on"		
+		
+project "BaldLionEditor"
+	location "BaldLionEditor"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++20"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	debugenvs { 
+		"PATH=%PATH%;$(ProjectDir)lib"
+	}
+
+	-- postbuildcommands {
+			-- -- Copy the necessary files to the target dir
+		-- '{MKDIR} "%{cfg.targetdir}/assets"',
+		-- '{COPYDIR} "%{wks.location}BaldLionEditor/assets/" "%{cfg.targetdir}/assets"',
+		-- '{COPYFILE} "%{wks.location}BaldLionEngine/vendor/assimp/lib/assimp-vc142-mtd.dll" "%{cfg.targetdir}"',			
+		-- '{COPYFILE} "%{wks.location}BaldLionEditor/imgui.ini" "%{cfg.targetdir}"'		
+	-- }	
+	
+	files
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"		
+	}
+
+	includedirs
+	{
+		"BaldLionEngine/vendor/spdlog/include",
+		"BaldLionEngine/src",
+		"BaldLionEngine/vendor",
+		"BaldLionGame/src",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.assimp}",
+		"%{IncludeDir.optick}",	
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.debug_draw}",		
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.yaml}",
+		"%{IncludeDir.ReactPhysics3D}",
+		"%{IncludeDir.RecastDetour}",
+		"%{IncludeDir.RecastDetourCrowd}",
+		"%{IncludeDir.RecastDetourTileCache}",
+		"%{IncludeDir.RecastRecast}"
+	}
+	
+	-- libdirs 
+	-- { 
+		-- "BaldLionEngine/vendor/assimp/lib",
+		-- "BaldLionEngine/vendor/ReactPhysics3D/lib",
+	-- }
+
+	links
+	{
+		"BaldLionEngine",
+		"BaldLionGame"
+		-- "assimp-vc142-mtd.lib",
+		-- "reactphysics3d.lib"
+	}
+
+	
+	filter "files:BaldLionEngine/vendor/ImGuizmo/**.cpp"
+		flags {"NoPCH"}
+				
+	filter "system:windows"	
+		systemversion "latest"
+
+		defines
+		{
+			"BL_PLATFORM_WINDOWS"
+		}
+
+	filter "configurations:Debug"
+		defines "BL_DEBUG"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "BL_RELEASE"
+		runtime "Release"
+		optimize "on"
+
+	filter "configurations:Dist"
+		defines "BL_DIST"
+		runtime "Release"
+		optimize "on"		
+		
 		

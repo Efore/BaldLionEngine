@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;..\BaldLionEngine\vendor\imgui;..\BaldLionEngine\vendor\yaml\include;..\BaldLionEngine\vendor\ReactPhysics3D\include;..\BaldLionEngine\vendor\Recast\Detour\include;..\BaldLionEngine\vendor\Recast\DetourCrowd\include;..\BaldLionEngine\vendor\Recast\DetourTileCache\include;..\BaldLionEngine\vendor\Recast\Recast\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionGame\src;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;..\BaldLionEngine\vendor\imgui;..\BaldLionEngine\vendor\yaml\include;..\BaldLionEngine\vendor\ReactPhysics3D\include;..\BaldLionEngine\vendor\Recast\Detour\include;..\BaldLionEngine\vendor\Recast\DetourCrowd\include;..\BaldLionEngine\vendor\Recast\DetourTileCache\include;..\BaldLionEngine\vendor\Recast\Recast\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -90,19 +90,13 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <PostBuildEvent>
-      <Command>IF NOT EXIST "..\bin\Debug-windows-x86_64\BaldLionEditor\assets" (mkdir "..\bin\Debug-windows-x86_64\BaldLionEditor\assets")
-xcopy /Q /E /Y /I "$(SolutionDir)BaldLionEditor\assets\" "..\bin\Debug-windows-x86_64\BaldLionEditor\assets"
-copy /B /Y "$(SolutionDir)BaldLionEngine\vendor\assimp\lib\assimp-vc142-mtd.dll" "..\bin\Debug-windows-x86_64\BaldLionEditor"
-copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Debug-windows-x86_64\BaldLionEditor"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;..\BaldLionEngine\vendor\imgui;..\BaldLionEngine\vendor\yaml\include;..\BaldLionEngine\vendor\ReactPhysics3D\include;..\BaldLionEngine\vendor\Recast\Detour\include;..\BaldLionEngine\vendor\Recast\DetourCrowd\include;..\BaldLionEngine\vendor\Recast\DetourTileCache\include;..\BaldLionEngine\vendor\Recast\Recast\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionGame\src;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;..\BaldLionEngine\vendor\imgui;..\BaldLionEngine\vendor\yaml\include;..\BaldLionEngine\vendor\ReactPhysics3D\include;..\BaldLionEngine\vendor\Recast\Detour\include;..\BaldLionEngine\vendor\Recast\DetourCrowd\include;..\BaldLionEngine\vendor\Recast\DetourTileCache\include;..\BaldLionEngine\vendor\Recast\Recast\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -117,19 +111,13 @@ copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Debug-windows-x86_64
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <PostBuildEvent>
-      <Command>IF NOT EXIST "..\bin\Release-windows-x86_64\BaldLionEditor\assets" (mkdir "..\bin\Release-windows-x86_64\BaldLionEditor\assets")
-xcopy /Q /E /Y /I "$(SolutionDir)BaldLionEditor\assets\" "..\bin\Release-windows-x86_64\BaldLionEditor\assets"
-copy /B /Y "$(SolutionDir)BaldLionEngine\vendor\assimp\lib\assimp-vc142-mtd.dll" "..\bin\Release-windows-x86_64\BaldLionEditor"
-copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Release-windows-x86_64\BaldLionEditor"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;..\BaldLionEngine\vendor\imgui;..\BaldLionEngine\vendor\yaml\include;..\BaldLionEngine\vendor\ReactPhysics3D\include;..\BaldLionEngine\vendor\Recast\Detour\include;..\BaldLionEngine\vendor\Recast\DetourCrowd\include;..\BaldLionEngine\vendor\Recast\DetourTileCache\include;..\BaldLionEngine\vendor\Recast\Recast\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionGame\src;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;..\BaldLionEngine\vendor\imgui;..\BaldLionEngine\vendor\yaml\include;..\BaldLionEngine\vendor\ReactPhysics3D\include;..\BaldLionEngine\vendor\Recast\Detour\include;..\BaldLionEngine\vendor\Recast\DetourCrowd\include;..\BaldLionEngine\vendor\Recast\DetourTileCache\include;..\BaldLionEngine\vendor\Recast\Recast\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -144,12 +132,6 @@ copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Release-windows-x86_
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <PostBuildEvent>
-      <Command>IF NOT EXIST "..\bin\Dist-windows-x86_64\BaldLionEditor\assets" (mkdir "..\bin\Dist-windows-x86_64\BaldLionEditor\assets")
-xcopy /Q /E /Y /I "$(SolutionDir)BaldLionEditor\assets\" "..\bin\Dist-windows-x86_64\BaldLionEditor\assets"
-copy /B /Y "$(SolutionDir)BaldLionEngine\vendor\assimp\lib\assimp-vc142-mtd.dll" "..\bin\Dist-windows-x86_64\BaldLionEditor"
-copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Dist-windows-x86_64\BaldLionEditor"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLionEditorLayer.h" />
@@ -191,6 +173,9 @@ copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Dist-windows-x86_64\
   <ItemGroup>
     <ProjectReference Include="..\BaldLionEngine\BaldLionEngine.vcxproj">
       <Project>{403C0D4C-2C0A-0152-159E-7178010BDDB6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\BaldLionGame\BaldLionGame.vcxproj">
+      <Project>{A4C09C75-9023-2C1A-39A9-64D025EBF79C}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

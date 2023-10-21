@@ -3,7 +3,7 @@
 #include "BaldLion/Core/Containers/HashTable.h"
 #include "BaldLion/ResourceManagement/ResourceManager.h"
 
-#define YAML_KEY_ANIMATOR_PATH						"AnimatorPath"
+#define YAML_KEY_ANIMATOR_ID						"AnimatorPath"
 #define YAML_KEY_INITIAL_ANIMATION_ID				"InitialAnimationID"
 
 #define YAML_KEY_ANIMATIONS							"Animations"
@@ -35,7 +35,7 @@ namespace BaldLion
 
 			out << YAML::BeginMap;
 
-			out << YAML::Key << YAML_KEY_ANIMATOR_PATH << YAML::Value << BL_STRINGID_TO_STR_C(animator->GetResourcePath());
+			out << YAML::Key << YAML_KEY_ANIMATOR_ID << YAML::Value << BL_STRINGID_TO_STR_C(animator->GetResourcePath());
 			out << YAML::Key << YAML_KEY_INITIAL_ANIMATION_ID << YAML::Value << animator->GetInitialAnimationID();
 
 			out << YAML::Key << YAML_KEY_PARAMETERS << YAML::Value << YAML::BeginSeq;
@@ -92,10 +92,10 @@ namespace BaldLion
 
 			YAML::Node data = YAML::Load(strStream.str());
 
-			if (!data[YAML_KEY_ANIMATOR_PATH])
+			if (!data[YAML_KEY_ANIMATOR_ID])
 				return false;
 
-			std::string animatorPath = data[YAML_KEY_ANIMATOR_PATH].as<std::string>();
+			std::string animatorPath = data[YAML_KEY_ANIMATOR_ID].as<std::string>();
 
 			Animator* animator = ResourceManagement::ResourceManager::LoadResource<Animator>(animatorPath);
 

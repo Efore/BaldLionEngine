@@ -11,8 +11,8 @@ namespace BaldLion
 
 		public:
 
-			ECSNavMeshAgentComponent(const glm::vec3& startPosition) :
-				ECSComponent(ECSComponentType::NavMeshAgent), agentMaxSpeed(3.5f), agentMaxAcceleration(8.0f)
+			ECSNavMeshAgentComponent(const glm::vec3& startPosition, float maxSpeed, float maxAcceleration) :
+				ECSComponent(ECSComponentType::NavMeshAgent), agentMaxSpeed(maxSpeed), agentMaxAcceleration(maxAcceleration)
 			{
 				crowdAgentIdx = AI::Navigation::NavigationManager::CreateCrowdAgent(startPosition, agentMaxSpeed, agentMaxAcceleration);
 			}

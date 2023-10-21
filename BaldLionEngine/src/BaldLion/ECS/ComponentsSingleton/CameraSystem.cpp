@@ -1,6 +1,6 @@
 #pragma once
 #include "blpch.h"
-#include "ECSProjectionCameraSingleton.h"
+#include "CameraSystem.h"
 
 namespace BaldLion {
 
@@ -8,18 +8,29 @@ namespace BaldLion {
 
 		namespace SingletonComponents {
 
-			ECSProjectionCameraComponent* ECSProjectionCameraSingleton::s_mainCamera;
-			ECSTransformComponent* ECSProjectionCameraSingleton::s_mainCameraTransform;
+			ECSProjectionCameraComponent* CameraSystem::s_mainCamera;
+			ECSTransformComponent* CameraSystem::s_mainCameraTransform;
 
-			DynamicArray<glm::vec4> ECSProjectionCameraSingleton::s_frustrumPlanes;
+			DynamicArray<glm::vec4> CameraSystem::s_frustrumPlanes;
 			
-			void ECSProjectionCameraSingleton::Init()
+			bool CameraSystem::s_initialized = false;
+
+			void CameraSystem::Init()
 			{
-				s_frustrumPlanes = DynamicArray<glm::vec4>(AllocationType::FreeList_ECS, 6);
-				s_frustrumPlanes.Populate();
+				if (!s_initialized)
+				{
+					s_initialized = true;
+					s_frustrumPlanes = DynamicArray<glm::vec4>(AllocationType::FreeList_ECS, 6);
+					s_frustrumPlanes.Populate();
+				}
 			}
 
-			void ECSProjectionCameraSingleton::UpdateFrustrumPlanes()
+			void CameraSystem::Stop()
+			{
+				s_frustrumPlanes.Delete();
+			}
+
+			void CameraSystem::UpdateFrustrumPlanes()
 			{
 				glm::mat4 transposedViewProjection = glm::transpose(s_mainCamera->viewProjectionMatrix);
 
@@ -41,19 +52,19 @@ namespace BaldLion {
 				}
 			}
 
-			void ECSProjectionCameraSingleton::SetMainCamera(ECSProjectionCameraComponent* cameraComponent, ECSTransformComponent* cameraTransform)
+			void CameraSystem::SetMainCamera(ECSProjectionCameraComponent* cameraComponent, ECSTransformComponent* cameraTransform)
 			{
 				s_mainCamera = cameraComponent;
 				s_mainCameraTransform = cameraTransform;
 			}
 
-			void ECSProjectionCameraSingleton::SetCameraSize(float width, float height)
+			void CameraSystem::SetCameraSize(float width, float height)
 			{
 				s_mainCamera->width = width;
 				s_mainCamera->height = height;
 			}
 
-			bool ECSProjectionCameraSingleton::IsAABBVisible(const GeometryUtils::BoundingBox& aabb)
+			bool CameraSystem::IsAABBVisible(const GeometryUtils::BoundingBox& aabb)
 			{
 				BL_PROFILE_FUNCTION();
 				const glm::vec3 minPointInWorldSpace = aabb.minPoint;

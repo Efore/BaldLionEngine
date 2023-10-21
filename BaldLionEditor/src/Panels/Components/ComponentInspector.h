@@ -23,7 +23,7 @@ namespace BaldLion {
 					{
 						if (ImGui::MenuItem("Remove component"))
 						{
-							sceneHierarchyPanel->GetSceneContext()->GetECSManager()->RemoveComponentFromEntity(componentID, sceneHierarchyPanel->GetSelectedEntityID());
+							SceneManagement::SceneManager::GetMainScene()->GetECSManager()->RemoveComponentFromEntity(componentID, sceneHierarchyPanel->GetSelectedEntityID());
 						}
 
 						ImGui::EndMenu();

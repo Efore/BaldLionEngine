@@ -12,7 +12,7 @@ namespace BaldLion
 
 			static void Init();
 			static void FrameStart();
-			static void Update();
+			static void Update(float deltaTime);
 			static void FrameEnd();
 			static void Stop();
 
@@ -28,10 +28,13 @@ namespace BaldLion
 
 			static void RemoveActiveScene(StringId sceneID);
 
-		private:
-			static HashMap<StringId,Scene*> m_activeScenes;
-			static Scene* m_mainScene;
+			static std::string GetMainScenePathFile() { return s_mainScenePathFile; }
+			static void SetMainScenePathFile(const std::string& mainScenePathFile) { s_mainScenePathFile = mainScenePathFile; }
 
+		private:
+			static HashMap<StringId,Scene*> s_activeScenes;
+			static Scene* s_mainScene;
+			static std::string s_mainScenePathFile;
 		};
 
 	}

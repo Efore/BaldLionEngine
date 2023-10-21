@@ -1,6 +1,7 @@
 #include "blpch.h"
 #include "SceneSerializer.h"
 
+#include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
 #include "BaldLion/SceneManagement/SceneManager.h"
@@ -8,6 +9,7 @@
 #include "BaldLion/Rendering/Mesh.h"
 #include "BaldLion/Animation/Skeleton.h"
 #include "BaldLion/Animation/AnimationManager.h"
+#include "BaldLion/AI/Navigation/NavigationManager.h"
 
 using namespace BaldLion::ECS;
 
@@ -15,9 +17,11 @@ using namespace BaldLion::ECS;
 #define YAML_KEY_SCENEID			"SceneID"
 #define YAML_KEY_ENTITIES			"Entities"
 #define YAML_KEY_ENTITYNAME			"EntityName"
+#define YAML_KEY_ENTITYID			"EntityID"
 #define YAML_KEY_ENTITYISSTATIC		"EntityIsStatic"
 #define YAML_KEY_COMPONENTS			"Components"
 #define YAML_KEY_COMPONENTTYPE		"ComponentType"
+#define YAML_KEY_ENTITYID_PROVIDER	"EntityIDProvider"
 
 //Transform
 #define YAML_KEY_POSITION			"Position"
@@ -42,7 +46,7 @@ using namespace BaldLion::ECS;
 #define YAML_KEY_LIGHTDIRECTION		"LightDirection"
 
 //Animation
-#define YAML_KEY_ANIMATOR_PATH		"AnimatorID"
+#define YAML_KEY_ANIMATOR_ID		"AnimatorID"
 
 //Physics
 #define YAML_KEY_PHYSICS_SHAPE			"PhyisicsShape"
@@ -56,7 +60,9 @@ using namespace BaldLion::ECS;
 #define YAML_KEY_LOCOMOTION_ROTSPEED	"LocomotionRotationSpeed"
 
 //NavMeshAgent
-#define YAML_KEY_NAVMESHAGENTID		"NavMeshAgentID"
+#define YAML_KEY_NAVMESHAGENT_POSITION		"NavMeshAgentPosition"
+#define YAML_KEY_NAVMESHAGENT_MAX_SPEED		"NavMeshAgentMaxSpeed"
+#define YAML_KEY_NAVMESHAGENT_MAX_ACC		"NavMeshAgentMaxAcc"
 
 //Hierarchy
 #define YAML_KEY_PARENTID			"ParentEntityID"
@@ -71,6 +77,8 @@ namespace BaldLion
 		{
 			YAML::Emitter out;
 			out << YAML::BeginMap;
+
+			out << YAML::Key << YAML_KEY_ENTITYID_PROVIDER << YAML::Value << ECS::ECSManager::GetLatestEntityID();
 			out << YAML::Key << YAML_KEY_SCENEID << YAML::Value << BL_STRINGID_TO_STR_C(scene->GetSceneID());
 			out << YAML::Key << YAML_KEY_SCENENAME << YAML::Value << BL_STRINGID_TO_STR_C(scene->GetSceneName());
 			out << YAML::Key << YAML_KEY_ENTITIES << YAML::Value << YAML::BeginSeq;
@@ -106,6 +114,8 @@ namespace BaldLion
 			SceneManager::AddScene(sceneName.c_str());
 			SceneManager::GetMainScene()->SetSceneName(sceneName.c_str());
 
+			ECS::ECSManager::SetEntityIDProvider(data[YAML_KEY_ENTITYID_PROVIDER].as<ui32>());
+
 			auto entities = data[YAML_KEY_ENTITIES];
 
 			if (entities)
@@ -125,6 +135,7 @@ namespace BaldLion
 		{
 			out << YAML::BeginMap;
 			out << YAML::Key << YAML_KEY_ENTITYNAME << YAML::Value << BL_STRINGID_TO_STR_C(entity->GetEntityName());
+			out << YAML::Key << YAML_KEY_ENTITYID << YAML::Value << (entity->GetEntityID());
 			out << YAML::Key << YAML_KEY_ENTITYISSTATIC << YAML::Value << entity->GetIsStatic();
 
 			out << YAML::Key << YAML_KEY_COMPONENTS << YAML::Value << YAML::BeginSeq;
@@ -161,8 +172,9 @@ namespace BaldLion
 		{
 			std::string entityName = yamlEntity[YAML_KEY_ENTITYNAME].as<std::string>();
 			bool isStatic = yamlEntity[YAML_KEY_ENTITYISSTATIC].as<bool>();
-				
-			ECS::ECSEntityID entityID = SceneManager::GetECSManager()->AddEntity(entityName.c_str());
+			ECS::ECSEntityID entityID = yamlEntity[YAML_KEY_ENTITYID].as<ECS::ECSEntityID>();
+
+			SceneManager::GetECSManager()->AddEntity(entityName.c_str(), entityID);
 
 			auto components = yamlEntity[YAML_KEY_COMPONENTS];
 
@@ -252,17 +264,10 @@ namespace BaldLion
 			}
 			break;
 
-			case ECS::ECSComponentType::Locomotion:
-			{
-				ECSLocomotionComponent* locomotionComponent = (ECSLocomotionComponent*)component;
-				out << YAML::Key << YAML_KEY_LOCOMOTION_ROTSPEED << YAML::Value << locomotionComponent->rotationSpeed;
-			}
-				break;
-
 			case ECS::ECSComponentType::Animation:
 			{
 				ECSAnimationComponent* animationComponent = (ECSAnimationComponent*)component;
-				out << YAML::Key << YAML_KEY_ANIMATOR_PATH << YAML::Value << animationComponent->animatorID;
+				out << YAML::Key << YAML_KEY_ANIMATOR_ID << YAML::Value << animationComponent->animatorID;
 			}			
 			break;
 
@@ -278,6 +283,23 @@ namespace BaldLion
 				SerializeVec3(out, YAML_KEY_PHYSICS_BODY_ROTATION, glm::eulerAngles(Physics::ToGlmQuat(physicsBodyComponent->rigidBody->getTransform().getOrientation())));
 
 				out << YAML::Key << YAML_KEY_PHYSICS_MASS << YAML::Value << (float)physicsBodyComponent->rigidBody->getMass();
+			}
+			break;
+
+			case ECS::ECSComponentType::Locomotion:
+			{
+				ECSLocomotionComponent* locomotionComponent = (ECSLocomotionComponent*)component;
+				out << YAML::Key << YAML_KEY_LOCOMOTION_ROTSPEED << YAML::Value << locomotionComponent->rotationSpeed;
+			}
+			break;
+
+			case ECS::ECSComponentType::NavMeshAgent:
+			{
+				ECSNavMeshAgentComponent* navMeshAgentComponent = (ECSNavMeshAgentComponent*)component;
+				
+				SerializeVec3(out, YAML_KEY_NAVMESHAGENT_POSITION, AI::Navigation::NavigationManager::GetCrowdAgentPosition(navMeshAgentComponent->crowdAgentIdx));				
+				out << YAML::Key << YAML_KEY_NAVMESHAGENT_MAX_SPEED	<< YAML::Value << navMeshAgentComponent->agentMaxSpeed;
+				out << YAML::Key << YAML_KEY_NAVMESHAGENT_MAX_ACC << YAML::Value << navMeshAgentComponent->agentMaxAcceleration;
 			}
 			break;
 
@@ -370,24 +392,9 @@ namespace BaldLion
 			}
 				break;
 
-			case BaldLion::ECS::ECSComponentType::Locomotion:
-			{
-				float rotSpeed = yamlComponent[YAML_KEY_LOCOMOTION_ROTSPEED].as<float>();
-				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSLocomotionComponent>(
-					ECS::ECSComponentType::DirectionalLight,
-					rotSpeed);
-			}
-				break;
-
-			case BaldLion::ECS::ECSComponentType::NavMeshAgent:
-				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSNavMeshAgentComponent>(
-					ECS::ECSComponentType::NavMeshAgent,
-					glm::vec3(0.0f));
-				break;
-
 			case BaldLion::ECS::ECSComponentType::Animation:
 			{
-				StringId animatorID = yamlComponent[YAML_KEY_ANIMATOR_PATH].as<StringId>();
+				StringId animatorID = yamlComponent[YAML_KEY_ANIMATOR_ID].as<StringId>();
 				StringId initAnimationID = Animation::AnimationManager::GetAnimator(animatorID)->GetInitialAnimationID();
 
 				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentType::Animation, animatorID, initAnimationID);
@@ -406,9 +413,33 @@ namespace BaldLion
 				float mass = yamlComponent[YAML_KEY_PHYSICS_MASS].as<float>();
 
 				component = SceneManager::GetECSManager()->CreateComponent<ECSPhysicsBodyComponent>(ECS::ECSComponentType::PhysicsBody, shape, bodyType, colliderSize, position, rotation, mass);
+				
 			}
 			break;
 
+
+			case BaldLion::ECS::ECSComponentType::Locomotion:
+			{
+				float rotSpeed = yamlComponent[YAML_KEY_LOCOMOTION_ROTSPEED].as<float>();
+				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSLocomotionComponent>(
+					ECS::ECSComponentType::DirectionalLight,
+					rotSpeed);
+			}
+			break;
+
+			case BaldLion::ECS::ECSComponentType::NavMeshAgent:
+			{
+				float maxSpeed = yamlComponent[YAML_KEY_NAVMESHAGENT_MAX_SPEED].as<float>();
+				float maxAcc = yamlComponent[YAML_KEY_NAVMESHAGENT_MAX_ACC].as<float>();
+				glm::vec3 agentPos = DeserializeVec3(yamlComponent, YAML_KEY_NAVMESHAGENT_POSITION);
+
+				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSNavMeshAgentComponent>(
+					ECS::ECSComponentType::NavMeshAgent,
+					agentPos,
+					maxSpeed,
+					maxAcc);
+				break;
+			}
 			default:
 				break;
 			}

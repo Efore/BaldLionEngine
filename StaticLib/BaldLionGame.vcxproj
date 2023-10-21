@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Dist|x64">
+      <Configuration>Dist</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A4C09C75-9023-2C1A-39A9-64D025EBF79C}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>BaldLionGame</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\bin\Debug-windows-x86_64\BaldLionGame\</OutDir>
+    <IntDir>..\bin-int\Debug-windows-x86_64\BaldLionGame\</IntDir>
+    <TargetName>BaldLionGame</TargetName>
+    <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\bin\Release-windows-x86_64\BaldLionGame\</OutDir>
+    <IntDir>..\bin-int\Release-windows-x86_64\BaldLionGame\</IntDir>
+    <TargetName>BaldLionGame</TargetName>
+    <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\bin\Dist-windows-x86_64\BaldLionGame\</OutDir>
+    <IntDir>..\bin-int\Dist-windows-x86_64\BaldLionGame\</IntDir>
+    <TargetName>BaldLionGame</TargetName>
+    <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionGame\vendor;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;..\BaldLionEditor\vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;..\BaldLionEngine\vendor\imgui;..\BaldLionEngine\vendor\yaml\include;..\BaldLionEngine\vendor\ReactPhysics3D\include;..\BaldLionEngine\vendor\Recast\Detour\include;..\BaldLionEngine\vendor\Recast\DetourCrowd\include;..\BaldLionEngine\vendor\Recast\DetourTileCache\include;..\BaldLionEngine\vendor\Recast\Recast\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "..\bin\Debug-windows-x86_64\BaldLionGame\assets" (mkdir "..\bin\Debug-windows-x86_64\BaldLionGame\assets")
+xcopy /Q /E /Y /I "$(SolutionDir)BaldLionEditor\assets\" "..\bin\Debug-windows-x86_64\BaldLionGame\assets"
+copy /B /Y "$(SolutionDir)BaldLionEngine\vendor\assimp\lib\assimp-vc142-mtd.dll" "..\bin\Debug-windows-x86_64\BaldLionGame"
+copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Debug-windows-x86_64\BaldLionGame"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionGame\vendor;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;..\BaldLionEditor\vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;..\BaldLionEngine\vendor\imgui;..\BaldLionEngine\vendor\yaml\include;..\BaldLionEngine\vendor\ReactPhysics3D\include;..\BaldLionEngine\vendor\Recast\Detour\include;..\BaldLionEngine\vendor\Recast\DetourCrowd\include;..\BaldLionEngine\vendor\Recast\DetourTileCache\include;..\BaldLionEngine\vendor\Recast\Recast\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "..\bin\Release-windows-x86_64\BaldLionGame\assets" (mkdir "..\bin\Release-windows-x86_64\BaldLionGame\assets")
+xcopy /Q /E /Y /I "$(SolutionDir)BaldLionEditor\assets\" "..\bin\Release-windows-x86_64\BaldLionGame\assets"
+copy /B /Y "$(SolutionDir)BaldLionEngine\vendor\assimp\lib\assimp-vc142-mtd.dll" "..\bin\Release-windows-x86_64\BaldLionGame"
+copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Release-windows-x86_64\BaldLionGame"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\BaldLionEngine\vendor\spdlog\include;..\BaldLionEngine\src;..\BaldLionEngine\vendor;..\BaldLionGame\vendor;..\BaldLionEngine\vendor\glm;..\BaldLionEngine\vendor\assimp\include;..\BaldLionEngine\vendor\optick\include;..\BaldLionEditor\vendor\ImGuizmo;..\BaldLionEngine\vendor\debug-draw;..\BaldLionEngine\vendor\imgui;..\BaldLionEngine\vendor\yaml\include;..\BaldLionEngine\vendor\ReactPhysics3D\include;..\BaldLionEngine\vendor\Recast\Detour\include;..\BaldLionEngine\vendor\Recast\DetourCrowd\include;..\BaldLionEngine\vendor\Recast\DetourTileCache\include;..\BaldLionEngine\vendor\Recast\Recast\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "..\bin\Dist-windows-x86_64\BaldLionGame\assets" (mkdir "..\bin\Dist-windows-x86_64\BaldLionGame\assets")
+xcopy /Q /E /Y /I "$(SolutionDir)BaldLionEditor\assets\" "..\bin\Dist-windows-x86_64\BaldLionGame\assets"
+copy /B /Y "$(SolutionDir)BaldLionEngine\vendor\assimp\lib\assimp-vc142-mtd.dll" "..\bin\Dist-windows-x86_64\BaldLionGame"
+copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Dist-windows-x86_64\BaldLionGame"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\BaldLionGame\src\BaldLionGameLayer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\BaldLionGame\src\BaldLionGameApp.cpp" />
+    <ClCompile Include="..\BaldLionGame\src\BaldLionGameLayer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BaldLionEngine\BaldLionEngine.vcxproj">
+      <Project>{403C0D4C-2C0A-0152-159E-7178010BDDB6}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

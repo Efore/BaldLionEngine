@@ -19,13 +19,14 @@ namespace BaldLion::AI::Navigation
 
 		static void Init();		
 		static void Stop();
-		static void Update();
+		static void Update(float deltaTime);
 
 		static void InitCrowd();
 		static i32 CreateCrowdAgent(const glm::vec3& pos, float maxSpeed, float maxAcceleration);
 		static void DestroyCrowdAgent(i32 agentIdx);
 
 		static const dtCrowdAgent* GetCrowdAgent(i32 agentIdx);
+		static glm::vec3 GetCrowdAgentPosition(i32 agentIdx);
 		static void RequestMoveTarget(i32 agentIndex, const glm::vec3& targetPos);
 		static void UpdateCrowdAgent(i32 agentIndex, float maxSpeed, float maxAcceleration);
 

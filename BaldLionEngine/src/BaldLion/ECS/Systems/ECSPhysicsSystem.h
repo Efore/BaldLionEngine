@@ -12,8 +12,8 @@ namespace BaldLion {
 			virtual ~ECSPhysicsSystem();
 
 			virtual void OnStart() override {};
-			virtual void OnUpdate() override;
-			virtual void UpdateComponents(ECSComponentLookUp* componentLookUp) override;
+			virtual void OnUpdate(float deltaTime) override;
+			virtual void UpdateComponents(ECSComponentLookUp* componentLookUp, float deltaTime) override;
 			virtual void OnStop() override {};
 
 		};

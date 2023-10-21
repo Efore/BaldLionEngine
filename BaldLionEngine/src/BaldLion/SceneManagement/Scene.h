@@ -15,7 +15,7 @@ namespace BaldLion {
 
 			void Init();
 			void FrameStart();
-			void Update();
+			void Update(float deltaTime);
 			void FrameEnd();
 
 			const StringId GetSceneID() const { return m_sceneID; }

@@ -11,41 +11,60 @@ namespace BaldLion {
 
 		SceneHierarchyPanel::SceneHierarchyPanel() : EditorPanel("Scene Hierarchy"){}
 
-		SceneHierarchyPanel::SceneHierarchyPanel(Scene* sceneContext) : EditorPanel("Scene Hierarchy"), m_sceneContext(sceneContext), m_selectedEntityID(0)
+		SceneHierarchyPanel::SceneHierarchyPanel(Scene* sceneContext) : EditorPanel("Scene Hierarchy"), m_selectedEntityID(0)
 		{
 
 		}
 
-		void SceneHierarchyPanel::SetSceneContext(Scene* sceneContext)
-		{
-			m_sceneContext = sceneContext;
-		}
-
-		void SceneHierarchyPanel::OnImGuiRender()
-		{
+		void SceneHierarchyPanel::OnImGuiRender(float deltaTime)
+		{			
 			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
 			m_panelID = ImGui::GetCurrentWindow()->ID;
 
 			m_viewportFocused = ImGui::IsWindowFocused();
+
+			if (!SceneManagement::SceneManager::GetMainScene())
+			{
+				m_selectedEntityID = 0;
+				return;
+			}
 
 			if (ImGui::Button("Add Entity"))
 			{
 				ImGui::OpenPopup("Create Entity");
 			}
 
-			ImGui::SameLine();
+			ImGui::Separator();
 
-			if (ImGui::Button("Create Entity from Model"))
+			static bool isStatic = false;
+
+			if (ImGui::Button("Create Static Entity from Model"))
 			{
+				isStatic = true;
 				ImGui::OpenPopup("create_model_entity");
 			}
 
-			if (ImGui::Button("Create Entity from Mesh"))
+			if (ImGui::Button("Create Static Entity from Mesh"))
 			{
+				isStatic = true;
 				ImGui::OpenPopup("create_mesh_entity");
 			}
 
 			ImGui::Separator();			
+
+			if (ImGui::Button("Create Dynamic Entity from Model"))
+			{
+				isStatic = false;
+				ImGui::OpenPopup("create_model_entity");
+			}
+
+			if (ImGui::Button("Create Dynamic Entity from Mesh"))
+			{
+				isStatic = false;
+				ImGui::OpenPopup("create_mesh_entity");
+			}
+
+			ImGui::Separator();
 
 			if (ImGui::BeginPopupModal("Create Entity", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 			{
@@ -54,7 +73,7 @@ namespace BaldLion {
 
 				if (entityName != "" && ImGui::Button("Create")) 
 				{
-					m_sceneContext->GetECSManager()->AddEntity(entityName);
+					SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddEntity(entityName);
 					ImGui::CloseCurrentPopup();
 				}				
 
@@ -68,24 +87,28 @@ namespace BaldLion {
 				ImGui::EndPopup();
 			}
 
-			Rendering::Model* model = EditorUtils::RenderResourceInspectorPopup<Rendering::Model>("create_model_entity", ResourceManagement::ResourceType::Model);
-			
-			if (model)
 			{
-				model->GenerateEntities(m_sceneContext->GetECSManager(), true);
+				Rendering::Model* model = EditorUtils::RenderResourceInspectorPopup<Rendering::Model>("create_model_entity", ResourceManagement::ResourceType::Model);
+				
+				if (model)
+				{
+					model->GenerateEntities(SceneManagement::SceneManager::GetMainScene()->GetECSManager(), isStatic);					
+				}				
 			}
 
-			Rendering::Mesh* mesh = EditorUtils::RenderResourceInspectorPopup<Rendering::Mesh>("create_mesh_entity", ResourceManagement::ResourceType::Mesh);
-
-			if (mesh)
 			{
-				mesh->GenerateEntity(m_sceneContext->GetECSManager(), true);
+				Rendering::Mesh* mesh = EditorUtils::RenderResourceInspectorPopup<Rendering::Mesh>("create_mesh_entity", ResourceManagement::ResourceType::Mesh);
+				
+				if (mesh)
+				{				
+					mesh->GenerateEntity(SceneManagement::SceneManager::GetMainScene()->GetECSManager(), isStatic);				
+				}
 			}
 
-			BL_DYNAMICARRAY_FOR(i, m_sceneContext->GetECSManager()->GetEntities(), 0)			
+			BL_DYNAMICARRAY_FOR(i, SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntities(), 0)
 			{				
 				bool selectedThisFrame = false;
-				DrawEntityElement(m_sceneContext->GetECSManager()->GetEntities()[i], true, selectedThisFrame);
+				DrawEntityElement(SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntities()[i], true, selectedThisFrame);
 			}
 
 			ImGui::End();
@@ -93,6 +116,12 @@ namespace BaldLion {
 
 		void SceneHierarchyPanel::OnKeyPressed(int keyCode)
 		{
+
+			if (!SceneManagement::SceneManager::GetMainScene())
+			{
+				return;
+			}
+
 			if (m_viewportFocused) {
 
 				switch (keyCode)
@@ -102,7 +131,7 @@ namespace BaldLion {
 
 					if (m_selectedEntityID > 0)
 					{
-						m_sceneContext->GetECSManager()->RemoveEntity(m_selectedEntityID);
+						SceneManagement::SceneManager::GetMainScene()->GetECSManager()->RemoveEntity(m_selectedEntityID);
 						m_selectedEntityID = 0;
 					}
 					break;
@@ -143,7 +172,7 @@ namespace BaldLion {
 				{
 					BL_DYNAMICARRAY_FOREACH(entity.GetChildrenIDs())
 					{
-						DrawEntityElement(*m_sceneContext->GetECSManager()->GetEntityMap().Get(entity.GetChildrenIDs()[i]), false, selectedThisFrame);
+						DrawEntityElement(*SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityMap().Get(entity.GetChildrenIDs()[i]), false, selectedThisFrame);
 					}	
 					ImGui::TreePop();
 				}

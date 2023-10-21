@@ -1,0 +1,28 @@
+AnimatorPath: assets\gameAssets\animations\LocomotionPack\Ch24_nonPBR\Ch24.animator
+InitialAnimationID: 1443453546
+Parameters:
+  - ParameterID: Speed
+    ParameterType: 1
+    ParameterValue: 0
+Animations:
+  - AnimationPath: assets\gameAssets\animations\LocomotionPack\idle\mixamo.com.animation
+  - AnimationPath: assets\gameAssets\animations\LocomotionPack\walking\mixamo.com.animation
+Transitions:
+  - TransitionInitAnimationID: assets\gameAssets\animations\LocomotionPack\idle\mixamo.com.animation
+    TransitionFinalAnimationID: assets\gameAssets\animations\LocomotionPack\walking\mixamo.com.animation
+    TransitionTime: 0.5
+    TransitionExitTime: 0
+    Conditions:
+      - ConditionsParameterA: Speed
+        ParameterType: 1
+        ParameterValue: 0.00999999978
+        ConditionsComparisonType: 5
+  - TransitionInitAnimationID: assets\gameAssets\animations\LocomotionPack\walking\mixamo.com.animation
+    TransitionFinalAnimationID: assets\gameAssets\animations\LocomotionPack\idle\mixamo.com.animation
+    TransitionTime: 0.5
+    TransitionExitTime: 0
+    Conditions:
+      - ConditionsParameterA: Speed
+        ParameterType: 1
+        ParameterValue: 0.00999999978
+        ConditionsComparisonType: 0

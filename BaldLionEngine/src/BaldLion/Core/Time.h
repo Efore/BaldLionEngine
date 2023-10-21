@@ -1,7 +1,7 @@
 #pragma once
 #include "Containers/HashTable.h"
 
-#define MAX_FPS 144.0f
+#define MAX_FPS 60.0f
 
 namespace BaldLion
 {

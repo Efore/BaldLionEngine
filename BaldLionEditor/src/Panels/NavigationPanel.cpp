@@ -32,7 +32,7 @@ namespace BaldLion
 			m_editorViewportPanel = editorViewPortPanel;
 		}
 
-		void NavigationPanel::OnImGuiRender()
+		void NavigationPanel::OnImGuiRender(float deltaTime)
 		{
 			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
 
@@ -421,11 +421,11 @@ namespace BaldLion
 				glm::vec2 mouseInWindow;
 				if (EditorUtils::GetMouseRelativePosInWindow(m_editorViewportPanel->GetPanelID(), mouseInWindow))
 				{
-					const glm::vec3 rayOrigin = ECS::SingletonComponents::ECSProjectionCameraSingleton::GetMainCameraTransform()->position;
+					const glm::vec3 rayOrigin = ECS::SingletonComponents::CameraSystem::GetMainCameraTransform()->position;
 
 					const glm::vec4 rayClip = glm::vec4(mouseInWindow.x, mouseInWindow.y, 1.0f, 1.0f);
 
-					glm::vec3 rayDirection = glm::inverse(ECS::SingletonComponents::ECSProjectionCameraSingleton::GetMainCamera()->viewProjectionMatrix) * rayClip;
+					glm::vec3 rayDirection = glm::inverse(ECS::SingletonComponents::CameraSystem::GetMainCamera()->viewProjectionMatrix) * rayClip;
 					rayDirection = glm::normalize(rayDirection);
 
 					const glm::vec3 rayEnd = rayOrigin + rayDirection * 5000.0f;
@@ -440,33 +440,7 @@ namespace BaldLion
 					}
 				}
 			}
-		}
-
-		void NavigationPanel::CreateAgent(const glm::vec3& pos)
-		{
-			const std::string agentName = "Agent" + std::to_string(m_agentCount++);
-			ECS::ECSEntityID agentEntityID = SceneManager::GetECSManager()->AddEntity(agentName.c_str());
-
-			ECS::ECSTransformComponent* transformComponent = SceneManager::GetECSManager()->CreateComponent<ECS::ECSTransformComponent>(
-				ECS::ECSComponentType::Transform,
-				pos,
-				glm::vec3(0.0f),
-				glm::vec3(1.0f));
-
-			ECS::ECSNavMeshAgentComponent* navMeshAgentComponent = SceneManager::GetECSManager()->CreateComponent<ECS::ECSNavMeshAgentComponent>(
-				ECS::ECSComponentType::NavMeshAgent,
-				pos);
-
-			SceneManager::GetECSManager()->AddComponentToEntity(agentEntityID, transformComponent);
-			SceneManager::GetECSManager()->AddComponentToEntity(agentEntityID, navMeshAgentComponent);
-
-			const dtCrowdAgent* agent = NavigationManager::GetCrowdAgent(navMeshAgentComponent->crowdAgentIdx);
-			
-			if (m_currentTarget != BaldLion::MathUtils::Vector3Zero)
-			{				
-				SetCrowdTargetPosition(m_currentTarget);
-			}
-		}
+		}		
 
 		void NavigationPanel::SetAgentsTarget(const glm::vec3& pos)
 		{

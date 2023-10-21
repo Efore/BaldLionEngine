@@ -23,17 +23,17 @@ namespace BaldLion {
 
 		}
 
-		void ECSPhysicsSystem::OnUpdate()
+		void ECSPhysicsSystem::OnUpdate(float deltaTime)
 		{
 			if (!Physics::PhysicsManager::GetIsPhysicsActive())
 				return;
 
-			Physics::PhysicsManager::UpdatePhysics();
+			Physics::PhysicsManager::UpdatePhysics(deltaTime);
 
-			ECSSystem::OnUpdate();
+			ECSSystem::OnUpdate(deltaTime);
 		}
 
-		void ECSPhysicsSystem::UpdateComponents(ECSComponentLookUp* componentLookUp)
+		void ECSPhysicsSystem::UpdateComponents(ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
 			 ECSTransformComponent* transform = componentLookUp->Write<ECSTransformComponent>(ECSComponentType::Transform);		
 			 const ECSPhysicsBodyComponent* physicsBody = componentLookUp->Read<ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);

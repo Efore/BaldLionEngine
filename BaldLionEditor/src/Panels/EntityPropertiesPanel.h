@@ -13,7 +13,7 @@ namespace BaldLion {
 			EntityPropertiesPanel();
 			EntityPropertiesPanel(SceneHierarchyPanel* sceneHierarchyPanel);			
 
-			virtual void OnImGuiRender() override;
+			virtual void OnImGuiRender(float deltaTime) override;
 			void SetHierarchyPanel(SceneHierarchyPanel* sceneHierarchyPanel);
 
 		private:

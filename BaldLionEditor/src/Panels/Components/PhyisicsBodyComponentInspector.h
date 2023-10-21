@@ -67,15 +67,12 @@ namespace BaldLion
 					if (!Physics::PhysicsManager::GetIsPhysicsActive())
 					{
 						EditorUtils::DrawVec3Handler("Box Size", componentPhysicsBody->unscaledColliderSize, 1.0f, 110.0f);
-						boxSize = componentPhysicsBody->unscaledColliderSize;
-						boxSize.x *= transformComponent->scale.x;
-						boxSize.y *= transformComponent->scale.y;
-						boxSize.z *= transformComponent->scale.z;
+						boxSize = componentPhysicsBody->unscaledColliderSize;						
 
-						((reactphysics3d::BoxShape*)componentPhysicsBody->collider->getCollisionShape())->setHalfExtents(Physics::FromGlmVec3(boxSize * 0.5f));
+						((reactphysics3d::BoxShape*)componentPhysicsBody->collider->getCollisionShape())->setHalfExtents(Physics::FromGlmVec3(boxSize * 0.5f));						
 					}
 
-					Rendering::Renderer::DrawDebugBox(transformComponent->position, boxSize, transformComponent->GetTransformMatrix(), MathUtils::Vector3UnitY);
+					Rendering::Renderer::DrawDebugBox(glm::vec3(0.0f), boxSize, transformComponent->GetTransformMatrix(), MathUtils::Vector3UnitY);
 
 					break;
 

@@ -5,7 +5,7 @@
 #include "BaldLion/ECS/Components/ECSTransformComponent.h"
 #include "BaldLion/ECS/Components/ECSMeshComponent.h"
 #include "BaldLion/ECS/Components/ECSSkeletonComponent.h"
-#include "BaldLion/ECS/ComponentsSingleton/ECSProjectionCameraSingleton.h"
+#include "BaldLion/ECS/ComponentsSingleton/CameraSystem.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,13 +14,13 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		void ECSRenderSystem::OnUpdate()
+		void ECSRenderSystem::OnUpdate(float deltaTime)
 		{
-			ECS::SingletonComponents::ECSProjectionCameraSingleton::UpdateFrustrumPlanes();
-			ECSSystem::OnUpdate();
+			ECS::SingletonComponents::CameraSystem::UpdateFrustrumPlanes();
+			ECSSystem::OnUpdate(deltaTime);
 		}
 
-		void ECSRenderSystem::UpdateComponents(ECSComponentLookUp* componentLookUp)
+		void ECSRenderSystem::UpdateComponents(ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
 			BL_PROFILE_FUNCTION();
 
@@ -35,7 +35,7 @@ namespace BaldLion {
 			
 			if (meshComponent->isStatic)
 			{	
-				if (ECS::SingletonComponents::ECSProjectionCameraSingleton::IsAABBVisible(meshComponent->localBoundingBox))
+				if (ECS::SingletonComponents::CameraSystem::IsAABBVisible(meshComponent->localBoundingBox))
 				{					
 					Renderer::AddStaticMeshToBatch(meshComponent->material, meshComponent->vertices, meshComponent->indices);					
 				}
@@ -43,7 +43,7 @@ namespace BaldLion {
 			else
 			{
 				const BoundingBox meshAABB = GeometryUtils::GetAABB(meshComponent->localBoundingBox, meshTransformMatrix);
-				if (ECS::SingletonComponents::ECSProjectionCameraSingleton::IsAABBVisible(meshAABB))
+				if (ECS::SingletonComponents::CameraSystem::IsAABBVisible(meshAABB))
 				{					
 					Renderer::AddDynamicMesh(meshComponent, meshTransform, skeletonComponent);
 				}

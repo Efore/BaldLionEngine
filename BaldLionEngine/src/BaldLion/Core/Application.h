@@ -22,6 +22,9 @@ namespace BaldLion
 		void PushLayer(GameStateLayer* layer);
 		void PushOverlay(GameStateLayer* overlay);
 
+		void PopLayer(GameStateLayer* layer);
+		void PopOverlay(GameStateLayer* overlay);
+
 		inline Window& GetWindow() const { return *m_window; }
 
 		virtual void Close();

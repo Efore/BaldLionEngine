@@ -9,7 +9,7 @@ namespace BaldLion {
 
 	namespace Editor {
 
-		void MemoryAllocationPanel::OnImGuiRender()
+		void MemoryAllocationPanel::OnImGuiRender(float deltaTime)
 		{
 			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
 			m_panelID = ImGui::GetCurrentWindow()->ID;

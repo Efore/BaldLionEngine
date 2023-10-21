@@ -285,6 +285,9 @@
     <ClInclude Include="src\BaldLion\AI\Navigation\NavMeshBuilder.h">
       <Filter>src\BaldLion\AI\Navigation</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationManager.h">
+      <Filter>src\BaldLion\AI\Navigation</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\AI\Navigation\RecastClasses\BuildContext.h">
       <Filter>src\BaldLion\AI\Navigation\RecastClasses</Filter>
     </ClInclude>
@@ -345,6 +348,12 @@
     <ClInclude Include="src\BaldLion\Core\EntryPoint.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\GameStateLayer.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\GameStateLayerStack.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Input.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
@@ -355,12 +364,6 @@
       <Filter>src\BaldLion\Core\JobManagement</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\KeyCodes.h">
-      <Filter>src\BaldLion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\GameStateLayer.h">
-      <Filter>src\BaldLion\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\GameStateLayerStack.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Log.h">
@@ -408,6 +411,9 @@
     <ClInclude Include="src\BaldLion\ECS\Components\ECSHierarchyComponent.h">
       <Filter>src\BaldLion\ECS\Components</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSLocomotionComponent.h">
+      <Filter>src\BaldLion\ECS\Components</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshComponent.h">
       <Filter>src\BaldLion\ECS\Components</Filter>
     </ClInclude>
@@ -429,7 +435,7 @@
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.h">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.h">
+    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\CameraSystem.h">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\ECSComponent.h">
@@ -457,6 +463,9 @@
       <Filter>src\BaldLion\ECS</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.h">
+      <Filter>src\BaldLion\ECS\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.h">
@@ -2571,12 +2580,12 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\AI\Navigation\NavigationManager.h" />
-    <ClInclude Include="src\BaldLion\ECS\Components\ECSLocomotionComponent.h" />
-    <ClInclude Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp">
+      <Filter>src\BaldLion\AI\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\AI\Navigation\NavigationManager.cpp">
       <Filter>src\BaldLion\AI\Navigation</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\BuildContext.cpp">
@@ -2609,17 +2618,17 @@
     <ClCompile Include="src\BaldLion\Core\Application.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\JobManagement\JobManager.cpp">
-      <Filter>src\BaldLion\Core\JobManagement</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\JobManagement\ThreadPool.cpp">
-      <Filter>src\BaldLion\Core\JobManagement</Filter>
-    </ClCompile>
     <ClCompile Include="src\BaldLion\Core\GameStateLayer.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\GameStateLayerStack.cpp">
       <Filter>src\BaldLion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\JobManagement\JobManager.cpp">
+      <Filter>src\BaldLion\Core\JobManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\JobManagement\ThreadPool.cpp">
+      <Filter>src\BaldLion\Core\JobManagement</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Log.cpp">
       <Filter>src\BaldLion\Core</Filter>
@@ -2651,7 +2660,7 @@
     <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.cpp">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSProjectionCameraSingleton.cpp">
+    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\CameraSystem.cpp">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\ECSManager.cpp">
@@ -2661,6 +2670,9 @@
       <Filter>src\BaldLion\ECS</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.cpp">
+      <Filter>src\BaldLion\ECS\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.cpp">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.cpp">
@@ -3116,7 +3128,8 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\AI\Navigation\NavigationManager.cpp" />
-    <ClCompile Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="C:\Users\Ivan\AppData\Local\Temp\1fdhzcyx.bmp" />
   </ItemGroup>
 </Project>

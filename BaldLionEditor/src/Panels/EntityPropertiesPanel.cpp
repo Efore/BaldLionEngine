@@ -36,15 +36,20 @@ namespace BaldLion {
 
 		}
 
-		void EntityPropertiesPanel::OnImGuiRender()
+		void EntityPropertiesPanel::OnImGuiRender(float deltaTime)
 		{
 			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
 			m_panelID = ImGui::GetCurrentWindow()->ID;
 
+			if (!SceneManagement::SceneManager::GetMainScene())
+			{
+				return;
+			}
+
 			const ECS::ECSEntityID selectedEntityID = m_sceneHierarchyPanel->GetSelectedEntityID();
 
 			ECS::ECSEntity* entity = nullptr;
-			if (m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityMap().TryGet(selectedEntityID, entity)) {
+			if (SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityMap().TryGet(selectedEntityID, entity)) {
 
 				ImGui::SameLine();
 				ImGui::Text(BL_STRINGID_TO_STR_C(entity->GetEntityName()));
@@ -91,7 +96,7 @@ namespace BaldLion {
 					const char* animatorPopup = "Choose Animator";
 					const char* physicsBodyPopup = "Physics Body Shape";
 
-					if (m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityComponents().TryGet(selectedEntityID, selectedEntityComponents)) 
+					if (SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityComponents().TryGet(selectedEntityID, selectedEntityComponents))
 					{
 						for (int i = 0; i < IM_ARRAYSIZE(componentTypeNames); i++)
 						{
@@ -106,7 +111,7 @@ namespace BaldLion {
 
 									case ECS::ECSComponentType::Transform:
 
-										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECS::ECSTransformComponent>(ECSComponentType::Transform,
+										newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSTransformComponent>(ECSComponentType::Transform,
 											MathUtils::Vector3Zero,
 											MathUtils::Vector3Zero,
 											glm::vec3(1.0f));
@@ -115,7 +120,7 @@ namespace BaldLion {
 
 									case ECS::ECSComponentType::ProjectionCamera:
 
-										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECS::ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera,
+										newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera,
 											45.0f,
 											600.0f,
 											480.0f,
@@ -133,7 +138,7 @@ namespace BaldLion {
 
 									case ECS::ECSComponentType::DirectionalLight:
 
-										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECSDirectionalLightComponent>(ECSComponentType::DirectionalLight,
+										newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSDirectionalLightComponent>(ECSComponentType::DirectionalLight,
 											glm::vec3(0.0f),
 											glm::vec3(1.0f),
 											glm::vec3(0.2f),
@@ -144,7 +149,7 @@ namespace BaldLion {
 										break;
 
 									case ECS::ECSComponentType::Locomotion:
-										newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECSLocomotionComponent>(ECSComponentType::Locomotion,
+										newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSLocomotionComponent>(ECSComponentType::Locomotion,
 											0.0f);
 										break;
 
@@ -159,21 +164,21 @@ namespace BaldLion {
 									case ECS::ECSComponentType::NavMeshAgent:
 
 										const ECS::ECSTransformComponent* transformComponent =
-											m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityComponents().Get(selectedEntityID).Read<ECS::ECSTransformComponent>(ECSComponentType::Transform);
+											SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityComponents().Get(selectedEntityID).Read<ECS::ECSTransformComponent>(ECSComponentType::Transform);
 
 										if (transformComponent != nullptr)
 										{
-											newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent,
-												transformComponent->position);
+											newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent,
+												transformComponent->position, 3.5f, 3.5f);
 
 											ECS::ECSLocomotionComponent* locomotionComponent =
-												m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityComponents().Get(selectedEntityID).Write<ECS::ECSLocomotionComponent>(ECSComponentType::Locomotion);
+												SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityComponents().Get(selectedEntityID).Write<ECS::ECSLocomotionComponent>(ECSComponentType::Locomotion);
 
 											if (locomotionComponent == nullptr)
 											{
-												locomotionComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECSLocomotionComponent>(ECSComponentType::Locomotion,
+												locomotionComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSLocomotionComponent>(ECSComponentType::Locomotion,
 													5.0f);
-												m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponentToEntity(selectedEntityID, locomotionComponent);
+												SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddComponentToEntity(selectedEntityID, locomotionComponent);
 											}
 										}
 
@@ -194,23 +199,23 @@ namespace BaldLion {
 						ECSTransformComponent* transform = selectedEntityComponents.Write<ECSTransformComponent>(ECSComponentType::Transform);
 						if (transform == nullptr)
 						{
-							transform = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECS::ECSTransformComponent>(ECSComponentType::Transform,
+							transform = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSTransformComponent>(ECSComponentType::Transform,
 								MathUtils::Vector3Zero,
 								MathUtils::Vector3Zero,
 								glm::vec3(1.0f));
 
-							m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponentToEntity(selectedEntityID, transform);
+							SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddComponentToEntity(selectedEntityID, transform);
 						}
 
 						ECS::ECSSkeletonComponent* skeletonComponent = nullptr;
 						ECS::ECSMeshComponent* meshComponent = nullptr;
-						mesh->GenerateMeshComponent(m_sceneHierarchyPanel->GetSceneContext()->GetECSManager(), true, transform, meshComponent, skeletonComponent);
+						mesh->GenerateMeshComponent(SceneManagement::SceneManager::GetMainScene()->GetECSManager(), true, transform, meshComponent, skeletonComponent);
 
 						newComponent = meshComponent;
 
 						if (skeletonComponent) 
 						{
-							m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponentToEntity(selectedEntityID, skeletonComponent);
+							SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddComponentToEntity(selectedEntityID, skeletonComponent);
 						}
 					}
 
@@ -220,7 +225,7 @@ namespace BaldLion {
 						{
 							if (ImGui::Selectable(BL_STRINGID_TO_STR_C(hashMapIterator.GetValue()->GetResourcePath())))
 							{
-								newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECS::ECSAnimationComponent>(ECSComponentType::Animation,
+								newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSAnimationComponent>(ECSComponentType::Animation,
 									hashMapIterator.GetValue()->GetResourceID(),
 									hashMapIterator.GetValue()->GetInitialAnimationID());
 							}
@@ -238,7 +243,7 @@ namespace BaldLion {
 							{
 								shape = (Physics::PhysicsShape)i;
 
-								newComponent = m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->CreateComponent<ECS::ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody,
+								newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody,
 									shape,
 									Physics::PhysicsBodyType::Static,
 									glm::vec3(1.0f),
@@ -253,7 +258,7 @@ namespace BaldLion {
 
 					if (newComponent) 
 					{
-						m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->AddComponentToEntity(selectedEntityID, newComponent);
+						SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddComponentToEntity(selectedEntityID, newComponent);
 					}
 
 					ImGui::EndPopup();
@@ -267,7 +272,7 @@ namespace BaldLion {
 
 				ECS::ECSComponentLookUp selectedEntityComponents;
 
-				if (m_sceneHierarchyPanel->GetSceneContext()->GetECSManager()->GetEntityComponents().TryGet(selectedEntityID, selectedEntityComponents)) {
+				if (SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityComponents().TryGet(selectedEntityID, selectedEntityComponents)) {
 
 					ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
 					for (ui32 i = 0; i < (ui32)ECS::ECSComponentType::Count; ++i)

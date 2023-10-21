@@ -18,12 +18,12 @@ namespace BaldLion::Physics
 		s_world = s_physicsCommon.createPhysicsWorld();
 	}
 
-	void PhysicsManager::UpdatePhysics()
+	void PhysicsManager::UpdatePhysics(float deltaTime)
 	{		
 		if (!s_physicsActive)
 			return;
 
-		s_accumulatedTime += Time::GetDeltaTime();
+		s_accumulatedTime += deltaTime;
 
 		while (s_accumulatedTime >= s_fixedPhysicsTime)
 		{

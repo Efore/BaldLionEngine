@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaldLion/Events/Event.h"
+#include "BaldLion/Core/Time.h"
 
 namespace BaldLion
 {
@@ -10,11 +11,16 @@ namespace BaldLion
 		GameStateLayer();
 		virtual ~GameStateLayer();
 
-		virtual void OnAttach() {}
-		virtual void OnDetach() {}
+		virtual void OnActivate() {}
+		virtual void OnDeactivate() {}
 		virtual void OnUpdate() {}
+		virtual void OnPause();
+		virtual void OnResume();
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& e) {}
+
+	protected:
+		Timer m_gameStateTimer;
 	};
 }
 

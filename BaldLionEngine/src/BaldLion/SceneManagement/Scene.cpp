@@ -27,6 +27,9 @@ namespace BaldLion {
 		{
 			if (m_ecsManager == nullptr)
 			{
+				ECS::ECSManager::SetComponentIDProvider(0);
+				ECS::ECSManager::SetEntityIDProvider(0);
+
 				m_ecsManager = Memory::MemoryManager::New<ECS::ECSManager>("ECS Manager", Memory::AllocationType::FreeList_ECS);
 
 				{//Systems
@@ -49,10 +52,10 @@ namespace BaldLion {
 			}
 		}
 
-		void Scene::Update()
+		void Scene::Update(float deltaTime)
 		{
 			if (m_ecsManager != nullptr) {
-				m_ecsManager->UpdateSystems();
+				m_ecsManager->UpdateSystems(deltaTime);
 			}
 		}
 

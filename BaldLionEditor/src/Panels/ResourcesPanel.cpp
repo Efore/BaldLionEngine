@@ -10,7 +10,7 @@ namespace BaldLion {
 
 	namespace Editor {
 
-		void ResourcesPanel::OnImGuiRender()
+		void ResourcesPanel::OnImGuiRender(float deltaTime)
 		{
 			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
 			m_panelID = ImGui::GetCurrentWindow()->ID;

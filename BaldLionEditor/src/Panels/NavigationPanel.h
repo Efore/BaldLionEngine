@@ -15,7 +15,7 @@ namespace BaldLion
 			~NavigationPanel();
 
 			void SetNavigationPanel(EditorViewportPanel* editorViewPortPanel);
-			virtual void OnImGuiRender() override;
+			virtual void OnImGuiRender(float deltaTime) override;
 
 		private:
 
@@ -26,7 +26,6 @@ namespace BaldLion
 			void DrawVertices(const dtMeshTile* tile);
 
 			void HandleInput();
-			void CreateAgent(const glm::vec3& pos);
 			void SetAgentsTarget(const glm::vec3& pos);
 			void SetCrowdTargetPosition(const glm::vec3& pos);
 

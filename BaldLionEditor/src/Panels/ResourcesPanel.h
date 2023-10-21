@@ -13,7 +13,7 @@ namespace BaldLion {
 		public:			
 			ResourcesPanel() : EditorPanel("Resources"){}
 
-			virtual void OnImGuiRender() override;
+			virtual void OnImGuiRender(float deltaTime) override;
 
 		private:
 			void AddResource();

@@ -1,78 +1,104 @@
 #include "blpch.h"
 #include "SceneManager.h"
 #include "Serialization/SceneSerializer.h"
+#include "BaldLion/ECS/ComponentsSingleton/CameraSystem.h"
+#include <filesystem>
 
 namespace BaldLion
 {
 	namespace SceneManagement {
-		
-		HashMap<StringId, Scene*> SceneManager::m_activeScenes;
-		Scene* SceneManager::m_mainScene;
+
+		#define LAST_SCENE_PATH "assets/scenes/lastScene.meta"
+
+		HashMap<StringId, Scene*> SceneManager::s_activeScenes;
+		Scene* SceneManager::s_mainScene;		
+
+		std::string SceneManager::s_mainScenePathFile;
 
 		void SceneManager::Init()
 		{
-			m_activeScenes = HashMap<StringId, Scene*>(AllocationType::FreeList_ECS, 10);
+			s_activeScenes = HashMap<StringId, Scene*>(AllocationType::FreeList_ECS, 10);
+
+			std::ifstream lastSceneFile(LAST_SCENE_PATH);			
+			if (lastSceneFile.is_open())
+			{
+				while (getline(lastSceneFile, s_mainScenePathFile));
+				lastSceneFile.close();
+			}
+
+			ECS::SingletonComponents::CameraSystem::Init();
 		}
 
 		void SceneManager::FrameStart()
 		{
-			if (m_mainScene != nullptr)
+			if (s_mainScene != nullptr)
 			{
-				m_mainScene->FrameStart();
+				s_mainScene->FrameStart();
 			}
 		}
 
-		void SceneManager::Update()
+		void SceneManager::Update(float deltaTime)
 		{
 			BL_PROFILE_FUNCTION();
 
-			if (m_mainScene != nullptr)
+			if (s_mainScene != nullptr)
 			{
-				m_mainScene->Update();
+				s_mainScene->Update(deltaTime);
 			}
 		}
 
 		void SceneManager::FrameEnd()
 		{
-			if (m_mainScene != nullptr)
+			if (s_mainScene != nullptr)
 			{
-				m_mainScene->FrameEnd();
+				s_mainScene->FrameEnd();
 			}
 		}
 
 		void SceneManager::Stop()
 		{
-			m_activeScenes.Delete();
+			s_activeScenes.Delete();
+
+			ECS::SingletonComponents::CameraSystem::Stop();
 		}
 
 		void SceneManager::SetMainScene(StringId sceneID)
 		{
 			Scene* result = nullptr;
 
-			if (m_activeScenes.TryGet(sceneID, result))
+			if (s_activeScenes.TryGet(sceneID, result))
 			{
-				m_mainScene = result;
+				s_mainScene = result;
 			}			
 		}
 
 		Scene* SceneManager::GetMainScene()
 		{
-			return m_mainScene;
+			return s_mainScene;
 		}
 
 		ECS::ECSManager* SceneManager::GetECSManager()
 		{
-			return m_mainScene->GetECSManager();
+			return s_mainScene->GetECSManager();
 		}
 
 		void SceneManager::OpenScene(const char* filepath)
 		{
 			SceneSerializer::DeserializeScene(filepath);
+			s_mainScenePathFile = filepath;
 		}
 
 		void SceneManager::SaveScene(const char* filepath)
 		{
-			SceneSerializer::SerializeScene(m_mainScene, filepath);
+			SceneSerializer::SerializeScene(s_mainScene, filepath);
+			s_mainScenePathFile = filepath;
+
+			std::ofstream lastSceneFile(LAST_SCENE_PATH);
+			if (lastSceneFile.is_open())
+			{
+				lastSceneFile << filepath;
+				lastSceneFile.close();
+			}
 		}
 
 		void SceneManager::AddScene(const char* sceneID, bool openAdditive, bool setAsMainScene)
@@ -89,28 +115,29 @@ namespace BaldLion
 
 			if (openAdditive)
 			{
-				if (!m_activeScenes.Contains(sceneid))
+				if (!s_activeScenes.Contains(sceneid))
 				{
-					m_activeScenes.Emplace(sceneid, newScene);
+					s_activeScenes.Emplace(sceneid, newScene);
 				}
 				if (setAsMainScene)
 				{
-					m_mainScene = newScene;
+					s_mainScene = newScene;
 				}
 			}
 			else
 			{
-				if (m_mainScene)
+				if (s_mainScene)
 				{
-					MemoryManager::Delete(m_mainScene);
+					MemoryManager::Delete(s_mainScene);
 				}
-				m_mainScene = newScene;
+				s_mainScene = newScene;
+				ECS::ECSManager::SetComponentIDProvider(0);				
 			}
 		}
 
 		void SceneManager::RemoveActiveScene(StringId sceneID)
 		{
-			m_activeScenes.Remove(sceneID);
+			s_activeScenes.Remove(sceneID);
 		}
 	}
 }

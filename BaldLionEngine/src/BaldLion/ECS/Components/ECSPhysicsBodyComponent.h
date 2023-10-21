@@ -20,7 +20,22 @@ namespace BaldLion {
 			{
 				rigidBody = Physics::PhysicsManager::CreateRigidbody(position, glm::quat(rotation));
 				rigidBody->setMass(initialMass);
-				rigidBody->setType(reactphysics3d::BodyType::STATIC);
+				
+				switch (bodyType)
+				{
+				default:
+					break;
+				case Physics::PhysicsBodyType::Dynamic:
+					rigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
+					break;
+				case Physics::PhysicsBodyType::Static:
+					rigidBody->setType(reactphysics3d::BodyType::STATIC);
+					break;
+				case Physics::PhysicsBodyType::Kinematic:
+					rigidBody->setType(reactphysics3d::BodyType::KINEMATIC);
+					break;
+				}
+
 				collider = Physics::PhysicsManager::CreateCollider(rigidBody, shape, colliderSize, glm::vec3(0.0f), glm::quat(glm::vec3(0.0f)));
 			}
 

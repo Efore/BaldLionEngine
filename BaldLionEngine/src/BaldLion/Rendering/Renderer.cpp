@@ -4,7 +4,7 @@
 #include "BaldLion/Core/JobManagement/JobManager.h"
 #include "BaldLion/Utils/MathUtils.h"
 
-#include "BaldLion/ECS/ComponentsSingleton/ECSProjectionCameraSingleton.h"
+#include "BaldLion/ECS/ComponentsSingleton/CameraSystem.h"
 #include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
 
 #include "BaldLion/ResourceManagement/ResourceManager.h"
@@ -109,8 +109,8 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 			
-			s_sceneData.viewProjectionMatrix = ECS::SingletonComponents::ECSProjectionCameraSingleton::GetMainCameraViewProjectionMatrix();
-			s_sceneData.cameraPosition = ECS::SingletonComponents::ECSProjectionCameraSingleton::GetMainCameraPosition();			
+			s_sceneData.viewProjectionMatrix = ECS::SingletonComponents::CameraSystem::GetMainCameraViewProjectionMatrix();
+			s_sceneData.cameraPosition = ECS::SingletonComponents::CameraSystem::GetMainCameraPosition();			
 
 			s_renderStats.drawCalls = 0;
 			s_renderStats.vertices = 0;		

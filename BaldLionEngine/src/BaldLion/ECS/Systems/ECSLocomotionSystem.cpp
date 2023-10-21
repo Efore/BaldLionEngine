@@ -22,7 +22,7 @@ namespace BaldLion
 
 		}
 
-		void ECSLocomotionSystem::UpdateComponents(ECSComponentLookUp* componentLookUp)
+		void ECSLocomotionSystem::UpdateComponents(ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
 			const ECSLocomotionComponent* locomotionComponent = componentLookUp->Read<ECSLocomotionComponent>(ECSComponentType::Locomotion);
 			ECSTransformComponent* transformComponent = componentLookUp->Write<ECSTransformComponent>(ECSComponentType::Transform);
@@ -35,7 +35,7 @@ namespace BaldLion
 				const glm::vec3 velocity = glm::normalize(locomotionComponent->desiredVelocity);
 				const glm::vec3 forward = glm::normalize(MathUtils::GetTransformForwardDirection(transformMatrix));
 
-				const float angle = glm::orientedAngle(forward, velocity, MathUtils::Vector3UnitY) * glm::clamp(Time::GetDeltaTime() * locomotionComponent->rotationSpeed, 0.0f, 1.0f);
+				const float angle = glm::orientedAngle(forward, velocity, MathUtils::Vector3UnitY) * glm::clamp(deltaTime * locomotionComponent->rotationSpeed, 0.0f, 1.0f);
 
 				const glm::mat4 rotatedMatrix = glm::rotate(transformMatrix, angle, MathUtils::Vector3UnitY);
 				MathUtils::DecomposeTransformMatrix(rotatedMatrix, transformComponent->position, transformComponent->rotation, transformComponent->scale);

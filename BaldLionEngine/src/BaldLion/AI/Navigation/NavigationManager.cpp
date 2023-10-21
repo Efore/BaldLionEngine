@@ -74,7 +74,7 @@ namespace BaldLion::AI::Navigation
 		}
 	}
 
-	void NavigationManager::Update()
+	void NavigationManager::Update(float deltaTime)
 	{
 		if (!s_navigationActive) 
 		{
@@ -83,9 +83,9 @@ namespace BaldLion::AI::Navigation
 
 		JobManagement::Job navigationUpdateJob("Update navigation job", JobManagement::Job::JobType::Navigation);
 
-		navigationUpdateJob.Task = [] {
+		navigationUpdateJob.Task = [deltaTime] {
 			BL_PROFILE_SCOPE("Crowd update",Optick::Category::GameLogic);
-			s_crowd->update(Time::GetDeltaTime(), &s_agentDebug);
+			s_crowd->update(deltaTime, &s_agentDebug);
 		};
 
 		JobManagement::JobManager::QueueJob(navigationUpdateJob);
@@ -135,7 +135,7 @@ namespace BaldLion::AI::Navigation
 		navquery->findNearestPoly((float*)&targetPos, ext, filter, &targetRef, targetPosition);
 
 		const dtCrowdAgent* ag = s_crowd->getAgent(agentIndex);
-		if (!ag->active) return;
+		if (!ag->m_isActive) return;
 
 		s_crowd->requestMoveTarget(agentIndex, targetRef, targetPosition);
 	}
@@ -143,13 +143,21 @@ namespace BaldLion::AI::Navigation
 	void NavigationManager::UpdateCrowdAgent(i32 agentIndex, float maxSpeed, float maxAcceleration)
 	{
 		const dtCrowdAgent* ag = s_crowd->getAgent(agentIndex);
-		if (!ag->active) return;
+		if (!ag->m_isActive) return;
 
 		dtCrowdAgentParams params = ag->params;
 		params.maxSpeed = maxSpeed;
 		params.maxAcceleration = maxAcceleration;
 
 		s_crowd->updateAgentParameters(agentIndex, &params);
+	}
+
+	glm::vec3 NavigationManager::GetCrowdAgentPosition(i32 agentIdx)
+	{
+		const dtCrowdAgent* ag = s_crowd->getAgent(agentIdx);
+		if (!ag->m_isActive) return glm::vec3(0.0f);
+
+		return *(glm::vec3*)ag->npos;
 	}
 
 }

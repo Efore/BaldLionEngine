@@ -217,6 +217,7 @@ namespace BaldLion
 			{
 				LoadMetaFile(metaPaths[i]);
 			}
+		
 		}
 
 		bool ResourceManager::HasMetafile(const Resource* resource)

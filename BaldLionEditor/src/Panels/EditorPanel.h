@@ -15,7 +15,7 @@ namespace BaldLion {
 			}
 
 			virtual ~EditorPanel(){}
-			virtual void OnImGuiRender(){}
+			virtual void OnImGuiRender(float deltaTime){}
 			virtual void OnKeyPressed(int keycode){}
 
 			glm::vec2 GetPanelCoords() 
@@ -37,9 +37,9 @@ namespace BaldLion {
 
 		protected:
 
-			bool m_viewportFocused;
-			StringId m_panelName;
-			ui32 m_panelID;
+			bool m_viewportFocused = false;
+			StringId m_panelName = 0;
+			ui32 m_panelID = 0;
 		};
 	}
 }

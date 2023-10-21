@@ -15,12 +15,12 @@ namespace BaldLion
 			virtual ~ECSSystem();
 
 			virtual void OnStart() = 0;
-			virtual void OnUpdate();
+			virtual void OnUpdate(float deltaTime);
 			virtual void OnStop() = 0;
 			virtual void OnFrameStart();
 			virtual void OnFrameEnd();
 
-			virtual void UpdateComponents(ECSComponentLookUp* componentLookUp) = 0;
+			virtual void UpdateComponents(ECSComponentLookUp* componentLookUp, float deltaTime) = 0;
 
 			void OnEntityModified(ECSSignature entitySignature);					
 

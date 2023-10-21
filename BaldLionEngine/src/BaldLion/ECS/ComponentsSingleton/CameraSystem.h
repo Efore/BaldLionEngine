@@ -10,11 +10,12 @@ namespace BaldLion {
 
 		namespace SingletonComponents {
 
-			class ECSProjectionCameraSingleton {
+			class CameraSystem {
 
 			public:
 
 				static void Init();
+				static void Stop();
 				static void SetMainCamera(ECSProjectionCameraComponent* cameraComponent, ECSTransformComponent* cameraTransform);
 				static void SetCameraSize(float width, float height);
 
@@ -23,7 +24,7 @@ namespace BaldLion {
 				
 				static ECSTransformComponent* GetMainCameraTransform() { return s_mainCameraTransform; }
 
-				static const ECSProjectionCameraComponent* GetMainCamera() { return s_mainCamera; }
+				static ECSProjectionCameraComponent* GetMainCamera() { return s_mainCamera; }
 
 				static bool IsAABBVisible(const GeometryUtils::BoundingBox& aabb);
 				static void UpdateFrustrumPlanes();
@@ -32,6 +33,7 @@ namespace BaldLion {
 				static ECSProjectionCameraComponent* s_mainCamera;
 				static ECSTransformComponent* s_mainCameraTransform;
 				static DynamicArray<glm::vec4> s_frustrumPlanes;
+				static bool s_initialized ;
 			};
 
 		}

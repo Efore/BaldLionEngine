@@ -25,28 +25,30 @@ namespace BaldLion
 
 	void GameStateLayerStack::PushLayer(GameStateLayer * layer)
 	{
+		m_layers[m_layerInsertIndex]->OnDeactivate();
 		m_layers.PushAt(layer, m_layerInsertIndex);
 		++m_layerInsertIndex;
-		layer->OnAttach();
+		layer->OnActivate();
 	}
 
 	void GameStateLayerStack::PushOverlay(GameStateLayer * overlay)
 	{
 		m_layers.PushBack(overlay);
-		overlay->OnAttach();
+		overlay->OnActivate();
 	}
 
 	void GameStateLayerStack::PopLayer(GameStateLayer * layer)
 	{		
+		layer->OnDeactivate();
 		m_layers.RemoveAtFast(m_layerInsertIndex);
 		--m_layerInsertIndex;
-		layer->OnDetach();
+		m_layers[m_layerInsertIndex]->OnActivate();
 	}
 
 	void GameStateLayerStack::PopOverlay(GameStateLayer * overlay)
 	{
 		m_layers.RemoveFast(overlay);
-		overlay->OnDetach();
+		overlay->OnDeactivate();
 	}
 
 	BaldLion::GameStateLayer* GameStateLayerStack::operator[](size_t index)

@@ -135,7 +135,8 @@ namespace BaldLion
 				const glm::mat4 meshTransformMatrix = transformComponent->GetTransformMatrix();
 				BL_DYNAMICARRAY_FOREACH(m_geometryData->vertices)
 				{
-					meshComponent->vertices.EmplaceBack(m_geometryData->vertices[i] * meshTransformMatrix);
+					const Vertex v = m_geometryData->vertices[i];
+					meshComponent->vertices.EmplaceBack(v * meshTransformMatrix);
 				}
 			}
 			else 

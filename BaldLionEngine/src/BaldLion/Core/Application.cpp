@@ -55,7 +55,7 @@ namespace BaldLion
 		Window::Destroy(m_window);
 
 		Rendering::Renderer::Stop();
-		SceneManagement::SceneManager::Stop	();
+		SceneManagement::SceneManager::Stop();
 		Animation::AnimationManager::Stop();
 		Physics::PhysicsManager::Stop();
 
@@ -81,6 +81,18 @@ namespace BaldLion
 		BL_PROFILE_FUNCTION();
 
 		m_layerStack.PushOverlay(overlay);		
+	}
+
+	void Application::PopLayer(GameStateLayer* layer)
+	{
+		BL_PROFILE_FUNCTION();
+		m_layerStack.PopLayer(layer);
+	}
+
+	void Application::PopOverlay(GameStateLayer* overlay)
+	{
+		BL_PROFILE_FUNCTION();
+		m_layerStack.PopOverlay(overlay);
 	}
 
 	void Application::Close()
@@ -111,15 +123,13 @@ namespace BaldLion
 			{
 				{
 					BL_PROFILE_SCOPE("LayerStack OnUpdates", Optick::Category::GameLogic);
-
-					for (ui32 i = 0; i < m_layerStack.Size(); ++i)
-						m_layerStack[i]->OnUpdate();
+					m_layerStack[m_layerStack.Size() - 1]->OnUpdate();
 				}
 
 				m_imGuiLayer->Begin();
 
 				{
-					BL_PROFILE_SCOPE("LayerStack OnUpdates", Optick::Category::Type::GameLogic);
+					BL_PROFILE_SCOPE("LayerStack OnImGuiRender", Optick::Category::Type::GameLogic);
 					for (ui32 i = 0; i < m_layerStack.Size(); ++i)
 						m_layerStack[i]->OnImGuiRender();
 				}

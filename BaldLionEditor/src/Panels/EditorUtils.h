@@ -36,6 +36,7 @@ namespace BaldLion
 							if (ImGui::Selectable(BL_STRINGID_TO_STR_C(hashMapIterator.GetValue()->GetResourceID())))
 							{
 								result = (T*)hashMapIterator.GetValue();
+								ImGui::CloseCurrentPopup();
 							}
 						}
 					}

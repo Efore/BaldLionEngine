@@ -12,7 +12,7 @@ namespace BaldLion
 
 			virtual void OnStart() override {};
 			virtual void OnStop() override {}			
-			virtual void UpdateComponents(ECSComponentLookUp* componentLookUp) override;
+			virtual void UpdateComponents(ECSComponentLookUp* componentLookUp, float deltaTime) override;
 		};
 	}
 }

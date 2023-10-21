@@ -1,14 +1,15 @@
 #include "blpch.h"
 #include "ECSManager.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
+#include "BaldLion/ECS/ComponentsSingleton/CameraSystem.h"
 #include "BaldLion/Utils/MathUtils.h"
 
 namespace BaldLion 
 {
 	namespace ECS {		
 
-		ui32 ECSManager::m_entityIDProvider = 1;
-		ui32 ECSManager::m_componentIDProvider = 1;
+		ui32 ECSManager::s_entityIDProvider = 1;
+		ui32 ECSManager::s_componentIDProvider = 1;
 
 		ECSManager::ECSManager()
 		{
@@ -59,10 +60,7 @@ namespace BaldLion
 			m_componentsPool.EmplaceBack(&m_navMeshAgentComponentPool);
 
 			m_locomotionComponentPool = DynamicArray<ECSLocomotionComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.EmplaceBack(&m_locomotionComponentPool);
-
-			m_entityIDProvider = 1;
-			m_componentIDProvider = 1;
+			m_componentsPool.EmplaceBack(&m_locomotionComponentPool);	
 		}
 
 		ECSManager::~ECSManager()
@@ -96,6 +94,13 @@ namespace BaldLion
 		{
 			ECSEntityID entityID = ECSManager::GetNextEntityID();
 
+			AddEntity(entityName, entityID);
+
+			return entityID;
+		}
+
+		void ECSManager::AddEntity(const char* entityName, ECSEntityID entityID)
+		{
 			m_entities.EmplaceBack(entityName, entityID);
 			m_entitiyMap.Emplace(entityID, &m_entities[m_entities.Size() - 1]);
 
@@ -105,16 +110,14 @@ namespace BaldLion
 			m_entitySignatures.Emplace(entityID, std::move(newSignature));
 
 			ECSComponentLookUp newComponentLookUp;
-			m_entityComponents.Emplace(entityID, std::move(newComponentLookUp));				
+			m_entityComponents.Emplace(entityID, std::move(newComponentLookUp));
 
 			ECSSignature signature = m_entitySignatures.Get(entityID);
 
-			BL_DYNAMICARRAY_FOR(i, m_systems, 0)			
+			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
 			{
 				m_systems[i]->OnEntityModified(signature);
 			}
-
-			return entityID;
 		}
 
 		void ECSManager::RemoveEntity(ECSEntityID entityID)
@@ -403,11 +406,11 @@ namespace BaldLion
 			}
 		}
 
-		void ECSManager::UpdateSystems()
+		void ECSManager::UpdateSystems(float deltaTime)
 		{
 			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
 			{
-				m_systems[i]->OnUpdate();
+				m_systems[i]->OnUpdate(deltaTime);
 			}
 		}
 

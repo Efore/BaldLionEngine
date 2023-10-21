@@ -22,7 +22,7 @@ namespace BaldLion::Physics
 
 	public:
 		static void Init(float fixedPhysicsTime);
-		static void UpdatePhysics();
+		static void UpdatePhysics(float deltaTime);
 		static void Stop();
 
 		static float GetAccumulatedTime() { return s_accumulatedTime; }

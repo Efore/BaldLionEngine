@@ -441,14 +441,14 @@ bool dtCrowd::init(const int maxAgents, const float maxAgentRadius, dtNavMesh* n
 	for (int i = 0; i < m_maxAgents; ++i)
 	{
 		new(&m_agents[i]) dtCrowdAgent();
-		m_agents[i].active = false;
+		m_agents[i].m_isActive = false;
 		if (!m_agents[i].corridor.init(m_maxPathResult))
 			return false;
 	}
 
 	for (int i = 0; i < m_maxAgents; ++i)
 	{
-		m_agentAnims[i].active = false;
+		m_agentAnims[i].m_isActive = false;
 	}
 
 	// The navquery is mostly used for local searches, no need for large node pool.
@@ -514,7 +514,7 @@ int dtCrowd::addAgent(const float* pos, const dtCrowdAgentParams* params)
 	int idx = -1;
 	for (int i = 0; i < m_maxAgents; ++i)
 	{
-		if (!m_agents[i].active)
+		if (!m_agents[i].m_isActive)
 		{
 			idx = i;
 			break;
@@ -560,7 +560,7 @@ int dtCrowd::addAgent(const float* pos, const dtCrowdAgentParams* params)
 	
 	ag->targetState = DT_CROWDAGENT_TARGET_NONE;
 	
-	ag->active = true;
+	ag->m_isActive = true;
 
 	return idx;
 }
@@ -573,7 +573,7 @@ void dtCrowd::removeAgent(const int idx)
 {
 	if (idx >= 0 && idx < m_maxAgents)
 	{
-		m_agents[idx].active = false;
+		m_agents[idx].m_isActive = false;
 	}
 }
 
@@ -666,7 +666,7 @@ int dtCrowd::getActiveAgents(dtCrowdAgent** agents, const int maxAgents)
 	int n = 0;
 	for (int i = 0; i < m_maxAgents; ++i)
 	{
-		if (!m_agents[i].active) continue;
+		if (!m_agents[i].m_isActive) continue;
 		if (n < maxAgents)
 			agents[n++] = &m_agents[i];
 	}
@@ -684,7 +684,7 @@ void dtCrowd::updateMoveRequest(const float /*dt*/)
 	for (int i = 0; i < m_maxAgents; ++i)
 	{
 		dtCrowdAgent* ag = &m_agents[i];
-		if (!ag->active)
+		if (!ag->m_isActive)
 			continue;
 		if (ag->state == DT_CROWDAGENT_STATE_INVALID)
 			continue;
@@ -787,7 +787,7 @@ void dtCrowd::updateMoveRequest(const float /*dt*/)
 	for (int i = 0; i < m_maxAgents; ++i)
 	{
 		dtCrowdAgent* ag = &m_agents[i];
-		if (!ag->active)
+		if (!ag->m_isActive)
 			continue;
 		if (ag->targetState == DT_CROWDAGENT_TARGET_NONE || ag->targetState == DT_CROWDAGENT_TARGET_VELOCITY)
 			continue;
@@ -1159,7 +1159,7 @@ void dtCrowd::update(const float dt, dtCrowdAgentDebugInfo* debug)
 			{
 				dtVcopy(anim->initPos, ag->npos);
 				anim->polyRef = refs[1];
-				anim->active = true;
+				anim->m_isActive = true;
 				anim->t = 0.0f;
 				anim->tmax = (dtVdist2D(anim->startPos, anim->endPos) / ag->params.maxSpeed) * 0.5f;
 				
@@ -1411,7 +1411,7 @@ void dtCrowd::update(const float dt, dtCrowdAgentDebugInfo* debug)
 	for (int i = 0; i < m_maxAgents; ++i)
 	{
 		dtCrowdAgentAnimation* anim = &m_agentAnims[i];
-		if (!anim->active)
+		if (!anim->m_isActive)
 			continue;
 		dtCrowdAgent* ag = agents[i];
 
@@ -1419,7 +1419,7 @@ void dtCrowd::update(const float dt, dtCrowdAgentDebugInfo* debug)
 		if (anim->t > anim->tmax)
 		{
 			// Reset animation
-			anim->active = false;
+			anim->m_isActive = false;
 			// Prepare agent for walking.
 			ag->state = DT_CROWDAGENT_STATE_WALKING;
 			continue;

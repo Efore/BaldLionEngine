@@ -12,7 +12,7 @@ namespace BaldLion
 
 			~BaldLionEditorApp()
 			{
-				m_layerStack.PopOverlay(m_baldLionEditorLayer);				
+				m_layerStack.PopLayer(m_baldLionEditorLayer);				
 			}
 
 			static Application& GetInstance(const std::string& applicationName)

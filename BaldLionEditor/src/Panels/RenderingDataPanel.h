@@ -9,7 +9,7 @@ namespace BaldLion {
 
 		public:
 			RenderingDataPanel() : EditorPanel("Rendering Data"){}
-			virtual void OnImGuiRender() override;
+			virtual void OnImGuiRender(float deltaTime) override;
 		};
 	}
 }

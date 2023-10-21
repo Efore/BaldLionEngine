@@ -10,7 +10,7 @@ namespace BaldLion {
 
 		public:	
 			MemoryAllocationPanel() : EditorPanel("Memory") {}
-			virtual void OnImGuiRender() override;						
+			virtual void OnImGuiRender(float deltaTime) override;
 		};
 	}
 }
