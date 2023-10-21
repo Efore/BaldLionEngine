@@ -3,6 +3,7 @@
 bin-int/
 bin/
 BaldLionEditor/assets/gameAssets/
+BaldLionGame/assets/gameAssets/
 
 # Files
 *.user
