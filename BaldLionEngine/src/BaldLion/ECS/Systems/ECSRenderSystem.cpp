@@ -20,7 +20,7 @@ namespace BaldLion {
 			ECSSystem::OnUpdate(deltaTime);
 		}
 
-		void ECSRenderSystem::UpdateComponents(ECSComponentLookUp* componentLookUp, float deltaTime)
+		void ECSRenderSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
 			BL_PROFILE_FUNCTION();
 

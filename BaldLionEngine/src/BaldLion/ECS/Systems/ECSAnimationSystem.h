@@ -16,7 +16,7 @@ namespace BaldLion {
 				ECSSystem(systemName, signature, ecsManager, true, true) {}
 
 			virtual void OnStart() override {}
-			virtual void UpdateComponents(ECSComponentLookUp* componentLookUp, float deltaTime) override;
+			virtual void UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime) override;
 			virtual void OnStop() override {}
 	
 		private: 

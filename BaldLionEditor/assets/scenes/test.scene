@@ -1,9 +1,9 @@
-EntityIDProvider: 21
+EntityIDProvider: 5
 SceneID: test
 SceneName: test
 Entities:
   - EntityName: Directional Light
-    EntityID: 16
+    EntityID: 0
     EntityIsStatic: false
     Components:
       - ComponentType: 4
@@ -23,17 +23,17 @@ Entities:
     ChildEntities:
       []
   - EntityName: assets\editorAssets\meshes\cubeMesh.mesh
-    EntityID: 17
+    EntityID: 1
     EntityIsStatic: true
     Components:
       - ComponentType: 0
-        PositionX: 0
+        PositionX: -2.64648676
         PositionY: 0
         PositionZ: 0
         RotationX: 0
         RotationY: 0
-        RotationZ: 0
-        ScaleX: 10
+        RotationZ: -0.33158648
+        ScaleX: 9.99999714
         ScaleY: 1
         ScaleZ: 10
       - ComponentType: 2
@@ -45,30 +45,30 @@ Entities:
         PhyisicsColliderSizeY: 1
         PhyisicsColliderSizeZ: 1
         PhyisicsBodyType: 1
-        PhyisicsBodyPositionX: 0
+        PhyisicsBodyPositionX: -2.64648676
         PhyisicsBodyPositionY: 0
         PhyisicsBodyPositionZ: 0
         PhyisicsBodyRotationX: 0
-        PhyisicsBodyRotationY: -0
-        PhyisicsBodyRotationZ: 0
+        PhyisicsBodyRotationY: 0
+        PhyisicsBodyRotationZ: -0.331586391
         PhyisicsMass: 1
     ParentEntityID: 0
     ChildEntities:
       []
   - EntityName: assets\editorAssets\meshes\cubeMesh.mesh
-    EntityID: 18
+    EntityID: 2
     EntityIsStatic: true
     Components:
       - ComponentType: 0
-        PositionX: 2.50682211
-        PositionY: 2.964252
+        PositionX: 8.88461304
+        PositionY: -6.47569227
         PositionZ: 0
         RotationX: 0
         RotationY: 0
-        RotationZ: 0.319395244
-        ScaleX: 4.5999999
+        RotationZ: 0.346541107
+        ScaleX: 10.0000038
         ScaleY: 1
-        ScaleZ: 6.0999999
+        ScaleZ: 10
       - ComponentType: 2
         MeshResourceID: 653619090
         MeshIsStatic: true
@@ -78,23 +78,23 @@ Entities:
         PhyisicsColliderSizeY: 1
         PhyisicsColliderSizeZ: 1
         PhyisicsBodyType: 1
-        PhyisicsBodyPositionX: 2.50682211
-        PhyisicsBodyPositionY: 2.964252
+        PhyisicsBodyPositionX: 8.88461304
+        PhyisicsBodyPositionY: -6.47569227
         PhyisicsBodyPositionZ: 0
         PhyisicsBodyRotationX: 0
         PhyisicsBodyRotationY: -0
-        PhyisicsBodyRotationZ: 0.319395244
+        PhyisicsBodyRotationZ: 0.346541107
         PhyisicsMass: 1
     ParentEntityID: 0
     ChildEntities:
       []
   - EntityName: assets\editorAssets\meshes\sphereMesh.mesh
-    EntityID: 19
+    EntityID: 3
     EntityIsStatic: false
     Components:
       - ComponentType: 0
-        PositionX: 2.141119
-        PositionY: 7.54666471
+        PositionX: 0
+        PositionY: 4.52321911
         PositionZ: 0
         RotationX: 0
         RotationY: 0
@@ -111,8 +111,8 @@ Entities:
         PhyisicsColliderSizeY: 1
         PhyisicsColliderSizeZ: 1
         PhyisicsBodyType: 0
-        PhyisicsBodyPositionX: 2.141119
-        PhyisicsBodyPositionY: 7.54666471
+        PhyisicsBodyPositionX: 0
+        PhyisicsBodyPositionY: 4.52321911
         PhyisicsBodyPositionZ: 0
         PhyisicsBodyRotationX: 0
         PhyisicsBodyRotationY: -0
@@ -122,13 +122,13 @@ Entities:
     ChildEntities:
       []
   - EntityName: Camera
-    EntityID: 20
+    EntityID: 4
     EntityIsStatic: false
     Components:
       - ComponentType: 0
         PositionX: 0
-        PositionY: 3.89731836
-        PositionZ: 20.1769371
+        PositionY: -2.38905811
+        PositionZ: 33.187191
         RotationX: 0
         RotationY: 0
         RotationZ: 0

@@ -24,50 +24,56 @@ namespace BaldLion
 				bool modified = false;
 				static glm::mat4 matTransformBeforeChange;
 
-				glm::vec3 newPosition = componentTransform->position;	
-				if (EditorUtils::DrawVec3Handler("World Position", newPosition, 0.0f, 110.0f))
 				{
-					if(glm::any(glm::epsilonNotEqual(newPosition, componentTransform->position, glm::epsilon<float>())) && !positionEdited)
-					{ 
-						matTransformBeforeChange = componentTransform->GetTransformMatrix();
-						positionEdited = true;
+					glm::vec3 newPosition = componentTransform->position;
+					if (EditorUtils::DrawVec3Handler("World Position", newPosition, 0.0f, 110.0f))
+					{
+						if (glm::any(glm::epsilonNotEqual(newPosition, componentTransform->position, glm::epsilon<float>())) && !positionEdited)
+						{
+							matTransformBeforeChange = componentTransform->GetTransformMatrix();
+							positionEdited = true;
+						}
 					}
+					else if (positionEdited)
+					{
+						modified = true;
+					}
+					componentTransform->position = newPosition;
 				}
-				else if (positionEdited)
-				{
-					modified = true;
-				}
-				componentTransform->position = newPosition;
 				
-				glm::vec3 newRotation = glm::degrees(componentTransform->rotation);
-				if (EditorUtils::DrawVec3Handler("World Rotation", newRotation, 0.0f, 110.0f))
 				{
-					if (glm::any(glm::epsilonNotEqual(newRotation, componentTransform->rotation, glm::epsilon<float>())) && !rotationEdited)
+					glm::vec3 newRotation = glm::degrees(componentTransform->rotation);
+					if (EditorUtils::DrawVec3Handler("World Rotation", newRotation, 0.0f, 110.0f))
 					{
-						matTransformBeforeChange = componentTransform->GetTransformMatrix();
-						rotationEdited = true;
+						if (glm::any(glm::epsilonNotEqual(newRotation, componentTransform->rotation, glm::epsilon<float>())) && !rotationEdited)
+						{
+							matTransformBeforeChange = componentTransform->GetTransformMatrix();
+							rotationEdited = true;
+						}
 					}
+					else if (rotationEdited)
+					{
+						modified = true;
+					}
+					componentTransform->rotation = glm::radians(newRotation);
 				}
-				else if (rotationEdited)
-				{
-					modified = true;
-				}
-				componentTransform->rotation = glm::radians(newRotation);
 
-				glm::vec3 newScale = componentTransform->scale;
-				if (EditorUtils::DrawVec3Handler("World Scale", newScale, 1.0f, 110.0f))
-				{	
-					if (glm::any(glm::epsilonNotEqual(newScale, componentTransform->scale, glm::epsilon<float>())) && !scaleEdited)
-					{
-						matTransformBeforeChange = componentTransform->GetTransformMatrix();
-						scaleEdited = true;
-					}
-				}
-				else if (scaleEdited)
 				{
-					modified = true;
+					glm::vec3 newScale = componentTransform->scale;
+					if (EditorUtils::DrawVec3Handler("World Scale", newScale, 1.0f, 110.0f))
+					{
+						if (glm::any(glm::epsilonNotEqual(newScale, componentTransform->scale, glm::epsilon<float>())) && !scaleEdited)
+						{
+							matTransformBeforeChange = componentTransform->GetTransformMatrix();
+							scaleEdited = true;
+						}
+					}
+					else if (scaleEdited)
+					{
+						modified = true;
+					}
+					componentTransform->scale = newScale;
 				}
-				componentTransform->scale = newScale;
 
 				ECS::ECSEntity* entity = SceneManager::GetECSManager()->GetEntityMap().Get(sceneHierarchyPanel->GetSelectedEntityID());
 

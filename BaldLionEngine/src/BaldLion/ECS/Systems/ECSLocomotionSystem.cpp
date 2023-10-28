@@ -1,6 +1,7 @@
 #include "blpch.h"
 #include "ECSLocomotionSystem.h"
 
+#include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/Components/ECSLocomotionComponent.h"
 #include "BaldLion/ECS/Components/ECSTransformComponent.h"
 #include "BaldLion/ECS/Components/ECSAnimationComponent.h"
@@ -22,7 +23,7 @@ namespace BaldLion
 
 		}
 
-		void ECSLocomotionSystem::UpdateComponents(ECSComponentLookUp* componentLookUp, float deltaTime)
+		void ECSLocomotionSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
 			const ECSLocomotionComponent* locomotionComponent = componentLookUp->Read<ECSLocomotionComponent>(ECSComponentType::Locomotion);
 			ECSTransformComponent* transformComponent = componentLookUp->Write<ECSTransformComponent>(ECSComponentType::Transform);
@@ -49,7 +50,9 @@ namespace BaldLion
 				{
 					parameter->Value.floating = glm::length(locomotionComponent->currentVelocity);
 				}
-			}
+			}		
+
+			m_ecsManager->MarkEntityAsChangedInHierarchy(entityID);
 		}
 	}
 }

@@ -220,6 +220,8 @@ namespace BaldLion
 
 					ImGui::EndMenu();
 				}
+
+				ImGui::EndMenuBar();
 			}
 
 			ImGui::End();
@@ -343,6 +345,7 @@ namespace BaldLion
 
 		void BaldLionEditorLayer::StartGame()
 		{
+			SaveScene();
 			Application::GetInstance("").PushLayer(m_baldLionGameLayer);
 		}
 

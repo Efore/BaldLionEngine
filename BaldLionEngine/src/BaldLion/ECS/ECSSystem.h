@@ -20,13 +20,14 @@ namespace BaldLion
 			virtual void OnFrameStart();
 			virtual void OnFrameEnd();
 
-			virtual void UpdateComponents(ECSComponentLookUp* componentLookUp, float deltaTime) = 0;
+			virtual void UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime) = 0;
 
 			void OnEntityModified(ECSSignature entitySignature);					
 
 		protected:
 
-			ECSSignature m_signature;
+			ECSSignature m_signature;			
+			DynamicArray<ECSEntityID> m_entityIDs;
 			DynamicArray<ECSComponentLookUp*> m_componentLookUps;
 
 			class ECSManager* m_ecsManager;

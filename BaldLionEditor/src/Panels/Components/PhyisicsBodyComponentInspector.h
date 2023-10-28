@@ -67,12 +67,11 @@ namespace BaldLion
 					if (!Physics::PhysicsManager::GetIsPhysicsActive())
 					{
 						EditorUtils::DrawVec3Handler("Box Size", componentPhysicsBody->unscaledColliderSize, 1.0f, 110.0f);
-						boxSize = componentPhysicsBody->unscaledColliderSize;						
-
-						((reactphysics3d::BoxShape*)componentPhysicsBody->collider->getCollisionShape())->setHalfExtents(Physics::FromGlmVec3(boxSize * 0.5f));						
 					}
 
-					Rendering::Renderer::DrawDebugBox(glm::vec3(0.0f), boxSize, transformComponent->GetTransformMatrix(), MathUtils::Vector3UnitY);
+					boxSize = componentPhysicsBody->unscaledColliderSize * transformComponent->scale;				
+
+					Rendering::Renderer::DrawDebugBox(glm::vec3(0.0f), componentPhysicsBody->unscaledColliderSize, transformComponent->GetTransformMatrix(), MathUtils::Vector3UnitY);
 
 					break;
 
@@ -83,10 +82,9 @@ namespace BaldLion
 					if (!Physics::PhysicsManager::GetIsPhysicsActive())
 					{
 						BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Sphere Radius", &componentPhysicsBody->unscaledColliderSize.x);
-						radius = componentPhysicsBody->unscaledColliderSize.x * transformComponent->scale.x;
-						((reactphysics3d::SphereShape*)componentPhysicsBody->collider->getCollisionShape())->setRadius(radius);
 					}
 
+					radius = componentPhysicsBody->unscaledColliderSize.x * transformComponent->scale.x;
 					Rendering::Renderer::DrawDebugSphere(transformComponent->position, radius, MathUtils::Vector3UnitY);
 
 					break;
@@ -100,13 +98,10 @@ namespace BaldLion
 					{
 						BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Capsule Radius", &componentPhysicsBody->unscaledColliderSize.x);
 						BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Capsule Height", &componentPhysicsBody->unscaledColliderSize.y);
-
-						radius = componentPhysicsBody->unscaledColliderSize.x * transformComponent->scale.x;
-						height = componentPhysicsBody->unscaledColliderSize.y * transformComponent->scale.y;
-
-						((reactphysics3d::CapsuleShape*)componentPhysicsBody->collider->getCollisionShape())->setRadius(radius);
-						((reactphysics3d::CapsuleShape*)componentPhysicsBody->collider->getCollisionShape())->setHeight(height);						
 					}
+
+					radius = componentPhysicsBody->unscaledColliderSize.x * transformComponent->scale.x;
+					height = componentPhysicsBody->unscaledColliderSize.y * transformComponent->scale.y;			
 
 					Rendering::Renderer::DrawDebugCapsule(transformComponent->position, transformComponent->GetTransformMatrix(), radius, height, MathUtils::Vector3UnitY);
 

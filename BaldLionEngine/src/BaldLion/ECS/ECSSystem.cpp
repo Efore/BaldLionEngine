@@ -16,7 +16,9 @@ namespace BaldLion {
 			m_waitForUpdatesOperationsToFinish(waitForUpdateOperationsToFinish),
 			m_refreshComponentLookUps(false)
 		{
+
 			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_ECS, 100);
+			m_entityIDs = DynamicArray<ECSEntityID>(AllocationType::FreeList_ECS, 100);
 			
 			BL_HASHMAP_FOR(m_ecsManager->GetEntitySignatures(), iterator)
 			{
@@ -24,6 +26,7 @@ namespace BaldLion {
 				{
 					ECSComponentLookUp* componentLookUp = &(m_ecsManager->GetEntityComponents().Get(iterator.GetKey()));
 					m_componentLookUps.PushBack(componentLookUp); 
+					m_entityIDs.PushBack(iterator.GetKey());
 				}
 			}
 		}
@@ -43,6 +46,7 @@ namespace BaldLion {
 			BL_DYNAMICARRAY_FOR(i, m_componentLookUps, 0)
 			{
 				ECSComponentLookUp* componentLookUp = m_componentLookUps[i];
+				const ECSEntityID entityID = m_entityIDs[i];
 
 				if (m_parallelize)
 				{
@@ -50,16 +54,16 @@ namespace BaldLion {
 
 					JobManagement::Job systemUpdateJob(systemOperation.c_str(), JobManagement::Job::JobType::ECS);
 
-					systemUpdateJob.Task = [this, componentLookUp, deltaTime] {
+					systemUpdateJob.Task = [this, entityID, componentLookUp, deltaTime] {
 
-						this->UpdateComponents(componentLookUp, deltaTime);
+						this->UpdateComponents(entityID, componentLookUp, deltaTime);
 					};
 
 					JobManagement::JobManager::QueueJob(systemUpdateJob);
 				}
 				else 
 				{
-					this->UpdateComponents(componentLookUp, deltaTime);
+					this->UpdateComponents(entityID, componentLookUp, deltaTime);
 				}
 			}
 
@@ -83,6 +87,7 @@ namespace BaldLion {
 					{
 						ECSComponentLookUp* componentLookUp = &(m_ecsManager->GetEntityComponents().Get(iterator.GetKey()));
 						m_componentLookUps.PushBack(componentLookUp);
+						m_entityIDs.PushBack(iterator.GetKey());
 					}
 				}
 

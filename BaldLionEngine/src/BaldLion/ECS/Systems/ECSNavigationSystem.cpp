@@ -25,7 +25,7 @@ namespace BaldLion
 			ECSSystem::OnUpdate(deltaTime);
 		}
 
-		void ECSNavigationSystem::UpdateComponents(ECSComponentLookUp* componentLookUp, float deltaTime)
+		void ECSNavigationSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
 			ECSLocomotionComponent* locomotionComponent = componentLookUp->Write<ECSLocomotionComponent>(ECSComponentType::Locomotion);
 			const ECSNavMeshAgentComponent* navMeshAgent = componentLookUp->Read<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent);
