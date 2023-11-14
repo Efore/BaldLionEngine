@@ -11,3 +11,4 @@ BaldLionGame/assets/gameAssets/
 BaldLionEditor/BaldLionProfile-Startup.json
 BaldLionEditor/BaldLionProfile-Shutdown.json
 BaldLionEditor/BaldLionProfile-Runtime.json
+*.meta
