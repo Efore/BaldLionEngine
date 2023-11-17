@@ -36,7 +36,7 @@ namespace BaldLion
 
 					if (showAABB)
 					{						
-						const BoundingBox meshAABB = meshComponent->isStatic ? meshComponent->localBoundingBox : GeometryUtils::GetAABB(meshComponent->localBoundingBox, meshTransformMatrix);
+						const BoundingBox meshAABB = GeometryUtils::GetAABB(meshComponent->localBoundingBox, meshTransformMatrix);
 						Renderer::DrawDebugBox(meshAABB.center, meshAABB.maxPoint - meshAABB.minPoint, glm::mat4(1.0f), glm::vec3(0.3f, 1.0f, 0.3f));					
 					}
 

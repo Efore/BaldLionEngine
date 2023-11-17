@@ -9,3 +9,4 @@
 #include "BaldLion/ECS/Components/ECSPhysicsBodyComponent.h"
 #include "BaldLion/ECS/Components/ECSNavMeshAgentComponent.h"
 #include "BaldLion/ECS/Components/ECSLocomotionComponent.h"
+#include "BaldLion/ECS/Components/ECSCameraFollowComponent.h"

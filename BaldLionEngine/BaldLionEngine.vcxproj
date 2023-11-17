@@ -188,6 +188,7 @@
     <ClInclude Include="src\BaldLion\Core\Time.h" />
     <ClInclude Include="src\BaldLion\Core\Window.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSAnimationComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSCameraFollowComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSDirectionalLightComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSHierarchyComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSLocomotionComponent.h" />
@@ -208,6 +209,7 @@
     <ClInclude Include="src\BaldLion\ECS\ECSSystemsInclude.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSUtils.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSCameraFollowSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.h" />
@@ -945,6 +947,7 @@
     <ClCompile Include="src\BaldLion\ECS\ECSManager.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ECSSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSCameraFollowSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.cpp" />

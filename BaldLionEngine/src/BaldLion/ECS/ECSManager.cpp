@@ -61,6 +61,9 @@ namespace BaldLion
 
 			m_locomotionComponentPool = DynamicArray<ECSLocomotionComponent>(AllocationType::FreeList_ECS, 40);
 			m_componentsPool.EmplaceBack(&m_locomotionComponentPool);	
+
+			m_cameraFollowComponentPool = DynamicArray<ECSCameraFollowComponent>(AllocationType::FreeList_ECS, 40);
+			m_componentsPool.EmplaceBack(&m_cameraFollowComponentPool);
 		}
 
 		ECSManager::~ECSManager()
@@ -86,6 +89,7 @@ namespace BaldLion
 			CleanComponentPool<ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);
 			CleanComponentPool<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent);
 			CleanComponentPool<ECSLocomotionComponent>(ECSComponentType::Locomotion);
+			CleanComponentPool<ECSLocomotionComponent>(ECSComponentType::CameraFollow);
 
 			m_componentsPool.Delete();
 		}
@@ -333,23 +337,6 @@ namespace BaldLion
 
 					m_cachedEntityHierarchy[i].parentWorldTransform = newParentWorldTransform;
 					m_cachedEntityHierarchy[i].hasChanged = true;
-
-					//Mesh update
-					{
-						ECS::ECSMeshComponent* meshComponent = m_entityComponents.Get(m_cachedEntityHierarchy[i].entityID).Write<ECS::ECSMeshComponent>(ECSComponentType::Mesh);
-
-						//Static meshes need to update their vertices
-						if (meshComponent != nullptr && meshComponent->isStatic)
-						{
-							BL_DYNAMICARRAY_FOREACH(meshComponent->vertices)
-							{
-								meshComponent->vertices[i] = meshComponent->vertices[i] * glm::inverse(transformMatrix);
-								meshComponent->vertices[i] = meshComponent->vertices[i] * transformComponent->GetTransformMatrix();
-							}
-						}
-
-						meshComponent->UpdateLocalBoundingBox();
-					}
 				}
 			}
 

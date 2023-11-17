@@ -90,47 +90,14 @@ namespace BaldLion
 					EditorUtils::DrawVec3Handler("Local Position", localPosition, 0.0f, 110.0f, false);
 					EditorUtils::DrawVec3Handler("Local Rotation", (glm::vec3&)glm::degrees(localRotation), 0.0f, 110.0f, false);
 					EditorUtils::DrawVec3Handler("Local Scale", localScale, 0.0f, 110.0f, false);
-				}
+				}				
 
-				//Static mesh update				
-				if (entity->GetIsStatic())
-				{
-					if (modified)
-					{
-						ECS::ECSMeshComponent* entityMeshComponent = SceneManager::GetECSManager()->GetEntityComponents().Get(entity->GetEntityID()).Write< ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh);
-						positionEdited = false;
-						rotationEdited = false;
-						scaleEdited = false;
-						modified = false;
+				positionEdited = false;
+				rotationEdited = false;
+				scaleEdited = false;
+				modified = false;
 
-						if (entityMeshComponent != nullptr)
-						{
-							const glm::mat4 currentMatrixTransform = componentTransform->GetTransformMatrix();
-
-							BL_DYNAMICARRAY_FOR(i, entityMeshComponent->vertices, 0)
-							{
-								//Returning  vertices to original values
-								entityMeshComponent->vertices[i] = entityMeshComponent->vertices[i] * glm::inverse(matTransformBeforeChange);
-
-								//New values
-								entityMeshComponent->vertices[i] = entityMeshComponent->vertices[i] * currentMatrixTransform;
-							}
-
-							entityMeshComponent->UpdateLocalBoundingBox();
-						}
-
-						SceneManager::GetECSManager()->MarkEntityAsChangedInHierarchy(entity->GetEntityID());
-					}
-				}
-				else {
-
-					positionEdited = false;
-					rotationEdited = false;
-					scaleEdited = false;
-					modified = false;
-
-					SceneManager::GetECSManager()->MarkEntityAsChangedInHierarchy(entity->GetEntityID());
-				}
+				SceneManager::GetECSManager()->MarkEntityAsChangedInHierarchy(entity->GetEntityID());				
 
 				ComponentInspector::EndComponentRender();
 			}

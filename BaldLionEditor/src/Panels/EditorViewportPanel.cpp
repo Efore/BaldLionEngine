@@ -117,37 +117,11 @@ namespace BaldLion {
 						entityTransformComponent->position = translation;
 						entityTransformComponent->rotation += deltaRotation;
 						entityTransformComponent->scale = scale;	
-
-						if (!entity->GetIsStatic())
-						{
-							m_isManipulatingGizmo = false;
-							SceneManager::GetECSManager()->MarkEntityAsChangedInHierarchy(selectedEntityID);
-						}
-					}	
-					else if (entity->GetIsStatic() && m_isManipulatingGizmo)
-					{
-						ECS::ECSMeshComponent* entityMeshComponent = SceneManager::GetECSManager()->GetEntityComponents().Get(entity->GetEntityID()).Write< ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh);
-
+						
 						m_isManipulatingGizmo = false;
-								
-						if (entityMeshComponent != nullptr)
-						{
-							const glm::mat4 newMatrixAfterManipulation = entityTransformComponent->GetTransformMatrix();
-
-							BL_DYNAMICARRAY_FOR(i, entityMeshComponent->vertices, 0)
-							{
-								//Returning  vertices to original values
-								entityMeshComponent->vertices[i] = entityMeshComponent->vertices[i] * glm::inverse(m_staticSelectedLastTransform);
-
-								//New values
-								entityMeshComponent->vertices[i] = entityMeshComponent->vertices[i] * newMatrixAfterManipulation;
-							}
-
-							entityMeshComponent->UpdateLocalBoundingBox();
-						}
-
-						SceneManager::GetECSManager()->MarkEntityAsChangedInHierarchy(selectedEntityID);							
-					}					
+						SceneManager::GetECSManager()->MarkEntityAsChangedInHierarchy(selectedEntityID);						
+					}
+										
 				}
 			}	
 			else 

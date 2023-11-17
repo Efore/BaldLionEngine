@@ -137,6 +137,7 @@
     <ClInclude Include="src\BaldLionEditorLayer.h" />
     <ClInclude Include="src\Panels\AnimatorPanel.h" />
     <ClInclude Include="src\Panels\Components\AnimationComponentInspector.h" />
+    <ClInclude Include="src\Panels\Components\CameraFollowComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\ComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\DirectionalLightComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\LocomotionComponentInspector.h" />

@@ -27,14 +27,19 @@ namespace BaldLion
 			);
 		}
 
-		static glm::vec3 GetTransformForwardDirection(const glm::mat4& transformMatrix) {
-
-			return glm::vec3(transformMatrix[2][0], transformMatrix[2][1], transformMatrix[2][2]);
-		}
-
 		static glm::vec3 GetTransformRightDirection(const glm::mat4& transformMatrix) {
 
 			return glm::vec3(transformMatrix[0][0], transformMatrix[0][1], transformMatrix[0][2]);
+		}
+
+		static glm::vec3 GetTransformUpDirection(const glm::mat4& transformMatrix) {
+
+			return glm::vec3(transformMatrix[1][0], transformMatrix[1][1], transformMatrix[1][2]);
+		}
+
+		static glm::vec3 GetTransformForwardDirection(const glm::mat4& transformMatrix) {
+
+			return glm::vec3(transformMatrix[2][0], transformMatrix[2][1], transformMatrix[2][2]);
 		}
 
 		static bool DecomposeTransformMatrix(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale) {

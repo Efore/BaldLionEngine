@@ -67,12 +67,9 @@ namespace BaldLion
 			static void Draw(const VertexArray* vertexArray, Shader* shader, bool receiveShadows, const glm::mat4& transform = glm::mat4(1.0f));	
 
 			inline static RendererPlatformInterface::RendererPlatform GetAPI() { return RendererPlatformInterface::GetAPI(); }
-
-			static void AddStaticMeshToBatch(Material* material, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices);
-			static void AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
+			
+			static void AddMeshToDraw(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
 			static void AddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
-
-			static void RegisterMaterial(Material* material);
 
 			static void DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::mat4& transformMatrix, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebugCircle(const glm::vec3& center, const glm::vec3& normal, float radius, ui32 numSteps, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
@@ -87,8 +84,7 @@ namespace BaldLion
 		private:
 			
 			static void DrawShadowMap();
-			static void DrawDynamicMeshes();
-			static void DrawBatchedMeshes();
+			static void DrawMeshes();
 			static void DrawDebugCommands();		
 
 		private:
@@ -100,10 +96,7 @@ namespace BaldLion
 			static class DebugDrawRenderInterface* s_debugDrawRender;
 
 			static DynamicArray<RenderMeshData> s_shadowCastingMeshes;
-			static DynamicArray<RenderMeshData> s_dynamicMeshes;
-			static HashTable<Material*, GeometryData*> s_geometryToBatch;
-
-			static DynamicArray<VertexArray*> s_disposableVertexArrays;
+			static DynamicArray<RenderMeshData> s_meshesToDraw;
 
 			static Framebuffer* s_framebuffer;
 			static Framebuffer* s_shadowFramebuffer;

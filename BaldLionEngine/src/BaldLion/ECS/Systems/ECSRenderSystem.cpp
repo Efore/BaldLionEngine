@@ -25,29 +25,21 @@ namespace BaldLion {
 			BL_PROFILE_FUNCTION();
 
 			const ECSTransformComponent* meshTransform = componentLookUp->Read<ECSTransformComponent>(ECSComponentType::Transform);
-			const ECSMeshComponent* meshComponent = componentLookUp->Read<ECSMeshComponent>(ECSComponentType::Mesh);			
+			ECSMeshComponent* meshComponent = componentLookUp->Write<ECSMeshComponent>(ECSComponentType::Mesh);			
 			const ECSSkeletonComponent* skeletonComponent = componentLookUp->Read<ECSSkeletonComponent>(ECSComponentType::Skeleton);
 
 			if (meshComponent->indices.Size() == 0)
 				return;
 
-			const glm::mat4 meshTransformMatrix = meshTransform->GetTransformMatrix();
+			const glm::mat4 meshTransformMatrix = meshTransform->GetTransformMatrix();		
 			
-			if (meshComponent->isStatic)
-			{	
-				if (ECS::SingletonComponents::CameraSystem::IsAABBVisible(meshComponent->localBoundingBox))
-				{					
-					Renderer::AddStaticMeshToBatch(meshComponent->material, meshComponent->vertices, meshComponent->indices);					
-				}
-			}	
-			else
+			const BoundingBox meshAABB = GeometryUtils::GetAABB(meshComponent->localBoundingBox, meshTransformMatrix);
+			meshComponent->isVisible = ECS::SingletonComponents::CameraSystem::IsAABBVisible(meshAABB);
+			if (meshComponent->isVisible)
 			{
-				const BoundingBox meshAABB = GeometryUtils::GetAABB(meshComponent->localBoundingBox, meshTransformMatrix);
-				if (ECS::SingletonComponents::CameraSystem::IsAABBVisible(meshAABB))
-				{					
-					Renderer::AddDynamicMesh(meshComponent, meshTransform, skeletonComponent);
-				}
+				Renderer::AddMeshToDraw(meshComponent, meshTransform, skeletonComponent);
 			}
+			
 
 			//if (meshComponent->material->GetCastShadows())
 			//{	

@@ -125,23 +125,34 @@ namespace BaldLion
 			meshComponent->material = m_material;
 			meshComponent->indices = DynamicArray<ui32>(AllocationType::FreeList_ECS, m_geometryData->indices);
 			meshComponent->meshResourceID = m_resourceID;
+			
+			meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices);			
+			meshComponent->vertexArray = VertexArray::Create();
 
-			Renderer::RegisterMaterial(m_material);
+			IndexBuffer* indexBuffer = IndexBuffer::Create(meshComponent->indices.Data(), meshComponent->indices.Size());
+			VertexBuffer* vertexBuffer = VertexBuffer::Create(meshComponent->vertices.Data(), (ui32)(meshComponent->vertices.Size() * sizeof(Vertex)));
 
-			if (isStatic)
-			{	
-				meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices.Size());
+			vertexBuffer->SetLayout({
+				{ ShaderDataType::Float3, "vertex_position"},
+				{ ShaderDataType::Float3, "vertex_normal"},
+				{ ShaderDataType::Float3, "vertex_tangent"},
+				{ ShaderDataType::Float2, "vertex_texcoord"}
+				});
 
-				const glm::mat4 meshTransformMatrix = transformComponent->GetTransformMatrix();
-				BL_DYNAMICARRAY_FOREACH(m_geometryData->vertices)
-				{
-					const Vertex v = m_geometryData->vertices[i];
-					meshComponent->vertices.EmplaceBack(v * meshTransformMatrix);
-				}
-			}
-			else 
+			meshComponent->vertexArray->AddIndexBuffer(indexBuffer);
+			meshComponent->vertexArray->AddVertexBuffer(vertexBuffer);
+
+			if (m_skeleton != nullptr)
 			{
-				meshComponent->vertices = DynamicArray<Vertex>(AllocationType::FreeList_ECS, m_geometryData->vertices);
+				VertexBuffer* boneDataVertexBuffer = VertexBuffer::Create(skeletonComponent->boneData[0].GetFirstElement(),
+					(ui32)(skeletonComponent->boneData.Size() * sizeof(VertexBone)));
+
+				boneDataVertexBuffer->SetLayout({
+					{ ShaderDataType::Int3,		"vertex_joint_ids" },
+					{ ShaderDataType::Float3,	"vertex_joint_weights" }
+					});
+
+				meshComponent->vertexArray->AddVertexBuffer(boneDataVertexBuffer);
 			}
 
 			glm::vec3 minPointInLocalSpace = meshComponent->vertices[0].position;

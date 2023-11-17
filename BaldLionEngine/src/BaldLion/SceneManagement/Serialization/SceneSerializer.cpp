@@ -64,6 +64,12 @@ using namespace BaldLion::ECS;
 #define YAML_KEY_NAVMESHAGENT_MAX_SPEED		"NavMeshAgentMaxSpeed"
 #define YAML_KEY_NAVMESHAGENT_MAX_ACC		"NavMeshAgentMaxAcc"
 
+//Camera Follow
+#define YAML_KEY_CAMERAFOLLOW_ENTITY_ID		"CameraFollowEntityID"
+#define YAML_KEY_CAMERAFOLLOW_XYOFFSET		"CameraFollowXYOffset"
+#define YAML_KEY_CAMERAFOLLOW_ZOFFSET		"CameraFollowZOffset"
+#define YAML_KEY_CAMERAFOLLOW_ROTSPEED		"CameraFollowRotationSpeed"
+
 //Hierarchy
 #define YAML_KEY_PARENTID			"ParentEntityID"
 #define YAML_KEY_CHILDENTITIES		"ChildEntities"
@@ -303,6 +309,17 @@ namespace BaldLion
 			}
 			break;
 
+			case ECS::ECSComponentType::CameraFollow:
+			{
+				ECSCameraFollowComponent* cameraFollowComponent = (ECSCameraFollowComponent*)component;
+
+				out << YAML::Key << YAML_KEY_CAMERAFOLLOW_ENTITY_ID << YAML::Value << cameraFollowComponent->followedEntityID;
+				SerializeVec2(out, YAML_KEY_CAMERAFOLLOW_XYOFFSET, cameraFollowComponent->offsetXY);
+				out << YAML::Key << YAML_KEY_CAMERAFOLLOW_ZOFFSET << YAML::Value << cameraFollowComponent->offsetZ;
+				out << YAML::Key << YAML_KEY_CAMERAFOLLOW_ROTSPEED << YAML::Value << cameraFollowComponent->rotationSpeed;
+			}
+			break;
+
 			}
 			out << YAML::EndMap;
 		}
@@ -440,6 +457,21 @@ namespace BaldLion
 					maxAcc);
 				break;
 			}
+			case BaldLion::ECS::ECSComponentType::CameraFollow:
+			{
+				ECS::ECSEntityID entityID = yamlComponent[YAML_KEY_CAMERAFOLLOW_ENTITY_ID].as<ui32>();
+				float rotSpeed = yamlComponent[YAML_KEY_CAMERAFOLLOW_ROTSPEED].as<float>();
+				glm::vec2 offsetXY = DeserializeVec2(yamlComponent, YAML_KEY_CAMERAFOLLOW_XYOFFSET);
+				float offsetZ = yamlComponent[YAML_KEY_CAMERAFOLLOW_ZOFFSET].as<float>();
+
+				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSCameraFollowComponent>(
+					ECS::ECSComponentType::CameraFollow,
+					entityID,
+					offsetXY,
+					offsetZ,
+					rotSpeed);
+			}
+			break;
 			default:
 				break;
 			}
@@ -461,6 +493,20 @@ namespace BaldLion
 			float z = node[key + "Z"].as<float>();
 
 			return glm::vec3(x, y, z);
+		}
+
+		void SceneSerializer::SerializeVec2(YAML::Emitter& out, const std::string& key, const glm::vec2& vec)
+		{
+			out << YAML::Key << (key + "X") << YAML::Value << vec.x;
+			out << YAML::Key << (key + "Y") << YAML::Value << vec.y;			
+		}
+
+		glm::vec2 SceneSerializer::DeserializeVec2(const YAML::Node& node, const std::string& key)
+		{
+			float x = node[key + "X"].as<float>();
+			float y = node[key + "Y"].as<float>();
+
+			return glm::vec2(x, y);
 		}
 
 		void SceneSerializer::SerializeQuat(YAML::Emitter &out, const std::string& key, const glm::quat& quat)

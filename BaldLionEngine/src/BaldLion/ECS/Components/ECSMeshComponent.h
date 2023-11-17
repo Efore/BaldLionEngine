@@ -2,6 +2,7 @@
 #include "BaldLion/ECS/ECSComponent.h"
 #include "BaldLion/Rendering/VertexArray.h"
 #include "BaldLion/Rendering/Material.h"
+#include "BaldLion/Rendering/Buffer.h"
 #include "BaldLion/Utils/GeometryUtils.h"
 
 using namespace BaldLion::Rendering;
@@ -25,32 +26,11 @@ namespace BaldLion {
 			~ECSMeshComponent() {
 				vertices.Delete();
 				indices.Delete();
-			}
 
-			void UpdateLocalBoundingBox() {
-
-				if (vertices.Size() == 0)
-					return;
-
-				glm::vec3 minPointInLocalSpace = vertices[0].position;
-				glm::vec3 maxPointInLocalSpace = vertices[0].position;
-
+				if (vertexArray != nullptr)
 				{
-					BL_DYNAMICARRAY_FOREACH(vertices)
-					{
-						const glm::vec3 vertexPosInWorldSpace = vertices[i].position;
-
-						if (vertexPosInWorldSpace.x > maxPointInLocalSpace.x)	maxPointInLocalSpace.x = vertexPosInWorldSpace.x;
-						if (vertexPosInWorldSpace.y > maxPointInLocalSpace.y)	maxPointInLocalSpace.y = vertexPosInWorldSpace.y;
-						if (vertexPosInWorldSpace.z > maxPointInLocalSpace.z)	maxPointInLocalSpace.z = vertexPosInWorldSpace.z;
-
-						if (vertexPosInWorldSpace.x < minPointInLocalSpace.x)	minPointInLocalSpace.x = vertexPosInWorldSpace.x;
-						if (vertexPosInWorldSpace.y < minPointInLocalSpace.y)	minPointInLocalSpace.y = vertexPosInWorldSpace.y;
-						if (vertexPosInWorldSpace.z < minPointInLocalSpace.z)	minPointInLocalSpace.z = vertexPosInWorldSpace.z;
-					}
+					VertexArray::Destroy(vertexArray);
 				}
-
-				localBoundingBox = { minPointInLocalSpace , maxPointInLocalSpace, ((maxPointInLocalSpace + minPointInLocalSpace) * 0.5f) };
 			}
 			
 		public:
@@ -59,8 +39,10 @@ namespace BaldLion {
 			DynamicArray<ui32> indices;
 			BoundingBox localBoundingBox;
 			Material* material;
+			VertexArray* vertexArray;
 			ui32 meshResourceID;
 			bool isStatic;
+			bool isVisible;
 		};
 
 	}

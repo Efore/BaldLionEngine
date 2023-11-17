@@ -4,6 +4,7 @@
 
 #include "Components/TransformComponentInspector.h"
 #include "Components/DirectionalLightComponentInspector.h"
+#include "Components/CameraFollowComponentInspector.h"
 #include "Components/ProjectionCameraComponentInspector.h"
 #include "Components/AnimationComponentInspector.h"
 #include "Components/MeshComponentInspector.h"
@@ -95,6 +96,7 @@ namespace BaldLion {
 					const char* meshPopup = "Choose Mesh";
 					const char* animatorPopup = "Choose Animator";
 					const char* physicsBodyPopup = "Physics Body Shape";
+					const char* followedEntityPopup = "Choose Followed Entity";
 
 					if (SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityComponents().TryGet(selectedEntityID, selectedEntityComponents))
 					{
@@ -162,7 +164,7 @@ namespace BaldLion {
 										break;
 
 									case ECS::ECSComponentType::NavMeshAgent:
-
+									{
 										const ECS::ECSTransformComponent* transformComponent =
 											SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityComponents().Get(selectedEntityID).Read<ECS::ECSTransformComponent>(ECSComponentType::Transform);
 
@@ -181,9 +183,13 @@ namespace BaldLion {
 												SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddComponentToEntity(selectedEntityID, locomotionComponent);
 											}
 										}
-
+									}
 										break;
-									
+
+									case ECS::ECSComponentType::CameraFollow:
+										ImGui::OpenPopup(followedEntityPopup);
+										break;
+										
 									}
 
 									break;
@@ -253,6 +259,24 @@ namespace BaldLion {
 							}
 						}
 						
+						ImGui::EndPopup();
+					}
+
+					if (ImGui::BeginPopupModal(followedEntityPopup, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+					{
+						BL_DYNAMICARRAY_FOR(i, SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntities(), 0)
+						{
+							StringId entityName = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntities()[i].GetEntityName();
+							if (ImGui::Selectable(BL_STRINGID_TO_STR_C(entityName)))
+							{
+								newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSCameraFollowComponent>(ECSComponentType::CameraFollow,
+									SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntities()[i].GetEntityID(),
+									glm::vec2(0.0f),
+									0.0f,
+									5.0f);
+							}							
+						}
+
 						ImGui::EndPopup();
 					}
 
@@ -335,6 +359,9 @@ namespace BaldLion {
 				case ECS::ECSComponentType::NavMeshAgent:
 					NavMeshAgentComponentInspector::OnImGuiRender(component, m_sceneHierarchyPanel);
 					break;
+
+				case ECS::ECSComponentType::CameraFollow:
+					CameraFollowInspector::OnImGuiRender(component, m_sceneHierarchyPanel);
 				
 				default:
 					break;

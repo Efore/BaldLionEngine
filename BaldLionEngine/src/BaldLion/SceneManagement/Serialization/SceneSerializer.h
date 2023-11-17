@@ -24,6 +24,9 @@ namespace BaldLion
 			static void SerializeVec3(YAML::Emitter &out, const std::string& key, const glm::vec3& vec);
 			static glm::vec3 DeserializeVec3(const YAML::Node& node, const std::string& key);
 
+			static void SerializeVec2(YAML::Emitter& out, const std::string& key, const glm::vec2& vec);
+			static glm::vec2 DeserializeVec2(const YAML::Node& node, const std::string& key);
+
 			static void SerializeQuat(YAML::Emitter &out, const std::string& key, const glm::quat& quat);
 			static glm::quat DeserializeQuat(const YAML::Node& node, const std::string& key);
 

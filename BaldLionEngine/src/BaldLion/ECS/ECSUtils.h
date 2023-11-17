@@ -18,6 +18,7 @@ namespace BaldLion
 			PhysicsBody,
 			NavMeshAgent,
 			Locomotion,
+			CameraFollow,
 
 			Count
 		};

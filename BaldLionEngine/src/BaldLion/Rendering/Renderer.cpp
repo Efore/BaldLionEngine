@@ -23,11 +23,8 @@ namespace BaldLion
 		
 		DebugDrawRenderInterface* Renderer::s_debugDrawRender;
 
-		HashTable<Material*, GeometryData*> Renderer::s_geometryToBatch;
-
 		DynamicArray<RenderMeshData> Renderer::s_shadowCastingMeshes;
-		DynamicArray<RenderMeshData> Renderer::s_dynamicMeshes;
-		DynamicArray<VertexArray*> Renderer::s_disposableVertexArrays;
+		DynamicArray<RenderMeshData> Renderer::s_meshesToDraw;
 
 		Framebuffer* Renderer::s_framebuffer;
 
@@ -76,10 +73,8 @@ namespace BaldLion
 
 			s_depthMapSkinnedShader = ResourceManagement::ResourceManager::AddResource<Shader>("assets/editorAssets/shaders/depthMapSkinned.glsl", ResourceManagement::ResourceType::Shader);
 
-			s_dynamicMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
+			s_meshesToDraw = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
 			s_shadowCastingMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
-			s_disposableVertexArrays = DynamicArray<VertexArray*>(AllocationType::FreeList_Renderer, 100);
-			s_geometryToBatch = HashTable<Material*, GeometryData*>(AllocationType::FreeList_Renderer, 100);		
 
 			s_debugDrawRender = DebugDrawRenderProvider::Create();
 			s_debugDrawRender->Init();
@@ -126,8 +121,7 @@ namespace BaldLion
 			s_framebuffer->Bind();
 			s_rendererPlatformInterface->SetClearColor({ 0.3f, 0.3f, 0.8f, 1.0f });
 
-			DrawBatchedMeshes();
-			DrawDynamicMeshes();
+			DrawMeshes();
 			s_skyboxPlatformInterface->Draw();
 
 			DrawDebugCommands();
@@ -136,20 +130,9 @@ namespace BaldLion
 		void Renderer::EndScene()
 		{
 			BL_PROFILE_FUNCTION();
-			BL_DYNAMICARRAY_FOR(i, s_disposableVertexArrays, 0)			
-			{
-				VertexArray::Destroy(s_disposableVertexArrays[i]);
-			}
 
-			s_disposableVertexArrays.Clear();
-
-			s_dynamicMeshes.Clear();
+			s_meshesToDraw.Clear();
 			s_shadowCastingMeshes.Clear();			
-
-			BL_HASHTABLE_FOR(s_geometryToBatch, it)
-			{
-				it.GetValue()->ClearGeometryData();
-			}
 
 			s_framebuffer->Unbind();
 		}
@@ -264,91 +247,35 @@ namespace BaldLion
 				}
 
 				s_renderStats.drawCalls++;
-				s_disposableVertexArrays.PushBack(vertexArray);
 			}
 
 			s_rendererPlatformInterface->SetFaceCulling(RendererPlatformInterface::FaceCulling::Back);
 			s_shadowFramebuffer->Unbind();		
 		}
 
-		void Renderer::DrawDynamicMeshes()
+		void Renderer::DrawMeshes()
 		{
 			BL_PROFILE_FUNCTION();
 
-			BL_DYNAMICARRAY_FOR(i, s_dynamicMeshes, 0)			
-			{
-				VertexArray* vertexArray = VertexArray::Create();
+			BL_DYNAMICARRAY_FOR(i, s_meshesToDraw, 0)			
+			{		
+				s_meshesToDraw[i].meshComponent->material->Bind();
 
-				IndexBuffer* indexBuffer = IndexBuffer::Create(&s_dynamicMeshes[i].meshComponent->indices[0], s_dynamicMeshes[i].meshComponent->indices.Size());
-				VertexBuffer* vertexBuffer = VertexBuffer::Create(s_dynamicMeshes[i].meshComponent->vertices[0].GetFirstElement(), (ui32)(s_dynamicMeshes[i].meshComponent->vertices.Size() * sizeof(Vertex)));
+				if (s_meshesToDraw[i].skeletonComponent != nullptr) {
 
-				vertexBuffer->SetLayout({
-					{ ShaderDataType::Float3, "vertex_position"},					
-					{ ShaderDataType::Float3, "vertex_normal"},
-					{ ShaderDataType::Float3, "vertex_tangent"},
-					{ ShaderDataType::Float2, "vertex_texcoord"}
-					});
-
-				vertexArray->AddIndexBuffer(indexBuffer);
-				vertexArray->AddVertexBuffer(vertexBuffer);
-
-				if (s_dynamicMeshes[i].skeletonComponent != nullptr)
-				{
-					VertexBuffer* boneDataVertexBuffer = VertexBuffer::Create(s_dynamicMeshes[i].skeletonComponent->boneData[0].GetFirstElement(),
-						(ui32)(s_dynamicMeshes[i].skeletonComponent->boneData.Size() * sizeof(VertexBone)));
-
-					boneDataVertexBuffer->SetLayout({
-						{ ShaderDataType::Int3,		"vertex_joint_ids" },
-						{ ShaderDataType::Float3,	"vertex_joint_weights" }
-						});
-
-					vertexArray->AddVertexBuffer(boneDataVertexBuffer);
-				}
-
-				s_dynamicMeshes[i].meshComponent->material->Bind();
-
-				if (s_dynamicMeshes[i].skeletonComponent != nullptr) {
-
-					const Animation::AnimationJoint* joints = (s_dynamicMeshes[i].skeletonComponent->joints);
+					const Animation::AnimationJoint* joints = (s_meshesToDraw[i].skeletonComponent->joints);
 
 					for (ui32 j = 0; j < (ui32)JointType::Count; ++j)
 					{
-						s_dynamicMeshes[i].meshComponent->material->GetShader()->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &(joints[j].jointModelSpaceTransform));
+						s_meshesToDraw[i].meshComponent->material->GetShader()->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &(joints[j].jointModelSpaceTransform));
 					}
 				}					
 				
-				Draw(vertexArray, s_dynamicMeshes[i].meshComponent->material->GetShader(), s_dynamicMeshes[i].meshComponent->material->GetReceiveShadows(), s_dynamicMeshes[i].transformMatrix);
+				Draw(s_meshesToDraw[i].meshComponent->vertexArray, s_meshesToDraw[i].meshComponent->material->GetShader(), s_meshesToDraw[i].meshComponent->material->GetReceiveShadows(), s_meshesToDraw[i].transformMatrix);
 
-				s_dynamicMeshes[i].meshComponent->material->Unbind();
-
-				s_disposableVertexArrays.PushBack(vertexArray);
+				s_meshesToDraw[i].meshComponent->material->Unbind();
 			}
-		}
-
-		void Renderer::DrawBatchedMeshes()
-		{
-			BL_PROFILE_FUNCTION();
-
-			if (s_geometryToBatch.Size() > 0)
-			{
-				//Draw batches
-				BL_HASHTABLE_FOR(s_geometryToBatch, iterator)
-				{
-					if(iterator.GetValue()->vertices.Size() == 0)
-						continue;
-
-					VertexArray* vertexArray = iterator.GetValue()->vertexArray;
-					vertexArray->GetIndexBuffer()->SetBufferData(&iterator.GetValue()->indices[0], (ui32)iterator.GetValue()->indices.Size());
-					vertexArray->GetVertexBuffers()[0]->SetBufferData(iterator.GetValue()->vertices[0].GetFirstElement(), (ui32)(iterator.GetValue()->vertices.Size() * sizeof(Vertex)));
-
-					const Material* mat = iterator.GetKey();
-
-					mat->Bind();
-					Draw(vertexArray, mat->GetShader(), mat->GetReceiveShadows());
-					mat->Unbind();
-				}
-			}
-		}
+		}		
 
 		void Renderer::DrawDebugCommands()
 		{
@@ -356,62 +283,10 @@ namespace BaldLion
 			dd::flush((int)Time::GetCurrentTimeInMilliseconds());
 		}
 
-		void Renderer::AddDynamicMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
+		void Renderer::AddMeshToDraw(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
 		{
 			BL_PROFILE_FUNCTION();
-			const std::lock_guard<std::mutex> lock(s_addDynamicMeshMutex);
-			s_dynamicMeshes.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
-		}
-
-		void Renderer::AddStaticMeshToBatch(Material* material, const DynamicArray<Vertex>& vertices, const DynamicArray<ui32>& indices)
-		{
-			BL_PROFILE_FUNCTION();	
-
-			const ui32 numVertices = vertices.Size();
-
-			if (numVertices == 0)
-				return;
-
-			const ui32 numIndices = indices.Size();
-
-			GeometryData* batch = nullptr;			
-
-			if (s_geometryToBatch.TryGet(material, batch))
-			{
-				BL_PROFILE_SCOPE("Emplace vertices and indices", Optick::Category::Rendering);
-				
-				ui32 startVerticesIndex = 0;
-				ui32 startIndicesIndex = 0;
-
-				{
-					const std::lock_guard<std::mutex> lock(batch->geometryDataMutex);
-
-					//mutex
-					startVerticesIndex = batch->verticesCurrentIndex;
-					batch->verticesCurrentIndex += numVertices;					
-					if (batch->verticesCurrentIndex > batch->vertices.Capacity())
-					{
-						batch->vertices.Reallocate(batch->verticesCurrentIndex * 2);						
-					}
-					batch->vertices.SetSize(batch->verticesCurrentIndex);
-
-
-					startIndicesIndex = batch->indicesCurrentIndex;
-					batch->indicesCurrentIndex += numIndices;
-					if (batch->indicesCurrentIndex > batch->indices.Capacity())
-					{
-						batch->indices.Reallocate(batch->indicesCurrentIndex * 2);						
-					}
-					batch->indices.SetSize(batch->indicesCurrentIndex);
-				}
-
-				memcpy(&(batch->vertices.Data()[startVerticesIndex]), vertices.Data(), numVertices * sizeof(Vertex));
-				
-				for (ui32 i = 0; i < numIndices; ++i)
-				{
-					batch->indices.Data()[startIndicesIndex + i] = indices[i] + startVerticesIndex;
-				}
-			}
+			s_meshesToDraw.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
 		}
 
 		void Renderer::AddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
@@ -424,38 +299,6 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 			s_shadowCastingMeshes.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
 		}	
-
-		void Renderer::RegisterMaterial(Material* material)
-		{
-			GeometryData* batch = nullptr;
-
-			if (!s_geometryToBatch.TryGet(material, batch))
-			{
-				BL_PROFILE_SCOPE("Try get batch", Optick::Category::Rendering);
-				batch = MemoryManager::New<GeometryData>("Batch", AllocationType::FreeList_Renderer);
-				batch->vertices = DynamicArray<Vertex>(AllocationType::FreeList_Renderer, 100);
-				batch->indices = DynamicArray<ui32>(AllocationType::FreeList_Renderer, 150);
-				batch->verticesCurrentIndex = 0;
-				batch->indicesCurrentIndex = 0;
-
-				batch->vertexArray = VertexArray::Create();
-
-				IndexBuffer* indexBuffer = IndexBuffer::Create(batch->indices.Data(), batch->indices.Size());
-				VertexBuffer* vertexBuffer = VertexBuffer::Create(batch->vertices.Data(), (ui32)(batch->vertices.Size() * sizeof(Vertex)));
-
-				vertexBuffer->SetLayout({
-					{ ShaderDataType::Float3, "vertex_position"},
-					{ ShaderDataType::Float3, "vertex_normal"},
-					{ ShaderDataType::Float3, "vertex_tangent"},
-					{ ShaderDataType::Float2, "vertex_texcoord"}
-					});
-
-				batch->vertexArray->AddIndexBuffer(indexBuffer);
-				batch->vertexArray->AddVertexBuffer(vertexBuffer);
-
-				s_geometryToBatch.Emplace(material, std::move(batch));
-			}
-		}
 		
 		void Renderer::DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::mat4& transformMatrix, const glm::vec3& color, int durationMs, bool depthEnabled /*= true*/)
 		{			
