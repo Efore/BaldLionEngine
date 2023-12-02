@@ -45,7 +45,7 @@
 #include "BaldLion/ECS/ECSSystemsInclude.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
 #include "BaldLion/ECS/ComponentsSingleton/CameraSystem.h"
-#include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
+#include "BaldLion/ECS/ComponentsSingleton/LightningSystem.h"
 
 #include "BaldLion/SceneManagement/SceneManager.h"
 

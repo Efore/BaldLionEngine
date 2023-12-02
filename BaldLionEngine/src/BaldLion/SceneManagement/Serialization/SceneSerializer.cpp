@@ -3,13 +3,14 @@
 
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
-#include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
+#include "BaldLion/ECS/ComponentsSingleton/LightningSystem.h"
 #include "BaldLion/SceneManagement/SceneManager.h"
 #include "BaldLion/ResourceManagement/ResourceManager.h"
 #include "BaldLion/Rendering/Mesh.h"
 #include "BaldLion/Animation/Skeleton.h"
 #include "BaldLion/Animation/AnimationManager.h"
 #include "BaldLion/AI/Navigation/NavigationManager.h"
+#include "BaldLion/Utils/MathUtils.h"
 
 using namespace BaldLion::ECS;
 
@@ -405,7 +406,7 @@ namespace BaldLion
 					specularColor,
 					direction);
 
-				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight((ECS::ECSDirectionalLightComponent*)component);
+				ECS::SingletonComponents::LightningSystem::SetDirectionalLight((ECS::ECSDirectionalLightComponent*)component);
 			}
 				break;
 
@@ -459,16 +460,25 @@ namespace BaldLion
 			}
 			case BaldLion::ECS::ECSComponentType::CameraFollow:
 			{
-				ECS::ECSEntityID entityID = yamlComponent[YAML_KEY_CAMERAFOLLOW_ENTITY_ID].as<ui32>();
+				ECS::ECSEntityID followedEntityID = yamlComponent[YAML_KEY_CAMERAFOLLOW_ENTITY_ID].as<ui32>();
 				float rotSpeed = yamlComponent[YAML_KEY_CAMERAFOLLOW_ROTSPEED].as<float>();
 				glm::vec2 offsetXY = DeserializeVec2(yamlComponent, YAML_KEY_CAMERAFOLLOW_XYOFFSET);
 				float offsetZ = yamlComponent[YAML_KEY_CAMERAFOLLOW_ZOFFSET].as<float>();
+				
+				ECSTransformComponent* transform = SceneManagement::SceneManager::GetECSManager()->GetEntityComponents().Get(entityID).Write<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
+				const ECSTransformComponent* followedEntityTransform = SceneManagement::SceneManager::GetECSManager()->GetEntityComponents().Get(followedEntityID).Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
 
+				const glm::vec3 followedEntityDirection = glm::normalize(MathUtils::GetTransformForwardDirection(followedEntityTransform->GetTransformMatrix()));
+				const glm::vec3 cameraPosition = followedEntityTransform->position - (followedEntityDirection * 5.0f);
+
+				transform->position = cameraPosition;
+				transform->rotation = followedEntityTransform->rotation;
+				
 				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSCameraFollowComponent>(
 					ECS::ECSComponentType::CameraFollow,
-					entityID,
+					followedEntityID,
 					offsetXY,
-					offsetZ,
+					offsetZ,				
 					rotSpeed);
 			}
 			break;

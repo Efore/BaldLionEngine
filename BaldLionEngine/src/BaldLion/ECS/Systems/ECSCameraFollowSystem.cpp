@@ -30,46 +30,63 @@ namespace BaldLion
 			ECSTransformComponent* cameraTransformComponent = componentLookUp->Write<ECSTransformComponent>(ECSComponentType::Transform);
 
 			if (cameraFollowComponent->followedEntityID > 0)
-			{
+			{				
+				CalculateInputRotation(cameraFollowComponent, deltaTime);
+
+				const ECSTransformComponent* followedEntityTransform = m_ecsManager->GetEntityComponents().Get(cameraFollowComponent->followedEntityID).Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
 				const glm::mat4 cameraTransformMatrix = cameraTransformComponent->GetTransformMatrix();
+				const glm::mat4 followedEntityTransformMatrix = followedEntityTransform->GetTransformMatrix();
 
-				const ECSTransformComponent* followedEntityTransform = SceneManagement::SceneManager::GetECSManager()->GetEntityComponents().Get(cameraFollowComponent->followedEntityID).Read<ECSTransformComponent>(ECSComponentType::Transform);
+				const glm::vec4 cameraCenterPosition = followedEntityTransformMatrix * glm::vec4(cameraFollowComponent->offsetXY, 0.0f,1.0f);
 				
-				const glm::vec3 cameraCenterPosition = followedEntityTransform->position + glm::vec3(cameraFollowComponent->offsetXY,0.0f);
-				glm::vec3 cameraDirection = glm::normalize(MathUtils::GetTransformForwardDirection(cameraTransformMatrix));
+				const glm::vec4 initialCameraPosition = cameraCenterPosition - glm::vec4((MathUtils::GetTransformForwardDirection(followedEntityTransformMatrix) * cameraFollowComponent->offsetZ),1.0f);
+				glm::vec4 stepArcBallPosition = initialCameraPosition;
 
-				cameraTransformComponent->position = cameraCenterPosition - (cameraDirection * cameraFollowComponent->offsetZ);
+				//Rotate the camera around the pivot point on the first axis.
+				glm::mat4x4 rotationMatrixX(1.0f);
+				rotationMatrixX = glm::rotate(rotationMatrixX, cameraFollowComponent->cameraYaw, MathUtils::Vector3UnitY);
+				stepArcBallPosition = (rotationMatrixX * (initialCameraPosition - cameraCenterPosition)) + cameraCenterPosition;
 
-				glm::vec3 directionToCameraCenter = glm::normalize(cameraCenterPosition - cameraTransformComponent->position);
+				//Rotate the camera around the pivot point on the second axis.
+				glm::mat4x4 rotationMatrixY(1.0f);
+				rotationMatrixY = glm::rotate(rotationMatrixY, cameraFollowComponent->cameraPitch, MathUtils::GetTransformRightDirection(cameraTransformMatrix));
+				stepArcBallPosition = (rotationMatrixY * (stepArcBallPosition - cameraCenterPosition)) + cameraCenterPosition;
 
-				float angle = glm::orientedAngle(cameraDirection, directionToCameraCenter, MathUtils::Vector3UnitY);
-				glm::mat4 rotatedMatrix = glm::rotate(cameraTransformMatrix, angle, MathUtils::Vector3UnitY);
-				
-				MathUtils::DecomposeTransformMatrix(rotatedMatrix, cameraTransformComponent->position, cameraTransformComponent->rotation, cameraTransformComponent->scale);
+				cameraTransformComponent->position = stepArcBallPosition;
 
-				const float difX = BaldLion::Input::GetMouseX() - cameraFollowComponent->prevX;
-				const float difY = BaldLion::Input::GetMouseY() - cameraFollowComponent->prevY;
-				const float directionX = difX == 0 ? 0.0f : difX > 0.0f ? 1.0f : -1.0f;
-				const float directionY = difY == 0 ? 0.0f : difY > 0.0f ? 1.0f : -1.0f;
+				glm::vec3 directionToFollowedPosition = glm::normalize(glm::vec3(cameraCenterPosition) - cameraTransformComponent->position);
+				const glm::quat lookAtQuat = glm::quatLookAt(directionToFollowedPosition, MathUtils::Vector3UnitY);
 
-				cameraFollowComponent->prevX = BaldLion::Input::GetMouseX();
-				cameraFollowComponent->prevY = BaldLion::Input::GetMouseY();
-
-				glm::vec3 cameraOrbitation = glm::normalize(MathUtils::GetTransformRightDirection(cameraTransformMatrix)) * directionX * cameraFollowComponent->rotationSpeed;
-				cameraOrbitation += glm::normalize(MathUtils::GetTransformUpDirection(cameraTransformMatrix)) * directionY * cameraFollowComponent->rotationSpeed;
-				cameraTransformComponent->position += cameraOrbitation;
-
-				cameraDirection = glm::normalize(MathUtils::GetTransformForwardDirection(cameraTransformMatrix));
-				directionToCameraCenter = glm::normalize(cameraCenterPosition - cameraTransformComponent->position);
-
-				angle = glm::orientedAngle(cameraDirection, directionToCameraCenter, MathUtils::Vector3UnitY);
-				rotatedMatrix = glm::rotate(cameraTransformMatrix, angle, MathUtils::Vector3UnitY);
-
-				MathUtils::DecomposeTransformMatrix(rotatedMatrix, cameraTransformComponent->position, cameraTransformComponent->rotation, cameraTransformComponent->scale);
+				cameraTransformComponent->rotation = glm::eulerAngles(lookAtQuat);
 			}
-		}
+		}	
 
-	
+		void ECSCameraFollowSystem::CalculateInputRotation(ECSCameraFollowComponent* cameraFollowComponent, float deltaTime)
+		{
+			const float difX = BaldLion::Input::GetMouseX() - cameraFollowComponent->prevX;
+			const float difY = BaldLion::Input::GetMouseY() - cameraFollowComponent->prevY;
+
+			cameraFollowComponent->prevX = BaldLion::Input::GetMouseX();
+			cameraFollowComponent->prevY = BaldLion::Input::GetMouseY();
+
+			float angleX = difX * deltaTime * cameraFollowComponent->rotationSpeed;
+			float angleY = difY * deltaTime * cameraFollowComponent->rotationSpeed;
+
+			cameraFollowComponent->cameraYaw += angleX;
+
+			if (cameraFollowComponent->cameraPitch + angleY > 1.0f)
+			{
+				cameraFollowComponent->cameraPitch = 1.0f;
+			}
+			else if (cameraFollowComponent->cameraPitch + angleY < -1.0f)
+			{
+				cameraFollowComponent->cameraPitch = -1.0f;
+			}
+			else
+			{
+				cameraFollowComponent->cameraPitch += angleY;
+			}
+		}	
 
 	}
 }

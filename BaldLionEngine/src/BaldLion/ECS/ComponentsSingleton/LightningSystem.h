@@ -9,7 +9,7 @@ namespace BaldLion {
 
 		namespace SingletonComponents {
 
-			class ECSLightSingleton {
+			class LightningSystem {
 
 			public:
 

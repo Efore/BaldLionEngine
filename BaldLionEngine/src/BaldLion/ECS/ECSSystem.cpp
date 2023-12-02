@@ -2,19 +2,19 @@
 #include "ECSSystem.h"
 #include "ECSManager.h"
 #include "BaldLion/Core/Containers/HashMap.h"
-#include "BaldLion/Core/JobManagement/JobManager.h"
 
 namespace BaldLion {
 
 	namespace ECS {
 
-		ECSSystem::ECSSystem(const char* systemName, const ECSSignature& signature, ECSManager* ecsManager, bool parallelize, bool waitForUpdateOperationsToFinish) :
+		ECSSystem::ECSSystem(const char* systemName, const ECSSignature& signature, ECSManager* ecsManager, bool parallelize, bool waitForUpdateOperationsToFinish, Job::JobType jobType) :
 			m_systemName(BL_STRING_TO_STRINGID(systemName)), 
 			m_signature(signature), 
 			m_ecsManager(ecsManager),
 			m_parallelize(parallelize),
 			m_waitForUpdatesOperationsToFinish(waitForUpdateOperationsToFinish),
-			m_refreshComponentLookUps(false)
+			m_refreshComponentLookUps(false),
+			m_jobType(jobType)
 		{
 
 			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_ECS, 100);
@@ -52,7 +52,7 @@ namespace BaldLion {
 				{
 					const std::string systemOperation = std::to_string(m_systemName) + std::to_string(i);
 
-					JobManagement::Job systemUpdateJob(systemOperation.c_str(), JobManagement::Job::JobType::ECS);
+					JobManagement::Job systemUpdateJob(systemOperation.c_str(), m_jobType);
 
 					systemUpdateJob.Task = [this, entityID, componentLookUp, deltaTime] {
 
@@ -69,7 +69,7 @@ namespace BaldLion {
 
 			if (m_parallelize && m_waitForUpdatesOperationsToFinish)
 			{
-				JobManagement::JobManager::WaitForJobs(1 << JobManagement::Job::JobType::ECS);
+				JobManagement::JobManager::WaitForJobs(1 << m_jobType);
 			}
 		}
 

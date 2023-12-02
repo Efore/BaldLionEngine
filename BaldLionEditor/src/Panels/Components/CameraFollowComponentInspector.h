@@ -3,6 +3,7 @@
 #include "BaldLion/ECS/Components/ECSCameraFollowComponent.h"
 #include "BaldLion/ECS/Components/ECSMeshComponent.h"
 #include "BaldLion/Rendering/Renderer.h"
+#include "BaldLion/Utils/MathUtils.h"
 
 namespace BaldLion
 {
@@ -29,13 +30,18 @@ namespace BaldLion
 
 				if (componentCameraFollow->followedEntityID > 0)
 				{
-					const ECS::ECSTransformComponent* entityTransformComponent =
+					const ECS::ECSTransformComponent* cameraTransformComponent =
 						SceneManager::GetECSManager()->GetEntityComponents().Get(sceneHierarchyPanel->GetSelectedEntityID()).Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
 
 					const ECS::ECSTransformComponent* followedEntityTransform = SceneManager::GetECSManager()->GetEntityComponents().Get(componentCameraFollow->followedEntityID).Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
-					
-				}
 
+					const glm::vec4 cameraCenterPosition = followedEntityTransform->GetTransformMatrix() * glm::vec4(componentCameraFollow->offsetXY, 0.0f, 1.0f);
+
+					glm::vec3 cameraDirection = glm::normalize(MathUtils::GetTransformForwardDirection(cameraTransformComponent->GetTransformMatrix()));
+
+					Renderer::DrawDebugSphere(cameraCenterPosition, 0.1f, EditorUtils::ColorRed);
+					Renderer::DrawDebugLine(cameraTransformComponent->position, cameraCenterPosition, EditorUtils::ColorRed);					
+				}
 
 				ComponentInspector::EndComponentRender();
 			}

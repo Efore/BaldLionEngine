@@ -5,7 +5,7 @@
 #include "BaldLion/Utils/MathUtils.h"
 
 #include "BaldLion/ECS/ComponentsSingleton/CameraSystem.h"
-#include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
+#include "BaldLion/ECS/ComponentsSingleton/LightningSystem.h"
 
 #include "BaldLion/ResourceManagement/ResourceManager.h"
 
@@ -158,10 +158,10 @@ namespace BaldLion
 			shader->SetUniform(UNIFORM_VIEW_PROJECTION, ShaderDataType::Mat4, &(s_sceneData.viewProjectionMatrix));
 			shader->SetUniform(UNIFORM_CAMERA_POS, ShaderDataType::Float3, &(s_sceneData.cameraPosition));
 
-			shader->SetUniform(UNIFORM_DIR_LIGHT_DIRECTION, ShaderDataType::Float3, &(ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightDirection()));
-			shader->SetUniform(UNIFORM_DIR_LIGHT_AMBIENT,ShaderDataType::Float3, &(ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightAmbientColor()));
-			shader->SetUniform(UNIFORM_DIR_LIGHT_DIFFUSE, ShaderDataType::Float3, &(ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightDiffuseColor()));
-			shader->SetUniform(UNIFORM_DIR_LIGHT_SPECULAR, ShaderDataType::Float3, &(ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightSpecularColor()));
+			shader->SetUniform(UNIFORM_DIR_LIGHT_DIRECTION, ShaderDataType::Float3, &(ECS::SingletonComponents::LightningSystem::GetDirectionaLightDirection()));
+			shader->SetUniform(UNIFORM_DIR_LIGHT_AMBIENT,ShaderDataType::Float3, &(ECS::SingletonComponents::LightningSystem::GetDirectionaLightAmbientColor()));
+			shader->SetUniform(UNIFORM_DIR_LIGHT_DIFFUSE, ShaderDataType::Float3, &(ECS::SingletonComponents::LightningSystem::GetDirectionaLightDiffuseColor()));
+			shader->SetUniform(UNIFORM_DIR_LIGHT_SPECULAR, ShaderDataType::Float3, &(ECS::SingletonComponents::LightningSystem::GetDirectionaLightSpecularColor()));
 
 			s_rendererPlatformInterface->DrawVertexArray(vertexArray);
 
@@ -181,7 +181,7 @@ namespace BaldLion
 			glm::vec3 lookAtEye = s_sceneData.cameraPosition;
 			lookAtEye.y = shadowDistance * 0.5f;
 
-			const glm::vec3 lookAtCenter = lookAtEye + (ECS::SingletonComponents::ECSLightSingleton::GetDirectionaLightDirection() * glm::length(lookAtEye));
+			const glm::vec3 lookAtCenter = lookAtEye + (ECS::SingletonComponents::LightningSystem::GetDirectionaLightDirection() * glm::length(lookAtEye));
 
 			const glm::mat4 lightView = glm::lookAt(lookAtEye, lookAtCenter, MathUtils::Vector3UnitY);
 			const glm::mat4 lightProjection = glm::ortho(-shadowDistance, shadowDistance, -shadowDistance, shadowDistance, 0.0f, shadowDistance * 2.0f);

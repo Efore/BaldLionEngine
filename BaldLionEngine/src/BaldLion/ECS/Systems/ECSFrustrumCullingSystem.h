@@ -5,11 +5,11 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		class ECSRenderSystem : public ECSSystem
+		class ECSFrustrumCullingSystem : public ECSSystem
 		{
 		public:
-			ECSRenderSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager) :
-				ECSSystem(systemName, signature, ecsManager, false, false) {}
+			ECSFrustrumCullingSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager) :
+				ECSSystem(systemName, signature, ecsManager, true, true, JobManagement::Job::JobType::Rendering) {}
 			
 			virtual void OnStart() override {};
 			virtual void OnUpdate(float deltaTime) override;

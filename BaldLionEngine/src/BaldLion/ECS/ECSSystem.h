@@ -2,16 +2,20 @@
 #include "ECSUtils.h"
 #include "ECSComponentLookUp.h"
 #include "BaldLion/Core/Containers/DynamicArray.h"
+#include "BaldLion/Core/JobManagement/JobManager.h"
+
+
 
 namespace BaldLion
 {
-	namespace ECS {
-		
+	using namespace JobManagement;
+
+	namespace ECS {		
 		
 		class ECSSystem {
 
 		public:
-			ECSSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager, bool parallelize, bool blockSystemsLoop);
+			ECSSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager, bool parallelize, bool blockSystemsLoop, Job::JobType jobType = Job::JobType::ECS);
 			virtual ~ECSSystem();
 
 			virtual void OnStart() = 0;
@@ -37,6 +41,8 @@ namespace BaldLion
 			bool m_parallelize;
 
 			bool m_refreshComponentLookUps;
+
+			Job::JobType m_jobType;
 		};
 
 		#define BL_GENERATE_SYSTEM(SystemName, SystemType, ecsManager, ...)	\

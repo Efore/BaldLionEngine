@@ -38,19 +38,19 @@ namespace BaldLion {
 
 			static bool isStatic = false;
 
-			if (ImGui::Button("Create Static Entity from Model"))
+			if (ImGui::Button("Create Entity from Model"))
 			{
 				isStatic = true;
 				ImGui::OpenPopup("create_model_entity");
 			}
 
-			if (ImGui::Button("Create Static Entity from Mesh"))
+			if (ImGui::Button("Create Entity from Mesh"))
 			{
 				isStatic = true;
 				ImGui::OpenPopup("create_mesh_entity");
 			}
 
-			ImGui::Separator();			
+			ImGui::Separator();
 
 			if (ImGui::Button("Create Dynamic Entity from Model"))
 			{

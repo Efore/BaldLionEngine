@@ -17,7 +17,7 @@
 #include "BaldLion/Utils/MathUtils.h"
 #include "BaldLion/ResourceManagement/ResourceManager.h"
 #include "BaldLion/Rendering/Mesh.h"
-#include "BaldLion/ECS/ComponentsSingleton/ECSLightSingleton.h"
+#include "BaldLion/ECS/ComponentsSingleton/LightningSystem.h"
 #include "BaldLion/Animation/AnimationManager.h"
 
 
@@ -64,7 +64,8 @@ namespace BaldLion {
 										"Animation",
 										"Physics Body",
 										"NavMesh Agent",
-										"Locomotion"
+										"Locomotion",
+										"Camera Follow"
 									};
 
 				const char* physicsBodyShapes[] = {
@@ -146,7 +147,7 @@ namespace BaldLion {
 											glm::vec3(0.2f),
 											glm::vec3(-1.0f, -1.0f, -1.0f));
 
-										ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight((ECSDirectionalLightComponent*)newComponent);
+										ECS::SingletonComponents::LightningSystem::SetDirectionalLight((ECSDirectionalLightComponent*)newComponent);
 											
 										break;
 
@@ -269,12 +270,25 @@ namespace BaldLion {
 							StringId entityName = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntities()[i].GetEntityName();
 							if (ImGui::Selectable(BL_STRINGID_TO_STR_C(entityName)))
 							{
+								const ECSEntityID chosenEntityID = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntities()[i].GetEntityID();
+
+								ECSTransformComponent* transform = selectedEntityComponents.Write<ECSTransformComponent>(ECSComponentType::Transform);
+								const ECSTransformComponent* followedEntityTransform = SceneManagement::SceneManager::GetECSManager()->GetEntityComponents().Get(chosenEntityID).Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
+
+								const glm::vec3 followedEntityDirection = glm::normalize(MathUtils::GetTransformForwardDirection(followedEntityTransform->GetTransformMatrix()));
+								const glm::vec3 cameraPosition = followedEntityTransform->position - (followedEntityDirection * 5.0f);
+
+								transform->position = cameraPosition;
+								transform->rotation = followedEntityTransform->rotation;
+
+
 								newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSCameraFollowComponent>(ECSComponentType::CameraFollow,
-									SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntities()[i].GetEntityID(),
+									chosenEntityID,
 									glm::vec2(0.0f),
-									0.0f,
-									5.0f);
+									5.0f,
+									1.0f);
 							}							
+								
 						}
 
 						ImGui::EndPopup();

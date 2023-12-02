@@ -1,6 +1,6 @@
 #pragma once
 #include "blpch.h"
-#include "ECSLightSingleton.h"
+#include "LightningSystem.h"
 
 namespace BaldLion {
 
@@ -8,7 +8,7 @@ namespace BaldLion {
 
 		namespace SingletonComponents {
 
-			ECSDirectionalLightComponent* ECSLightSingleton::s_directionalLight = nullptr;
+			ECSDirectionalLightComponent* LightningSystem::s_directionalLight = nullptr;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 #include "blpch.h"
-#include "ECSRenderSystem.h"
+#include "ECSFrustrumCullingSystem.h"
 #include "BaldLion/Rendering/Renderer.h"
 
 #include "BaldLion/ECS/Components/ECSTransformComponent.h"
@@ -14,13 +14,13 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		void ECSRenderSystem::OnUpdate(float deltaTime)
+		void ECSFrustrumCullingSystem::OnUpdate(float deltaTime)
 		{
 			ECS::SingletonComponents::CameraSystem::UpdateFrustrumPlanes();
 			ECSSystem::OnUpdate(deltaTime);
 		}
 
-		void ECSRenderSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
+		void ECSFrustrumCullingSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
 			BL_PROFILE_FUNCTION();
 

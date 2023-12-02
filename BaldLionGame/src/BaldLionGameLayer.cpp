@@ -50,6 +50,8 @@ namespace BaldLion
 
 		void BaldLionGameLayer::OnUpdate()
 		{
+			BL_PROFILE_FUNCTION();
+
 			glm::mat4 cameraMatrixTransform = ECS::SingletonComponents::CameraSystem::GetMainCameraTransform()->GetTransformMatrix();
 			ECS::ECSProjectionCameraComponent* viewportCamera = ECS::SingletonComponents::CameraSystem::GetMainCamera();
 
@@ -58,16 +60,13 @@ namespace BaldLion
 
 			viewportCamera->viewProjectionMatrix = projectionMatrix * viewMatrix;
 
-			BL_PROFILE_FUNCTION();
-
 			SceneManagement::SceneManager::FrameStart();
-			SceneManagement::SceneManager::Update(m_gameStateTimer.GetDeltaTime());
-				
+			SceneManagement::SceneManager::Update(m_gameStateTimer.GetDeltaTime());	
+			SceneManagement::SceneManager::FrameEnd();
+
 			Renderer::BeginScene();			
 			Renderer::DrawScene();
 			Renderer::EndScene();		
-
-			SceneManagement::SceneManager::FrameEnd();
 		}
 
 		void BaldLionGameLayer::OnImGuiRender()

@@ -14,8 +14,9 @@ namespace BaldLion
 			virtual void OnStop() override {}			
 			virtual void UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime) override;
 
-		private:
-			void CenterCamera(float cameraRotationSpeed, float deltaTime, float& prevX, float& prevY);
+		private:			
+			void CalculateInputRotation(class ECSCameraFollowComponent* cameraFollowComponent, float deltaTime);
+			
 		};
 	}
 }

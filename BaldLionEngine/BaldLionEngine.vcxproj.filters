@@ -432,7 +432,7 @@
     <ClInclude Include="src\BaldLion\ECS\Components\ECSTransformComponent.h">
       <Filter>src\BaldLion\ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.h">
+    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\LightningSystem.h">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\CameraSystem.h">
@@ -474,7 +474,7 @@
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\Systems\ECSRenderSystem.h">
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h">
@@ -2659,7 +2659,7 @@
     <ClCompile Include="src\BaldLion\Core\Window.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.cpp">
+    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\LightningSystem.cpp">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\CameraSystem.cpp">
@@ -2683,7 +2683,7 @@
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.cpp">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\ECS\Systems\ECSRenderSystem.cpp">
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.cpp">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">

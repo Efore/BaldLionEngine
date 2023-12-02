@@ -68,13 +68,12 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 
 			SceneManagement::SceneManager::FrameStart();
-			SceneManagement::SceneManager::Update(m_gameStateTimer.GetDeltaTime());
-				
+			SceneManagement::SceneManager::Update(0.0f);
+			SceneManagement::SceneManager::FrameEnd();
+
 			Renderer::BeginScene();			
 			Renderer::DrawScene();
-			Renderer::EndScene();		
-
-			SceneManagement::SceneManager::FrameEnd();
+			Renderer::EndScene();	
 
 			HandleInput();
 		}
@@ -108,7 +107,7 @@ namespace BaldLion
 		void BaldLionEditorLayer::SetupEditorCamera()
 		{
 			m_viewportCameraTransform = BaldLion::Memory::MemoryManager::New<ECS::ECSTransformComponent>("Editor camera transform", AllocationType::FreeList_ECS,
-				glm::vec3(0, 10, -50),
+				glm::vec3(0, 10, -10),
 				MathUtils::Vector3Zero,
 				glm::vec3(1.0f));
 
@@ -339,7 +338,7 @@ namespace BaldLion
 
 				m_ecsManager->AddComponentToEntity(directionalLight, directionalLightComponent);
 
-				ECS::SingletonComponents::ECSLightSingleton::SetDirectionalLight(directionalLightComponent);
+				ECS::SingletonComponents::LightningSystem::SetDirectionalLight(directionalLightComponent);
 			}
 		}
 

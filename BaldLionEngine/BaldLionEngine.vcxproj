@@ -198,7 +198,7 @@
     <ClInclude Include="src\BaldLion\ECS\Components\ECSProjectionCameraComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSSkeletonComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSTransformComponent.h" />
-    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.h" />
+    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\LightningSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\CameraSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\ECSComponentLookUp.h" />
@@ -213,7 +213,7 @@
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.h" />
-    <ClInclude Include="src\BaldLion\ECS\Systems\ECSRenderSystem.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.h" />
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h" />
     <ClInclude Include="src\BaldLion\Events\Event.h" />
     <ClInclude Include="src\BaldLion\Events\KeyEvent.h" />
@@ -942,7 +942,7 @@
     <ClCompile Include="src\BaldLion\Core\StringId.cpp" />
     <ClCompile Include="src\BaldLion\Core\Time.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
-    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\ECSLightSingleton.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\LightningSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\CameraSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ECSManager.cpp" />
     <ClCompile Include="src\BaldLion\ECS\ECSSystem.cpp" />
@@ -951,7 +951,7 @@
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.cpp" />
-    <ClCompile Include="src\BaldLion\ECS\Systems\ECSRenderSystem.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\BaldLion\Physics\PhysicsManager.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp" />

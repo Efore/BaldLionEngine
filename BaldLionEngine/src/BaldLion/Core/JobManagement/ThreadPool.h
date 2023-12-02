@@ -22,6 +22,7 @@ namespace BaldLion
 			{
 				Unknown,
 				ECS,
+				Rendering,
 				Navigation,
 				Editor,
 
@@ -34,7 +35,8 @@ namespace BaldLion
 			std::function<void()> Task;
 			StringId JobDependencyName;
 			StringId JobParentName;
-			ui32 ChildrenCount;			
+			ui32 ChildrenCount;		
+			bool finish = false;
 
 			Job(){}
 
