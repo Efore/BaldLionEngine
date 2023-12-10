@@ -44,21 +44,21 @@ namespace BaldLion
 			void* stackAllocatorStart = s_freeListMainAllocator->Allocate(stackAllocatorSize, __alignof(StackAllocator));
 			s_stackAllocator = new (stackAllocatorStart) StackAllocator("Stack Allocator", stackAllocatorSize - sizeof(StackAllocator), AddPointerOffset(stackAllocatorStart, sizeof(StackAllocator)));
 
-			const size_t ecsSize = 50 * 1024 * 1024; //50MB
+			const size_t ecsSize = 450 * 1024 * 1024; //450MB
 			void *ecsAllocatorStart = s_freeListMainAllocator->Allocate(ecsSize, __alignof(FreeListAllocator));
-			s_freeListECSAllocator = new (ecsAllocatorStart) FreeListAllocator("Renderer FreeList Allocator", ecsSize - sizeof(FreeListAllocator), AddPointerOffset(ecsAllocatorStart, sizeof(FreeListAllocator)));
+			s_freeListECSAllocator = new (ecsAllocatorStart) FreeListAllocator("ECS FreeList Allocator", ecsSize - sizeof(FreeListAllocator), AddPointerOffset(ecsAllocatorStart, sizeof(FreeListAllocator)));
 
-			const size_t rendererSize = 500 * 1024 * 1024; //500MB
+			const size_t rendererSize = 100 * 1024 * 1024; //100MB
 			void *rendererAllocatorStart = s_freeListMainAllocator->Allocate(rendererSize, __alignof(FreeListAllocator));
 			s_freeListRendererAllocator = new (rendererAllocatorStart) FreeListAllocator("Renderer FreeList Allocator", rendererSize - sizeof(FreeListAllocator), AddPointerOffset(rendererAllocatorStart, sizeof(FreeListAllocator)));
 
 			const size_t resourcesSize = 50 * 1024 * 1024; //50MB
 			void *resourcesAllocatorStart = s_freeListMainAllocator->Allocate(resourcesSize, __alignof(FreeListAllocator));
-			s_freeListResourcesAllocator = new (resourcesAllocatorStart) FreeListAllocator("Renderer FreeList Allocator", resourcesSize - sizeof(FreeListAllocator), AddPointerOffset(resourcesAllocatorStart, sizeof(FreeListAllocator)));	
+			s_freeListResourcesAllocator = new (resourcesAllocatorStart) FreeListAllocator("Resources FreeList Allocator", resourcesSize - sizeof(FreeListAllocator), AddPointerOffset(resourcesAllocatorStart, sizeof(FreeListAllocator)));	
 
 			const size_t physxSize = 100 * 1024 * 1024; //100MB
 			void *physxAllocatorStart = s_freeListMainAllocator->Allocate(physxSize, __alignof(FreeListAllocator));
-			s_freeListPhysXAllocator = new (physxAllocatorStart) FreeListAllocator("Renderer FreeList Allocator", physxSize - sizeof(FreeListAllocator), AddPointerOffset(physxAllocatorStart, sizeof(FreeListAllocator)));
+			s_freeListPhysXAllocator = new (physxAllocatorStart) FreeListAllocator("PhysX FreeList Allocator", physxSize - sizeof(FreeListAllocator), AddPointerOffset(physxAllocatorStart, sizeof(FreeListAllocator)));
 		}
 
 		void MemoryManager::Delete(AllocationType allocationType)

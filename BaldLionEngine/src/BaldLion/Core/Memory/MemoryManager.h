@@ -174,36 +174,56 @@ namespace BaldLion
 		{
 			BL_ASSERT(element != nullptr, "element cannot be null");
 
-			if (s_allocationMap.find(element) == s_allocationMap.end())
-				return;
+			auto it = s_allocationMap.find(element);
+			if (it == s_allocationMap.end())
+				return;			
 
 			AllocationType allocationType = s_allocationMap[element].allocationType;
+			size_t remainingMemory = 0;
 
 			switch (allocationType)
 			{
 			case AllocationType::FreeList_Main:
-				if(s_freeListMainAllocator != nullptr)
+				if (s_freeListMainAllocator != nullptr)
+				{
 					s_freeListMainAllocator->Deallocate(element);
+				}
 				break;
 			case AllocationType::Linear_Frame:
 				if (s_linearFrameAllocator != nullptr)
+				{
 					s_linearFrameAllocator->Deallocate(element);
+				}
 				break;
 			case AllocationType::Stack:
 				if (s_stackAllocator != nullptr)
+				{
 					s_stackAllocator->Deallocate(element);
+				}
 				break;
 			case AllocationType::FreeList_Renderer:
 				if (s_freeListRendererAllocator != nullptr)
+				{
 					s_freeListRendererAllocator->Deallocate(element);
+				}
 				break;
 			case AllocationType::FreeList_ECS:
 				if (s_freeListECSAllocator != nullptr)
-					s_freeListECSAllocator->Deallocate(element);
+				{
+					s_freeListECSAllocator->Deallocate(element);			
+				}
 				break;
 			case AllocationType::FreeList_Resources:
 				if (s_freeListResourcesAllocator != nullptr)
+				{
 					s_freeListResourcesAllocator->Deallocate(element);
+				}
+				break;
+			case AllocationType::FreeList_PhysX:
+				if (s_freeListPhysXAllocator != nullptr)
+				{
+					s_freeListPhysXAllocator->Deallocate(element);
+				}
 				break;
 			}
 

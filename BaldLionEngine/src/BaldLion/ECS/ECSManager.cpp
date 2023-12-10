@@ -34,6 +34,8 @@ namespace BaldLion
 			//	7-PhysicsBody
 			//	8-NavMeshAgent
 			//	9-Locomotion
+			//  10-CameraFollow
+			//	11-PlayerController
 
 			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_ECS, 1000);
 			m_componentsPool.EmplaceBack(&m_transformComponentPool);
@@ -62,8 +64,11 @@ namespace BaldLion
 			m_locomotionComponentPool = DynamicArray<ECSLocomotionComponent>(AllocationType::FreeList_ECS, 40);
 			m_componentsPool.EmplaceBack(&m_locomotionComponentPool);	
 
-			m_cameraFollowComponentPool = DynamicArray<ECSCameraFollowComponent>(AllocationType::FreeList_ECS, 40);
+			m_cameraFollowComponentPool = DynamicArray<ECSCameraFollowComponent>(AllocationType::FreeList_ECS, 2);
 			m_componentsPool.EmplaceBack(&m_cameraFollowComponentPool);
+
+			m_playerControllerComponentPool = DynamicArray<ECSPlayerControllerComponent>(AllocationType::FreeList_ECS, 40);
+			m_componentsPool.EmplaceBack(&m_playerControllerComponentPool);
 		}
 
 		ECSManager::~ECSManager()
@@ -89,7 +94,8 @@ namespace BaldLion
 			CleanComponentPool<ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);
 			CleanComponentPool<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent);
 			CleanComponentPool<ECSLocomotionComponent>(ECSComponentType::Locomotion);
-			CleanComponentPool<ECSLocomotionComponent>(ECSComponentType::CameraFollow);
+			CleanComponentPool<ECSCameraFollowComponent>(ECSComponentType::CameraFollow);
+			CleanComponentPool<ECSPlayerControllerComponent>(ECSComponentType::PlayerController);
 
 			m_componentsPool.Delete();
 		}

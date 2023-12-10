@@ -10,3 +10,4 @@
 #include "BaldLion/ECS/Components/ECSNavMeshAgentComponent.h"
 #include "BaldLion/ECS/Components/ECSLocomotionComponent.h"
 #include "BaldLion/ECS/Components/ECSCameraFollowComponent.h"
+#include "BaldLion/ECS/Components/ECSPlayerControllerComponent.h"

@@ -2582,6 +2582,8 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSCameraFollowSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSCameraFollowComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSPlayerControllerComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp">
@@ -3131,6 +3133,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSCameraFollowSystem.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="C:\Users\Ivan\AppData\Local\Temp\1fdhzcyx.bmp" />

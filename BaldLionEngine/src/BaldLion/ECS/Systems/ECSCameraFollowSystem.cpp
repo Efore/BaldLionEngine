@@ -39,7 +39,7 @@ namespace BaldLion
 
 				const glm::vec4 cameraCenterPosition = followedEntityTransformMatrix * glm::vec4(cameraFollowComponent->offsetXY, 0.0f,1.0f);
 				
-				const glm::vec4 initialCameraPosition = cameraCenterPosition - glm::vec4((MathUtils::GetTransformForwardDirection(followedEntityTransformMatrix) * cameraFollowComponent->offsetZ),1.0f);
+				const glm::vec4 initialCameraPosition = cameraCenterPosition - glm::vec4((MathUtils::Vector3UnitZ * cameraFollowComponent->offsetZ),1.0f);
 				glm::vec4 stepArcBallPosition = initialCameraPosition;
 
 				//Rotate the camera around the pivot point on the first axis.
@@ -69,8 +69,8 @@ namespace BaldLion
 			cameraFollowComponent->prevX = BaldLion::Input::GetMouseX();
 			cameraFollowComponent->prevY = BaldLion::Input::GetMouseY();
 
-			float angleX = difX * deltaTime * cameraFollowComponent->rotationSpeed;
-			float angleY = difY * deltaTime * cameraFollowComponent->rotationSpeed;
+			float angleX = -difX * deltaTime * cameraFollowComponent->rotationSpeed;
+			float angleY = -difY * deltaTime * cameraFollowComponent->rotationSpeed;
 
 			cameraFollowComponent->cameraYaw += angleX;
 

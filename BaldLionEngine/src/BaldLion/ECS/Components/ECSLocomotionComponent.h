@@ -11,8 +11,8 @@ namespace BaldLion
 
 		public:
 
-			ECSLocomotionComponent(float rotationSpeed) :
-				ECSComponent(ECSComponentType::Locomotion), rotationSpeed(rotationSpeed), currentVelocity(0.0f), desiredVelocity(0.0f)
+			ECSLocomotionComponent(float rotationSpeed, float maxMovementSpeed, float accelerationSpeed) :
+				ECSComponent(ECSComponentType::Locomotion), rotationSpeed(rotationSpeed), currentMovementSpeed(0.0f), maxMovementSpeed(maxMovementSpeed), maxAcceleration(accelerationSpeed), currentVelocity(0.0f), desiredVelocity(0.0f)
 			{				
 			}
 
@@ -21,8 +21,11 @@ namespace BaldLion
 			}
 
 		public:						
-			float rotationSpeed;		
-			glm::vec3 nextPosition;
+			float rotationSpeed;
+			float currentMovementSpeed;
+			float maxMovementSpeed;
+			float maxAcceleration;
+
 			glm::vec3 currentVelocity;
 			glm::vec3 desiredVelocity;
 		};

@@ -59,6 +59,8 @@ using namespace BaldLion::ECS;
 
 //Locomotion
 #define YAML_KEY_LOCOMOTION_ROTSPEED	"LocomotionRotationSpeed"
+#define YAML_KEY_LOCOMOTION_MAXMOVSPEED	"LocomotionMaxMovementSpeed"
+#define YAML_KEY_LOCOMOTION_MAXACC		"LocomotionMaxAcceleration"
 
 //NavMeshAgent
 #define YAML_KEY_NAVMESHAGENT_POSITION		"NavMeshAgentPosition"
@@ -297,6 +299,8 @@ namespace BaldLion
 			{
 				ECSLocomotionComponent* locomotionComponent = (ECSLocomotionComponent*)component;
 				out << YAML::Key << YAML_KEY_LOCOMOTION_ROTSPEED << YAML::Value << locomotionComponent->rotationSpeed;
+				out << YAML::Key << YAML_KEY_LOCOMOTION_MAXMOVSPEED << YAML::Value << locomotionComponent->maxMovementSpeed;
+				out << YAML::Key << YAML_KEY_LOCOMOTION_MAXACC << YAML::Value << locomotionComponent->maxAcceleration;
 			}
 			break;
 
@@ -318,6 +322,10 @@ namespace BaldLion
 				SerializeVec2(out, YAML_KEY_CAMERAFOLLOW_XYOFFSET, cameraFollowComponent->offsetXY);
 				out << YAML::Key << YAML_KEY_CAMERAFOLLOW_ZOFFSET << YAML::Value << cameraFollowComponent->offsetZ;
 				out << YAML::Key << YAML_KEY_CAMERAFOLLOW_ROTSPEED << YAML::Value << cameraFollowComponent->rotationSpeed;
+			}
+			break;
+			case ECS::ECSComponentType::PlayerController:
+			{
 			}
 			break;
 
@@ -439,9 +447,14 @@ namespace BaldLion
 			case BaldLion::ECS::ECSComponentType::Locomotion:
 			{
 				float rotSpeed = yamlComponent[YAML_KEY_LOCOMOTION_ROTSPEED].as<float>();
+				float maxMovementSpeed = yamlComponent[YAML_KEY_LOCOMOTION_MAXMOVSPEED ].as<float>();
+				float maxAcceleration = yamlComponent[YAML_KEY_LOCOMOTION_MAXACC].as<float>();
+
 				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSLocomotionComponent>(
-					ECS::ECSComponentType::DirectionalLight,
-					rotSpeed);
+					ECS::ECSComponentType::Locomotion,
+					rotSpeed, 
+					maxMovementSpeed,
+					maxAcceleration);
 			}
 			break;
 
@@ -480,6 +493,12 @@ namespace BaldLion
 					offsetXY,
 					offsetZ,				
 					rotSpeed);
+				break;
+			}
+			case BaldLion::ECS::ECSComponentType::PlayerController:
+			{
+				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSPlayerControllerComponent>(
+					ECS::ECSComponentType::PlayerController);
 			}
 			break;
 			default:

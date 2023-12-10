@@ -6,3 +6,4 @@
 #include "BaldLion/ECS/Systems/ECSNavigationSystem.h"
 #include "BaldLion/ECS/Systems/ECSLocomotionSystem.h"
 #include "BaldLion/ECS/Systems/ECSCameraFollowSystem.h"
+#include "BaldLion/ECS/Systems/ECSPlayerControllerSystem.h"

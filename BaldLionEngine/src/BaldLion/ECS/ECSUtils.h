@@ -19,6 +19,7 @@ namespace BaldLion
 			NavMeshAgent,
 			Locomotion,
 			CameraFollow,
+			PlayerController,
 
 			Count
 		};

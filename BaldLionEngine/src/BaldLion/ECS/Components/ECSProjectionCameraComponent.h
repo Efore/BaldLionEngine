@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include "BaldLion/ECS/ECSComponent.h"
 #include <glm/glm.hpp>
 

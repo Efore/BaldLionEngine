@@ -110,11 +110,11 @@ namespace BaldLion
 		{
 			StringId sceneid = BL_STRING_TO_STRINGID(sceneID);
 
-			Scene* newScene = MemoryManager::New<Scene>(sceneID, AllocationType::FreeList_Main, sceneID, ecsManager);
-			newScene->Init();
-
 			if (openAdditive)
 			{
+				Scene* newScene = MemoryManager::New<Scene>(sceneID, AllocationType::FreeList_Main, sceneID, ecsManager);
+				newScene->Init();
+
 				if (!s_activeScenes.Contains(sceneid))
 				{
 					s_activeScenes.Emplace(sceneid, newScene);
@@ -130,6 +130,10 @@ namespace BaldLion
 				{
 					MemoryManager::Delete(s_mainScene);
 				}
+
+				Scene* newScene = MemoryManager::New<Scene>(sceneID, AllocationType::FreeList_Main, sceneID, ecsManager);
+				newScene->Init();
+
 				s_mainScene = newScene;
 				ECS::ECSManager::SetComponentIDProvider(0);				
 			}

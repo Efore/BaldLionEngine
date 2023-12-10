@@ -25,11 +25,9 @@ namespace BaldLion
 
 		void ECSLocomotionSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
-			const ECSLocomotionComponent* locomotionComponent = componentLookUp->Read<ECSLocomotionComponent>(ECSComponentType::Locomotion);
+			ECSLocomotionComponent* locomotionComponent = componentLookUp->Write<ECSLocomotionComponent>(ECSComponentType::Locomotion);
 			ECSTransformComponent* transformComponent = componentLookUp->Write<ECSTransformComponent>(ECSComponentType::Transform);
 			
-			transformComponent->position = locomotionComponent->nextPosition;
-
 			if (glm::length2(locomotionComponent->desiredVelocity) > FLT_EPSILON * FLT_EPSILON)
 			{				
 				const glm::mat4 transformMatrix = transformComponent->GetTransformMatrix();
@@ -42,13 +40,37 @@ namespace BaldLion
 				MathUtils::DecomposeTransformMatrix(rotatedMatrix, transformComponent->position, transformComponent->rotation, transformComponent->scale);
 			}
 
+			const float maxDelta = locomotionComponent->maxAcceleration * deltaTime;
+			
+			glm::vec3 deltaVelocity = locomotionComponent->desiredVelocity - locomotionComponent->currentVelocity;			
+			const float deltaSpeed = glm::length(deltaVelocity);
+
+			if (deltaSpeed > maxDelta)
+			{
+				const float velocityIncrease = maxDelta / deltaSpeed;
+				deltaVelocity *= velocityIncrease;
+			}
+
+			locomotionComponent->currentVelocity += deltaVelocity;
+
+			if(glm::length2(locomotionComponent->currentVelocity) > FLT_EPSILON * FLT_EPSILON)
+			{
+				locomotionComponent->currentMovementSpeed = glm::length(locomotionComponent->currentVelocity);				
+				transformComponent->position += locomotionComponent->currentVelocity * deltaTime;
+			}
+			else 
+			{
+				locomotionComponent->currentVelocity = MathUtils::Vector3Zero;
+				locomotionComponent->currentMovementSpeed = 0.0f;
+			}
+
 			ECSAnimationComponent* animationComponent = componentLookUp->Write<ECSAnimationComponent>(ECSComponentType::Animation);
 			if (animationComponent != nullptr)
 			{
 				Animation::AnimatorParameter *parameter = nullptr;
 				if (animationComponent->animatorParameters.TryGet(BL_STRING_TO_STRINGID("Speed"), parameter))
 				{
-					parameter->Value.floating = glm::length(locomotionComponent->currentVelocity);
+					parameter->Value.floating = locomotionComponent->currentMovementSpeed;
 				}
 			}		
 

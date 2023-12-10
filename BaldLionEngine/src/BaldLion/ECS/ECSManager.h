@@ -124,6 +124,7 @@ namespace BaldLion {
 			DynamicArray<class ECSNavMeshAgentComponent> m_navMeshAgentComponentPool;
 			DynamicArray<class ECSLocomotionComponent> m_locomotionComponentPool;
 			DynamicArray<class ECSCameraFollowComponent> m_cameraFollowComponentPool;
+			DynamicArray<class ECSPlayerControllerComponent> m_playerControllerComponentPool;
 
 			static ui32 s_entityIDProvider;
 			static ui32 s_componentIDProvider;

@@ -38,8 +38,8 @@ namespace BaldLion {
 					BL_GENERATE_SYSTEM("ECS LocomotionSystem", ECS::ECSLocomotionSystem, m_ecsManager, ECS::ECSComponentType::Transform, ECS::ECSComponentType::Locomotion);
 					BL_GENERATE_SYSTEM("ECS CameraFollowSystem", ECS::ECSCameraFollowSystem, m_ecsManager, ECS::ECSComponentType::Transform, ECS::ECSComponentType::CameraFollow);
 					BL_GENERATE_SYSTEM("ECS AnimationSystem", ECS::ECSAnimationSystem, m_ecsManager, ECS::ECSComponentType::Animation, ECS::ECSComponentType::Skeleton);
-					BL_GENERATE_SYSTEM("ECS NavigationSystem", ECS::ECSNavigationSystem, m_ecsManager, ECS::ECSComponentType::Locomotion, ECS::ECSComponentType::NavMeshAgent);
-					
+					BL_GENERATE_SYSTEM("ECS NavigationSystem", ECS::ECSNavigationSystem, m_ecsManager, ECS::ECSComponentType::Locomotion, ECS::ECSComponentType::NavMeshAgent, ECS::ECSComponentType::Transform);
+					BL_GENERATE_SYSTEM("ECS PlayerControllerSystem", ECS::ECSPlayerControllerSystem, m_ecsManager, ECS::ECSComponentType::Locomotion, ECS::ECSComponentType::Transform);
 					
 					BL_GENERATE_SYSTEM("ECS Frustrum Culling System", ECS::ECSFrustrumCullingSystem, m_ecsManager, ECS::ECSComponentType::Mesh, ECS::ECSComponentType::Transform);
 				}

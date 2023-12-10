@@ -195,6 +195,7 @@
     <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSNavMeshAgentComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSPhysicsBodyComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSPlayerControllerComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSProjectionCameraComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSSkeletonComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSTransformComponent.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.h" />
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h" />
     <ClInclude Include="src\BaldLion\Events\Event.h" />
     <ClInclude Include="src\BaldLion\Events\KeyEvent.h" />
@@ -952,6 +954,7 @@
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\BaldLion\Physics\PhysicsManager.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp" />

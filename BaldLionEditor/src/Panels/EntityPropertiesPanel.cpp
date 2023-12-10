@@ -65,7 +65,8 @@ namespace BaldLion {
 										"Physics Body",
 										"NavMesh Agent",
 										"Locomotion",
-										"Camera Follow"
+										"Camera Follow",
+										"Player Controller"
 									};
 
 				const char* physicsBodyShapes[] = {
@@ -153,7 +154,7 @@ namespace BaldLion {
 
 									case ECS::ECSComponentType::Locomotion:
 										newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSLocomotionComponent>(ECSComponentType::Locomotion,
-											0.0f);
+											5.0f, 3.5f, 3.5f);
 										break;
 
 									case ECS::ECSComponentType::Animation:
@@ -180,7 +181,7 @@ namespace BaldLion {
 											if (locomotionComponent == nullptr)
 											{
 												locomotionComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSLocomotionComponent>(ECSComponentType::Locomotion,
-													5.0f);
+													5.0f, 3.5f, 3.5f);
 												SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddComponentToEntity(selectedEntityID, locomotionComponent);
 											}
 										}
@@ -188,9 +189,13 @@ namespace BaldLion {
 										break;
 
 									case ECS::ECSComponentType::CameraFollow:
+									{
 										ImGui::OpenPopup(followedEntityPopup);
+									}
 										break;
-										
+									case ECS::ECSComponentType::PlayerController:
+										newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSPlayerControllerComponent>(ECSComponentType::PlayerController);
+										break;
 									}
 
 									break;

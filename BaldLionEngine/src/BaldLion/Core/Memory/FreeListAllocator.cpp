@@ -62,13 +62,13 @@ namespace BaldLion
 				prevBlock = currentBlock;
 				currentBlock = currentBlock->nextBlock;
 			}
-
+			
 			if (bestFitBlock == nullptr)
 			{
 				BL_LOG_CORE_ERROR("{0}: Not enough memory", BL_STRINGID_TO_STR_C(m_allocatorName));
-				return nullptr;
 			}
 
+			BL_ASSERT(bestFitBlock != nullptr, "");
 
 			//If the size of the current best fit block after allocating wont be enought to allocate more elements, 
 			//it becomes full and "unnaccessible"
@@ -162,12 +162,15 @@ namespace BaldLion
 				prevFreeBlock = temp;
 			}
 
-			//assert prevFreeBlock = nullptr
-
 			if (AddPointerOffset(prevFreeBlock, prevFreeBlock->size) == prevFreeBlock->nextBlock)
 			{
 				prevFreeBlock->size += prevFreeBlock->nextBlock->size;
 				prevFreeBlock->nextBlock = prevFreeBlock->nextBlock->nextBlock;
+			}
+
+			if (reinterpret_cast<uintptr_t>(prevFreeBlock) < reinterpret_cast<uintptr_t>(m_allocationBlocksBegin))
+			{
+				m_allocationBlocksBegin = prevFreeBlock;
 			}
 
 			m_num_allocations--;
