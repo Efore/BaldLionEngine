@@ -381,7 +381,11 @@ namespace BaldLion {
 
 				case ECS::ECSComponentType::CameraFollow:
 					CameraFollowInspector::OnImGuiRender(component, m_sceneHierarchyPanel);
-				
+					break;
+				case ECS::ECSComponentType::PlayerController:
+					ComponentInspector::BeginComponentRender("Player Controller", ECS::ECSComponentType::PlayerController, m_sceneHierarchyPanel, GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f);
+					ComponentInspector::EndComponentRender();
+					break;
 				default:
 					break;
 				

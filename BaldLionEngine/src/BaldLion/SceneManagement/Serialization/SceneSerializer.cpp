@@ -479,13 +479,6 @@ namespace BaldLion
 				float offsetZ = yamlComponent[YAML_KEY_CAMERAFOLLOW_ZOFFSET].as<float>();
 				
 				ECSTransformComponent* transform = SceneManagement::SceneManager::GetECSManager()->GetEntityComponents().Get(entityID).Write<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
-				const ECSTransformComponent* followedEntityTransform = SceneManagement::SceneManager::GetECSManager()->GetEntityComponents().Get(followedEntityID).Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
-
-				const glm::vec3 followedEntityDirection = glm::normalize(MathUtils::GetTransformForwardDirection(followedEntityTransform->GetTransformMatrix()));
-				const glm::vec3 cameraPosition = followedEntityTransform->position - (followedEntityDirection * 5.0f);
-
-				transform->position = cameraPosition;
-				transform->rotation = followedEntityTransform->rotation;
 				
 				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSCameraFollowComponent>(
 					ECS::ECSComponentType::CameraFollow,

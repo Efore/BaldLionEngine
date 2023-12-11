@@ -99,8 +99,8 @@ namespace BaldLion
 		{
 			BL_LOG_CORE_INFO("Memory not freed:");
 
-			for (std::unordered_map<void*, AllocationInfo>::const_iterator it = s_allocationMap.begin(); it != s_allocationMap.end(); ++it) {
-				
+			/*for (std::unordered_map<void*, AllocationInfo>::const_iterator it = s_allocationMap.begin(); it != s_allocationMap.end(); ++it) {
+
 				switch (it->second.allocationType)
 				{
 				case AllocationType::FreeList_Main:
@@ -129,10 +129,10 @@ namespace BaldLion
 					break;
 				}
 
-				BL_LOG_CORE_INFO(BL_STRINGID_TO_STR_C(it->second.allocationDescription));				
+				BL_LOG_CORE_INFO(BL_STRINGID_TO_STR_C(it->second.allocationDescription));
 				BL_LOG_CORE_INFO("Size: {0}",(it->second.allocationSize));
 				BL_LOG_CORE_INFO("---------------");
-			}			
+			}	*/
 
 			if (s_linearFrameAllocator != nullptr)
 			{

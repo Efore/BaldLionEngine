@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneHierarchyPanel.h"
 #include "EditorUtils.h"
+#include "BaldLion/ECS/Components/ECSTransformComponent.h"
 
 #include <BaldLion.h>
 #include <imgui/imgui.h>
@@ -52,20 +53,6 @@ namespace BaldLion {
 
 			ImGui::Separator();
 
-			if (ImGui::Button("Create Dynamic Entity from Model"))
-			{
-				isStatic = false;
-				ImGui::OpenPopup("create_model_entity");
-			}
-
-			if (ImGui::Button("Create Dynamic Entity from Mesh"))
-			{
-				isStatic = false;
-				ImGui::OpenPopup("create_mesh_entity");
-			}
-
-			ImGui::Separator();
-
 			if (ImGui::BeginPopupModal("Create Entity", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 			{
 				static char entityName[64] = "";
@@ -73,7 +60,15 @@ namespace BaldLion {
 
 				if (entityName != "" && ImGui::Button("Create")) 
 				{
-					SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddEntity(entityName);
+					ECS::ECSEntityID newEntityID = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddEntity(entityName);
+
+					ECS::ECSTransformComponent* transformComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform,
+						MathUtils::Vector3Zero,
+						MathUtils::Vector3Zero,
+						glm::vec3(1.0f));
+
+					SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddComponentToEntity(newEntityID, transformComponent);
+
 					ImGui::CloseCurrentPopup();
 				}				
 
