@@ -18,6 +18,7 @@ namespace BaldLion {
 		{
 			ECS::SingletonComponents::CameraSystem::UpdateFrustrumPlanes();
 			ECSSystem::OnUpdate(deltaTime);
+			AddVisibleMeshesToRenderer();
 		}
 
 		void ECSFrustrumCullingSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
@@ -35,10 +36,7 @@ namespace BaldLion {
 			
 			const BoundingBox meshAABB = GeometryUtils::GetAABB(meshComponent->localBoundingBox, meshTransformMatrix);
 			meshComponent->isVisible = ECS::SingletonComponents::CameraSystem::IsAABBVisible(meshAABB);
-			if (meshComponent->isVisible)
-			{
-				Renderer::AddMeshToDraw(meshComponent, meshTransform, skeletonComponent);
-			}
+			
 			
 
 			//if (meshComponent->material->GetCastShadows())
@@ -46,5 +44,25 @@ namespace BaldLion {
 			//	Renderer::AddShadowCastingMesh(meshComponent, meshTransform, skeletonComponent);				
 			//}
 		}
+		
+		void ECSFrustrumCullingSystem::AddVisibleMeshesToRenderer()
+		{
+
+			if (m_componentLookUps.Size() == 0)
+				return;
+
+			BL_DYNAMICARRAY_FOREACH(m_componentLookUps)
+			{
+				const ECSTransformComponent* meshTransform = m_componentLookUps[i]->Read<ECSTransformComponent>(ECSComponentType::Transform);
+				const ECSMeshComponent* meshComponent = m_componentLookUps[i]->Read<ECSMeshComponent>(ECSComponentType::Mesh);
+				const ECSSkeletonComponent* skeletonComponent = m_componentLookUps[i]->Read<ECSSkeletonComponent>(ECSComponentType::Skeleton);
+
+				if (meshComponent->isVisible)
+				{
+					Renderer::AddMeshToDraw(meshComponent, meshTransform, skeletonComponent);
+				}
+			}
+		}
+
 	}
 }

@@ -30,7 +30,7 @@ namespace BaldLion
 
 			if (s_memory == nullptr)
 			{
-				BL_LOG_CORE_ERROR ("Not enough memory! 2GB of RAM needed.");
+				BL_LOG_CORE_ERROR ("Not enough memory! 1GB of RAM needed.");
 				return;
 			}
 

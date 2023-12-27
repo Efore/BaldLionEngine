@@ -7,14 +7,12 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		ECSSystem::ECSSystem(const char* systemName, const ECSSignature& signature, ECSManager* ecsManager, bool parallelize, bool waitForUpdateOperationsToFinish, Job::JobType jobType) :
+		ECSSystem::ECSSystem(const char* systemName, const ECSSignature& signature, ECSManager* ecsManager, bool parallelize) :
 			m_systemName(BL_STRING_TO_STRINGID(systemName)), 
 			m_signature(signature), 
 			m_ecsManager(ecsManager),
 			m_parallelize(parallelize),
-			m_waitForUpdatesOperationsToFinish(waitForUpdateOperationsToFinish),
-			m_refreshComponentLookUps(false),
-			m_jobType(jobType)
+			m_refreshComponentLookUps(false)
 		{
 
 			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_ECS, 100);
@@ -43,33 +41,32 @@ namespace BaldLion {
 			if (m_componentLookUps.Size() == 0)
 				return;
 
-			BL_DYNAMICARRAY_FOR(i, m_componentLookUps, 0)
+
+			if (m_parallelize)
 			{
-				ECSComponentLookUp* componentLookUp = m_componentLookUps[i];
-				const ECSEntityID entityID = m_entityIDs[i];
+				Threading::TaskScheduler::KickParallelTask(m_parallelTask, m_componentLookUps.Size(),
+					[this,deltaTime](uint32_t firstIterationIndex, uint32_t lastIterationIndex)
+					{
+						for (uint32_t i = firstIterationIndex; i <= lastIterationIndex; ++i)
+						{
+							ECSComponentLookUp* componentLookUp = m_componentLookUps[i];
+							const ECSEntityID entityID = m_entityIDs[i];
 
-				if (m_parallelize)
+							this->UpdateComponents(entityID, componentLookUp, deltaTime);
+						}
+					});
+
+				m_parallelTask.Wait();
+			}
+			else 
+			{
+				BL_DYNAMICARRAY_FOR(i, m_componentLookUps, 0)
 				{
-					const std::string systemOperation = std::to_string(m_systemName) + std::to_string(i);
+					ECSComponentLookUp* componentLookUp = m_componentLookUps[i];
+					const ECSEntityID entityID = m_entityIDs[i];
 
-					JobManagement::Job systemUpdateJob(systemOperation.c_str(), m_jobType);
-
-					systemUpdateJob.Task = [this, entityID, componentLookUp, deltaTime] {
-
-						this->UpdateComponents(entityID, componentLookUp, deltaTime);
-					};
-
-					JobManagement::JobManager::QueueJob(systemUpdateJob);
-				}
-				else 
-				{
 					this->UpdateComponents(entityID, componentLookUp, deltaTime);
 				}
-			}
-
-			if (m_parallelize && m_waitForUpdatesOperationsToFinish)
-			{
-				JobManagement::JobManager::WaitForJobs(1 << m_jobType);
 			}
 		}
 

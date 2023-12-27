@@ -9,12 +9,15 @@ namespace BaldLion {
 		{
 		public:
 			ECSFrustrumCullingSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager) :
-				ECSSystem(systemName, signature, ecsManager, false, false, JobManagement::Job::JobType::Rendering) {}
+				ECSSystem(systemName, signature, ecsManager, true) {}
 			
 			virtual void OnStart() override {};
 			virtual void OnUpdate(float deltaTime) override;
 			virtual void UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime) override;
 			virtual void OnStop() override {};
+
+		private:
+			void AddVisibleMeshesToRenderer();
 
 		};
 

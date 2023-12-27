@@ -6,8 +6,7 @@
 #include "DetourObstacleAvoidance.h"
 #include "DetourCrowd.h"
 
-#include "BaldLion/Core/JobManagement/JobManager.h"
-
+#include "BaldLion/Core/Threading/TaskScheduler.h"
 #include <glm/glm.hpp>
 
 namespace BaldLion::AI::Navigation
@@ -39,6 +38,7 @@ namespace BaldLion::AI::Navigation
 		static dtObstacleAvoidanceDebugData* s_vod;
 
 		static bool s_navigationActive;
+		static Threading::Task s_updateTask;
 
 	};
 }

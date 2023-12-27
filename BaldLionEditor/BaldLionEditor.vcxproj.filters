@@ -27,6 +27,9 @@
     <ClInclude Include="src\Panels\Components\AnimationComponentInspector.h">
       <Filter>src\Panels\Components</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\Components\CameraFollowComponentInspector.h">
+      <Filter>src\Panels\Components</Filter>
+    </ClInclude>
     <ClInclude Include="src\Panels\Components\ComponentInspector.h">
       <Filter>src\Panels\Components</Filter>
     </ClInclude>
@@ -84,7 +87,6 @@
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
       <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panels\Components\CameraFollowComponentInspector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp">

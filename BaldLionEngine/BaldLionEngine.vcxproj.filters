@@ -28,11 +28,11 @@
     <Filter Include="src\BaldLion\Core\Containers">
       <UniqueIdentifier>{7E066D0B-6AC1-5CB7-1379-D501FF12A747}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\BaldLion\Core\JobManagement">
-      <UniqueIdentifier>{809CD2F9-EC7F-E139-F582-0F7661E5A78A}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\BaldLion\Core\Memory">
       <UniqueIdentifier>{E1E6F51D-CD0B-459E-F656-2A2EE2DA43BC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\Core\Threading">
+      <UniqueIdentifier>{1E5FEE30-8A6C-1C17-1353-18027F5FE8CD}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\BaldLion\ECS">
       <UniqueIdentifier>{6BC1AF88-57BA-CEDA-80EC-B35F6C44AEE6}</UniqueIdentifier>
@@ -357,12 +357,6 @@
     <ClInclude Include="src\BaldLion\Core\Input.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\JobManagement\JobManager.h">
-      <Filter>src\BaldLion\Core\JobManagement</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\JobManagement\ThreadPool.h">
-      <Filter>src\BaldLion\Core\JobManagement</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Core\KeyCodes.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
@@ -396,6 +390,12 @@
     <ClInclude Include="src\BaldLion\Core\StringId.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Threading\Task.h">
+      <Filter>src\BaldLion\Core\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\Threading\TaskScheduler.h">
+      <Filter>src\BaldLion\Core\Threading</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Time.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
@@ -403,6 +403,9 @@
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Components\ECSAnimationComponent.h">
+      <Filter>src\BaldLion\ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSCameraFollowComponent.h">
       <Filter>src\BaldLion\ECS\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Components\ECSDirectionalLightComponent.h">
@@ -423,6 +426,9 @@
     <ClInclude Include="src\BaldLion\ECS\Components\ECSPhysicsBodyComponent.h">
       <Filter>src\BaldLion\ECS\Components</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSPlayerControllerComponent.h">
+      <Filter>src\BaldLion\ECS\Components</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Components\ECSProjectionCameraComponent.h">
       <Filter>src\BaldLion\ECS\Components</Filter>
     </ClInclude>
@@ -432,10 +438,10 @@
     <ClInclude Include="src\BaldLion\ECS\Components\ECSTransformComponent.h">
       <Filter>src\BaldLion\ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\LightningSystem.h">
+    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\CameraSystem.h">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\CameraSystem.h">
+    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\LightningSystem.h">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\ECSComponent.h">
@@ -465,6 +471,12 @@
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSCameraFollowSystem.h">
+      <Filter>src\BaldLion\ECS\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.h">
+      <Filter>src\BaldLion\ECS\Systems</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
@@ -474,7 +486,7 @@
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.h">
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h">
@@ -2580,10 +2592,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\Systems\ECSCameraFollowSystem.h" />
-    <ClInclude Include="src\BaldLion\ECS\Components\ECSCameraFollowComponent.h" />
-    <ClInclude Include="src\BaldLion\ECS\Components\ECSPlayerControllerComponent.h" />
-    <ClInclude Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp">
@@ -2628,12 +2636,6 @@
     <ClCompile Include="src\BaldLion\Core\GameStateLayerStack.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\JobManagement\JobManager.cpp">
-      <Filter>src\BaldLion\Core\JobManagement</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\JobManagement\ThreadPool.cpp">
-      <Filter>src\BaldLion\Core\JobManagement</Filter>
-    </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Log.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
@@ -2655,16 +2657,22 @@
     <ClCompile Include="src\BaldLion\Core\StringId.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Threading\Task.cpp">
+      <Filter>src\BaldLion\Core\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Threading\TaskScheduler.cpp">
+      <Filter>src\BaldLion\Core\Threading</Filter>
+    </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Time.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Window.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\LightningSystem.cpp">
+    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\CameraSystem.cpp">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\CameraSystem.cpp">
+    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\LightningSystem.cpp">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\ECSManager.cpp">
@@ -2676,6 +2684,12 @@
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.cpp">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSCameraFollowSystem.cpp">
+      <Filter>src\BaldLion\ECS\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.cpp">
+      <Filter>src\BaldLion\ECS\Systems</Filter>
+    </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.cpp">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
@@ -2685,7 +2699,7 @@
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.cpp">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.cpp">
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.cpp">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
@@ -3132,10 +3146,5 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\ECS\Systems\ECSCameraFollowSystem.cpp" />
-    <ClCompile Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="C:\Users\Ivan\AppData\Local\Temp\1fdhzcyx.bmp" />
   </ItemGroup>
 </Project>

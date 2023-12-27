@@ -2,7 +2,6 @@
 #include "NavMeshBuilder.h"
 #include "RecastClasses/InputGeom.h"
 #include "DetourNavMeshBuilder.h"
-#include "BaldLion/Core/JobManagement/JobManager.h"
 #include "BaldLion/SceneManagement/SceneManager.h"
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/Components/ECSMeshComponent.h"
@@ -33,7 +32,10 @@ namespace BaldLion::AI::Navigation
 	float NavMeshBuilder::s_totalBuildTimeMs;
 	int NavMeshBuilder::s_tileTriCount;
 
-	bool NavMeshBuilder::s_isBakingNavmesh = false;
+	bool NavMeshBuilder::s_isBakingNavmesh = false;	
+	bool NavMeshBuilder::s_geomMeshAdded = false;
+
+	Threading::Task NavMeshBuilder::s_bakeNavMeshTask;
 
 	void NavMeshBuilder::Init()
 	{
@@ -126,11 +128,8 @@ namespace BaldLion::AI::Navigation
 		buildSettings.tileSize = navMeshConfig.tileSize;
 
 		s_geom->saveGeomSet(&buildSettings);
-
-
-		JobManagement::Job loadGeomJob("Load Geom", JobManagement::Job::JobType::Editor);
-
-		loadGeomJob.Task = [] 
+		s_geomMeshAdded = false;
+		Threading::TaskScheduler::KickSingleTask(s_bakeNavMeshTask,[] 
 		{
 
 			BL_PROFILE_SCOPE("Load Geom for Navmesh", Optick::Category::Navigation);
@@ -155,10 +154,10 @@ namespace BaldLion::AI::Navigation
 				MemoryManager::Delete(s_geom);
 				s_geom = nullptr;
 			}
-		};
 
-		JobManagement::JobManager::QueueJob(loadGeomJob);
-		
+			s_geomMeshAdded = true;
+		});
+			
 
 		return true;
 	}
@@ -215,16 +214,13 @@ namespace BaldLion::AI::Navigation
 			return false;
 		}
 
-		JobManagement::Job bakeNavMeshJob("Bake Nav Mesh", JobManagement::Job::JobType::Editor);
+		s_bakeNavMeshTask.Wait();
 
-		bakeNavMeshJob.Task = [] {
+		Threading::TaskScheduler::KickSingleTask(s_bakeNavMeshTask, [] {
 			s_isBakingNavmesh = true;
 			BuildAllTiles();
 			s_isBakingNavmesh = false;
-		};
-
-		JobManagement::JobManager::WaitForJobs(1 << JobManagement::Job::JobType::Editor);
-		JobManagement::JobManager::QueueJob(bakeNavMeshJob);
+		});
 
 		return true;
 	}
@@ -730,5 +726,6 @@ namespace BaldLion::AI::Navigation
 		return s_isBakingNavmesh;
 	}
 
+	
 
 }

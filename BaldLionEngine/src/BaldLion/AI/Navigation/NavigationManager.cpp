@@ -10,6 +10,8 @@ namespace BaldLion::AI::Navigation
 
 	bool NavigationManager::s_navigationActive = false;
 
+	Threading::Task NavigationManager::s_updateTask;
+
 	void NavigationManager::Init()
 	{
 		NavMeshBuilder::Init();
@@ -81,14 +83,10 @@ namespace BaldLion::AI::Navigation
 			return;
 		}
 
-		JobManagement::Job navigationUpdateJob("Update navigation job", JobManagement::Job::JobType::Navigation);
-
-		navigationUpdateJob.Task = [deltaTime] {
+		Threading::TaskScheduler::KickSingleTask(s_updateTask, [deltaTime] {
 			BL_PROFILE_SCOPE("Crowd update",Optick::Category::GameLogic);
 			s_crowd->update(deltaTime, &s_agentDebug);
-		};
-
-		JobManagement::JobManager::QueueJob(navigationUpdateJob);
+		});
 	}
 
 	i32 NavigationManager::CreateCrowdAgent(const glm::vec3& pos, float maxSpeed, float maxAcceleration)

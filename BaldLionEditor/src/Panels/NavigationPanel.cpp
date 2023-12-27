@@ -150,7 +150,7 @@ namespace BaldLion
 			}
 			
 
-			if (geom != nullptr)
+			if (NavMeshBuilder::GeomMeshAdded())
 			{
 				if (ImGui::Button("Bake NavMesh"))
 				{
@@ -161,7 +161,6 @@ namespace BaldLion
 
 			if (NavMeshBuilder::NavMeshIsValid() && !NavMeshBuilder::NavMeshIsBaking())
 			{
-				//DrawNavMesh();
 				DrawAgents();	
 				
 				ImGui::Checkbox("Manage Agents", &m_manageAgents);

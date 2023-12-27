@@ -14,7 +14,7 @@ namespace BaldLion
 	{
 
 		ECSNavigationSystem::ECSNavigationSystem(const char* systemName, const ECSSignature & signature, class ECSManager* ecsManager) :
-				ECSSystem(systemName, signature, ecsManager, true, true) 
+				ECSSystem(systemName, signature, ecsManager, true) 
 		{
 				
 		}		

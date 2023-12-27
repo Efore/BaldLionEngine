@@ -1,7 +1,7 @@
 #include "blpch.h"
 #include "Application.h"
 #include "BaldLion/Rendering/Renderer.h"
-#include "BaldLion/Core/JobManagement/JobManager.h"
+#include "BaldLion/Core/Threading/TaskScheduler.h"
 #include "BaldLion/Animation/AnimationManager.h"
 #include "BaldLion/SceneManagement/SceneManager.h"
 #include "BaldLion/ResourceManagement/ResourceManager.h"
@@ -26,7 +26,7 @@ namespace BaldLion
 		s_instance = this;
 
 		Memory::MemoryManager::Init(0);
-		JobManagement::JobManager::Init();
+		Threading::TaskScheduler::Init();
 		ResourceManagement::ResourceManager::Init();		
 		AI::Navigation::NavigationManager::Init();
 
@@ -48,8 +48,6 @@ namespace BaldLion
 
 	Application::~Application()
 	{		
-		JobManagement::JobManager::WaitForJobs(JobManagement::Job::AllJobTypesMask);
-
 		m_layerStack.PopOverlay(m_imGuiLayer);
 		m_layerStack.Delete();
 		Window::Destroy(m_window);
@@ -63,7 +61,7 @@ namespace BaldLion
 
 		AI::Navigation::NavigationManager::Stop();
 		ResourceManagement::ResourceManager::Stop();
-		JobManagement::JobManager::Stop();
+		Threading::TaskScheduler::Stop();
 		Memory::MemoryManager::Stop();
 
 		OPTICK_SHUTDOWN();

@@ -3,6 +3,7 @@
 bin-int/
 bin/
 BaldLionEditor/assets/gameAssets/
+BaldLionEditor/assets/scenes/
 BaldLionGame/assets/gameAssets/
 
 # Files
@@ -13,3 +14,4 @@ BaldLionEditor/BaldLionProfile-Shutdown.json
 BaldLionEditor/BaldLionProfile-Runtime.json
 *.meta
 *.scene
+BaldLionEditor/imgui.ini

@@ -5,6 +5,7 @@
 #include "DetourNavMeshQuery.h"
 #include "RecastClasses/BuildContext.h"
 #include "RecastClasses/InputGeom.h"
+#include "BaldLion/Core/Threading/TaskScheduler.h"
 
 namespace BaldLion::AI::Navigation 
 {
@@ -44,6 +45,8 @@ namespace BaldLion::AI::Navigation
 		static bool NavMeshIsValid();
 		static bool NavMeshIsBaking();
 
+		static bool GeomMeshAdded() { return s_geomMeshAdded; }
+
 	private:
 
 		static bool InternalBuildNavMesh();
@@ -81,6 +84,9 @@ namespace BaldLion::AI::Navigation
 		static int s_tileTriCount;
 
 		static bool s_isBakingNavmesh;
+		static bool s_geomMeshAdded;
+
+		static Threading::Task s_bakeNavMeshTask;
 	};
 }
 
