@@ -17,58 +17,43 @@ namespace BaldLion
 			m_entitySignatures = HashTable<ECSEntityID, ECSSignature>(AllocationType::FreeList_ECS, 1000);
 			m_entitiyMap = HashTable<ECSEntityID, ECSEntity*>(AllocationType::FreeList_ECS, 1000);
 
-			m_entities = DynamicArray<ECSEntity>(AllocationType::FreeList_ECS,1000);			
-			m_systems = DynamicArray<ECSSystem*>(AllocationType::FreeList_ECS,100);
+			memset(m_systems, 0, sizeof(ECSSystem*) * (ui32)ECSSystemType::Count);
 
-			m_componentsPool = DynamicArray<void*>(AllocationType::FreeList_ECS, (ui32)ECSComponentType::Count);
-
+			m_entities = DynamicArray<ECSEntity>(AllocationType::FreeList_ECS,1000);		
 			m_cachedEntityHierarchy = DynamicArray<ECSTransformHierarchyEntry>(AllocationType::FreeList_ECS, 1000);
 
-			//Pools initialization in ecscomponenttype order: 
-			//	1-Transform
-			//	2-ProjectionCamera
-			//	3-Mesh
-			//	4-Skeleton
-			//	5-DirectionalLight
-			//	6-Animation
-			//	7-PhysicsBody
-			//	8-NavMeshAgent
-			//	9-Locomotion
-			//  10-CameraFollow
-			//	11-PlayerController
-
 			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_ECS, 1000);
-			m_componentsPool.EmplaceBack(&m_transformComponentPool);
+			m_componentsPool[(ui32)ECSComponentType::Transform] = &m_transformComponentPool;
 
 			m_projectionCameraComponentPool = DynamicArray<ECSProjectionCameraComponent>(AllocationType::FreeList_ECS, 10);
-			m_componentsPool.EmplaceBack(&m_projectionCameraComponentPool);
-
+			m_componentsPool[(ui32)ECSComponentType::ProjectionCamera] = &m_projectionCameraComponentPool;
+			
 			m_meshComponentPool = DynamicArray<ECSMeshComponent>(AllocationType::FreeList_ECS, 1000);
-			m_componentsPool.EmplaceBack(&m_meshComponentPool);
+			m_componentsPool[(ui32)ECSComponentType::Mesh] = &m_meshComponentPool;
 
 			m_skeletonComponentPool = DynamicArray<ECSSkeletonComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.EmplaceBack(&m_skeletonComponentPool);			
+			m_componentsPool[(ui32)ECSComponentType::Skeleton] = &m_skeletonComponentPool;
 
 			m_directionalLightComponentPool = DynamicArray<ECSDirectionalLightComponent>(AllocationType::FreeList_ECS, 10);
-			m_componentsPool.EmplaceBack(&m_directionalLightComponentPool);
+			m_componentsPool[(ui32)ECSComponentType::DirectionalLight] = &m_directionalLightComponentPool;
 
 			m_animationComponentPool = DynamicArray<ECSAnimationComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.EmplaceBack(&m_animationComponentPool);
+			m_componentsPool[(ui32)ECSComponentType::Animation] = &m_animationComponentPool;
 
 			m_physicsBodyComponentPool = DynamicArray<ECSPhysicsBodyComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.EmplaceBack(&m_physicsBodyComponentPool);
+			m_componentsPool[(ui32)ECSComponentType::PhysicsBody] = &m_physicsBodyComponentPool;
 
 			m_navMeshAgentComponentPool = DynamicArray<ECSNavMeshAgentComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.EmplaceBack(&m_navMeshAgentComponentPool);
+			m_componentsPool[(ui32)ECSComponentType::NavMeshAgent] = &m_navMeshAgentComponentPool;
 
 			m_locomotionComponentPool = DynamicArray<ECSLocomotionComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.EmplaceBack(&m_locomotionComponentPool);	
+			m_componentsPool[(ui32)ECSComponentType::Locomotion] = &m_locomotionComponentPool;
 
 			m_cameraFollowComponentPool = DynamicArray<ECSCameraFollowComponent>(AllocationType::FreeList_ECS, 2);
-			m_componentsPool.EmplaceBack(&m_cameraFollowComponentPool);
+			m_componentsPool[(ui32)ECSComponentType::CameraFollow] = &m_cameraFollowComponentPool;
 
 			m_playerControllerComponentPool = DynamicArray<ECSPlayerControllerComponent>(AllocationType::FreeList_ECS, 40);
-			m_componentsPool.EmplaceBack(&m_playerControllerComponentPool);
+			m_componentsPool[(ui32)ECSComponentType::PlayerController] = &m_playerControllerComponentPool;
 		}
 
 		ECSManager::~ECSManager()
@@ -78,12 +63,10 @@ namespace BaldLion
 			m_entities.Delete();
 			m_cachedEntityHierarchy.Delete();
 
-			BL_DYNAMICARRAY_FOR(i, m_systems, 0)			
+			for(ui32 i = 0; i < (ui32)ECSSystemType::Count; ++i)
 			{
 				MemoryManager::Delete(m_systems[i]);
-			}
-
-			m_systems.Delete();			
+			}	
 
 			CleanComponentPool<ECSTransformComponent>(ECSComponentType::Transform);
 			CleanComponentPool<ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera);
@@ -97,7 +80,6 @@ namespace BaldLion
 			CleanComponentPool<ECSCameraFollowComponent>(ECSComponentType::CameraFollow);
 			CleanComponentPool<ECSPlayerControllerComponent>(ECSComponentType::PlayerController);
 
-			m_componentsPool.Delete();
 		}
 
 		ECSEntityID ECSManager::AddEntity(const char* entityName)
@@ -124,7 +106,7 @@ namespace BaldLion
 
 			ECSSignature signature = m_entitySignatures.Get(entityID);
 
-			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
+			for (ui32 i = 0; i < (ui32)ECSSystemType::Count; ++i)
 			{
 				m_systems[i]->OnEntityModified(signature);
 			}
@@ -148,7 +130,7 @@ namespace BaldLion
 		{
 			ECSSignature oldSignature = m_entitySignatures.Get(entityID);
 
-			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
+			for (ui32 i = 0; i < (ui32)ECSSystemType::Count; ++i)
 			{
 				m_systems[i]->OnEntityModified(oldSignature);
 			}
@@ -202,7 +184,7 @@ namespace BaldLion
 
 			ECSSignature signature = m_entitySignatures.Get(entityID);
 
-			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
+			for (ui32 i = 0; i < (ui32)ECSSystemType::Count; ++i)
 			{
 				m_systems[i]->OnEntityModified(signature);
 			}
@@ -224,7 +206,7 @@ namespace BaldLion
 
 			m_entityComponents.Get(entityID).Set(componentType, nullptr);
 
-			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
+			for (ui32 i = 0; i < (ui32)ECSSystemType::Count; ++i)
 			{
 				m_systems[i]->OnEntityModified(oldSignature);
 			}
@@ -367,7 +349,7 @@ namespace BaldLion
 
 		void ECSManager::StartSystems()
 		{
-			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
+			for (ui32 i = 0; i < (ui32)ECSSystemType::Count; ++i)
 			{
 				m_systems[i]->OnStart();
 			}
@@ -375,7 +357,7 @@ namespace BaldLion
 
 		void ECSManager::StopSystems()
 		{
-			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
+			for (ui32 i = 0; i < (ui32)ECSSystemType::Count; ++i)
 			{
 				m_systems[i]->OnStop();
 			}
@@ -383,17 +365,17 @@ namespace BaldLion
 
 		void ECSManager::AddSystem(ECSSystem* system)
 		{
-			m_systems.PushBack(system);
+			m_systems[(ui32)system->GetSystemType()] = system;
 		}
 
-		void ECSManager::RemoveSystem(ECSSystem* system)
+		ECSSystem* ECSManager::GetSystem(ECSSystemType systemType) const
 		{
-			m_systems.Remove(system);
+			return m_systems[(ui32)systemType];
 		}
 
 		void ECSManager::FrameStart()
 		{
-			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
+			for (ui32 i = 0; i < (ui32)ECSSystemType::Count; ++i)
 			{
 				m_systems[i]->OnFrameStart();
 			}
@@ -401,7 +383,7 @@ namespace BaldLion
 
 		void ECSManager::UpdateSystems(float deltaTime)
 		{
-			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
+			for (ui32 i = 0; i < (ui32)ECSSystemType::Count; ++i)
 			{
 				m_systems[i]->OnUpdate(deltaTime);
 			}
@@ -409,7 +391,7 @@ namespace BaldLion
 
 		void ECSManager::FrameEnd()
 		{
-			BL_DYNAMICARRAY_FOR(i, m_systems, 0)
+			for (ui32 i = 0; i < (ui32)ECSSystemType::Count; ++i)
 			{
 				m_systems[i]->OnFrameEnd();
 			}

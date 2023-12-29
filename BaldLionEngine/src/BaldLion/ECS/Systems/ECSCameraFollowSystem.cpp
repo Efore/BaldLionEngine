@@ -18,8 +18,8 @@ namespace BaldLion
 	namespace ECS
 	{
 
-		ECSCameraFollowSystem::ECSCameraFollowSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager) : 
-			ECSSystem(systemName, signature, ecsManager, true)
+		ECSCameraFollowSystem::ECSCameraFollowSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, class ECSManager* ecsManager) : 
+			ECSSystem(systemName, systemType, signature, ecsManager, true)
 		{
 
 		}

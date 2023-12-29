@@ -8,7 +8,7 @@ namespace BaldLion
 		class ECSCameraFollowSystem : public ECSSystem
 		{
 		public:
-			ECSCameraFollowSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager);
+			ECSCameraFollowSystem(const char* systemName, ECSSystemType systemType,const ECSSignature& signature, class ECSManager* ecsManager);
 
 			virtual void OnStart() override {};
 			virtual void OnStop() override {}			

@@ -11,7 +11,7 @@ namespace BaldLion
 		class ECSSystem {
 
 		public:
-			ECSSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager, bool parallelize);
+			ECSSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, class ECSManager* ecsManager, bool parallelize);
 			virtual ~ECSSystem();
 
 			virtual void OnStart() = 0;
@@ -22,29 +22,44 @@ namespace BaldLion
 
 			virtual void UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime) = 0;
 
-			void OnEntityModified(ECSSignature entitySignature);					
+			void OnEntityModified(ECSSignature entitySignature);	
+
+			ECSSystemType GetSystemType() const { return m_systemType; }
+
+			void SetParallelDependencies(ui32 count, ...);
+
+			const Threading::Task& GetParallelTask() const { return m_parallelTask; }
 
 		protected:
 
+			StringId m_systemName;
+			ECSSystemType m_systemType;
 			ECSSignature m_signature;			
 			DynamicArray<ECSEntityID> m_entityIDs;
 			DynamicArray<ECSComponentLookUp*> m_componentLookUps;
 
-			class ECSManager* m_ecsManager;
-			StringId m_systemName;
-		
-			bool m_parallelize;
+			const Threading::Task* m_parallelDependencies[(ui32)ECSSystemType::Count];
+			ui32 m_parallelDependenciesCount = 0;
+
+			class ECSManager* m_ecsManager;		
 
 			bool m_refreshComponentLookUps;
 
+			bool m_parallelize;
 			Threading::Task m_parallelTask;
 		};
 
-		#define BL_GENERATE_SYSTEM(SystemName, SystemType, ecsManager, ...)	\
+		#define BL_GENERATE_SYSTEM(SystemName, SystemClass, SystemType, EcsManager, ...)	\
 				{	\
 				const ECS::ECSSignature systemSignature = GenerateSignature(BL_NUMARGS(__VA_ARGS__),__VA_ARGS__);	\
-				SystemType* ecsSystem = MemoryManager::New<SystemType>(SystemName, AllocationType::FreeList_ECS, SystemName, systemSignature, ecsManager);	\
-				ecsManager->AddSystem(ecsSystem);	\
+				SystemClass* ecsSystem = MemoryManager::New<SystemClass>(SystemName, AllocationType::FreeList_ECS, SystemName, SystemType, systemSignature, EcsManager);	\
+				EcsManager->AddSystem(ecsSystem);	\
+				}
+
+		#define BL_SET_SYSTEM_DEPENDENCIES(SystemType, EcsManager, ...)	\
+				{	\
+				ECS::ECSSystem* ecsSystem = EcsManager->GetSystem(SystemType);	\
+				ecsSystem->SetParallelDependencies(BL_NUMARGS(__VA_ARGS__),__VA_ARGS__);	\
 				}
 
 	}

@@ -40,14 +40,12 @@ namespace BaldLion
 			m_isActive = true;
 			Physics::PhysicsManager::SetIsPhysicsActive(false);
 
-			if (SceneManagement::SceneManager::GetMainScenePathFile().empty())
+			if (SceneManagement::SceneManager::GetMainScenePathFile().empty() || 
+				!SceneManagement::SceneManager::OpenScene(SceneManagement::SceneManager::GetMainScenePathFile().c_str()))
 			{
 				NewScene();
 			}
-			else
-			{
-				SceneManagement::SceneManager::OpenScene(SceneManagement::SceneManager::GetMainScenePathFile().c_str());
-			}
+
 			m_ecsManager = SceneManagement::SceneManager::GetECSManager();
 
 			//Panel Setup

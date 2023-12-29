@@ -82,10 +82,16 @@ namespace BaldLion
 			return s_mainScene->GetECSManager();
 		}
 
-		void SceneManager::OpenScene(const char* filepath)
+		bool SceneManager::OpenScene(const char* filepath)
 		{
-			SceneSerializer::DeserializeScene(filepath);
+			bool success = SceneSerializer::DeserializeScene(filepath);
+			if (!success)
+			{
+				return false;
+			}
+
 			s_mainScenePathFile = filepath;
+			return true;
 		}
 
 		void SceneManager::SaveScene(const char* filepath)

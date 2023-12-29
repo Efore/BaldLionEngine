@@ -8,7 +8,7 @@ namespace BaldLion
 		class ECSPlayerControllerSystem : public ECSSystem
 		{
 		public:
-			ECSPlayerControllerSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager);
+			ECSPlayerControllerSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, class ECSManager* ecsManager);
 
 			virtual void OnStart() override {};
 			virtual void OnStop() override {}			

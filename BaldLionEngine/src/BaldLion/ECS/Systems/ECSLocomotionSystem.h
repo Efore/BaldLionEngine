@@ -8,7 +8,7 @@ namespace BaldLion
 		class ECSLocomotionSystem : public ECSSystem
 		{
 		public:
-			ECSLocomotionSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager);
+			ECSLocomotionSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, class ECSManager* ecsManager);
 
 			virtual void OnStart() override {};
 			virtual void OnStop() override {}			

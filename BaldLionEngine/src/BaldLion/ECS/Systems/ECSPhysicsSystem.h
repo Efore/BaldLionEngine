@@ -8,7 +8,7 @@ namespace BaldLion {
 		class ECSPhysicsSystem : public ECSSystem
 		{
 		public:
-			ECSPhysicsSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager);
+			ECSPhysicsSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, class ECSManager* ecsManager);
 			virtual ~ECSPhysicsSystem();
 
 			virtual void OnStart() override {};

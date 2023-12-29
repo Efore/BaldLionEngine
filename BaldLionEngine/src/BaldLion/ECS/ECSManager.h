@@ -51,7 +51,7 @@ namespace BaldLion {
 
 			//Systems
 			void AddSystem(ECSSystem* system);		
-			void RemoveSystem(ECSSystem* system);			
+			ECSSystem* GetSystem(ECSSystemType systemType) const;			
 
 			//Hierarchy
 			void SetEntityParent(ECSEntityID entityID, ECSEntityID parentID);
@@ -108,12 +108,12 @@ namespace BaldLion {
 			HashTable<ECSEntityID, ECSEntity*> m_entitiyMap;
 
 			DynamicArray<ECSEntity> m_entities;
-			DynamicArray<ECSSystem*> m_systems;
+			ECSSystem* m_systems[(ui32)ECSSystemType::Count];
 
 			DynamicArray<ECSTransformHierarchyEntry> m_cachedEntityHierarchy;
 
 			//Pools
-			DynamicArray<void*> m_componentsPool;
+			void* m_componentsPool[(ui32)ECSComponentType::Count];
 			DynamicArray<class ECSTransformComponent> m_transformComponentPool;
 			DynamicArray<class ECSProjectionCameraComponent> m_projectionCameraComponentPool;			
 			DynamicArray<class ECSDirectionalLightComponent> m_directionalLightComponentPool;

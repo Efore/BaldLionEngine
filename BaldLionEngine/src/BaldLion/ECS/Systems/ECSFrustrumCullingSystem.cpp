@@ -46,10 +46,11 @@ namespace BaldLion {
 		}
 		
 		void ECSFrustrumCullingSystem::AddVisibleMeshesToRenderer()
-		{
-
+		{			
 			if (m_componentLookUps.Size() == 0)
 				return;
+
+			m_parallelTask.Wait();
 
 			BL_DYNAMICARRAY_FOREACH(m_componentLookUps)
 			{

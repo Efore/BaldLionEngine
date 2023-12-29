@@ -6,7 +6,7 @@ namespace BaldLion
 {
 	namespace Threading
 	{		
-		void Task::Wait()
+		void Task::Wait() const
 		{
 			while (m_counter > 0);
 		}

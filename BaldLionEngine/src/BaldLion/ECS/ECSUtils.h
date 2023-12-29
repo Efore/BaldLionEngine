@@ -24,6 +24,19 @@ namespace BaldLion
 			Count
 		};
 
+		enum class ECSSystemType : ui32
+		{
+			PhysicsSystem,
+			NavigationSystem,
+			PlayerControllerSystem,
+			LocomotionSystem,
+			AnimationSystem,
+			CameraFollowSystem,
+			FrustrumCullingSystem,
+
+			Count
+		};
+
 		//---------------------------------------------------------------------------------------------------
 
 		using ECSEntityID = ui32;

@@ -11,7 +11,7 @@ namespace BaldLion
 	{
 		struct Task
 		{
-			void Wait();
+			void Wait() const;
 
 			void SetCounter(ui32 counter);
 			void ReduceCounter();

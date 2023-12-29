@@ -14,8 +14,8 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		ECSPhysicsSystem::ECSPhysicsSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager)
-			:ECSSystem(systemName, signature, ecsManager, true) 
+		ECSPhysicsSystem::ECSPhysicsSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, class ECSManager* ecsManager)
+			:ECSSystem(systemName, systemType, signature, ecsManager, true) 
 		{
 
 		}

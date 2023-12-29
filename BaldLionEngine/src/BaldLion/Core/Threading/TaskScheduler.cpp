@@ -7,7 +7,12 @@ namespace BaldLion
 {
 	namespace Threading 
 	{
-		DynamicArray<std::thread> TaskScheduler::s_workerThreads;
+		WorkerThread::WorkerThread(ui32 threadIndex) : thread(TaskScheduler::ThreadProcess, threadIndex)
+		{
+			sprintf(name, "Worker%i", threadIndex);
+		}
+		//--------------------------------------------------------------------------
+		DynamicArray<WorkerThread> TaskScheduler::s_workerThreads;
 		Queue<TaskEntry> TaskScheduler::s_taskQueue;
 		std::mutex TaskScheduler::s_taskQueueMutex;
 
@@ -18,12 +23,12 @@ namespace BaldLion
 
 		void TaskScheduler::Init(ui32 threadsCount /*= std::thread::hardware_concurrency() / 2*/)
 		{
-			s_workerThreads = DynamicArray<std::thread>(AllocationType::FreeList_Main, threadsCount);
+			s_workerThreads = DynamicArray<WorkerThread>(AllocationType::FreeList_Main, threadsCount);
 			s_taskQueue = Queue<TaskEntry>(AllocationType::FreeList_Main, 1000);
 
 			for (ui32 i = 0; i < threadsCount; ++i)
 			{
-				s_workerThreads.EmplaceBack(ThreadProcess,i);
+				s_workerThreads.EmplaceBack(i);
 			}
 		}
 
@@ -95,6 +100,7 @@ namespace BaldLion
 		{
 			while (true)
 			{
+				BL_PROFILE_THREAD(s_workerThreads[threadIndex].name);
 				TaskEntry entry;
 
 				s_taskQueueMutex.lock();
@@ -115,6 +121,8 @@ namespace BaldLion
 				}
 			}
 		}
+
+		
 
 	}
 }

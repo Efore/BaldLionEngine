@@ -14,8 +14,8 @@ namespace BaldLion
 {	
 	namespace ECS
 	{
-		ECSPlayerControllerSystem::ECSPlayerControllerSystem(const char* systemName, const ECSSignature& signature, class ECSManager* ecsManager) :
-			ECSSystem(systemName, signature, ecsManager, false)
+		ECSPlayerControllerSystem::ECSPlayerControllerSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, class ECSManager* ecsManager) :
+			ECSSystem(systemName, systemType, signature, ecsManager, false)
 		{
 
 		}

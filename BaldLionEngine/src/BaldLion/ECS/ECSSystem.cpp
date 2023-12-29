@@ -7,14 +7,14 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		ECSSystem::ECSSystem(const char* systemName, const ECSSignature& signature, ECSManager* ecsManager, bool parallelize) :
+		ECSSystem::ECSSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, ECSManager* ecsManager, bool parallelize) :
 			m_systemName(BL_STRING_TO_STRINGID(systemName)), 
+			m_systemType(systemType),
 			m_signature(signature), 
 			m_ecsManager(ecsManager),
 			m_parallelize(parallelize),
 			m_refreshComponentLookUps(false)
 		{
-
 			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_ECS, 100);
 			m_entityIDs = DynamicArray<ECSEntityID>(AllocationType::FreeList_ECS, 100);
 			
@@ -27,6 +27,8 @@ namespace BaldLion {
 					m_entityIDs.PushBack(iterator.GetKey());
 				}
 			}
+
+			memset(m_parallelDependencies, 0, sizeof(Threading::Task*) * (ui32)ECSSystemType::Count);
 		}
 
 		ECSSystem::~ECSSystem()
@@ -41,6 +43,13 @@ namespace BaldLion {
 			if (m_componentLookUps.Size() == 0)
 				return;
 
+			if (m_parallelDependenciesCount > 0)
+			{
+				for (ui32 i = 0; i < m_parallelDependenciesCount; ++i)
+				{
+					m_parallelDependencies[i]->Wait();
+				}
+			}
 
 			if (m_parallelize)
 			{
@@ -55,8 +64,6 @@ namespace BaldLion {
 							this->UpdateComponents(entityID, componentLookUp, deltaTime);
 						}
 					});
-
-				m_parallelTask.Wait();
 			}
 			else 
 			{
@@ -102,6 +109,26 @@ namespace BaldLion {
 			if ((entitySignature & m_signature) == m_signature) {
 				m_refreshComponentLookUps = true;
 			}			
+		}
+
+		void ECSSystem::SetParallelDependencies(ui32 numArgs, ...)
+		{			
+			std::va_list argsComponents;
+			va_start(argsComponents, numArgs);
+
+			ui32 count = 0;
+			for (ui32 i = 0; i < numArgs; ++i)
+			{
+				ECSSystemType type = va_arg(argsComponents, ECSSystemType);
+				ECSSystem* system = m_ecsManager->GetSystem(type);
+				if (system != nullptr)
+				{
+					m_parallelDependencies[i] = &system->GetParallelTask();
+					count++;
+				}
+			}
+
+			m_parallelDependenciesCount = count;
 		}
 	}
 }
