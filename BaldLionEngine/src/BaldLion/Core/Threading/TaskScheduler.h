@@ -50,9 +50,6 @@ namespace BaldLion
 			static Queue<TaskEntry> s_taskQueue;
 			static std::mutex s_taskQueueMutex;
 			static std::atomic<ui32> s_activeJobs;
-
-			static std::mutex s_waitForJobsMutex;
-			static std::condition_variable s_waitForJobsCV;
 		};
 
 

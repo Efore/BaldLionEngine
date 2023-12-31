@@ -18,9 +18,6 @@ namespace BaldLion
 
 		std::atomic<ui32> TaskScheduler::s_activeJobs = 0;
 
-		std::mutex TaskScheduler::s_waitForJobsMutex;
-		std::condition_variable TaskScheduler::s_waitForJobsCV;
-
 		void TaskScheduler::Init(ui32 threadsCount /*= std::thread::hardware_concurrency() / 2*/)
 		{
 			s_workerThreads = DynamicArray<WorkerThread>(AllocationType::FreeList_Main, threadsCount);
@@ -40,8 +37,7 @@ namespace BaldLion
 
 		void TaskScheduler::WaitForAllJobs()
 		{
-			std::unique_lock<std::mutex> waitActiveJobsLock(s_waitForJobsMutex);
-			s_waitForJobsCV.wait(waitActiveJobsLock, [] { return s_activeJobs == 0; });
+			while (s_activeJobs > 0);
 		}
 
 		void TaskScheduler::KickSingleTask(Task& task, SingleJobFunction jobFunction)
@@ -108,7 +104,7 @@ namespace BaldLion
 				{
 					entry = s_taskQueue.Front();
 					s_taskQueue.Pop();
-					s_activeJobs++;
+					s_activeJobs.fetch_add(1);
 				}
 				s_taskQueueMutex.unlock();
 
@@ -116,13 +112,10 @@ namespace BaldLion
 				{					
 					entry.job();
 					entry.task->ReduceCounter();
-					s_activeJobs--;
-					s_waitForJobsCV.notify_all();
+					s_activeJobs.fetch_sub(1);
 				}
 			}
-		}
-
-		
+		}	
 
 	}
 }
