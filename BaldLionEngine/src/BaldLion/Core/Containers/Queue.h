@@ -95,6 +95,8 @@ namespace BaldLion
 		if (&other == this)
 			return *this;
 
+		Delete();
+
 		m_allocationType = other.m_allocationType;
 		m_size = other.m_size;
 		m_frontIndex = other.m_frontIndex;
@@ -258,10 +260,7 @@ namespace BaldLion
 
 		const ui32 newSize = newCapacity < m_size ? newCapacity : m_size;
 
-		for (ui32 i = 0; i < newSize; ++i)
-		{
-			newLocation[i] = std::move(m_elements[i]);
-		}
+		memcpy(newLocation, m_elements, sizeof(T) * newSize);
 
 		Delete();
 
