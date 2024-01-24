@@ -19,7 +19,7 @@ namespace BaldLion {
 		s_additionalTimers.Delete();
 	}
 
-	bool Time::SetCurrentTime(double currentTime)
+	void Time::UpdateCurrentTime(double currentTime, bool& processNewFrame)
 	{
 		const float maxPeriod = 1.0f / MAX_FPS;
 
@@ -31,9 +31,10 @@ namespace BaldLion {
 			{
 				it.GetValue()->SetCurrentTime(currentTime);
 			}
-			return true;
+			processNewFrame = true;
+			return;
 		}
-		return false;
+		processNewFrame = false;
 	}
 
 	void Time::RequestNewTimer(Timer& timer)

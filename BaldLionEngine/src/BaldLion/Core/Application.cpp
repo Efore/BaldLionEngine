@@ -7,6 +7,7 @@
 #include "BaldLion/ResourceManagement/ResourceManager.h"
 #include "BaldLion/Physics/PhysicsManager.h"
 #include "BaldLion/AI/Navigation/NavigationManager.h"
+#include "BaldLion/Core/Input.h"
 
 #include <GLFW/glfw3.h>
 
@@ -39,6 +40,7 @@ namespace BaldLion
 		Rendering::Renderer::Init(m_window->GetWidth(), m_window->GetHeight());
 		ResourceManagement::ResourceManager::LoadAssets();
 		Physics::PhysicsManager::Init(1.0f/60.0f);
+		Input::InputSystem::Init();
 
 		m_layerStack.Init();
 
@@ -48,14 +50,17 @@ namespace BaldLion
 
 	Application::~Application()
 	{		
+		OPTICK_SHUTDOWN();
+		Input::InputSystem::Stop();
+
 		m_layerStack.PopOverlay(m_imGuiLayer);
 		m_layerStack.Delete();
 		Window::Destroy(m_window);
 
+		Physics::PhysicsManager::Stop();
 		Rendering::Renderer::Stop();
 		SceneManagement::SceneManager::Stop();
 		Animation::AnimationManager::Stop();
-		Physics::PhysicsManager::Stop();
 
 		Time::Stop();
 
@@ -63,8 +68,6 @@ namespace BaldLion
 		ResourceManagement::ResourceManager::Stop();
 		Threading::TaskScheduler::Stop();
 		Memory::MemoryManager::Stop();
-
-		OPTICK_SHUTDOWN();
 	}
 
 	void Application::PushLayer(GameStateLayer * layer)
@@ -110,13 +113,16 @@ namespace BaldLion
 	{		
 		while (m_running)
 		{	
-			BL_PROFILE_FRAME();
+			bool processNewFrame = false;
+			Time::UpdateCurrentTime(glfwGetTime(), processNewFrame);
 
-			if (!Time::SetCurrentTime(glfwGetTime()))// Platform::GetTime
+			if (!processNewFrame)// Platform::GetTime
 			{
 				continue;
 			}
 	
+			BL_PROFILE_FRAME();
+
 			if (!m_minimized)
 			{
 				{
@@ -151,7 +157,7 @@ namespace BaldLion
 			m_layerStack[i]->OnEvent(e);
 			if (e.IsHandled())
 				break;
-		}
+		}	
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent & e)

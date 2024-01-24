@@ -76,6 +76,7 @@ namespace BaldLion::AI::Navigation
 
 	void NavMeshBuilder::Stop()
 	{
+		s_bakeNavMeshTask.Wait();
 		CleanUp();
 
 		if (s_navQuery != nullptr)

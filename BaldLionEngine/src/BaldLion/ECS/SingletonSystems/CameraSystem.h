@@ -8,7 +8,7 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		namespace SingletonComponents {
+		namespace SingletonSystems {
 
 			class CameraSystem {
 

@@ -22,13 +22,6 @@ namespace BaldLion
 			SingleJobFunction job;
 		};
 
-		struct WorkerThread
-		{
-			WorkerThread(ui32 threadIndex);
-
-			char name[10];
-			std::thread thread;
-		};
 
 		class TaskScheduler
 		{
@@ -46,10 +39,11 @@ namespace BaldLion
 
 		private:
 
-			static DynamicArray<WorkerThread> s_workerThreads;
+			static DynamicArray<std::thread > s_workerThreads;
 			static Queue<TaskEntry> s_taskQueue;
 			static std::mutex s_taskQueueMutex;
 			static std::atomic<ui32> s_activeJobs;
+			static bool s_running;
 		};
 
 

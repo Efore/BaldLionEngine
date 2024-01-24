@@ -6,7 +6,7 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		namespace SingletonComponents {
+		namespace SingletonSystems {
 
 			ECSProjectionCameraComponent* CameraSystem::s_mainCamera;
 			ECSTransformComponent* CameraSystem::s_mainCameraTransform;

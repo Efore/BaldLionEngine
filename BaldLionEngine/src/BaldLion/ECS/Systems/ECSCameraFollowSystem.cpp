@@ -26,6 +26,8 @@ namespace BaldLion
 
 		void ECSCameraFollowSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
+			BL_PROFILE_FUNCTION();
+
 			ECSCameraFollowComponent* cameraFollowComponent = componentLookUp->Write<ECSCameraFollowComponent>(ECSComponentType::CameraFollow);
 			ECSTransformComponent* cameraTransformComponent = componentLookUp->Write<ECSTransformComponent>(ECSComponentType::Transform);
 
@@ -63,11 +65,11 @@ namespace BaldLion
 
 		void ECSCameraFollowSystem::CalculateInputRotation(ECSCameraFollowComponent* cameraFollowComponent, float deltaTime)
 		{
-			const float difX = BaldLion::Input::GetMouseX() - cameraFollowComponent->prevX;
-			const float difY = BaldLion::Input::GetMouseY() - cameraFollowComponent->prevY;
+			const float difX = BaldLion::Input::PlatformInput::GetMouseX() - cameraFollowComponent->prevX;
+			const float difY = BaldLion::Input::PlatformInput::GetMouseY() - cameraFollowComponent->prevY;
 
-			cameraFollowComponent->prevX = BaldLion::Input::GetMouseX();
-			cameraFollowComponent->prevY = BaldLion::Input::GetMouseY();
+			cameraFollowComponent->prevX = BaldLion::Input::PlatformInput::GetMouseX();
+			cameraFollowComponent->prevY = BaldLion::Input::PlatformInput::GetMouseY();
 
 			float angleX = -difX * deltaTime * cameraFollowComponent->rotationSpeed;
 			float angleY = -difY * deltaTime * cameraFollowComponent->rotationSpeed;

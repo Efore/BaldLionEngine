@@ -360,7 +360,6 @@ namespace BaldLion
 
 		if (ratio > 0.75f)
 		{
-			//BL_LOG_CORE_INFO("Need reallocation");
 			Reallocate((ui32)(m_capacity * 1.5f));
 		}
 
@@ -371,8 +370,6 @@ namespace BaldLion
 		{
 			tableIndex = (tableIndex + 1) % m_capacity;
 		}
-
-		//BL_LOG_CORE_INFO("found free node");
 
 		HashTableNode<K, V>& node = m_table[tableIndex];
 		node.used = true;

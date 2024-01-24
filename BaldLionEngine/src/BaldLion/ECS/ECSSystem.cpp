@@ -33,13 +33,12 @@ namespace BaldLion {
 
 		ECSSystem::~ECSSystem()
 		{
+			m_parallelTask.Wait();
 			m_componentLookUps.Delete();
 		}
 
 		void ECSSystem::OnUpdate(float deltaTime)
-		{	
-			BL_PROFILE_FUNCTION();
-
+		{			
 			if (m_componentLookUps.Size() == 0)
 				return;
 

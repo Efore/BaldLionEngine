@@ -1,7 +1,7 @@
 #include "blpch.h"
 #include "SceneManager.h"
 #include "Serialization/SceneSerializer.h"
-#include "BaldLion/ECS/ComponentsSingleton/CameraSystem.h"
+#include "BaldLion/ECS/SingletonSystems/CameraSystem.h"
 #include <filesystem>
 
 namespace BaldLion
@@ -26,7 +26,7 @@ namespace BaldLion
 				lastSceneFile.close();
 			}
 
-			ECS::SingletonComponents::CameraSystem::Init();
+			ECS::SingletonSystems::CameraSystem::Init();
 		}
 
 		void SceneManager::FrameStart()
@@ -59,7 +59,7 @@ namespace BaldLion
 		{
 			s_activeScenes.Delete();
 
-			ECS::SingletonComponents::CameraSystem::Stop();
+			ECS::SingletonSystems::CameraSystem::Stop();
 		}
 
 		void SceneManager::SetMainScene(StringId sceneID)

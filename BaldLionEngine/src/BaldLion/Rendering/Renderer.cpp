@@ -3,8 +3,8 @@
 
 #include "BaldLion/Utils/MathUtils.h"
 
-#include "BaldLion/ECS/ComponentsSingleton/CameraSystem.h"
-#include "BaldLion/ECS/ComponentsSingleton/LightningSystem.h"
+#include "BaldLion/ECS/SingletonSystems/CameraSystem.h"
+#include "BaldLion/ECS/SingletonSystems/LightningSystem.h"
 
 #include "BaldLion/ResourceManagement/ResourceManager.h"
 
@@ -103,8 +103,8 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 			
-			s_sceneData.viewProjectionMatrix = ECS::SingletonComponents::CameraSystem::GetMainCameraViewProjectionMatrix();
-			s_sceneData.cameraPosition = ECS::SingletonComponents::CameraSystem::GetMainCameraPosition();			
+			s_sceneData.viewProjectionMatrix = ECS::SingletonSystems::CameraSystem::GetMainCameraViewProjectionMatrix();
+			s_sceneData.cameraPosition = ECS::SingletonSystems::CameraSystem::GetMainCameraPosition();			
 
 			s_renderStats.drawCalls = 0;
 			s_renderStats.vertices = 0;		
@@ -157,10 +157,10 @@ namespace BaldLion
 			shader->SetUniform(UNIFORM_VIEW_PROJECTION, ShaderDataType::Mat4, &(s_sceneData.viewProjectionMatrix));
 			shader->SetUniform(UNIFORM_CAMERA_POS, ShaderDataType::Float3, &(s_sceneData.cameraPosition));
 
-			shader->SetUniform(UNIFORM_DIR_LIGHT_DIRECTION, ShaderDataType::Float3, &(ECS::SingletonComponents::LightningSystem::GetDirectionaLightDirection()));
-			shader->SetUniform(UNIFORM_DIR_LIGHT_AMBIENT,ShaderDataType::Float3, &(ECS::SingletonComponents::LightningSystem::GetDirectionaLightAmbientColor()));
-			shader->SetUniform(UNIFORM_DIR_LIGHT_DIFFUSE, ShaderDataType::Float3, &(ECS::SingletonComponents::LightningSystem::GetDirectionaLightDiffuseColor()));
-			shader->SetUniform(UNIFORM_DIR_LIGHT_SPECULAR, ShaderDataType::Float3, &(ECS::SingletonComponents::LightningSystem::GetDirectionaLightSpecularColor()));
+			shader->SetUniform(UNIFORM_DIR_LIGHT_DIRECTION, ShaderDataType::Float3, &(ECS::SingletonSystems::LightningSystem::GetDirectionaLightDirection()));
+			shader->SetUniform(UNIFORM_DIR_LIGHT_AMBIENT,ShaderDataType::Float3, &(ECS::SingletonSystems::LightningSystem::GetDirectionaLightAmbientColor()));
+			shader->SetUniform(UNIFORM_DIR_LIGHT_DIFFUSE, ShaderDataType::Float3, &(ECS::SingletonSystems::LightningSystem::GetDirectionaLightDiffuseColor()));
+			shader->SetUniform(UNIFORM_DIR_LIGHT_SPECULAR, ShaderDataType::Float3, &(ECS::SingletonSystems::LightningSystem::GetDirectionaLightSpecularColor()));
 
 			s_rendererPlatformInterface->DrawVertexArray(vertexArray);
 
@@ -180,7 +180,7 @@ namespace BaldLion
 			glm::vec3 lookAtEye = s_sceneData.cameraPosition;
 			lookAtEye.y = shadowDistance * 0.5f;
 
-			const glm::vec3 lookAtCenter = lookAtEye + (ECS::SingletonComponents::LightningSystem::GetDirectionaLightDirection() * glm::length(lookAtEye));
+			const glm::vec3 lookAtCenter = lookAtEye + (ECS::SingletonSystems::LightningSystem::GetDirectionaLightDirection() * glm::length(lookAtEye));
 
 			const glm::mat4 lightView = glm::lookAt(lookAtEye, lookAtCenter, MathUtils::Vector3UnitY);
 			const glm::mat4 lightProjection = glm::ortho(-shadowDistance, shadowDistance, -shadowDistance, shadowDistance, 0.0f, shadowDistance * 2.0f);

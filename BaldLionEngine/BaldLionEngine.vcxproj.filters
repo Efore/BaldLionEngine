@@ -357,7 +357,7 @@
     <ClInclude Include="src\BaldLion\Core\Input.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\KeyCodes.h">
+    <ClInclude Include="src\BaldLion\Core\BLKeyCodes.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Log.h">
@@ -438,10 +438,10 @@
     <ClInclude Include="src\BaldLion\ECS\Components\ECSTransformComponent.h">
       <Filter>src\BaldLion\ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\CameraSystem.h">
+    <ClInclude Include="src\BaldLion\ECS\SingletonSystems\CameraSystem.h">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\ComponentsSingleton\LightningSystem.h">
+    <ClInclude Include="src\BaldLion\ECS\SingletonSystems\LightningSystem.h">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\ECSComponent.h">
@@ -495,7 +495,7 @@
     <ClInclude Include="src\BaldLion\Events\Event.h">
       <Filter>src\BaldLion\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Events\KeyEvent.h">
+    <ClInclude Include="src\BaldLion\Events\KeyboardInputEvent.h">
       <Filter>src\BaldLion\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Events\MouseEvent.h">
@@ -2669,10 +2669,10 @@
     <ClCompile Include="src\BaldLion\Core\Window.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\CameraSystem.cpp">
+    <ClCompile Include="src\BaldLion\ECS\SingletonSystems\CameraSystem.cpp">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\ECS\ComponentsSingleton\LightningSystem.cpp">
+    <ClCompile Include="src\BaldLion\ECS\SingletonSystems\LightningSystem.cpp">
       <Filter>src\BaldLion\ECS\ComponentsSingleton</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\ECSManager.cpp">
@@ -3146,5 +3146,6 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\Input.cpp" />
   </ItemGroup>
 </Project>

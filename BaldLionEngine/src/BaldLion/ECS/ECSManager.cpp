@@ -1,7 +1,7 @@
 #include "blpch.h"
 #include "ECSManager.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
-#include "BaldLion/ECS/ComponentsSingleton/CameraSystem.h"
+#include "BaldLion/ECS/SingletonSystems/CameraSystem.h"
 #include "BaldLion/Utils/MathUtils.h"
 
 namespace BaldLion 

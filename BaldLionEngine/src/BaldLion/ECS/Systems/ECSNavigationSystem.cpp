@@ -21,12 +21,15 @@ namespace BaldLion
 
 		void ECSNavigationSystem::OnUpdate(float deltaTime)
 		{
+			BL_PROFILE_FUNCTION();
 			NavigationManager::Update(deltaTime);
 			ECSSystem::OnUpdate(deltaTime);
 		}
 
 		void ECSNavigationSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
+			BL_PROFILE_FUNCTION();
+
 			ECSLocomotionComponent* locomotionComponent = componentLookUp->Write<ECSLocomotionComponent>(ECSComponentType::Locomotion);
 			const ECSNavMeshAgentComponent* navMeshAgent = componentLookUp->Read<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent);
 

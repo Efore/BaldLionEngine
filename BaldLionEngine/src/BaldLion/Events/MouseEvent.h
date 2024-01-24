@@ -54,7 +54,7 @@ namespace BaldLion
 		inline int GetMouseButton() const { return m_button; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput);
-
+		
 	protected:
 		MouseButtonEvent(int button) : m_button(button) {}
 

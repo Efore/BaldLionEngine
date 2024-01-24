@@ -7,7 +7,7 @@
 #include "BaldLion/Core/Log.h"
 #include "BaldLion/Core/Time.h"
 #include "BaldLion/Core/Input.h"
-#include "BaldLion/Core/KeyCodes.h"
+#include "BaldLion/Core/BLKeyCodes.h"
 #include "BaldLion/Core/MouseButtonCodes.h"
 
 #include "BaldLion/ImGui/ImGuiLayer.h"
@@ -44,8 +44,8 @@
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/ECSSystemsInclude.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
-#include "BaldLion/ECS/ComponentsSingleton/CameraSystem.h"
-#include "BaldLion/ECS/ComponentsSingleton/LightningSystem.h"
+#include "BaldLion/ECS/SingletonSystems/CameraSystem.h"
+#include "BaldLion/ECS/SingletonSystems/LightningSystem.h"
 
 #include "BaldLion/SceneManagement/SceneManager.h"
 

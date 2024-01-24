@@ -5,7 +5,7 @@
 #include "BaldLion/ECS/Components/ECSTransformComponent.h"
 #include "BaldLion/ECS/Components/ECSMeshComponent.h"
 #include "BaldLion/ECS/Components/ECSSkeletonComponent.h"
-#include "BaldLion/ECS/ComponentsSingleton/CameraSystem.h"
+#include "BaldLion/ECS/SingletonSystems/CameraSystem.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,7 +16,8 @@ namespace BaldLion {
 
 		void ECSFrustrumCullingSystem::OnUpdate(float deltaTime)
 		{
-			ECS::SingletonComponents::CameraSystem::UpdateFrustrumPlanes();
+			BL_PROFILE_FUNCTION();
+			ECS::SingletonSystems::CameraSystem::UpdateFrustrumPlanes();
 			ECSSystem::OnUpdate(deltaTime);
 			AddVisibleMeshesToRenderer();
 		}
@@ -35,14 +36,7 @@ namespace BaldLion {
 			const glm::mat4 meshTransformMatrix = meshTransform->GetTransformMatrix();		
 			
 			const BoundingBox meshAABB = GeometryUtils::GetAABB(meshComponent->localBoundingBox, meshTransformMatrix);
-			meshComponent->isVisible = ECS::SingletonComponents::CameraSystem::IsAABBVisible(meshAABB);
-			
-			
-
-			//if (meshComponent->material->GetCastShadows())
-			//{	
-			//	Renderer::AddShadowCastingMesh(meshComponent, meshTransform, skeletonComponent);				
-			//}
+			meshComponent->isVisible = ECS::SingletonSystems::CameraSystem::IsAABBVisible(meshAABB);			
 		}
 		
 		void ECSFrustrumCullingSystem::AddVisibleMeshesToRenderer()
@@ -51,6 +45,8 @@ namespace BaldLion {
 				return;
 
 			m_parallelTask.Wait();
+
+			BL_PROFILE_FUNCTION();
 
 			BL_DYNAMICARRAY_FOREACH(m_componentLookUps)
 			{

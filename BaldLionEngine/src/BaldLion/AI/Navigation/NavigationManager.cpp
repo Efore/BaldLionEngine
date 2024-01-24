@@ -27,6 +27,7 @@ namespace BaldLion::AI::Navigation
 
 	void NavigationManager::Stop()
 	{
+		s_updateTask.Wait();
 		NavMeshBuilder::Stop();
 		dtFreeCrowd(s_crowd);
 		dtFreeObstacleAvoidanceDebugData(s_vod);

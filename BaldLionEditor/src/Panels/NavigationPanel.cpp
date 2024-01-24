@@ -420,11 +420,11 @@ namespace BaldLion
 				glm::vec2 mouseInWindow;
 				if (EditorUtils::GetMouseRelativePosInWindow(m_editorViewportPanel->GetPanelID(), mouseInWindow))
 				{
-					const glm::vec3 rayOrigin = ECS::SingletonComponents::CameraSystem::GetMainCameraTransform()->position;
+					const glm::vec3 rayOrigin = ECS::SingletonSystems::CameraSystem::GetMainCameraTransform()->position;
 
 					const glm::vec4 rayClip = glm::vec4(mouseInWindow.x, mouseInWindow.y, 1.0f, 1.0f);
 
-					glm::vec3 rayDirection = glm::inverse(ECS::SingletonComponents::CameraSystem::GetMainCamera()->viewProjectionMatrix) * rayClip;
+					glm::vec3 rayDirection = glm::inverse(ECS::SingletonSystems::CameraSystem::GetMainCamera()->viewProjectionMatrix) * rayClip;
 					rayDirection = glm::normalize(rayDirection);
 
 					const glm::vec3 rayEnd = rayOrigin + rayDirection * 5000.0f;

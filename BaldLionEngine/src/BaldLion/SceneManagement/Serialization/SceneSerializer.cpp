@@ -3,7 +3,7 @@
 
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
-#include "BaldLion/ECS/ComponentsSingleton/LightningSystem.h"
+#include "BaldLion/ECS/SingletonSystems/LightningSystem.h"
 #include "BaldLion/SceneManagement/SceneManager.h"
 #include "BaldLion/ResourceManagement/ResourceManager.h"
 #include "BaldLion/Rendering/Mesh.h"
@@ -414,7 +414,7 @@ namespace BaldLion
 					specularColor,
 					direction);
 
-				ECS::SingletonComponents::LightningSystem::SetDirectionalLight((ECS::ECSDirectionalLightComponent*)component);
+				ECS::SingletonSystems::LightningSystem::SetDirectionalLight((ECS::ECSDirectionalLightComponent*)component);
 			}
 				break;
 

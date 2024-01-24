@@ -25,6 +25,8 @@ namespace BaldLion
 
 		void ECSLocomotionSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
+			BL_PROFILE_FUNCTION();
+
 			ECSLocomotionComponent* locomotionComponent = componentLookUp->Write<ECSLocomotionComponent>(ECSComponentType::Locomotion);
 			ECSTransformComponent* transformComponent = componentLookUp->Write<ECSTransformComponent>(ECSComponentType::Transform);
 			

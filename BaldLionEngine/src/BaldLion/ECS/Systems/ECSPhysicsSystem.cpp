@@ -30,6 +30,7 @@ namespace BaldLion {
 			if (!Physics::PhysicsManager::GetIsPhysicsActive())
 				return;
 
+			BL_PROFILE_FUNCTION();
 			Physics::PhysicsManager::UpdatePhysics(deltaTime);
 
 			ECSSystem::OnUpdate(deltaTime);
@@ -37,6 +38,7 @@ namespace BaldLion {
 
 		void ECSPhysicsSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
+			BL_PROFILE_FUNCTION();
 			 ECSTransformComponent* transform = componentLookUp->Write<ECSTransformComponent>(ECSComponentType::Transform);		
 			 ECSPhysicsBodyComponent* physicsBody = componentLookUp->Write<ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);
 

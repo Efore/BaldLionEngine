@@ -6,7 +6,7 @@ namespace BaldLion {
 
 	namespace ECS {
 
-		namespace SingletonComponents {
+		namespace SingletonSystems {
 
 			ECSDirectionalLightComponent* LightningSystem::s_directionalLight = nullptr;
 		}

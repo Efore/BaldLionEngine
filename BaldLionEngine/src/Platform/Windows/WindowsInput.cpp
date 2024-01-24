@@ -6,29 +6,28 @@
 
 namespace BaldLion
 {
-
-	bool Input::IsKeyPressed(int keycode)
+	bool Input::PlatformInput::IsKeyPressed(int keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::GetInstance().GetWindow().GetNativeWindow());
 		auto state = glfwGetKey(window, keycode);
 		return state == GLFW_PRESS;
 	}
 
-	bool Input::IsMouseButtonPress(int button)
+	bool Input::PlatformInput::IsMouseButtonPress(int button)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::GetInstance().GetWindow().GetNativeWindow());
 		auto state = glfwGetMouseButton(window, button);
 		return state == GLFW_PRESS;
 	}
 
-	bool BaldLion::Input::IsMouseButtonReleased(int button)
+	bool BaldLion::Input::PlatformInput::IsMouseButtonReleased(int button)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::GetInstance().GetWindow().GetNativeWindow());
 		auto state = glfwGetMouseButton(window, button);
 		return state == GLFW_RELEASE;
 	}
 
-	std::pair<float, float> Input::GetMousePosition()
+	std::pair<float, float> Input::PlatformInput::GetMousePosition()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::GetInstance().GetWindow().GetNativeWindow());
 		double xpos, ypos;
@@ -37,15 +36,43 @@ namespace BaldLion
 		return { (float)xpos, (float)ypos };
 	}
 
-	float Input::GetMouseX()
+	float Input::PlatformInput::GetMouseX()
 	{
 		auto mousePosition = GetMousePosition();
 		return std::get<0>(mousePosition);
 	}
 
-	float Input::GetMouseY()
+	float Input::PlatformInput::GetMouseY()
 	{
 		auto mousePosition = GetMousePosition();
 		return std::get<1>(mousePosition);
+	}
+
+	float Input::PlatformInput::GetGamepadAxisValue(int gamepadIndex, int button)
+	{
+		float result = 0.0f;
+
+		GLFWgamepadstate state;
+
+		if (glfwGetGamepadState(gamepadIndex, &state))
+		{
+			result = state.axes[button];
+		}
+
+		return result;
+	}
+
+	bool Input::PlatformInput::GetGamepadButtonValue(int gamepadIndex, int button)
+	{
+		bool result = false;
+
+		GLFWgamepadstate state;
+
+		if (glfwGetGamepadState(gamepadIndex, &state))
+		{
+			result = state.buttons[button];
+		}
+
+		return result;
 	}
 }

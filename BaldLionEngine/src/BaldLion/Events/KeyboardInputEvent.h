@@ -4,22 +4,22 @@
 
 namespace BaldLion
 {
-	class  KeyEvent : public Event
+	class  KeyboardInputEvent : public Event
 	{
 	public:
 		inline int GetKeyCode() const { return m_keyCode; }
 
-		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
+		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)		
 
 	protected:
-		KeyEvent(int keycode) : m_keyCode(keycode){}
+		KeyboardInputEvent(int keycode) : m_keyCode(keycode){}
 		int m_keyCode;
 	};
 
-	class  KeyPressedEvent : public KeyEvent
+	class  KeyPressedEvent : public KeyboardInputEvent
 	{
 	public:
-		KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_repeatCount(repeatCount){}
+		KeyPressedEvent(int keycode, int repeatCount) : KeyboardInputEvent(keycode), m_repeatCount(repeatCount){}
 
 		inline int GetRepeatCount() const { return m_repeatCount; }
 
@@ -36,10 +36,10 @@ namespace BaldLion
 		int m_repeatCount;
 	};
 
-	class  KeyReleasedEvent : public KeyEvent
+	class  KeyReleasedEvent : public KeyboardInputEvent
 	{
 	public:
-		KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
+		KeyReleasedEvent(int keycode) : KeyboardInputEvent(keycode) {}
 
 		std::string ToString() const override
 		{
@@ -51,10 +51,10 @@ namespace BaldLion
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
 
-	class  KeyTypedEvent : public KeyEvent
+	class  KeyTypedEvent : public KeyboardInputEvent
 	{
 	public:
-		KeyTypedEvent(int keycode) : KeyEvent(keycode) {}
+		KeyTypedEvent(int keycode) : KeyboardInputEvent(keycode) {}
 		
 		std::string ToString() const override
 		{

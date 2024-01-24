@@ -3,7 +3,7 @@
 
 #include "BaldLion/Events/MouseEvent.h"
 #include "BaldLion/Events/ApplicationEvent.h"
-#include "BaldLion/Events/KeyEvent.h"
+#include "BaldLion/Events/KeyboardInputEvent.h"
 #include "BaldLion/Rendering/Platform/OpenGL/OpenGLContext.h"
 
 #include <glad/glad.h>

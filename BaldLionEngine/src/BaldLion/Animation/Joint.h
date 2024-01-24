@@ -91,6 +91,7 @@ namespace BaldLion
 			
 			void UpdateJointTransforms(const glm::mat4& rootInverseTransform, const glm::mat4& parentTransform, const glm::mat4& localAnimationTransform)
 			{	
+				BL_PROFILE_FUNCTION();
 				jointLocalSpaceTransform = parentTransform * localAnimationTransform;
 				jointModelSpaceTransform = rootInverseTransform * jointLocalSpaceTransform * jointOffsetTransform;
 			}

@@ -53,7 +53,7 @@ namespace BaldLion
 			m_editorViewportPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);
 			m_navigationPanel.SetNavigationPanel(&m_editorViewportPanel);
 
-			ECS::SingletonComponents::CameraSystem::SetMainCamera(m_viewportCamera, m_viewportCameraTransform);
+			ECS::SingletonSystems::CameraSystem::SetMainCamera(m_viewportCamera, m_viewportCameraTransform);
 		}
 
 		void BaldLionEditorLayer::OnDeactivate()
@@ -229,7 +229,7 @@ namespace BaldLion
 			ui32 width = e.GetWidth();
 			ui32 height = e.GetHeight();
 
-			ECS::SingletonComponents::CameraSystem::SetCameraSize((float)width, (float)height);
+			ECS::SingletonSystems::CameraSystem::SetCameraSize((float)width, (float)height);
 
 			Renderer::OnWindowResize(width, height);
 
@@ -244,9 +244,9 @@ namespace BaldLion
 			switch (e.GetKeyCode())
 			{
 			case BL_KEY_S:
-				if (Input::IsKeyPressed(BL_KEY_LEFT_CONTROL) || Input::IsKeyPressed(BL_KEY_RIGHT_CONTROL))
+				if (Input::PlatformInput::IsKeyPressed(BL_KEY_LEFT_CONTROL) || Input::PlatformInput::IsKeyPressed(BL_KEY_RIGHT_CONTROL))
 				{
-					if (Input::IsKeyPressed(BL_KEY_LEFT_SHIFT) || Input::IsKeyPressed(BL_KEY_RIGHT_SHIFT)) 
+					if (Input::PlatformInput::IsKeyPressed(BL_KEY_LEFT_SHIFT) || Input::PlatformInput::IsKeyPressed(BL_KEY_RIGHT_SHIFT)) 
 					{
 						SaveSceneAs();
 						return true;
@@ -259,14 +259,14 @@ namespace BaldLion
 				}
 				break;
 			case BL_KEY_N:
-				if (Input::IsKeyPressed(BL_KEY_LEFT_CONTROL) || Input::IsKeyPressed(BL_KEY_RIGHT_CONTROL))
+				if (Input::PlatformInput::IsKeyPressed(BL_KEY_LEFT_CONTROL) || Input::PlatformInput::IsKeyPressed(BL_KEY_RIGHT_CONTROL))
 				{
 					NewScene();
 					return true;
 				}
 				break;
 			case BL_KEY_O:
-				if (Input::IsKeyPressed(BL_KEY_LEFT_CONTROL) || Input::IsKeyPressed(BL_KEY_RIGHT_CONTROL))
+				if (Input::PlatformInput::IsKeyPressed(BL_KEY_LEFT_CONTROL) || Input::PlatformInput::IsKeyPressed(BL_KEY_RIGHT_CONTROL))
 				{
 					OpenScene();
 					return true;
@@ -336,7 +336,7 @@ namespace BaldLion
 
 				m_ecsManager->AddComponentToEntity(directionalLight, directionalLightComponent);
 
-				ECS::SingletonComponents::LightningSystem::SetDirectionalLight(directionalLightComponent);
+				ECS::SingletonSystems::LightningSystem::SetDirectionalLight(directionalLightComponent);
 			}
 		}
 
@@ -382,36 +382,31 @@ namespace BaldLion
 		{
 			cameraMovement = glm::vec3(0, 0, 0);
 
-			if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
+			if (BaldLion::Input::PlatformInput::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 			{
-				if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
-					cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
-				else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
-					cameraMovement += MathUtils::GetTransformForwardDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
+				glm::vec2 moveInput = Input::InputSystem::GetActionValue(BL_STRING_TO_STRINGID("Move")).value2D;
 
-				if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
-					cameraMovement -= MathUtils::GetTransformRightDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
-				else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
-					cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
+				cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed * moveInput.y;				
+				cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed * moveInput.x;
 
-				if (BaldLion::Input::IsKeyPressed(BL_KEY_LEFT_SHIFT))
+				if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_LEFT_SHIFT))
 					cameraMovement *= 2;
 			}
 		}
 
 		void BaldLionEditorLayer::CalculateCameraRotation(const float cameraRotationSpeed, float& prevX, float& prevY, float& cameraYaw, float& cameraPitch)
 		{
-			if (BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
+			if (BaldLion::Input::PlatformInput::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 			{
-				float deltaX = BaldLion::Input::GetMouseX() - prevX;
-				float deltaY = BaldLion::Input::GetMouseY() - prevY;
+				float deltaX = BaldLion::Input::PlatformInput::GetMouseX() - prevX;
+				float deltaY = BaldLion::Input::PlatformInput::GetMouseY() - prevY;
 
 				cameraYaw -= deltaX * cameraRotationSpeed * m_gameStateTimer.GetDeltaTime();
 				cameraPitch -= deltaY * cameraRotationSpeed * m_gameStateTimer.GetDeltaTime();
 			}
 
-			prevX = BaldLion::Input::GetMouseX();
-			prevY = BaldLion::Input::GetMouseY();
+			prevX = BaldLion::Input::PlatformInput::GetMouseX();
+			prevY = BaldLion::Input::PlatformInput::GetMouseY();
 		}
 	}
 }

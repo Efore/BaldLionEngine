@@ -45,15 +45,18 @@ namespace BaldLion {
 			JointTransform transforms[(ui32)JointType::Count];
 			CalculateInterpolatedTransforms(animationComponent->currentAnimationTime, currentTransitionTime, currentAnimation, entityAnimator, currentTransition, transforms);
 
-			for (ui32 i = 0; i < (ui32)JointType::Count; ++i)
 			{
-				const JointType parentJointType = entitySkeleton->joints[i].parentJointType;
-				
-				const glm::mat4& parentTransform = parentJointType == JointType::Count ? glm::mat4(1.0f) : entitySkeleton->joints[(ui32)parentJointType].jointLocalSpaceTransform;
+				BL_PROFILE_SCOPE("Calculating new joint transforms", Optick::Category::GameLogic);
+				for (ui32 i = 0; i < (ui32)JointType::Count; ++i)
+				{
+					const JointType parentJointType = entitySkeleton->joints[i].parentJointType;
 
-				const glm::mat4& animationTransform = glm::translate(glm::mat4(1.0f), transforms[i].position) * glm::mat4_cast(transforms[i].rotation) * glm::scale(glm::mat4(1.0f), transforms[i].scale);
-				
-				entitySkeleton->joints[i].UpdateJointTransforms(currentAnimation->InverseRootTransform, parentTransform, animationTransform);
+					const glm::mat4& parentTransform = parentJointType == JointType::Count ? glm::mat4(1.0f) : entitySkeleton->joints[(ui32)parentJointType].jointLocalSpaceTransform;
+
+					const glm::mat4& animationTransform = glm::translate(glm::mat4(1.0f), transforms[i].position) * glm::mat4_cast(transforms[i].rotation) * glm::scale(glm::mat4(1.0f), transforms[i].scale);
+
+					entitySkeleton->joints[i].UpdateJointTransforms(currentAnimation->InverseRootTransform, parentTransform, animationTransform);
+				}
 			}
 		}	
 

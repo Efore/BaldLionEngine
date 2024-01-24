@@ -3,9 +3,9 @@
 
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/Core/Input.h"
-#include "BaldLion/Core/KeyCodes.h"
+#include "BaldLion/Core/BLKeyCodes.h"
 #include "BaldLion/ECS/Components/ECSLocomotionComponent.h"
-#include "BaldLion/ECS/ComponentsSingleton/CameraSystem.h"
+#include "BaldLion/ECS/SingletonSystems/CameraSystem.h"
 #include "BaldLion/ECS/Components/ECSPlayerControllerComponent.h"
 #include "BaldLion/Utils/MathUtils.h"
 
@@ -22,21 +22,23 @@ namespace BaldLion
 
 		void ECSPlayerControllerSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
 		{
+			BL_PROFILE_FUNCTION();
+
 			const ECSTransformComponent* transformComponent = componentLookUp->Read<ECSTransformComponent>(ECSComponentType::Transform);
 			ECSLocomotionComponent* locomotionComponent = componentLookUp->Write<ECSLocomotionComponent>(ECSComponentType::Locomotion);
 			
-			const glm::mat4 cameraTransformMatrix = ECS::SingletonComponents::CameraSystem::GetMainCameraTransform()->GetTransformMatrix();
+			const glm::mat4 cameraTransformMatrix = ECS::SingletonSystems::CameraSystem::GetMainCameraTransform()->GetTransformMatrix();
 
 			glm::vec3 desiredVelocity(0.0f);
 
-			if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
+			if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_W))
 				desiredVelocity -= MathUtils::GetTransformForwardDirection(cameraTransformMatrix);
-			else if (BaldLion::Input::IsKeyPressed(BL_KEY_S))
+			else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_S))
 				desiredVelocity += MathUtils::GetTransformForwardDirection(cameraTransformMatrix);
 
-			if (BaldLion::Input::IsKeyPressed(BL_KEY_A))
+			if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_A))
 				desiredVelocity -= MathUtils::GetTransformRightDirection(cameraTransformMatrix);
-			else if (BaldLion::Input::IsKeyPressed(BL_KEY_D))
+			else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_D))
 				desiredVelocity += MathUtils::GetTransformRightDirection(cameraTransformMatrix);
 
 			desiredVelocity.y = 0.0f;

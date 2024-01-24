@@ -37,7 +37,7 @@ namespace BaldLion
 				if (potentialCamera != nullptr)
 				{
 					ECS::ECSTransformComponent* cameraTransform = it.GetValue().Write<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
-					ECS::SingletonComponents::CameraSystem::SetMainCamera(potentialCamera, cameraTransform);
+					ECS::SingletonSystems::CameraSystem::SetMainCamera(potentialCamera, cameraTransform);
 					break;
 				}
 			}
@@ -52,8 +52,8 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			glm::mat4 cameraMatrixTransform = ECS::SingletonComponents::CameraSystem::GetMainCameraTransform()->GetTransformMatrix();
-			ECS::ECSProjectionCameraComponent* viewportCamera = ECS::SingletonComponents::CameraSystem::GetMainCamera();
+			glm::mat4 cameraMatrixTransform = ECS::SingletonSystems::CameraSystem::GetMainCameraTransform()->GetTransformMatrix();
+			ECS::ECSProjectionCameraComponent* viewportCamera = ECS::SingletonSystems::CameraSystem::GetMainCamera();
 
 			const glm::mat4 viewMatrix = glm::inverse(cameraMatrixTransform);
 			const glm::mat4 projectionMatrix = glm::perspective(glm::radians(viewportCamera->fov), viewportCamera->width / viewportCamera->height, viewportCamera->nearPlane, viewportCamera->farPlane);
@@ -88,7 +88,7 @@ namespace BaldLion
 			ui32 width = e.GetWidth();
 			ui32 height = e.GetHeight();
 
-			ECS::SingletonComponents::CameraSystem::SetCameraSize((float)width, (float)height);
+			ECS::SingletonSystems::CameraSystem::SetCameraSize((float)width, (float)height);
 
 			Renderer::OnWindowResize(width, height);
 

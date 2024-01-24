@@ -77,8 +77,8 @@ namespace BaldLion {
 			ECS::ECSEntityID selectedEntityID = m_sceneHierarchyPanel->GetSelectedEntityID();
 			ECS::ECSComponentLookUp selectedEntityComponents;			
 			
-			glm::mat4 cameraView = glm::inverse(ECS::SingletonComponents::CameraSystem::GetMainCameraTransform()->GetTransformMatrix());
-			const ECS::ECSProjectionCameraComponent* mainCamera = ECS::SingletonComponents::CameraSystem::GetMainCamera();
+			glm::mat4 cameraView = glm::inverse(ECS::SingletonSystems::CameraSystem::GetMainCameraTransform()->GetTransformMatrix());
+			const ECS::ECSProjectionCameraComponent* mainCamera = ECS::SingletonSystems::CameraSystem::GetMainCamera();
 
 			glm::mat4 cameraProjection = glm::perspective(glm::radians(mainCamera->fov), mainCamera->width / mainCamera->height, mainCamera->nearPlane, mainCamera->farPlane);
 
@@ -139,17 +139,17 @@ namespace BaldLion {
 			if (!m_viewportFocused)
 				return;
 
-			if (!BaldLion::Input::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
+			if (!BaldLion::Input::PlatformInput::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 			{
-				if (BaldLion::Input::IsKeyPressed(BL_KEY_Q))
+				if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_Q))
 				{
 					m_imGuizmoOperation = 0;
 				}
-				else if (BaldLion::Input::IsKeyPressed(BL_KEY_W))
+				else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_W))
 				{
 					m_imGuizmoOperation = 1;
 				}
-				else if (BaldLion::Input::IsKeyPressed(BL_KEY_E))
+				else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_E))
 				{
 					m_imGuizmoOperation = 2;
 				}
@@ -167,11 +167,11 @@ namespace BaldLion {
 			glm::vec2 mouseInWindow;
 			if (EditorUtils::GetMouseRelativePosInWindow(m_panelID, mouseInWindow))
 			{	
-				const glm::vec3 rayOrigin = ECS::SingletonComponents::CameraSystem::GetMainCameraTransform()->position;
+				const glm::vec3 rayOrigin = ECS::SingletonSystems::CameraSystem::GetMainCameraTransform()->position;
 
 				const glm::vec4 rayClip = glm::vec4(mouseInWindow.x, mouseInWindow.y, 1.0f, 1.0f);
 
-				glm::vec3 rayDirection = glm::inverse(ECS::SingletonComponents::CameraSystem::GetMainCamera()->viewProjectionMatrix) * rayClip;
+				glm::vec3 rayDirection = glm::inverse(ECS::SingletonSystems::CameraSystem::GetMainCamera()->viewProjectionMatrix) * rayClip;
 				rayDirection = glm::normalize(rayDirection);
 
 				//Renderer::DrawDebugLine(rayOrigin, rayDirection * 5000.0f, glm::vec3(1.0f, 0.0f, 0.0f), false, 5000);
@@ -189,7 +189,7 @@ namespace BaldLion {
 
 						const BoundingBox meshAABB = GeometryUtils::GetAABB(meshComponent->localBoundingBox, transform->GetTransformMatrix());												
 
-						if (ECS::SingletonComponents::CameraSystem::IsAABBVisible(meshAABB) && meshAABB.IsIntersectedByRayFast(rayOrigin, rayDirection))
+						if (ECS::SingletonSystems::CameraSystem::IsAABBVisible(meshAABB) && meshAABB.IsIntersectedByRayFast(rayOrigin, rayDirection))
 						{			
 							float sqrDistance = glm::length2(meshAABB.center - rayOrigin);
 							if (sqrDistance < sqrClosestDistance)

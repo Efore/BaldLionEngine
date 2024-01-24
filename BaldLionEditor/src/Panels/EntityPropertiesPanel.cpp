@@ -17,7 +17,7 @@
 #include "BaldLion/Utils/MathUtils.h"
 #include "BaldLion/ResourceManagement/ResourceManager.h"
 #include "BaldLion/Rendering/Mesh.h"
-#include "BaldLion/ECS/ComponentsSingleton/LightningSystem.h"
+#include "BaldLion/ECS/SingletonSystems/LightningSystem.h"
 #include "BaldLion/Animation/AnimationManager.h"
 
 
@@ -148,7 +148,7 @@ namespace BaldLion {
 											glm::vec3(0.2f),
 											glm::vec3(-1.0f, -1.0f, -1.0f));
 
-										ECS::SingletonComponents::LightningSystem::SetDirectionalLight((ECSDirectionalLightComponent*)newComponent);
+										ECS::SingletonSystems::LightningSystem::SetDirectionalLight((ECSDirectionalLightComponent*)newComponent);
 											
 										break;
 
