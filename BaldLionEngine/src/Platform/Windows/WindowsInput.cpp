@@ -59,6 +59,10 @@ namespace BaldLion
 			result = state.axes[button];
 		}
 
+		if (button == GLFW_GAMEPAD_AXIS_RIGHT_Y || button == GLFW_GAMEPAD_AXIS_LEFT_Y)
+		{
+			result *= -1.0f;
+		}
 		return result;
 	}
 
@@ -75,4 +79,12 @@ namespace BaldLion
 
 		return result;
 	}
+
+
+
+	bool Input::PlatformInput::GetGamepadIsConnected(int gamepadIndex)
+	{
+		return glfwJoystickPresent(gamepadIndex) != GLFW_FALSE;
+	}
+
 }

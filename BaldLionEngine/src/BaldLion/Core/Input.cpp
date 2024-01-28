@@ -376,6 +376,7 @@ namespace BaldLion
 		BaldLion::Threading::Task InputSystem::s_parallelTask;
 
 		bool InputSystem::s_initialized = false;
+		bool InputSystem::s_gamepadIsConected = false;
 
 		InputSystem::InputCode InputSystem::s_gamepadInputButtons[15] =
 		{
@@ -413,7 +414,10 @@ namespace BaldLion
 			s_entriesByActions = HashTable<StringId, DynamicArray<InputEntry>>(Memory::AllocationType::FreeList_Main, 50);	
 
 			s_entriesByActions.Emplace(BL_STRING_TO_STRINGID("Move"), AllocationType::FreeList_ECS, (int)InputSource::Count);
+			s_entriesByActions.Emplace(BL_STRING_TO_STRINGID("Look"), AllocationType::FreeList_ECS, (int)InputSource::Count);
+
 			s_initialized = true;
+			s_gamepadIsConected = PlatformInput::GetGamepadIsConnected(0);
 
 			DynamicArray<InputEntry>* entries = nullptr;
 			if (s_entriesByActions.TryGet(BL_STRING_TO_STRINGID("Move"), entries))
@@ -424,21 +428,54 @@ namespace BaldLion
 				testEntry.inputType = InputType::Axis2D;
 
 				testEntry.inputCodes[0] = InputCode::KEY_D;
-				s_inputCodeBindings[(int)InputCode::KEY_D] = BL_STRING_TO_STRINGID("Move");
-
 				testEntry.inputCodes[1] = InputCode::KEY_A;
-				s_inputCodeBindings[(int)InputCode::KEY_A] = BL_STRING_TO_STRINGID("Move");
-
 				testEntry.inputCodes[2] = InputCode::KEY_W;
-				s_inputCodeBindings[(int)InputCode::KEY_W] = BL_STRING_TO_STRINGID("Move");
-
 				testEntry.inputCodes[3] = InputCode::KEY_S;
-				s_inputCodeBindings[(int)InputCode::KEY_S] = BL_STRING_TO_STRINGID("Move");
 
 				memset(&testEntry.currentValue, 0, sizeof(InputValue));
 				memset(&testEntry.previousValue, 0, sizeof(InputValue));
 
 				entries->PushBack(testEntry);
+
+				testEntry.source = InputSource::Controller;
+				testEntry.inputType = InputType::Axis2D;
+				testEntry.deadZone = 0.1f;
+
+				testEntry.inputCodes[0] = InputCode::GAMEPAD_AXIS_LEFT_X;
+				testEntry.inputCodes[1] = InputCode::GAMEPAD_AXIS_LEFT_Y;
+
+				memset(&testEntry.currentValue, 0, sizeof(InputValue));
+				memset(&testEntry.previousValue, 0, sizeof(InputValue));
+
+				entries->PushBack(testEntry);
+
+			}
+			
+			if (s_entriesByActions.TryGet(BL_STRING_TO_STRINGID("Look"), entries))
+			{
+				//TEST
+				InputEntry testEntry;
+				testEntry.source = InputSource::Controller;
+				testEntry.inputType = InputType::Axis2D;
+
+				testEntry.inputCodes[0] = InputCode::GAMEPAD_AXIS_RIGHT_X;
+				testEntry.inputCodes[1] = InputCode::GAMEPAD_AXIS_RIGHT_Y;
+				testEntry.deadZone = 0.1f;
+
+				memset(&testEntry.currentValue, 0, sizeof(InputValue));
+				memset(&testEntry.previousValue, 0, sizeof(InputValue));
+
+				entries->PushBack(testEntry);
+				testEntry.source = InputSource::Mouse;
+				testEntry.inputType = InputType::Axis2D;
+
+				testEntry.inputCodes[0] = InputCode::MOUSE_POS;				
+
+				memset(&testEntry.currentValue, 0, sizeof(InputValue));
+				memset(&testEntry.previousValue, 0, sizeof(InputValue));
+
+				entries->PushBack(testEntry);
+
 			}
 
 			Threading::TaskScheduler::KickParallelTask(s_parallelTask, 1,
@@ -448,97 +485,7 @@ namespace BaldLion
 					{
 						while (s_initialized)
 						{
-							BL_HASHTABLE_FOR(s_entriesByActions, it)
-							{
-								DynamicArray<InputSystem::InputEntry>& entries = it.GetValue();
-								BL_DYNAMICARRAY_FOREACH(entries)
-								{
-									InputEntry& entry = (entries)[i];
-									entry.previousValue = entry.currentValue;
-
-									ui32 blKeyCode = 0;
-
-									switch (entry.source)
-									{									
-									case InputSource::Mouse:
-									{
-										switch (entry.inputType)
-										{
-										case InputType::Button:
-											blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
-											entry.currentValue.valueButton = PlatformInput::IsMouseButtonPress(blKeyCode);
-											break;
-										case InputType::Axis1D:
-											blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
-											entry.currentValue.value1D = PlatformInput::IsMouseButtonPress(blKeyCode) ? 1.0f : 0.0f;
-											break;
-										case InputType::Axis2D:
-											entry.currentValue.value2D.x = PlatformInput::GetMouseX();
-											entry.currentValue.value2D.y = PlatformInput::GetMouseY();
-											break;
-										}
-									}
-										break;
-									case InputSource::Keyboard:
-									{
-										switch (entry.inputType)
-										{
-										case InputType::Button:
-											blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
-											entry.currentValue.valueButton = PlatformInput::IsKeyPressed(blKeyCode);
-											break;
-
-										case InputType::Axis1D:
-											blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
-											entry.currentValue.value1D = PlatformInput::IsKeyPressed(blKeyCode) ? 1.0f : 0.0f;
-											break;
-
-										case InputType::Axis2D:
-										{
-											ui32 blKeyCode0 = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
-											ui32 blKeyCode1 = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[1]);
-											ui32 blKeyCode2 = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[2]);
-											ui32 blKeyCode3 = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[3]);
-
-											entry.currentValue.value2D.x = PlatformInput::IsKeyPressed(blKeyCode0) ? 1.0f : (PlatformInput::IsKeyPressed(blKeyCode1) ? -1.0f : 0.0f);
-											entry.currentValue.value2D.y = PlatformInput::IsKeyPressed(blKeyCode2) ? 1.0f : (PlatformInput::IsKeyPressed(blKeyCode3) ? -1.0f : 0.0f);
-										}
-										break;
-										}
-									}
-										break;
-									case InputSource::Controller:
-									{
-										blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
-										entry.previousValue = entry.currentValue;
-
-										switch (entry.inputType)
-										{
-										case InputType::Button:
-											entry.currentValue.valueButton = PlatformInput::GetGamepadButtonValue(0, blKeyCode);
-											break;
-										case InputType::Axis1D:
-											entry.currentValue.value1D = PlatformInput::GetGamepadAxisValue(0, blKeyCode);
-											break;
-										case InputType::Axis2D:
-										{
-											ui32 blKeyCodeY = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[1]);
-											entry.currentValue.value2D.x = PlatformInput::GetGamepadAxisValue(0, blKeyCode);
-											entry.currentValue.value2D.y = PlatformInput::GetGamepadAxisValue(0, blKeyCodeY);
-										}
-										break;
-										default:
-											break;
-										}
-									}
-									break;
-
-									default:
-										break;
-									
-									}
-								}
-							}
+							UpdateEntries();
 						}
 					}
 				});
@@ -577,125 +524,109 @@ namespace BaldLion
 			s_entriesByActions.Delete();
 		}
 
-		bool InputSystem::OnKeyPressedEvent(KeyPressedEvent& e)
+		void InputSystem::UpdateEntries()
 		{
-			InputCode inputCode = BlKeyCodeToInputCode(InputSource::Keyboard, InputType::Button, e.GetKeyCode());
-				
-			StringId actionName = s_inputCodeBindings[(int)inputCode];
-			ui32 codeIndex = 0;
-			InputEntry* entryWithCode = FindEntryByActionAndInputCode(actionName, inputCode, codeIndex);
-
-			if (entryWithCode != nullptr)
+			BL_HASHTABLE_FOR(s_entriesByActions, it)
 			{
-				InputValue value = entryWithCode->currentValue;
-
-				switch (entryWithCode->inputType)
+				DynamicArray<InputSystem::InputEntry>& entries = it.GetValue();
+				BL_DYNAMICARRAY_FOREACH(entries)
 				{
-				case InputType::Button:
-					value.valueButton = 1;
+					InputEntry& entry = (entries)[i];					
+
+					ui32 blKeyCode = 0;
+
+					switch (entry.source)
+					{
+					case InputSource::Mouse:
+					{
+						switch (entry.inputType)
+						{
+						case InputType::Button:
+							blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
+							entry.currentValue.valueButton = PlatformInput::IsMouseButtonPress(blKeyCode);
+							break;
+						case InputType::Axis1D:
+							blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
+							entry.currentValue.value1D = PlatformInput::IsMouseButtonPress(blKeyCode) ? 1.0f : 0.0f;
+							break;
+						case InputType::Axis2D:
+							entry.currentValue.value2D.x = PlatformInput::GetMouseX();
+							entry.currentValue.value2D.y = PlatformInput::GetMouseY();
+							break;
+						}
+					}
 					break;
-				case InputType::Axis1D:
-					value.value1D = 1.0f;
+					case InputSource::Keyboard:
+					{
+						switch (entry.inputType)
+						{
+						case InputType::Button:
+							blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
+							entry.currentValue.valueButton = PlatformInput::IsKeyPressed(blKeyCode);
+							break;
+
+						case InputType::Axis1D:
+							blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
+							entry.currentValue.value1D = PlatformInput::IsKeyPressed(blKeyCode) ? 1.0f : 0.0f;
+							break;
+
+						case InputType::Axis2D:
+						{
+							ui32 blKeyCode0 = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
+							ui32 blKeyCode1 = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[1]);
+							ui32 blKeyCode2 = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[2]);
+							ui32 blKeyCode3 = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[3]);
+
+							entry.currentValue.value2D.x = PlatformInput::IsKeyPressed(blKeyCode0) ? 1.0f : (PlatformInput::IsKeyPressed(blKeyCode1) ? -1.0f : 0.0f);
+							entry.currentValue.value2D.y = PlatformInput::IsKeyPressed(blKeyCode2) ? 1.0f : (PlatformInput::IsKeyPressed(blKeyCode3) ? -1.0f : 0.0f);
+						}
+						break;
+						}
+					}
 					break;
-				case InputType::Axis2D:
-				{
-					float axisValue = codeIndex % 2 == 0 ? -1.0f : 1.0f;
-					value.value2D[codeIndex / 2] = axisValue; // 0/1 -> x 2/3 -> y
+					case InputSource::Controller:
+					{
+						if (s_gamepadIsConected)
+						{
+							blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
+							entry.previousValue = entry.currentValue;
+
+							switch (entry.inputType)
+							{
+							case InputType::Button:
+								entry.currentValue.valueButton = PlatformInput::GetGamepadButtonValue(0, blKeyCode);
+								break;
+							case InputType::Axis1D:
+								entry.currentValue.value1D = PlatformInput::GetGamepadAxisValue(0, blKeyCode);
+								break;
+							case InputType::Axis2D:
+							{
+								ui32 blKeyCodeY = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[1]);
+
+								float valueX = PlatformInput::GetGamepadAxisValue(0, blKeyCode);
+								float valueY = PlatformInput::GetGamepadAxisValue(0, blKeyCodeY);
+
+								entry.currentValue.value2D.x = abs(valueX) > entry.deadZone ? valueX : 0.0f;
+								entry.currentValue.value2D.y = abs(valueY) > entry.deadZone ? valueY : 0.0f;
+							}
+							break;
+							default:
+								break;
+							}
+						}
+						else
+						{
+							memset(&entry.currentValue, 0, sizeof(InputValue));
+						}
+					}
+					break;
+
+					default:
+						break;
+
+					}
 				}
-					break;
-				default:
-					break;
-				}
-
-				entryWithCode->previousValue = entryWithCode->currentValue;
-				entryWithCode->currentValue = value;
-			}			
-
-			return true;
-		}
-
-		bool InputSystem::OnKeyReleasedEvent(KeyReleasedEvent& e)
-		{			
-			InputCode inputCode = BlKeyCodeToInputCode(InputSource::Keyboard, InputType::Button, e.GetKeyCode());
-
-			StringId actionName = s_inputCodeBindings[(int)inputCode];
-			ui32 codeIndex = 0;
-			InputEntry* entryWithCode = FindEntryByActionAndInputCode(actionName, inputCode, codeIndex);
-
-			if (entryWithCode != nullptr)
-			{
-				InputValue value = entryWithCode->currentValue;
-
-				switch (entryWithCode->inputType)
-				{
-				case InputType::Button:
-					value.valueButton = 0;
-					break;
-				case InputType::Axis1D:
-					value.value1D = 0.0f;
-					break;
-				case InputType::Axis2D:
-					value.value2D[codeIndex / 2] = 0.0f; // 0/1 -> x 2/3 -> y
-					break;
-				default:
-					break;
-				}
-
-				entryWithCode->previousValue = entryWithCode->currentValue;
-				entryWithCode->currentValue = value;
 			}
-
-			return true;
-		}
-
-		bool InputSystem::OnMouseButtonPressedEvent(MouseButtonPressedEvent& e)
-		{			
-			InputCode inputCode = BlKeyCodeToInputCode(InputSource::Mouse, InputType::Button, e.GetMouseButton());
-
-			StringId actionName = s_inputCodeBindings[(int)inputCode];
-			ui32 codeIndex = 0;
-			InputEntry* entryWithCode = FindEntryByActionAndInputCode(actionName, inputCode, codeIndex);
-
-			if (entryWithCode != nullptr)
-			{
-				entryWithCode->previousValue = entryWithCode->currentValue;
-				entryWithCode->currentValue.valueButton = 1;
-			}
-
-			return true;
-		}
-
-		bool InputSystem::OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e)
-		{
-			InputCode inputCode = BlKeyCodeToInputCode(InputSource::Mouse, InputType::Button, ((MouseButtonReleasedEvent*)&e)->GetMouseButton());
-
-			StringId actionName = s_inputCodeBindings[(int)inputCode];
-			ui32 codeIndex = 0;
-			InputEntry* entryWithCode = FindEntryByActionAndInputCode(actionName, inputCode, codeIndex);
-
-			if (entryWithCode != nullptr)
-			{
-				entryWithCode->previousValue = entryWithCode->currentValue;
-				entryWithCode->currentValue.valueButton = 0;
-			}
-
-			return true;
-		}
-
-		bool InputSystem::OnMouseMovedEvent(MouseMovedEvent& e)
-		{	
-			StringId actionName = s_inputCodeBindings[(int)InputCode::MOUSE_POS];
-			ui32 codeIndex = 0;
-			InputEntry* entryWithCode = FindEntryByActionAndInputCode(actionName, InputCode::MOUSE_POS, codeIndex);
-
-			if (entryWithCode != nullptr)
-			{
-				entryWithCode->previousValue = entryWithCode->currentValue;
-				entryWithCode->currentValue.value2D.x = e.GetMouseX();
-				entryWithCode->currentValue.value2D.y = e.GetMouseY();
-			}				
-		
-			return true;
 		}
 
 		InputSystem::InputEntry* InputSystem::FindEntryByActionAndInputCode(StringId inputAction, InputCode inputCode, ui32& inputCodeIndex)
@@ -804,5 +735,14 @@ namespace BaldLion
 			return InputCode::NO_INPUT;
 		}
 
+		bool InputSystem::GetGamepadIsConnected()
+		{
+			return s_gamepadIsConected;
+		}
+
+		void InputSystem::SetGamepadIsConnected(bool value)
+		{
+			s_gamepadIsConected = value;			
+		}
 	}
 }

@@ -31,15 +31,10 @@ namespace BaldLion
 
 			glm::vec3 desiredVelocity(0.0f);
 
-			if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_W))
-				desiredVelocity -= MathUtils::GetTransformForwardDirection(cameraTransformMatrix);
-			else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_S))
-				desiredVelocity += MathUtils::GetTransformForwardDirection(cameraTransformMatrix);
+			glm::vec2 moveInput = Input::InputSystem::GetActionValue(BL_STRING_TO_STRINGID("Move")).value2D;
 
-			if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_A))
-				desiredVelocity -= MathUtils::GetTransformRightDirection(cameraTransformMatrix);
-			else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_D))
-				desiredVelocity += MathUtils::GetTransformRightDirection(cameraTransformMatrix);
+			desiredVelocity -= MathUtils::GetTransformForwardDirection(cameraTransformMatrix) * moveInput.y;
+			desiredVelocity += MathUtils::GetTransformRightDirection(cameraTransformMatrix) * moveInput.x;
 
 			desiredVelocity.y = 0.0f;
 			desiredVelocity = glm::normalize(desiredVelocity);

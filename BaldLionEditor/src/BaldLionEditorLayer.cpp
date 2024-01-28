@@ -383,11 +383,16 @@ namespace BaldLion
 			cameraMovement = glm::vec3(0, 0, 0);
 
 			if (BaldLion::Input::PlatformInput::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
-			{
-				glm::vec2 moveInput = Input::InputSystem::GetActionValue(BL_STRING_TO_STRINGID("Move")).value2D;
+			{				
+				if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_W))
+					cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
+				else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_S))
+					cameraMovement += MathUtils::GetTransformForwardDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;				
 
-				cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed * moveInput.y;				
-				cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed * moveInput.x;
+				if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_A))
+					cameraMovement -= MathUtils::GetTransformRightDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
+				else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_D))
+					cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 
 				if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_LEFT_SHIFT))
 					cameraMovement *= 2;

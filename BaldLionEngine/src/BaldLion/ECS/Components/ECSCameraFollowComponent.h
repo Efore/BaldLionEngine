@@ -20,7 +20,8 @@ namespace BaldLion {
 				followedEntityID(followedEntity),
 				offsetXY(offsetXY),
 				offsetZ(offsetZ),
-				rotationSpeed(rotationSpeed)
+				rotationSpeed(rotationSpeed),
+				prevInputValue(0.0f)
 			{ 
 			}
 
@@ -30,10 +31,9 @@ namespace BaldLion {
 			glm::vec2 offsetXY;
 			float offsetZ;
 			float rotationSpeed;
-			float interpolator = 1.0f;
+			float interpolator = 1.0f;			
 			
-			float prevX = 0.0f;
-			float prevY = 0.0f;
+			glm::vec2 prevInputValue;
 			float cameraYaw = 0.0f;
 			float cameraPitch = 0.0f;			
 		};

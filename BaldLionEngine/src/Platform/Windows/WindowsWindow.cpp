@@ -5,6 +5,7 @@
 #include "BaldLion/Events/ApplicationEvent.h"
 #include "BaldLion/Events/KeyboardInputEvent.h"
 #include "BaldLion/Rendering/Platform/OpenGL/OpenGLContext.h"
+#include "BaldLion/Core/Input.h"
 
 #include <glad/glad.h>
 
@@ -155,6 +156,22 @@ namespace BaldLion
 			KeyTypedEvent event(keycode);
 			data.EventCallback(event);
 		});
+
+		glfwSetJoystickCallback([](int joystickId, int event)
+			{
+				if (event == GLFW_CONNECTED)
+				{
+					Input::InputSystem::SetGamepadIsConnected(true);
+					BL_LOG_CORE_INFO("joystick {0} connected", joystickId);
+
+				}
+				else if (event == GLFW_DISCONNECTED)
+				{
+					Input::InputSystem::SetGamepadIsConnected(false);
+					BL_LOG_CORE_INFO("joystick {0} disconnected", joystickId);
+				}
+
+			});
 	}
 
 	void WindowsWindow::Shutdown()

@@ -228,6 +228,8 @@ namespace BaldLion
 
 				InputValue previousValue;
 				InputValue currentValue;
+
+				float deadZone;
 			};
 
 		public:
@@ -235,18 +237,15 @@ namespace BaldLion
 			static void Init();
 
 			static InputValue GetActionValue(StringId inputAction);
-			
+
+			static bool GetGamepadIsConnected();
+			static void SetGamepadIsConnected(bool value);
+
 			static void Stop();
 
 		private:
 			
-			static bool OnKeyPressedEvent(KeyPressedEvent& e);
-			static bool OnKeyReleasedEvent(KeyReleasedEvent& e);
-
-			static bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);
-			static bool OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
-
-			static bool OnMouseMovedEvent(MouseMovedEvent& e);
+			static void UpdateEntries();
 
 			static bool CompareInputCodes(InputCode* codes1, InputCode* codes2)
 			{
@@ -277,6 +276,7 @@ namespace BaldLion
 
 			static Threading::Task s_parallelTask;
 			static bool s_initialized;
+			static bool s_gamepadIsConected;
 		};
 
 		class PlatformInput
@@ -292,6 +292,8 @@ namespace BaldLion
 
 			static float GetGamepadAxisValue(int gamepadIndex, int button);
 			static bool GetGamepadButtonValue(int gamepadIndex, int button);
+			static bool GetGamepadIsConnected(int gamepadIndex);
+
 		};
 	}
 }

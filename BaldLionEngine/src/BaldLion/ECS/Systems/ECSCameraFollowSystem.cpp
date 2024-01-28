@@ -65,16 +65,26 @@ namespace BaldLion
 
 		void ECSCameraFollowSystem::CalculateInputRotation(ECSCameraFollowComponent* cameraFollowComponent, float deltaTime)
 		{
-			const float difX = BaldLion::Input::PlatformInput::GetMouseX() - cameraFollowComponent->prevX;
-			const float difY = BaldLion::Input::PlatformInput::GetMouseY() - cameraFollowComponent->prevY;
+			glm::vec2 lookInput = Input::InputSystem::GetActionValue(BL_STRING_TO_STRINGID("Look")).value2D;
+			float angleX = 0.0f;
+			float angleY = 0.0f;
 
-			cameraFollowComponent->prevX = BaldLion::Input::PlatformInput::GetMouseX();
-			cameraFollowComponent->prevY = BaldLion::Input::PlatformInput::GetMouseY();
+			if (lookInput.x > 1.0f || lookInput.x < -1.0f || lookInput.y > 1.0f || lookInput.y < -1.0f)
+			{
+				angleX = lookInput.x - cameraFollowComponent->prevInputValue.x;
+				angleY = -(lookInput.y - cameraFollowComponent->prevInputValue.y);
+				cameraFollowComponent->prevInputValue = lookInput;
+			}
+			else
+			{
+				angleX = lookInput.x;
+				angleY = lookInput.y;
+			}
 
-			float angleX = -difX * deltaTime * cameraFollowComponent->rotationSpeed;
-			float angleY = -difY * deltaTime * cameraFollowComponent->rotationSpeed;
+			angleX *= deltaTime * cameraFollowComponent->rotationSpeed;
+			angleY *= deltaTime * cameraFollowComponent->rotationSpeed;
 
-			cameraFollowComponent->cameraYaw += angleX;
+			cameraFollowComponent->cameraYaw -= angleX;			
 
 			if (cameraFollowComponent->cameraPitch + angleY > 1.0f)
 			{
