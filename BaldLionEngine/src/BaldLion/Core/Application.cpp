@@ -114,6 +114,7 @@ namespace BaldLion
 		while (m_running)
 		{	
 			bool processNewFrame = false;
+
 			Time::UpdateCurrentTime(glfwGetTime(), processNewFrame);
 
 			if (!processNewFrame)// Platform::GetTime
@@ -122,6 +123,8 @@ namespace BaldLion
 			}
 	
 			BL_PROFILE_FRAME();
+
+			Input::InputSystem::UpdateEntries();
 
 			if (!m_minimized)
 			{

@@ -4,6 +4,7 @@
 #include "Panels/EntityPropertiesPanel.h"
 #include "Panels/EditorViewportPanel.h"
 #include "Panels/MemoryAllocationPanel.h"
+#include "Panels/InputManagementPanel.h"
 #include "Panels/RenderingDataPanel.h"
 #include "Panels/ResourcesPanel.h"
 #include "Panels/AnimatorPanel.h"
@@ -57,9 +58,11 @@ namespace BaldLion
 			EditorViewportPanel m_editorViewportPanel;
 			RenderingDataPanel m_renderingDataPanel;
 			MemoryAllocationPanel m_memoryAllocationPanel;
+			InputManagementPanel m_inputManagementPanel;
 			ResourcesPanel m_resourcesPanel;
 			AnimatorPanel m_animatorPanel;
 			NavigationPanel m_navigationPanel;
+
 
 			ECS::ECSProjectionCameraComponent* m_viewportCamera;
 			ECS::ECSTransformComponent* m_viewportCameraTransform;

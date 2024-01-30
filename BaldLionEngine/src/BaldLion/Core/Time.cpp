@@ -21,7 +21,7 @@ namespace BaldLion {
 
 	void Time::UpdateCurrentTime(double currentTime, bool& processNewFrame)
 	{
-		const float maxPeriod = 1.0f / MAX_FPS;
+		const float maxPeriod = 1.0f / MAX_FPS_GAMEPLAY;
 
 		if ((float)currentTime - s_globalTimer.GetCurrentTime() > maxPeriod) {
 

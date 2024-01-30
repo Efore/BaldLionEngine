@@ -88,6 +88,7 @@ namespace BaldLion
 			m_editorViewportPanel.OnImGuiRender(deltaTime);
 			m_entityPropertiesPanel.OnImGuiRender(deltaTime);
 			m_memoryAllocationPanel.OnImGuiRender(deltaTime);
+			m_inputManagementPanel.OnImGuiRender(deltaTime);
 			m_renderingDataPanel.OnImGuiRender(deltaTime);
 			m_resourcesPanel.OnImGuiRender(deltaTime);
 			m_animatorPanel.OnImGuiRender(deltaTime);

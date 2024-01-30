@@ -23,7 +23,6 @@ namespace BaldLion
 				glm::vec2 value2D;
 			};
 
-		private:
 			enum class InputSource : ui8
 			{
 				Mouse,
@@ -40,7 +39,7 @@ namespace BaldLion
 				Axis2D
 			};
 
-			enum class InputCode : ui32
+			enum class InputCode : ui16
 			{
 				NO_INPUT,
 
@@ -222,7 +221,7 @@ namespace BaldLion
 			struct InputEntry
 			{
 				InputType inputType;
-				InputSource source;
+				InputSource inputSource;
 
 				InputCode inputCodes[4]; //x, -x, y, -y 
 
@@ -230,6 +229,12 @@ namespace BaldLion
 				InputValue currentValue;
 
 				float deadZone;
+
+				bool operator== (const InputEntry& other)
+				{
+					bool inputCodesEqual = memcmp(&inputCodes, &other.inputCodes, sizeof(this->inputCodes)) == 0;
+					return inputCodesEqual && inputType == other.inputType && inputSource == other.inputSource;
+				}
 			};
 
 		public:
@@ -238,15 +243,20 @@ namespace BaldLion
 
 			static InputValue GetActionValue(StringId inputAction);
 
+			static void UpdateEntries();
 			static bool GetGamepadIsConnected();
 			static void SetGamepadIsConnected(bool value);
 
+			static HashTable<StringId, DynamicArray<InputEntry>>& GetInputActions();
+
+			static void SerializeInputEntries();
+			static void AddInputEntry(StringId actionName, const InputEntry& entry);
+
 			static void Stop();
 
-		private:
-			
-			static void UpdateEntries();
+		private:			
 
+			static void DeserializeInputEntries();
 			static bool CompareInputCodes(InputCode* codes1, InputCode* codes2)
 			{
 				for (ui32 i = 0; i < 4; ++i)
@@ -265,16 +275,14 @@ namespace BaldLion
 			static InputCode BlKeyCodeToInputCode(InputSource inputSource, InputType inputType, ui32 blKeyCode);
 
 		private:
-
-			static StringId s_inputCodeBindings[(int)InputCode::Count];
-			static HashTable<StringId, DynamicArray<InputEntry>> s_entriesByActions;
+			
+			static HashTable<StringId, DynamicArray<InputEntry>> s_actionBindings;
 
 			static InputCode s_keyboardInputs[349];
 			static InputCode s_mouseInputs[8];
 			static InputCode s_gamepadInputButtons[15];
 			static InputCode s_gamepadInputAxes[6];
 
-			static Threading::Task s_parallelTask;
 			static bool s_initialized;
 			static bool s_gamepadIsConected;
 		};

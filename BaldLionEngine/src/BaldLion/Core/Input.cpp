@@ -2,13 +2,31 @@
 #include "blpch.h"
 
 #include "Input.h"
+#include <yaml-cpp/yaml.h>
+
+
 
 namespace BaldLion
 {
 	namespace Input
 	{
-		StringId InputSystem::s_inputCodeBindings[(int)InputCode::Count];
-		HashTable<StringId, DynamicArray<InputSystem::InputEntry>> InputSystem::s_entriesByActions;
+		#define YAML_KEY_INPUT_SYSTEM		"InputSystem"
+		#define YAML_KEY_ACTION_NAME		"ActionName"
+		#define YAML_KEY_ACTION_BINDINGS	"ActionBindings"
+		#define YAML_KEY_INPUT_TYPE			"InputType"
+		#define YAML_KEY_INPUT_SOURCE		"InputSource"
+		#define YAML_KEY_INPUT_CODE_0		"InputCode0"
+		#define YAML_KEY_INPUT_CODE_1		"InputCode1"
+		#define YAML_KEY_INPUT_CODE_2		"InputCode2"
+		#define YAML_KEY_INPUT_CODE_3		"InputCode3"
+		#define YAML_KEY_INPUT_DEADZONE		"InputDeadzone"
+
+		#define INPUT_BINDINGS_PATH "assets/input/inputBindings.meta"
+
+		HashTable<StringId, DynamicArray<InputSystem::InputEntry>> InputSystem::s_actionBindings;
+
+		bool InputSystem::s_initialized = false;
+		bool InputSystem::s_gamepadIsConected = false;
 
 		InputSystem::InputCode InputSystem::s_keyboardInputs[349] =
 		{
@@ -373,11 +391,6 @@ namespace BaldLion
 			InputCode::GAMEPAD_AXIS_RIGHT_TRIGGER
 		};
 
-		BaldLion::Threading::Task InputSystem::s_parallelTask;
-
-		bool InputSystem::s_initialized = false;
-		bool InputSystem::s_gamepadIsConected = false;
-
 		InputSystem::InputCode InputSystem::s_gamepadInputButtons[15] =
 		{
 			InputCode::GAMEPAD_BUTTON_A,
@@ -411,84 +424,11 @@ namespace BaldLion
 
 		void InputSystem::Init()
 		{			
-			s_entriesByActions = HashTable<StringId, DynamicArray<InputEntry>>(Memory::AllocationType::FreeList_Main, 50);	
-
-			s_entriesByActions.Emplace(BL_STRING_TO_STRINGID("Move"), AllocationType::FreeList_ECS, (int)InputSource::Count);
-			s_entriesByActions.Emplace(BL_STRING_TO_STRINGID("Look"), AllocationType::FreeList_ECS, (int)InputSource::Count);
-
+			s_actionBindings = HashTable<StringId, DynamicArray<InputEntry>>(Memory::AllocationType::FreeList_Main, 50);
 			s_initialized = true;
 			s_gamepadIsConected = PlatformInput::GetGamepadIsConnected(0);
 
-			DynamicArray<InputEntry>* entries = nullptr;
-			if (s_entriesByActions.TryGet(BL_STRING_TO_STRINGID("Move"), entries))
-			{
-				//TEST
-				InputEntry testEntry;
-				testEntry.source = InputSource::Keyboard;
-				testEntry.inputType = InputType::Axis2D;
-
-				testEntry.inputCodes[0] = InputCode::KEY_D;
-				testEntry.inputCodes[1] = InputCode::KEY_A;
-				testEntry.inputCodes[2] = InputCode::KEY_W;
-				testEntry.inputCodes[3] = InputCode::KEY_S;
-
-				memset(&testEntry.currentValue, 0, sizeof(InputValue));
-				memset(&testEntry.previousValue, 0, sizeof(InputValue));
-
-				entries->PushBack(testEntry);
-
-				testEntry.source = InputSource::Controller;
-				testEntry.inputType = InputType::Axis2D;
-				testEntry.deadZone = 0.1f;
-
-				testEntry.inputCodes[0] = InputCode::GAMEPAD_AXIS_LEFT_X;
-				testEntry.inputCodes[1] = InputCode::GAMEPAD_AXIS_LEFT_Y;
-
-				memset(&testEntry.currentValue, 0, sizeof(InputValue));
-				memset(&testEntry.previousValue, 0, sizeof(InputValue));
-
-				entries->PushBack(testEntry);
-
-			}
-			
-			if (s_entriesByActions.TryGet(BL_STRING_TO_STRINGID("Look"), entries))
-			{
-				//TEST
-				InputEntry testEntry;
-				testEntry.source = InputSource::Controller;
-				testEntry.inputType = InputType::Axis2D;
-
-				testEntry.inputCodes[0] = InputCode::GAMEPAD_AXIS_RIGHT_X;
-				testEntry.inputCodes[1] = InputCode::GAMEPAD_AXIS_RIGHT_Y;
-				testEntry.deadZone = 0.1f;
-
-				memset(&testEntry.currentValue, 0, sizeof(InputValue));
-				memset(&testEntry.previousValue, 0, sizeof(InputValue));
-
-				entries->PushBack(testEntry);
-				testEntry.source = InputSource::Mouse;
-				testEntry.inputType = InputType::Axis2D;
-
-				testEntry.inputCodes[0] = InputCode::MOUSE_POS;				
-
-				memset(&testEntry.currentValue, 0, sizeof(InputValue));
-				memset(&testEntry.previousValue, 0, sizeof(InputValue));
-
-				entries->PushBack(testEntry);
-
-			}
-
-			Threading::TaskScheduler::KickParallelTask(s_parallelTask, 1,
-				[](uint32_t firstIterationIndex, uint32_t lastIterationIndex)
-				{
-					for (uint32_t i = firstIterationIndex; i <= lastIterationIndex; ++i)
-					{
-						while (s_initialized)
-						{
-							UpdateEntries();
-						}
-					}
-				});
+			DeserializeInputEntries();
 		}
 
 		InputSystem::InputValue InputSystem::GetActionValue(StringId inputAction)
@@ -499,7 +439,7 @@ namespace BaldLion
 
 			DynamicArray <InputEntry>* entriesBindedToAction = nullptr;
 
-			if (!s_entriesByActions.TryGet(inputAction, entriesBindedToAction))
+			if (!s_actionBindings.TryGet(inputAction, entriesBindedToAction))
 			{
 				return resultValue;
 			}
@@ -517,16 +457,9 @@ namespace BaldLion
 			return resultValue;
 		}
 
-		void InputSystem::Stop()
-		{			
-			s_initialized = false;
-			s_parallelTask.Wait();
-			s_entriesByActions.Delete();
-		}
-
 		void InputSystem::UpdateEntries()
 		{
-			BL_HASHTABLE_FOR(s_entriesByActions, it)
+			BL_HASHTABLE_FOR(s_actionBindings, it)
 			{
 				DynamicArray<InputSystem::InputEntry>& entries = it.GetValue();
 				BL_DYNAMICARRAY_FOREACH(entries)
@@ -535,18 +468,18 @@ namespace BaldLion
 
 					ui32 blKeyCode = 0;
 
-					switch (entry.source)
+					switch (entry.inputSource)
 					{
 					case InputSource::Mouse:
 					{
 						switch (entry.inputType)
 						{
 						case InputType::Button:
-							blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
+							blKeyCode = InputCodeToBlKeyCode(entry.inputSource, entry.inputType, entry.inputCodes[0]);
 							entry.currentValue.valueButton = PlatformInput::IsMouseButtonPress(blKeyCode);
 							break;
 						case InputType::Axis1D:
-							blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
+							blKeyCode = InputCodeToBlKeyCode(entry.inputSource, entry.inputType, entry.inputCodes[0]);
 							entry.currentValue.value1D = PlatformInput::IsMouseButtonPress(blKeyCode) ? 1.0f : 0.0f;
 							break;
 						case InputType::Axis2D:
@@ -561,21 +494,21 @@ namespace BaldLion
 						switch (entry.inputType)
 						{
 						case InputType::Button:
-							blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
+							blKeyCode = InputCodeToBlKeyCode(entry.inputSource, entry.inputType, entry.inputCodes[0]);
 							entry.currentValue.valueButton = PlatformInput::IsKeyPressed(blKeyCode);
 							break;
 
 						case InputType::Axis1D:
-							blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
+							blKeyCode = InputCodeToBlKeyCode(entry.inputSource, entry.inputType, entry.inputCodes[0]);
 							entry.currentValue.value1D = PlatformInput::IsKeyPressed(blKeyCode) ? 1.0f : 0.0f;
 							break;
 
 						case InputType::Axis2D:
 						{
-							ui32 blKeyCode0 = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
-							ui32 blKeyCode1 = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[1]);
-							ui32 blKeyCode2 = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[2]);
-							ui32 blKeyCode3 = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[3]);
+							ui32 blKeyCode0 = InputCodeToBlKeyCode(entry.inputSource, entry.inputType, entry.inputCodes[0]);
+							ui32 blKeyCode1 = InputCodeToBlKeyCode(entry.inputSource, entry.inputType, entry.inputCodes[1]);
+							ui32 blKeyCode2 = InputCodeToBlKeyCode(entry.inputSource, entry.inputType, entry.inputCodes[2]);
+							ui32 blKeyCode3 = InputCodeToBlKeyCode(entry.inputSource, entry.inputType, entry.inputCodes[3]);
 
 							entry.currentValue.value2D.x = PlatformInput::IsKeyPressed(blKeyCode0) ? 1.0f : (PlatformInput::IsKeyPressed(blKeyCode1) ? -1.0f : 0.0f);
 							entry.currentValue.value2D.y = PlatformInput::IsKeyPressed(blKeyCode2) ? 1.0f : (PlatformInput::IsKeyPressed(blKeyCode3) ? -1.0f : 0.0f);
@@ -588,7 +521,7 @@ namespace BaldLion
 					{
 						if (s_gamepadIsConected)
 						{
-							blKeyCode = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[0]);
+							blKeyCode = InputCodeToBlKeyCode(entry.inputSource, entry.inputType, entry.inputCodes[0]);
 							entry.previousValue = entry.currentValue;
 
 							switch (entry.inputType)
@@ -601,7 +534,7 @@ namespace BaldLion
 								break;
 							case InputType::Axis2D:
 							{
-								ui32 blKeyCodeY = InputCodeToBlKeyCode(entry.source, entry.inputType, entry.inputCodes[1]);
+								ui32 blKeyCodeY = InputCodeToBlKeyCode(entry.inputSource, entry.inputType, entry.inputCodes[1]);
 
 								float valueX = PlatformInput::GetGamepadAxisValue(0, blKeyCode);
 								float valueY = PlatformInput::GetGamepadAxisValue(0, blKeyCodeY);
@@ -629,12 +562,18 @@ namespace BaldLion
 			}
 		}
 
+		void InputSystem::Stop()
+		{			
+			s_initialized = false;
+			s_actionBindings.Delete();
+		}
+
 		InputSystem::InputEntry* InputSystem::FindEntryByActionAndInputCode(StringId inputAction, InputCode inputCode, ui32& inputCodeIndex)
 		{		
 			InputEntry* resultEntry = nullptr;
 
 			DynamicArray <InputEntry>* entriesBindedToAction = nullptr;
-			if (s_entriesByActions.TryGet(inputAction, entriesBindedToAction))
+			if (s_actionBindings.TryGet(inputAction, entriesBindedToAction))
 			{
 				BL_DYNAMICARRAY_FOREACH(*entriesBindedToAction)
 				{
@@ -743,6 +682,119 @@ namespace BaldLion
 		void InputSystem::SetGamepadIsConnected(bool value)
 		{
 			s_gamepadIsConected = value;			
+		}
+
+		HashTable<StringId, DynamicArray<InputSystem::InputEntry>>& InputSystem::GetInputActions()
+		{
+			return s_actionBindings;
+		}
+
+		void InputSystem::AddInputEntry(StringId actionName, const InputEntry& entry)
+		{
+			DynamicArray <InputEntry>* entriesBindedToAction = nullptr;
+
+			if (s_actionBindings.TryGet(actionName, entriesBindedToAction))
+			{
+				bool alreadyExists = false;
+				BL_DYNAMICARRAY_FOREACH(*entriesBindedToAction)
+				{
+					if ((*entriesBindedToAction)[i] == entry)
+					{
+						alreadyExists = true;
+						break;
+					}
+				}
+
+				if (!alreadyExists)
+				{
+					(*entriesBindedToAction).PushBack(entry);
+				}
+			}
+			else
+			{	
+				s_actionBindings.Emplace(actionName, AllocationType::FreeList_ECS, (int)InputSource::Count);
+				entriesBindedToAction = &s_actionBindings.Get(actionName);
+				entriesBindedToAction->PushBack(entry);
+			}
+		}
+
+		void InputSystem::SerializeInputEntries()
+		{
+			YAML::Emitter out;
+			out << YAML::BeginMap;
+
+			out << YAML::Key << YAML_KEY_INPUT_SYSTEM << YAML::Value << YAML::BeginSeq;
+			BL_HASHTABLE_FOR(s_actionBindings, it)
+			{
+				out << YAML::BeginMap;
+				out << YAML::Key << YAML_KEY_ACTION_NAME << YAML::Value << BL_STRINGID_TO_STR_C(it.GetKey());
+				out << YAML::Key << YAML_KEY_ACTION_BINDINGS << YAML::Value << YAML::BeginSeq;
+				
+				DynamicArray<InputSystem::InputEntry>& bindings = it.GetValue();
+
+				BL_DYNAMICARRAY_FOREACH(bindings)
+				{
+					out << YAML::BeginMap;
+
+					out << YAML::Key << YAML_KEY_INPUT_SOURCE << YAML::Value << (ui32)bindings[i].inputSource;
+					out << YAML::Key << YAML_KEY_INPUT_TYPE << YAML::Value << (ui32)bindings[i].inputType;
+					out << YAML::Key << YAML_KEY_INPUT_CODE_0 << YAML::Value << (ui32)bindings[i].inputCodes[0];
+					out << YAML::Key << YAML_KEY_INPUT_CODE_1 << YAML::Value << (ui32)bindings[i].inputCodes[1];
+					out << YAML::Key << YAML_KEY_INPUT_CODE_2 << YAML::Value << (ui32)bindings[i].inputCodes[2];
+					out << YAML::Key << YAML_KEY_INPUT_CODE_3 << YAML::Value << (ui32)bindings[i].inputCodes[3];
+					out << YAML::Key << YAML_KEY_INPUT_DEADZONE << YAML::Value << (float)bindings[i].deadZone;
+
+					out << YAML::EndMap;
+				}
+
+				out << YAML::EndSeq;
+				out << YAML::EndMap;
+			}
+			out << YAML::EndSeq;
+			out << YAML::EndMap;
+
+			std::ofstream fout(INPUT_BINDINGS_PATH);
+			fout << out.c_str();
+			fout.close();
+		}
+
+		void InputSystem::DeserializeInputEntries()
+		{
+			std::ifstream stream(INPUT_BINDINGS_PATH);
+			std::stringstream strStream;
+
+			strStream << stream.rdbuf();
+
+			YAML::Node data = YAML::Load(strStream.str());
+
+			if (!data[YAML_KEY_INPUT_SYSTEM])
+				return;
+
+			auto actions = data[YAML_KEY_INPUT_SYSTEM];
+			
+			if (actions)
+			{
+				for (auto action : actions)
+				{
+					StringId actionName = BL_STRING_TO_STRINGID(action[YAML_KEY_ACTION_NAME].as<std::string>());
+					auto yamlBindings = action[YAML_KEY_ACTION_BINDINGS];
+
+					for (auto binding : yamlBindings)
+					{
+						InputEntry entry;
+						entry.inputSource = (InputSource)binding[YAML_KEY_INPUT_SOURCE].as<ui32>();
+						entry.inputType = (InputType)binding[YAML_KEY_INPUT_TYPE].as<ui32>();
+						entry.inputCodes[0] = (InputCode)binding[YAML_KEY_INPUT_CODE_0].as<ui32>();
+						entry.inputCodes[1] = (InputCode)binding[YAML_KEY_INPUT_CODE_1].as<ui32>();
+						entry.inputCodes[2] = (InputCode)binding[YAML_KEY_INPUT_CODE_2].as<ui32>();
+						entry.inputCodes[3] = (InputCode)binding[YAML_KEY_INPUT_CODE_3].as<ui32>();
+						entry.deadZone = binding[YAML_KEY_INPUT_DEADZONE].as<float>();
+
+						AddInputEntry(actionName, entry);
+					}
+
+				}
+			}
 		}
 	}
 }

@@ -69,7 +69,7 @@ namespace BaldLion
 			float angleX = 0.0f;
 			float angleY = 0.0f;
 
-			if (lookInput.x > 1.0f || lookInput.x < -1.0f || lookInput.y > 1.0f || lookInput.y < -1.0f)
+			if (lookInput.x > 1.0f || lookInput.x < -1.0f || lookInput.y > 1.0f || lookInput.y < -1.0f) // mouse adjustment
 			{
 				angleX = lookInput.x - cameraFollowComponent->prevInputValue.x;
 				angleY = -(lookInput.y - cameraFollowComponent->prevInputValue.y);
