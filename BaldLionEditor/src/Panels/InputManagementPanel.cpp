@@ -253,11 +253,30 @@ namespace BaldLion {
 				if (ImGui::Button("Add Entry"))
 				{
 					Input::InputSystem::AddInputEntry(BL_STRING_TO_STRINGID(entryName), entry);
+
+					memset(entryName, 0, sizeof(entryName));
+					entry.inputCodes[0] = Input::InputSystem::InputCode::NO_INPUT;
+					entry.inputCodes[1] = Input::InputSystem::InputCode::NO_INPUT;
+					entry.inputCodes[2] = Input::InputSystem::InputCode::NO_INPUT;
+					entry.inputCodes[3] = Input::InputSystem::InputCode::NO_INPUT;
+					entry.deadZone = 0.0f;
+					entry.inputType = Input::InputSystem::InputType::Axis1D;
+					entry.inputSource = Input::InputSystem::InputSource::Keyboard;
+
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Cancel"))
 				{
+					memset(entryName, 0, sizeof(entryName));
+					entry.inputCodes[0] = Input::InputSystem::InputCode::NO_INPUT;
+					entry.inputCodes[1] = Input::InputSystem::InputCode::NO_INPUT;
+					entry.inputCodes[2] = Input::InputSystem::InputCode::NO_INPUT;
+					entry.inputCodes[3] = Input::InputSystem::InputCode::NO_INPUT;
+					entry.deadZone = 0.0f;
+					entry.inputType = Input::InputSystem::InputType::Axis1D;
+					entry.inputSource = Input::InputSystem::InputSource::Keyboard;
+
 					ImGui::CloseCurrentPopup();
 				}
 
@@ -326,16 +345,16 @@ namespace BaldLion {
 						entry.inputCodes[3] = (Input::InputSystem::InputCode)inputCode3Index;
 					}
 
+					float deadZone = entry.deadZone;
+					BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Dead Zone", &deadZone);
+					entry.deadZone = deadZone;
+
 					if (ImGui::Button("X"))
 					{
 						inputEntries.RemoveAt(i);
 						ImGui::PopID();
 						break;
 					}
-
-					float deadZone = entry.deadZone;
-					BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Dead Zone", &deadZone);
-					entry.deadZone = deadZone;
 
 					ImGui::PopID();
 					ImGui::Separator();
