@@ -101,6 +101,7 @@ namespace BaldLion {
 		void ECSSystem::OnFrameEnd()
 		{
 			BL_PROFILE_FUNCTION();
+			m_firstFrame = false;
 		}
 
 		void ECSSystem::OnEntityModified(ECSSignature entitySignature)

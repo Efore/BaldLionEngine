@@ -28,6 +28,9 @@ namespace BaldLion {
 		public:
 			ECSEntityID followedEntityID;
 
+			glm::vec3 prevEntityFollowedPosition;
+			glm::mat4 cameraTargetTransform;
+
 			glm::vec2 offsetXY;
 			float offsetZ;
 			float rotationSpeed;

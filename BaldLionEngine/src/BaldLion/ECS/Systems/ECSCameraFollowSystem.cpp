@@ -33,30 +33,45 @@ namespace BaldLion
 
 			if (cameraFollowComponent->followedEntityID > 0)
 			{				
-				CalculateInputRotation(cameraFollowComponent, deltaTime);
-
 				const ECSTransformComponent* followedEntityTransform = m_ecsManager->GetEntityComponents().Get(cameraFollowComponent->followedEntityID).Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
 				const glm::mat4 cameraTransformMatrix = cameraTransformComponent->GetTransformMatrix();
 				const glm::mat4 followedEntityTransformMatrix = followedEntityTransform->GetTransformMatrix();
 
-				const glm::vec4 cameraCenterPosition = followedEntityTransformMatrix * glm::vec4(cameraFollowComponent->offsetXY, 0.0f,1.0f);
-				
-				const glm::vec4 initialCameraPosition = cameraCenterPosition - glm::vec4((MathUtils::Vector3UnitZ * cameraFollowComponent->offsetZ),1.0f);
-				glm::vec4 stepArcBallPosition = initialCameraPosition;
+				glm::vec4 cameraTargetPosition(0.0f);
 
-				//Rotate the camera around the pivot point on the first axis.
-				glm::mat4x4 rotationMatrixX(1.0f);
-				rotationMatrixX = glm::rotate(rotationMatrixX, cameraFollowComponent->cameraYaw, MathUtils::Vector3UnitY);
-				stepArcBallPosition = (rotationMatrixX * (initialCameraPosition - cameraCenterPosition)) + cameraCenterPosition;
+				if (m_firstFrame)
+				{
+					cameraTargetPosition = followedEntityTransformMatrix * glm::vec4(cameraFollowComponent->offsetXY, 0.0f, 1.0f);
+					
+					cameraFollowComponent->prevEntityFollowedPosition = followedEntityTransform->position;
+					cameraFollowComponent->cameraTargetTransform = glm::translate(glm::mat4(1.0f), glm::vec3(cameraTargetPosition)) * glm::toMat4(glm::quat(followedEntityTransform->rotation)) * glm::mat4(1.0f);
+				}
+				else
+				{
+					const glm::vec4 followedEntityDeltaPosition = glm::vec4(followedEntityTransform->position - cameraFollowComponent->prevEntityFollowedPosition,1.0f);					
+					cameraTargetPosition = cameraFollowComponent->cameraTargetTransform[3] + followedEntityDeltaPosition;
+				}
 
-				//Rotate the camera around the pivot point on the second axis.
+				CalculateInputRotation(cameraFollowComponent, deltaTime);
+
+				//Rotate the camera target around the followed entity
+				glm::mat4x4 rotationAroundEntity = glm::rotate(glm::mat4(1.0f), cameraFollowComponent->cameraYaw, MathUtils::Vector3UnitY);
+
+				const glm::vec4 followedEntityPosition(followedEntityTransform->position, 1.0f);
+				const glm::vec4 cameraTargetNewPosition = (rotationAroundEntity * glm::vec4(cameraFollowComponent->offsetXY,1.0f,1.0f)) + followedEntityPosition;
+
+				cameraFollowComponent->cameraTargetTransform = glm::translate(glm::mat4(1.0f), glm::vec3(cameraTargetNewPosition)) * rotationAroundEntity * glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
+
+				glm::vec4 cameraNewPosition = cameraTargetNewPosition - glm::vec4(MathUtils::GetTransformForwardDirection(cameraFollowComponent->cameraTargetTransform) * cameraFollowComponent->offsetZ,1.0f);
+
+				//Rotate the camera around the pivot point on the world's right axis.
 				glm::mat4x4 rotationMatrixY(1.0f);
 				rotationMatrixY = glm::rotate(rotationMatrixY, cameraFollowComponent->cameraPitch, MathUtils::GetTransformRightDirection(cameraTransformMatrix));
-				stepArcBallPosition = (rotationMatrixY * (stepArcBallPosition - cameraCenterPosition)) + cameraCenterPosition;
+				cameraNewPosition = (rotationMatrixY * (cameraNewPosition - cameraTargetNewPosition)) + cameraTargetNewPosition;
 
-				cameraTransformComponent->position = stepArcBallPosition;
+				cameraTransformComponent->position = cameraNewPosition;
 
-				glm::vec3 directionToFollowedPosition = glm::normalize(glm::vec3(cameraCenterPosition) - cameraTransformComponent->position);
+				glm::vec3 directionToFollowedPosition = glm::normalize(glm::vec3(cameraTargetNewPosition) - cameraTransformComponent->position);
 				const glm::quat lookAtQuat = glm::quatLookAt(directionToFollowedPosition, MathUtils::Vector3UnitY);
 
 				cameraTransformComponent->rotation = glm::eulerAngles(lookAtQuat);

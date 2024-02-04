@@ -44,6 +44,7 @@ namespace BaldLion
 			class ECSManager* m_ecsManager;		
 
 			bool m_refreshComponentLookUps;
+			bool m_firstFrame = true;
 
 			bool m_parallelize;
 			Threading::Task m_parallelTask;
