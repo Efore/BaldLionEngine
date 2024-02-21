@@ -43,6 +43,7 @@ namespace BaldLion {
 			ui32 meshResourceID;
 			bool isStatic;
 			bool isVisible;
+			bool isShadowVisible;
 		};
 
 	}

@@ -41,10 +41,12 @@ using namespace BaldLion::ECS;
 #define YAML_KEY_MESHISSTATIC		"MeshIsStatic"
 
 //Light
-#define YAML_KEY_AMBIENTCOLOR		"AmbientColor"
-#define YAML_KEY_DIFFUSECOLOR		"DiffuseColor"
-#define YAML_KEY_SPECULARCOLOR		"SpecularColor"
-#define YAML_KEY_LIGHTDIRECTION		"LightDirection"
+#define YAML_KEY_AMBIENTCOLOR				"AmbientColor"
+#define YAML_KEY_DIFFUSECOLOR				"DiffuseColor"
+#define YAML_KEY_SPECULARCOLOR				"SpecularColor"
+#define YAML_KEY_LIGHTDIRECTION				"LightDirection"
+#define YAML_KEY_SHADOWMAP_DISTANCE			"ShadowMapDistance"
+#define YAML_KEY_SHADOW_TRANSITION_DISTANCE	"ShadowTransitionDistance"
 
 //Animation
 #define YAML_KEY_ANIMATOR_ID		"AnimatorID"
@@ -269,7 +271,8 @@ namespace BaldLion
 				SerializeVec3(out, YAML_KEY_AMBIENTCOLOR, directionalLightComponent->ambientColor);
 				SerializeVec3(out, YAML_KEY_DIFFUSECOLOR, directionalLightComponent->diffuseColor);
 				SerializeVec3(out, YAML_KEY_SPECULARCOLOR, directionalLightComponent->specularColor);
-				SerializeVec3(out, YAML_KEY_LIGHTDIRECTION, directionalLightComponent->direction);
+				out << YAML::Key << YAML_KEY_SHADOWMAP_DISTANCE << YAML::Value << ECS::SingletonSystems::LightningSystem::GetShadowDistance();
+				out << YAML::Key << YAML_KEY_SHADOW_TRANSITION_DISTANCE << YAML::Value << ECS::SingletonSystems::LightningSystem::GetShadowTransitionDistance();
 			}
 			break;
 
@@ -404,17 +407,23 @@ namespace BaldLion
 			{
 				glm::vec3 ambientColor = DeserializeVec3(yamlComponent, YAML_KEY_AMBIENTCOLOR);
 				glm::vec3 diffuseColor = DeserializeVec3(yamlComponent, YAML_KEY_DIFFUSECOLOR);
-				glm::vec3 specularColor = DeserializeVec3(yamlComponent, YAML_KEY_SPECULARCOLOR);
-				glm::vec3 direction = DeserializeVec3(yamlComponent, YAML_KEY_LIGHTDIRECTION);
+				glm::vec3 specularColor = DeserializeVec3(yamlComponent, YAML_KEY_SPECULARCOLOR);				
+
+				float shadowMapDistance = yamlComponent[YAML_KEY_SHADOWMAP_DISTANCE].as<float>();
+				float shadowTransitionDistance = yamlComponent[YAML_KEY_SHADOW_TRANSITION_DISTANCE].as<float>();
 
 				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSDirectionalLightComponent>(
 					ECS::ECSComponentType::DirectionalLight,
 					ambientColor,
 					diffuseColor,
-					specularColor,
-					direction);
+					specularColor);
 
+				ECSTransformComponent* transformComponent = SceneManager::GetECSManager()->GetEntityComponents().Get(entityID).Write<ECSTransformComponent>(ECSComponentType::Transform);
+
+				ECS::SingletonSystems::LightningSystem::SetDirectionalLightTransform(transformComponent);
 				ECS::SingletonSystems::LightningSystem::SetDirectionalLight((ECS::ECSDirectionalLightComponent*)component);
+				ECS::SingletonSystems::LightningSystem::SetShadowDistance(shadowMapDistance);
+				ECS::SingletonSystems::LightningSystem::SetShadowTransitionDistance(shadowTransitionDistance);
 			}
 				break;
 

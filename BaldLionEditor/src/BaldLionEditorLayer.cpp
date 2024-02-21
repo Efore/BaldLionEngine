@@ -65,6 +65,9 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
+
+			HandleInput();
+
 			SceneManagement::SceneManager::FrameStart();
 			SceneManagement::SceneManager::Update(0.0f);
 			SceneManagement::SceneManager::FrameEnd();
@@ -73,7 +76,6 @@ namespace BaldLion
 			Renderer::DrawScene();
 			Renderer::EndScene();	
 
-			HandleInput();
 		}
 
 		void BaldLionEditorLayer::OnImGuiRender()
@@ -106,7 +108,7 @@ namespace BaldLion
 		void BaldLionEditorLayer::SetupEditorCamera()
 		{
 			m_viewportCameraTransform = BaldLion::Memory::MemoryManager::New<ECS::ECSTransformComponent>("Editor camera transform", AllocationType::FreeList_ECS,
-				glm::vec3(0, 10, -10),
+				MathUtils::Vector3Zero,
 				MathUtils::Vector3Zero,
 				glm::vec3(1.0f));
 
@@ -115,9 +117,9 @@ namespace BaldLion
 				(float)Application::GetInstance().GetWindow().GetWidth(),
 				(float)Application::GetInstance().GetWindow().GetHeight(),
 				0.1f,
-				50000.0f);
+				1000.0f);
 
-			m_cameraMovementSpeed = 50.0f;
+			m_cameraMovementSpeed = 25.0f;
 			m_cameraRotationSpeed = 1.0f;
 
 			m_prevX = 0.0f;
@@ -332,12 +334,19 @@ namespace BaldLion
 					ECS::ECSComponentType::DirectionalLight,
 					glm::vec3(0.0f),
 					glm::vec3(1.0f),
-					glm::vec3(0.2f),
-					glm::vec3(-1.0f, -1.0f, 1.0f));
+					glm::vec3(0.2f));
+
+				ECS::ECSTransformComponent* directionalLightTransformComponent = m_ecsManager->CreateComponent<ECS::ECSTransformComponent>(
+					ECS::ECSComponentType::Transform,
+					glm::vec3(0.0f),
+					glm::vec3(0.0f),
+					glm::vec3(1.0f));
 
 				m_ecsManager->AddComponentToEntity(directionalLight, directionalLightComponent);
+				m_ecsManager->AddComponentToEntity(directionalLight, directionalLightTransformComponent);
 
 				ECS::SingletonSystems::LightningSystem::SetDirectionalLight(directionalLightComponent);
+				ECS::SingletonSystems::LightningSystem::SetDirectionalLightTransform(directionalLightTransformComponent);
 			}
 		}
 
@@ -394,6 +403,11 @@ namespace BaldLion
 					cameraMovement -= MathUtils::GetTransformRightDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 				else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_D))
 					cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
+
+				if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_Q))
+					cameraMovement -= MathUtils::Vector3UnitY * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
+				else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_E))
+					cameraMovement += MathUtils::Vector3UnitY * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 
 				if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_LEFT_SHIFT))
 					cameraMovement *= 2;

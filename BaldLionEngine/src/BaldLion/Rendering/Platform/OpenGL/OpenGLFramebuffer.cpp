@@ -75,8 +75,7 @@ namespace BaldLion
 			}
 			else
 			{
-				glDrawBuffer(GL_NONE);
-				glReadBuffer(GL_NONE);
+				glDrawBuffer(GL_NONE);				
 			}			
 
 			//Depth & stencil render buffer
@@ -93,15 +92,14 @@ namespace BaldLion
 			{
 				if (m_framebufferSpecification.DepthMap != nullptr)
 				{
-					ui32 depthMapID;
-					glGenTextures(1, &depthMapID);
+					glGenTextures(1, &m_depthBufferID);
 
-					m_framebufferSpecification.DepthMap->SetRendererID(depthMapID);
+					m_framebufferSpecification.DepthMap->SetRendererID(m_depthBufferID);
 					m_framebufferSpecification.DepthMap->SetWidth(m_framebufferSpecification.Width);
 					m_framebufferSpecification.DepthMap->SetHeight(m_framebufferSpecification.Height);
 
-					glBindTexture(GL_TEXTURE_2D, depthMapID);
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_framebufferSpecification.Width, m_framebufferSpecification.Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+					glBindTexture(GL_TEXTURE_2D, m_depthBufferID);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, m_framebufferSpecification.Width, m_framebufferSpecification.Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -110,13 +108,13 @@ namespace BaldLion
 					glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 					glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferID);
-					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMapID, 0);
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBufferID, 0);
 				}
 				else
 				{
 					glCreateRenderbuffers(1, &m_depthBufferID);
 					glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferID);
-					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_framebufferSpecification.Width, m_framebufferSpecification.Height);
+					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_framebufferSpecification.Width, m_framebufferSpecification.Height);
 					glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferID);
 					glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferID);				
 				}
@@ -126,7 +124,7 @@ namespace BaldLion
 			{
 				glCreateRenderbuffers(1, &m_stencilBufferID);
 				glBindRenderbuffer(GL_RENDERBUFFER, m_stencilBufferID);
-				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_framebufferSpecification.Width, m_framebufferSpecification.Height);
+				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_framebufferSpecification.Width, m_framebufferSpecification.Height);
 				glBindFramebuffer(GL_FRAMEBUFFER, m_framebufferID);
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_stencilBufferID);				
 			}

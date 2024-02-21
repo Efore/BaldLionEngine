@@ -5,8 +5,11 @@
 
 #include "BaldLion/ECS/SingletonSystems/CameraSystem.h"
 #include "BaldLion/ECS/SingletonSystems/LightningSystem.h"
+#include "BaldLion/ECS/ECSComponentLookUp.h"
+#include "BaldLion/SceneManagement/SceneManager.h"
 
 #include "BaldLion/ResourceManagement/ResourceManager.h"
+
 
 #include "DebugDrawRenderInterface.h"
 #include "DebugDrawRenderProvider.h"
@@ -22,9 +25,6 @@ namespace BaldLion
 		
 		DebugDrawRenderInterface* Renderer::s_debugDrawRender;
 
-		DynamicArray<RenderMeshData> Renderer::s_shadowCastingMeshes;
-		DynamicArray<RenderMeshData> Renderer::s_meshesToDraw;
-
 		Framebuffer* Renderer::s_framebuffer;
 
 		//Shadows
@@ -36,8 +36,11 @@ namespace BaldLion
 
 		glm::mat4 Renderer::s_lightViewProjection;
 
-		std::mutex Renderer::s_addDynamicMeshMutex;
-		std::mutex Renderer::s_addShadowCastingMeshMutex;
+		DynamicArray<ECS::ECSComponentLookUp*> Renderer::s_renderingComponentLookUps;
+
+		bool Renderer::s_refreshComponentLookUps = true;
+
+		ECS::ECSSignature Renderer::s_renderingEcsSignature;
 
 		void Renderer::Init(ui32 width, ui32 height)
 		{
@@ -56,24 +59,25 @@ namespace BaldLion
 				(ui8)FramebufferUsage::ColorBuffer | (ui8)FramebufferUsage::DepthBuffer | (ui8)FramebufferUsage::StencilBuffer
 			});
 
-			s_shadowMapTex = Texture2D::Create("ShadowMapTex",true);
+			s_shadowMapTex = Texture2D::Create("ShadowMapTex", true);
+			s_shadowMapTex->SetWrapMode(WrapMode::ClampToEdge, WrapMode::ClampToEdge);
+
 			ResourceManagement::ResourceManager::AddResource(s_shadowMapTex);
 
 			s_shadowFramebuffer = Framebuffer::Create({
-				1024,
-				1024,
+				4096,
+				4096,
 				1,
 				(ui8)FramebufferUsage::DepthBuffer,
 				false,
 				s_shadowMapTex
 			});
 
+			s_renderingComponentLookUps = DynamicArray<ECS::ECSComponentLookUp*>(AllocationType::FreeList_Renderer, 1000);
+			s_renderingEcsSignature = ECS::GenerateSignature(2, ECS::ECSComponentType::Mesh, ECS::ECSComponentType::Transform);
+
 			s_depthMapShader = ResourceManagement::ResourceManager::AddResource<Shader>("assets/editorAssets/shaders/depthMap.glsl",ResourceManagement::ResourceType::Shader);
-
 			s_depthMapSkinnedShader = ResourceManagement::ResourceManager::AddResource<Shader>("assets/editorAssets/shaders/depthMapSkinned.glsl", ResourceManagement::ResourceType::Shader);
-
-			s_meshesToDraw = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
-			s_shadowCastingMeshes = DynamicArray<RenderMeshData>(AllocationType::FreeList_Renderer, 100);
 
 			s_debugDrawRender = DebugDrawRenderProvider::Create();
 			s_debugDrawRender->Init();
@@ -97,6 +101,8 @@ namespace BaldLion
 		void Renderer::OnWindowResize(ui32 width, ui32 height)
 		{
 			s_rendererPlatformInterface->SetViewport(0, 0, width, height);			
+			s_framebuffer->Resize(width, height);
+			s_shadowFramebuffer->Resize(width, height);
 		}
 
 		void Renderer::BeginScene()
@@ -109,6 +115,11 @@ namespace BaldLion
 			s_renderStats.drawCalls = 0;
 			s_renderStats.vertices = 0;		
 
+			if (s_refreshComponentLookUps)
+			{
+				RefreshComponentLookUps();
+				s_refreshComponentLookUps = false;
+			}
 		}
 
 		void Renderer::DrawScene()
@@ -128,12 +139,13 @@ namespace BaldLion
 
 		void Renderer::EndScene()
 		{
-			BL_PROFILE_FUNCTION();
-
-			s_meshesToDraw.Clear();
-			s_shadowCastingMeshes.Clear();			
-
+			BL_PROFILE_FUNCTION();			
 			s_framebuffer->Unbind();
+		}
+
+		void Renderer::ForceRefreshComponentLookUps()
+		{
+			s_refreshComponentLookUps = true;
 		}
 
 		void Renderer::Draw(const VertexArray* vertexArray, Shader* shader, bool receiveShadows, const glm::mat4& transform)
@@ -157,10 +169,13 @@ namespace BaldLion
 			shader->SetUniform(UNIFORM_VIEW_PROJECTION, ShaderDataType::Mat4, &(s_sceneData.viewProjectionMatrix));
 			shader->SetUniform(UNIFORM_CAMERA_POS, ShaderDataType::Float3, &(s_sceneData.cameraPosition));
 
-			shader->SetUniform(UNIFORM_DIR_LIGHT_DIRECTION, ShaderDataType::Float3, &(ECS::SingletonSystems::LightningSystem::GetDirectionaLightDirection()));
+			const glm::vec3 lightDirection = MathUtils::GetTransformForwardDirection(ECS::SingletonSystems::LightningSystem::GetDirectionaLightTransform()->GetTransformMatrix());
+			shader->SetUniform(UNIFORM_DIR_LIGHT_DIRECTION, ShaderDataType::Float3, &(lightDirection));
 			shader->SetUniform(UNIFORM_DIR_LIGHT_AMBIENT,ShaderDataType::Float3, &(ECS::SingletonSystems::LightningSystem::GetDirectionaLightAmbientColor()));
 			shader->SetUniform(UNIFORM_DIR_LIGHT_DIFFUSE, ShaderDataType::Float3, &(ECS::SingletonSystems::LightningSystem::GetDirectionaLightDiffuseColor()));
 			shader->SetUniform(UNIFORM_DIR_LIGHT_SPECULAR, ShaderDataType::Float3, &(ECS::SingletonSystems::LightningSystem::GetDirectionaLightSpecularColor()));
+			shader->SetUniform(UNIFORM_SHADOW_DISTANCE, ShaderDataType::Float, &(ECS::SingletonSystems::LightningSystem::GetShadowDistance()));
+			shader->SetUniform(UNIFORM_SHADOW_TRANSITION_DISTANCE, ShaderDataType::Float, &(ECS::SingletonSystems::LightningSystem::GetShadowTransitionDistance()));
 
 			s_rendererPlatformInterface->DrawVertexArray(vertexArray);
 
@@ -171,81 +186,71 @@ namespace BaldLion
 		void Renderer::DrawShadowMap()
 		{
 			BL_PROFILE_FUNCTION();
+			
+			float shadowDistance = ECS::SingletonSystems::LightningSystem::GetShadowDistance();
+						
+			const glm::mat4 cameraMatrixTransform = ECS::SingletonSystems::CameraSystem::GetMainCameraTransform()->GetTransformMatrix();
+			const glm::vec3 lightDirection = MathUtils::GetTransformForwardDirection(ECS::SingletonSystems::LightningSystem::GetDirectionaLightTransform()->GetTransformMatrix());
 
-			if (s_shadowCastingMeshes.Size() == 0)
-				return;
-
-			const float shadowDistance = 200.0f;	
-
-			glm::vec3 lookAtEye = s_sceneData.cameraPosition;
-			lookAtEye.y = shadowDistance * 0.5f;
-
-			const glm::vec3 lookAtCenter = lookAtEye + (ECS::SingletonSystems::LightningSystem::GetDirectionaLightDirection() * glm::length(lookAtEye));
-
-			const glm::mat4 lightView = glm::lookAt(lookAtEye, lookAtCenter, MathUtils::Vector3UnitY);
-			const glm::mat4 lightProjection = glm::ortho(-shadowDistance, shadowDistance, -shadowDistance, shadowDistance, 0.0f, shadowDistance * 2.0f);
-
+			const glm::mat4 lightView = glm::lookAt(ECS::SingletonSystems::CameraSystem::GetMainCameraTransform()->position - (glm::normalize(lightDirection) * shadowDistance * 0.5f), ECS::SingletonSystems::CameraSystem::GetMainCameraTransform()->position, MathUtils::Vector3UnitY);
+			const glm::mat4 lightProjection = glm::ortho(-shadowDistance, shadowDistance, -shadowDistance, shadowDistance, 0.0f, shadowDistance * 2);
 			s_lightViewProjection = lightProjection * lightView;	
 
 			s_shadowFramebuffer->Bind();
 			s_rendererPlatformInterface->SetClearColor(glm::vec4(1.0f));
-			s_rendererPlatformInterface->SetFaceCulling(RendererPlatformInterface::FaceCulling::Front);
+			s_rendererPlatformInterface->SetFaceCulling(RendererPlatformInterface::FaceCulling::Front);			
 
-			BL_DYNAMICARRAY_FOR(i, s_shadowCastingMeshes, 0)			
+			BL_DYNAMICARRAY_FOR(i, s_renderingComponentLookUps, 0)
 			{
-				VertexArray* vertexArray = VertexArray::Create();
+				ECS::ECSComponentLookUp* componentLookUp = s_renderingComponentLookUps[i];
+				const ECS::ECSMeshComponent* meshComponent = componentLookUp->Read<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh);
 
-				IndexBuffer* indexBuffer = IndexBuffer::Create(&s_shadowCastingMeshes[i].meshComponent->indices[0], s_shadowCastingMeshes[i].meshComponent->indices.Size());
-				VertexBuffer* vertexBuffer = VertexBuffer::Create(s_shadowCastingMeshes[i].meshComponent->vertices[0].GetFirstElement(), (ui32)(s_shadowCastingMeshes[i].meshComponent->vertices.Size() * sizeof(Vertex)));
-
-				vertexBuffer->SetLayout({
-					{ ShaderDataType::Float3, "vertex_position"},					
-					{ ShaderDataType::Float3, "vertex_normal"},
-					{ ShaderDataType::Float3, "vertex_tangent"},
-					{ ShaderDataType::Float2, "vertex_texcoord"}
-					});
-
-				vertexArray->AddIndexBuffer(indexBuffer);
-				vertexArray->AddVertexBuffer(vertexBuffer);
-
-				if (s_shadowCastingMeshes[i].skeletonComponent != nullptr)
+				if (!meshComponent->isShadowVisible)
 				{
-					VertexBuffer* boneDataVertexBuffer = VertexBuffer::Create(s_shadowCastingMeshes[i].skeletonComponent->boneData[0].GetFirstElement(), 
-						(ui32)(s_shadowCastingMeshes[i].skeletonComponent->boneData.Size() * sizeof(VertexBone)));
+					continue;
+				}
 
-					boneDataVertexBuffer->SetLayout({
-						{ ShaderDataType::Int3,		"vertex_joint_ids" },
-						{ ShaderDataType::Float3,	"vertex_joint_weights" }
-						});
+				const ECS::ECSTransformComponent* meshTransform = componentLookUp->Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
+				const ECS::ECSSkeletonComponent* skeletonComponent = componentLookUp->Read<ECS::ECSSkeletonComponent>(ECS::ECSComponentType::Skeleton);
 
-					vertexArray->AddVertexBuffer(boneDataVertexBuffer);
+				const glm::mat4 meshTransformMatrix = meshTransform->GetTransformMatrix();
+
+				meshComponent->material->Bind();
+
+				if (skeletonComponent != nullptr) {
 
 					s_depthMapSkinnedShader->Bind();
-					s_depthMapSkinnedShader->SetUniform(UNIFORM_LIGHT_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_lightViewProjection));
-					s_depthMapSkinnedShader->SetUniform(UNIFORM_MODEL_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_shadowCastingMeshes[i].transformMatrix));
 
-					const Animation::AnimationJoint* joints = s_shadowCastingMeshes[i].skeletonComponent->joints;
-					
-					for (ui32 j = 0; j < (ui32)JointType::Count; ++j)					
+					const Animation::AnimationJoint* joints = (skeletonComponent->joints);
+
+					for (ui32 j = 0; j < (ui32)JointType::Count; ++j)
 					{
 						s_depthMapSkinnedShader->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &(joints[j].jointModelSpaceTransform));
 					}
 
-					s_rendererPlatformInterface->DrawVertexArray(vertexArray);
+					s_depthMapSkinnedShader->SetUniform(UNIFORM_LIGHT_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_lightViewProjection));
+					s_depthMapSkinnedShader->SetUniform(UNIFORM_MODEL_SPACE_TRANSFORM, ShaderDataType::Mat4, &(meshTransformMatrix));
+
+					s_rendererPlatformInterface->DrawVertexArray(meshComponent->vertexArray);
+
 					s_depthMapSkinnedShader->Unbind();
 				}
-				else {
-
+				else
+				{
 					s_depthMapShader->Bind();
 					s_depthMapShader->SetUniform(UNIFORM_LIGHT_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_lightViewProjection));
-					s_depthMapShader->SetUniform(UNIFORM_MODEL_SPACE_TRANSFORM, ShaderDataType::Mat4, &(s_shadowCastingMeshes[i].transformMatrix));
+					s_depthMapShader->SetUniform(UNIFORM_MODEL_SPACE_TRANSFORM, ShaderDataType::Mat4, &(meshTransformMatrix));
 
-					s_rendererPlatformInterface->DrawVertexArray(vertexArray);
+					s_rendererPlatformInterface->DrawVertexArray(meshComponent->vertexArray);
 
 					s_depthMapShader->Unbind();
 				}
+	
 
 				s_renderStats.drawCalls++;
+				s_renderStats.vertices += meshComponent->vertexArray->GetIndexBuffer()->GetCount();
+
+				meshComponent->material->Unbind();
 			}
 
 			s_rendererPlatformInterface->SetFaceCulling(RendererPlatformInterface::FaceCulling::Back);
@@ -256,23 +261,34 @@ namespace BaldLion
 		{
 			BL_PROFILE_FUNCTION();
 
-			BL_DYNAMICARRAY_FOR(i, s_meshesToDraw, 0)			
+			BL_DYNAMICARRAY_FOR(i, s_renderingComponentLookUps, 0)			
 			{		
-				s_meshesToDraw[i].meshComponent->material->Bind();
+				ECS::ECSComponentLookUp* componentLookUp = s_renderingComponentLookUps[i];
+				const ECS::ECSMeshComponent* meshComponent = componentLookUp->Read<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh);
 
-				if (s_meshesToDraw[i].skeletonComponent != nullptr) {
+				if (!meshComponent->isVisible)
+				{
+					continue;
+				}
 
-					const Animation::AnimationJoint* joints = (s_meshesToDraw[i].skeletonComponent->joints);
+				const ECS::ECSTransformComponent* meshTransform = componentLookUp->Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
+				const ECS::ECSSkeletonComponent* skeletonComponent = componentLookUp->Read<ECS::ECSSkeletonComponent>(ECS::ECSComponentType::Skeleton);
+
+				meshComponent->material->Bind();
+
+				if (skeletonComponent != nullptr) {
+
+					const Animation::AnimationJoint* joints = (skeletonComponent->joints);
 
 					for (ui32 j = 0; j < (ui32)JointType::Count; ++j)
 					{
-						s_meshesToDraw[i].meshComponent->material->GetShader()->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &(joints[j].jointModelSpaceTransform));
+						meshComponent->material->GetShader()->SetUniform(BL_STRING_TO_STRINGID(("u_joints[" + std::to_string(j) + "]")), ShaderDataType::Mat4, &(joints[j].jointModelSpaceTransform));
 					}
 				}					
 				
-				Draw(s_meshesToDraw[i].meshComponent->vertexArray, s_meshesToDraw[i].meshComponent->material->GetShader(), s_meshesToDraw[i].meshComponent->material->GetReceiveShadows(), s_meshesToDraw[i].transformMatrix);
+				Draw(meshComponent->vertexArray, meshComponent->material->GetShader(), meshComponent->material->GetReceiveShadows(), meshTransform->GetTransformMatrix());
 
-				s_meshesToDraw[i].meshComponent->material->Unbind();
+				meshComponent->material->Unbind();
 			}
 		}		
 
@@ -282,23 +298,20 @@ namespace BaldLion
 			dd::flush((int)Time::GetCurrentTimeInMilliseconds());
 		}
 
-		void Renderer::AddMeshToDraw(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
+		void Renderer::RefreshComponentLookUps()
 		{
-			BL_PROFILE_FUNCTION();
-			s_meshesToDraw.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
-		}
+			s_renderingComponentLookUps.Clear();
 
-		void Renderer::AddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent)
-		{
-			const std::lock_guard<std::mutex> lock(s_addShadowCastingMeshMutex);
+			BL_HASHMAP_FOR(SceneManagement::SceneManager::GetECSManager()->GetEntitySignatures(), iterator)
+			{
+				if ((iterator.GetValue() & s_renderingEcsSignature) == s_renderingEcsSignature)
+				{
+					ECS::ECSComponentLookUp* componentLookUp = &(SceneManagement::SceneManager::GetECSManager()->GetEntityComponents().Get(iterator.GetKey()));
+					s_renderingComponentLookUps.PushBack(componentLookUp);
+				}
+			}
+		}		
 
-			if (meshComponent->vertices.Size() == 0)
-				return;
-
-			BL_PROFILE_FUNCTION();
-			s_shadowCastingMeshes.EmplaceBack(RenderMeshData{ meshTransform->GetTransformMatrix(), meshComponent, skeletonComponent });
-		}	
-		
 		void Renderer::DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::mat4& transformMatrix, const glm::vec3& color, int durationMs, bool depthEnabled /*= true*/)
 		{			
 			dd::box((float*)&center, (float*)&transformMatrix, (float*)&color, size[0], size[1], size[2], durationMs, depthEnabled);			

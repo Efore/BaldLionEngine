@@ -97,7 +97,7 @@ namespace BaldLion {
 					ECS::ECSEntity* entity = SceneManager::GetECSManager()->GetEntityMap().Get(selectedEntityID);
 
 					const glm::mat4 preManipulationMat = entityTransformComponent->GetTransformMatrix();
-					glm::mat4 manipulationMat = entityTransformComponent->GetTransformMatrix();
+					glm::mat4 manipulationMat = preManipulationMat;
 					
 					ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), (ImGuizmo::OPERATION)m_imGuizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(manipulationMat));
 

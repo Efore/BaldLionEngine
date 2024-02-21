@@ -55,10 +55,14 @@ namespace BaldLion
 			glm::mat4 cameraMatrixTransform = ECS::SingletonSystems::CameraSystem::GetMainCameraTransform()->GetTransformMatrix();
 			ECS::ECSProjectionCameraComponent* viewportCamera = ECS::SingletonSystems::CameraSystem::GetMainCamera();
 
+			const float cameraFov = viewportCamera->fov;
 			const glm::mat4 viewMatrix = glm::inverse(cameraMatrixTransform);
-			const glm::mat4 projectionMatrix = glm::perspective(glm::radians(viewportCamera->fov), viewportCamera->width / viewportCamera->height, viewportCamera->nearPlane, viewportCamera->farPlane);
+			const glm::mat4 projectionMatrix = glm::perspective(glm::radians(cameraFov), viewportCamera->width / viewportCamera->height, viewportCamera->nearPlane, viewportCamera->farPlane);
 
 			viewportCamera->viewProjectionMatrix = projectionMatrix * viewMatrix;
+
+			const glm::mat4 shadowProjectionMatrix = glm::perspective(glm::radians(glm::min(179.0f, cameraFov * 2)), viewportCamera->width / viewportCamera->height, viewportCamera->nearPlane, viewportCamera->farPlane);
+			viewportCamera->shadowProjectionMatrix = shadowProjectionMatrix * viewMatrix;
 
 			SceneManagement::SceneManager::FrameStart();
 			SceneManagement::SceneManager::Update(m_gameStateTimer.GetDeltaTime());	

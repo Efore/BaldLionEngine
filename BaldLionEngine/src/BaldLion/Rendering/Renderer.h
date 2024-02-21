@@ -7,6 +7,7 @@
 #include "Framebuffer.h"
 #include "BaldLion/Core/Containers/HashMap.h"
 
+#include "BaldLion/ECS/ECSUtils.h"
 #include "BaldLion/ECS/Components/ECSMeshComponent.h"
 #include "BaldLion/ECS/Components/ECSTransformComponent.h"
 #include "BaldLion/ECS/Components/ECSSkeletonComponent.h"
@@ -27,13 +28,6 @@ namespace BaldLion
 			Debug,
 			Count
 		};	
-
-		struct RenderMeshData {
-
-			const glm::mat4 transformMatrix;
-			const ECS::ECSMeshComponent* meshComponent;
-			const ECS::ECSSkeletonComponent* skeletonComponent;
-		};
 
 		class Renderer
 		{
@@ -60,17 +54,17 @@ namespace BaldLion
 			static void DrawScene();
 			static void EndScene();
 
+			static void ForceRefreshComponentLookUps();
+
 			static SceneData& GetSceneData() { return s_sceneData; }
 			static RendererStats& GetRenderStats() { return s_renderStats; }
 			static Framebuffer* GetFrameBuffer() { return s_framebuffer; }
+			static Framebuffer* GetShadowFrameBuffer() { return s_shadowFramebuffer; }
 
 			static void Draw(const VertexArray* vertexArray, Shader* shader, bool receiveShadows, const glm::mat4& transform = glm::mat4(1.0f));	
 
-			inline static RendererPlatformInterface::RendererPlatform GetAPI() { return RendererPlatformInterface::GetAPI(); }
+			inline static RendererPlatformInterface::RendererPlatform GetAPI() { return RendererPlatformInterface::GetAPI(); }			
 			
-			static void AddMeshToDraw(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
-			static void AddShadowCastingMesh(const ECS::ECSMeshComponent* meshComponent, const ECS::ECSTransformComponent* meshTransform, const ECS::ECSSkeletonComponent* skeletonComponent);
-
 			static void DrawDebugBox(const glm::vec3& center, const glm::vec3& size, const glm::mat4& transformMatrix, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebugCircle(const glm::vec3& center, const glm::vec3& normal, float radius, ui32 numSteps, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
 			static void DrawDebugSphere(const glm::vec3& center, float radius, const glm::vec3& color, int durationMs = 0, bool depthEnabled = true);
@@ -86,6 +80,7 @@ namespace BaldLion
 			static void DrawShadowMap();
 			static void DrawMeshes();
 			static void DrawDebugCommands();		
+			static void RefreshComponentLookUps();
 
 		private:
 
@@ -94,9 +89,6 @@ namespace BaldLion
 			static RendererPlatformInterface* s_rendererPlatformInterface;
 			static SkyboxPlatformInterface* s_skyboxPlatformInterface;			
 			static class DebugDrawRenderInterface* s_debugDrawRender;
-
-			static DynamicArray<RenderMeshData> s_shadowCastingMeshes;
-			static DynamicArray<RenderMeshData> s_meshesToDraw;
 
 			static Framebuffer* s_framebuffer;
 			static Framebuffer* s_shadowFramebuffer;
@@ -107,8 +99,9 @@ namespace BaldLion
 
 			static glm::mat4 s_lightViewProjection;
 
-			static std::mutex s_addDynamicMeshMutex;
-			static std::mutex s_addShadowCastingMeshMutex;
+			static DynamicArray<class ECS::ECSComponentLookUp*> s_renderingComponentLookUps;
+			static bool s_refreshComponentLookUps;
+			static ECS::ECSSignature s_renderingEcsSignature;
 		};
 	}
 }

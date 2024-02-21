@@ -11,8 +11,9 @@ namespace BaldLion {
 			ECSProjectionCameraComponent* CameraSystem::s_mainCamera;
 			ECSTransformComponent* CameraSystem::s_mainCameraTransform;
 
-			DynamicArray<glm::vec4> CameraSystem::s_frustrumPlanes;
-			
+			DynamicArray<glm::vec4> CameraSystem::s_frustrumPlanes;			
+			DynamicArray<glm::vec4> CameraSystem::s_shadowFrustrumPlanes;
+
 			bool CameraSystem::s_initialized = false;
 
 			void CameraSystem::Init()
@@ -22,6 +23,9 @@ namespace BaldLion {
 					s_initialized = true;
 					s_frustrumPlanes = DynamicArray<glm::vec4>(AllocationType::FreeList_ECS, 6);
 					s_frustrumPlanes.Populate();
+
+					s_shadowFrustrumPlanes = DynamicArray<glm::vec4>(AllocationType::FreeList_ECS, 6);
+					s_shadowFrustrumPlanes.Populate();
 				}
 			}
 
@@ -50,6 +54,27 @@ namespace BaldLion {
 					s_frustrumPlanes[i].z /= magnitude;
 					s_frustrumPlanes[i].w /= magnitude;
 				}
+
+				transposedViewProjection = glm::transpose(s_mainCamera->shadowProjectionMatrix);
+
+				s_shadowFrustrumPlanes[0] = transposedViewProjection[3] + transposedViewProjection[0];	//Left Plane
+				s_shadowFrustrumPlanes[1] = transposedViewProjection[3] - transposedViewProjection[0];	//Right Plane
+				s_shadowFrustrumPlanes[2] = transposedViewProjection[3] - transposedViewProjection[1];	//Top Plane
+				s_shadowFrustrumPlanes[3] = transposedViewProjection[3] + transposedViewProjection[1];	//Bottom Plane
+				s_shadowFrustrumPlanes[4] = transposedViewProjection[3] + transposedViewProjection[2];	//Near Plane
+				s_shadowFrustrumPlanes[5] = transposedViewProjection[3] - transposedViewProjection[2];	//Far Plane	
+
+				////Normalizing planes
+				BL_DYNAMICARRAY_FOR(i, s_frustrumPlanes, 0)
+				{
+					float magnitude = glm::sqrt((s_shadowFrustrumPlanes[i].x * s_shadowFrustrumPlanes[i].x) + (s_shadowFrustrumPlanes[i].y * s_shadowFrustrumPlanes[i].y) + (s_shadowFrustrumPlanes[i].z * s_shadowFrustrumPlanes[i].z));
+					s_shadowFrustrumPlanes[i].x /= magnitude;
+					s_shadowFrustrumPlanes[i].y /= magnitude;
+					s_shadowFrustrumPlanes[i].z /= magnitude;
+					s_shadowFrustrumPlanes[i].w /= magnitude;
+				}
+
+
 			}
 
 			void CameraSystem::SetMainCamera(ECSProjectionCameraComponent* cameraComponent, ECSTransformComponent* cameraTransform)
@@ -87,6 +112,31 @@ namespace BaldLion {
 
 				return true;
 			}
+
+			bool CameraSystem::IsAABBShadowVisible(const GeometryUtils::BoundingBox& aabb)
+			{
+				BL_PROFILE_FUNCTION();
+				const glm::vec3 minPointInWorldSpace = aabb.minPoint;
+				const glm::vec3 maxPointInWorldSpace = aabb.maxPoint;
+
+				glm::vec3 axisVert;
+
+				BL_DYNAMICARRAY_FOR(i, s_shadowFrustrumPlanes, 0)
+				{
+					glm::vec3 planeNormal(s_shadowFrustrumPlanes[i].x, s_shadowFrustrumPlanes[i].y, s_shadowFrustrumPlanes[i].z);
+					float planeConstant = s_shadowFrustrumPlanes[i].w;
+
+					axisVert.x = s_shadowFrustrumPlanes[i].x < 0.0f ? minPointInWorldSpace.x : maxPointInWorldSpace.x;
+					axisVert.y = s_shadowFrustrumPlanes[i].y < 0.0f ? minPointInWorldSpace.y : maxPointInWorldSpace.y;
+					axisVert.z = s_shadowFrustrumPlanes[i].z < 0.0f ? minPointInWorldSpace.z : maxPointInWorldSpace.z;
+
+					if (glm::dot(planeNormal, axisVert) + planeConstant < 0.0f)
+						return false;
+				}
+
+				return true;
+			}
+
 		}
 	}
 }

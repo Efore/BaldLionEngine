@@ -248,13 +248,7 @@ namespace BaldLion
 			if (m_uniformLocationCache.TryGet(name, location))
 				return location;
 
-			location = glGetUniformLocation(m_rendererID, BL_STRINGID_TO_STR_C(name));
-
-			if (location == -1)
-			{
-				//BL_LOG_CORE_WARN("Uniform '{0}' not found!", BL_STRINGID_TO_STR_C(name));
-				return location;
-			}
+			location = glGetUniformLocation(m_rendererID, BL_STRINGID_TO_STR_C(name));		
 
 			m_uniformLocationCache.Emplace(name,std::move(location));
 

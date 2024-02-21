@@ -9,7 +9,7 @@ layout (location = 3) in vec2 vertex_texcoord;
 uniform mat4 u_viewProjectionMatrix;  
 uniform mat4 u_worldTransformMatrix;
 uniform mat4 u_lightViewProjectionMatrix;
-		
+
 const int MAX_JOINTS = 100;
 uniform mat4 u_joints[MAX_JOINTS];
 
@@ -100,6 +100,8 @@ uniform DirectionalLight u_directionalLight;
 
 uniform int u_useShadowMap;
 uniform sampler2D u_shadowMapTex;
+uniform float u_shadowDistance;
+uniform float u_shadowTransitionDistance;		
 
 uniform PointLight u_pointLights[MAX_POINT_LIGHTS];
 uniform int u_numPointLights;
@@ -107,9 +109,15 @@ uniform int u_numPointLights;
 uniform vec3 u_cameraPos;
 
 //Functions
+const int pcfCount = 2;
+const float totalTexels = (pcfCount * 2.0 + 1.0) * (pcfCount * 2.0 + 1.0);
 
-float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightDir)
 {
+	float distance = length(u_cameraPos - fragPos);
+	distance = distance - (u_shadowDistance - u_shadowTransitionDistance);
+	distance /= u_shadowTransitionDistance;
+
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
 	projCoords = (projCoords * 0.5) + 0.5; 
 
@@ -122,24 +130,25 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
 	float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(u_shadowMapTex, 0);
 
-    for(int x = -1; x <= 1; ++x)
+    for(int x = -pcfCount; x <= pcfCount; ++x)
     {
-        for(int y = -1; y <= 1; ++y)
+        for(int y = -pcfCount; y <= pcfCount; ++y)
         {
             float pcfDepth = texture(u_shadowMapTex, projCoords.xy + vec2(x, y) * texelSize).r; 
             shadow += currentDepth - bias > pcfDepth  ? 0.8 : 0.0;        
         }    
     }
-    shadow /= 9.0;
+
+    shadow /= totalTexels;
     
     // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
     if(projCoords.z > 1.0)
         shadow = 0.0;
 
-	return shadow;
+	return shadow * (1.0 - clamp(distance, 0.0, 1.0));
 }
 
-vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec4 posLightSpace)
+vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec4 posLightSpace, vec3 fragPos)
 {
     vec3 lightDir = normalize(-light.direction);
 
@@ -165,7 +174,7 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec4 posLig
 	specularTexResult.y = clamp(specularTexResult.y + (1.0 - u_material.useSpecularTex), 0.0, 1.0);
 	specularTexResult.z = clamp(specularTexResult.z + (1.0 - u_material.useSpecularTex), 0.0, 1.0);
 
-	float shadow = ShadowCalculation(posLightSpace, normal, lightDir) * float(u_useShadowMap);
+	float shadow = ShadowCalculation(posLightSpace,fragPos, normal, lightDir) * float(u_useShadowMap);
 
 	// combine results
     vec3 ambient  = light.ambientColor * u_material.ambientColor * ambientTexResult;
@@ -230,7 +239,7 @@ void main()
 	vec3 posToViewDir = normalize(u_cameraPos - fs_in.vs_position);
 
 	//Directional Lighting
-	vec3 result = CalcDirLight(u_directionalLight, norm, posToViewDir, fs_in.vs_posLightSpace);
+	vec3 result = CalcDirLight(u_directionalLight, norm, posToViewDir, fs_in.vs_posLightSpace, fs_in.vs_position);
 
 	for(int i = 0; i < u_numPointLights; i++)
         result += CalcPointLight(u_pointLights[i], norm, posToViewDir); 

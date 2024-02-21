@@ -22,6 +22,7 @@ namespace BaldLion {
 			
 		public:
 			glm::mat4 viewProjectionMatrix;
+			glm::mat4 shadowProjectionMatrix;
 
 			float fov;
 

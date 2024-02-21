@@ -22,7 +22,7 @@ namespace BaldLion
 
 			virtual void UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime) = 0;
 
-			void OnEntityModified(ECSSignature entitySignature);	
+			virtual void OnEntityModified(ECSSignature entitySignature);	
 
 			ECSSystemType GetSystemType() const { return m_systemType; }
 

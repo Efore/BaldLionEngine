@@ -16,9 +16,7 @@ namespace BaldLion {
 			virtual void UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime) override;
 			virtual void OnStop() override {};
 
-		private:
-			void AddVisibleMeshesToRenderer();
-
+			virtual void OnEntityModified(ECSSignature entitySignature) override;
 		};
 
 	}

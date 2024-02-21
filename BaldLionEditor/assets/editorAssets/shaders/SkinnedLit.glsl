@@ -11,7 +11,9 @@ layout (location = 5) in vec3 vertex_joint_weights;
 uniform mat4 u_viewProjectionMatrix;  
 uniform mat4 u_worldTransformMatrix;
 uniform mat4 u_lightViewProjectionMatrix;
-		
+uniform float u_shadowDistance;
+uniform float u_shadowTransitionDistance;		
+
 const int MAX_JOINTS = 100;
 uniform mat4 u_joints[MAX_JOINTS];
 
@@ -114,6 +116,8 @@ uniform int u_useShadowMap;
 uniform sampler2D u_shadowMapTex;
 
 //Functions
+const int pcfCount = 2;
+const float totalTexels = (pcfCount * 2.0 + 1.0) * (pcfCount * 2.0 + 1.0);
 
 float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
 {
@@ -129,15 +133,16 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
 	float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(u_shadowMapTex, 0);
 
-    for(int x = -1; x <= 1; ++x)
+    for(int x = -pcfCount; x <= pcfCount; ++x)
     {
-        for(int y = -1; y <= 1; ++y)
+        for(int y = -pcfCount; y <= pcfCount; ++y)
         {
             float pcfDepth = texture(u_shadowMapTex, projCoords.xy + vec2(x, y) * texelSize).r; 
             shadow += currentDepth - bias > pcfDepth  ? 0.8 : 0.0;        
         }    
     }
-    shadow /= 9.0;
+
+    shadow /= totalTexels;
     
     // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
     if(projCoords.z > 1.0)

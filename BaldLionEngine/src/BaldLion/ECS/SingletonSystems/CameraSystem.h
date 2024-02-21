@@ -27,12 +27,14 @@ namespace BaldLion {
 				static ECSProjectionCameraComponent* GetMainCamera() { return s_mainCamera; }
 
 				static bool IsAABBVisible(const GeometryUtils::BoundingBox& aabb);
+				static bool IsAABBShadowVisible(const GeometryUtils::BoundingBox& aabb);
 				static void UpdateFrustrumPlanes();
 
 			private:
 				static ECSProjectionCameraComponent* s_mainCamera;
 				static ECSTransformComponent* s_mainCameraTransform;
 				static DynamicArray<glm::vec4> s_frustrumPlanes;
+				static DynamicArray<glm::vec4> s_shadowFrustrumPlanes;
 				static bool s_initialized ;
 			};
 

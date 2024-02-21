@@ -23,8 +23,10 @@
 #define UNIFORM_USE_NORMAL_TEX			BL_STRING_TO_STRINGID("u_material.useNormalTex")
 #define UNIFORM_NORMAL_TEX				BL_STRING_TO_STRINGID("u_material.normalTex")
 										
-#define UNIFORM_USE_SHADOWMAP_TEX		BL_STRING_TO_STRINGID("u_useShadowMap")
-#define UNIFORM_SHADOWMAP_TEX			BL_STRING_TO_STRINGID("u_shadowMapTex")
+#define UNIFORM_USE_SHADOWMAP_TEX			BL_STRING_TO_STRINGID("u_useShadowMap")
+#define UNIFORM_SHADOWMAP_TEX				BL_STRING_TO_STRINGID("u_shadowMapTex")
+#define UNIFORM_SHADOW_DISTANCE				BL_STRING_TO_STRINGID("u_shadowDistance")
+#define UNIFORM_SHADOW_TRANSITION_DISTANCE	BL_STRING_TO_STRINGID("u_shadowTransitionDistance")
 										
 #define UNIFORM_MODEL_SPACE_TRANSFORM	BL_STRING_TO_STRINGID("u_worldTransformMatrix")
 #define UNIFORM_VIEW_PROJECTION			BL_STRING_TO_STRINGID("u_viewProjectionMatrix")
