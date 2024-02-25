@@ -100,11 +100,16 @@ namespace BaldLion
 				}
 
 				glm::vec3 normal = glm::vec3(0.0f);
+				glm::vec3 tangent = glm::vec3(0.0f);
 				if (aimesh->HasNormals())
 				{
 					normal.x = aimesh->mNormals[i].x;
 					normal.y = aimesh->mNormals[i].y;
 					normal.z = aimesh->mNormals[i].z;
+
+					tangent.x = aimesh->mTangents[i].x;
+					tangent.y = aimesh->mTangents[i].y;
+					tangent.z = aimesh->mTangents[i].z;
 				}
 
 				glm::vec2 texCoord = glm::vec2(0.0f);
@@ -113,19 +118,6 @@ namespace BaldLion
 					texCoord.x = aimesh->mTextureCoords[0][i].x;
 					texCoord.y = aimesh->mTextureCoords[0][i].y;
 				}
-
-				glm::vec3 tangent = glm::vec3(0.0f);
-				const glm::vec3 c1 = glm::cross(normal, glm::vec3(0.0, 0.0, 1.0));
-				const glm::vec3 c2 = glm::cross(normal, glm::vec3(0.0, 1.0, 0.0));
-
-				if (glm::length2(c1) > glm::length2(c2))
-				{
-					tangent = c1;
-				}
-				else
-				{
-					tangent = c2;
-				}				
 
 				vertices.EmplaceBack(position, normal, texCoord, tangent);
 			}
@@ -257,6 +249,28 @@ namespace BaldLion
 			if (aimaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
 			{
 				aimaterial->GetTexture(aiTextureType_NORMALS, 0, &relativeTexPath);
+				completeTexPath = StringUtils::GetPathWithoutFile(BL_STRINGID_TO_STR_C(modelFolderPath));
+				completeTexPath.append(relativeTexPath.C_Str());
+
+				if (const aiTexture* embeddedTex = aiscene->GetEmbeddedTexture(relativeTexPath.C_Str()))
+				{
+					const int size = embeddedTex->mHeight == 0 ? embeddedTex->mWidth : embeddedTex->mWidth * embeddedTex->mHeight;
+					normalTex = ResourceManager::LoadResource<Texture>(completeTexPath);
+
+					if (!normalTex)
+					{
+						normalTex = Texture2D::Create(completeTexPath, reinterpret_cast<const unsigned char*>(embeddedTex->pcData), size);
+						ResourceManager::AddResource(normalTex);
+					}
+				}
+				else
+				{
+					normalTex = ResourceManager::AddResource<Texture>(completeTexPath, ResourceType::Texture);
+				}
+			} 
+			else if (aimaterial->GetTextureCount(aiTextureType_HEIGHT) > 0)
+			{
+				aimaterial->GetTexture(aiTextureType_HEIGHT, 0, &relativeTexPath);
 				completeTexPath = StringUtils::GetPathWithoutFile(BL_STRINGID_TO_STR_C(modelFolderPath));
 				completeTexPath.append(relativeTexPath.C_Str());
 

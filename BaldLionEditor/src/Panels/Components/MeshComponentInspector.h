@@ -47,7 +47,7 @@ namespace BaldLion
 							glm::vec3 position = meshTransformMatrix * glm::vec4(meshComponent->vertices[i].position, 1.0f);
 							glm::vec3 normal = meshTransformMatrix * glm::vec4(meshComponent->vertices[i].normal, 1.0f);
 
-							Renderer::DrawDebugLine(position, position + normal, glm::vec3(1.0f, 0.2f, 0.2f), 0.5f);
+							Renderer::DrawDebugLine(position, position + normal, glm::vec3(1.0f, 0.2f, 0.2f), 0.1f);
 						}
 					}
 				}

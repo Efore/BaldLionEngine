@@ -67,6 +67,7 @@ namespace BaldLion
 				extension == ".fbx"		||
 				extension == ".blend"	||
 				extension == ".3ds"		||
+				extension == ".glb"		||
 				extension == ".dae")
 			{
 				return ResourceType::Model;
