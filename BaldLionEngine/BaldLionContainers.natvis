@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="BaldLion::DynamicArray&lt;*&gt;">
+    <DisplayString>{{size = {m_size} capacity = {m_capacity}}}</DisplayString>
+    <Expand>
+      <Item Name="[size]">m_size</Item>
+      <Item Name="[capacity]">m_capacity</Item>
+      <ArrayItems>
+        <Size>m_size</Size>
+        <ValuePointer>m_elements</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="BaldLion::Queue&lt;*&gt;">
+    <DisplayString>{{size = {m_size - m_frontIndex} capacity = {m_capacity}}}</DisplayString>
+    <Expand>
+      <Item Name="[size]">m_size - m_frontIndex</Item>
+      <Item Name="[capacity]">m_capacity</Item>
+      <ArrayItems>
+        <Size>m_size - m_frontIndex</Size>
+        <ValuePointer>m_elements + m_frontIndex</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+</AutoVisualizer>

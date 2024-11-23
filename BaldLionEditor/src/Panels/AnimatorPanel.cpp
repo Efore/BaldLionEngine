@@ -136,6 +136,8 @@ namespace BaldLion {
 				ImGui::OpenPopup("add_parameter");
 			}
 
+			ui32 imguiID = 0;
+
 			float ySize = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f * (m_currentAnimator->GetAllParameters().Size() + 4);
 			ImGui::BeginChild("parameter column", ImVec2(0, ySize));
 			{
@@ -149,9 +151,10 @@ namespace BaldLion {
 				ImGui::Separator();
 
 				DynamicArray<StringId> parametersToDestroy(Memory::AllocationType::Linear_Frame, m_currentAnimator->GetAllParameters().Size());
-
+				
 				BL_HASHTABLE_FOR(m_currentAnimator->GetAllParameters(), it)
 				{
+					ImGui::PushID(imguiID++);
 					RenderParameter(it.GetValue(), it.GetKey());	
 
 					if (ImGui::Button("-")) {
@@ -161,11 +164,14 @@ namespace BaldLion {
 					ImGui::NextColumn();
 
 					ImGui::Separator();
+					ImGui::PopID();
 				}
 
 				BL_DYNAMICARRAY_FOR(i, parametersToDestroy, 0)
 				{
+					ImGui::PushID(imguiID++);
 					m_currentAnimator->RemoveParameter(parametersToDestroy[i]);
+					ImGui::PopID();
 				}
 			}
 
@@ -188,10 +194,12 @@ namespace BaldLion {
 
 				for (int i = 0; i < IM_ARRAYSIZE(parameterTypeNames); i++)
 				{
+					ImGui::PushID(imguiID++);
 					if (ImGui::Button(parameterTypeNames[i]))
 					{
 						parameterValueType = (AnimatorParameter::ValueType)i;
 					}
+					ImGui::PopID();
 				}
 
 				ImGui::Separator();
@@ -276,9 +284,11 @@ namespace BaldLion {
 				ImGui::Text("Transitions"); ImGui::NextColumn();
 				ImGui::Separator();
 
+				ui32 imguiIDs = 0;
 				ui32 animationIndex = 0;
 				BL_HASHTABLE_FOR(m_currentAnimator->GetAllAnimations(), it)
 				{
+					ImGui::PushID(imguiIDs++);
 					const char* initialAnimationPath = BL_STRINGID_TO_STR_C(it.GetValue()->GetResourcePath());
 					ImGui::BulletText(initialAnimationPath);
 					ImGui::NextColumn();
@@ -286,7 +296,7 @@ namespace BaldLion {
 					DynamicArray<AnimatorTransition*>* transitions = m_currentAnimator->GetTransitionsOfAnimation(it.GetKey());
 
 					if (transitions != nullptr)
-					{
+					{						
 						DynamicArray<ui32> transitionIndexToRemove(Memory::AllocationType::Linear_Frame, transitions->Size());
 						BL_DYNAMICARRAY_FOR(i, *transitions, 0)
 						{
@@ -310,22 +320,24 @@ namespace BaldLion {
 
 						BL_DYNAMICARRAY_FOR(i, transitionIndexToRemove, 0)
 						{
+							ImGui::PushID(imguiIDs++);
 							transitions->RemoveAt(transitionIndexToRemove[i]);
+							ImGui::PopID();
 						}
 					}
 
-					std::string popupId = "Add Transition " + std::to_string(animationIndex);
-					if (ImGui::Button(popupId.c_str()))
+					if (ImGui::Button("Add Transition"))
 					{
-						ImGui::OpenPopup(popupId.c_str());
+						ImGui::OpenPopup("Add Transition");
 					}
 
-					RenderAddTransitionPopup(popupId.c_str(), initialAnimationPath, it.GetValue()->GetResourceID());
+					RenderAddTransitionPopup("Add Transition", initialAnimationPath, it.GetValue()->GetResourceID());
 
 					ImGui::NextColumn();
 					ImGui::Separator();
 
 					animationIndex++;
+					ImGui::PopID();
 				}
 			}
 			ImGui::EndChild();
@@ -346,11 +358,13 @@ namespace BaldLion {
 
 				if (ImGui::BeginCombo("Final animation", combo_preview_value, ImGuiComboFlags_PopupAlignLeft))
 				{
+					ui32 imguiIDs = 0;
 					BL_HASHTABLE_FOR(m_currentAnimator->GetAllAnimations(), it)
 					{
 						if(it.GetKey() == initialAnimationID)
 							continue;
 
+						ImGui::PushID(imguiIDs++);
 						const bool is_selected = (finalAnimationID == it.GetKey());
 
 						if (ImGui::Selectable(BL_STRINGID_TO_STR_C(it.GetValue()->GetResourcePath()), is_selected))
@@ -361,6 +375,8 @@ namespace BaldLion {
 						// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 						if (is_selected)
 							ImGui::SetItemDefaultFocus();
+
+						ImGui::PopID();
 					}
 					ImGui::EndCombo();
 				}
@@ -421,6 +437,7 @@ namespace BaldLion {
 
 					BL_DYNAMICARRAY_FOR(i, transition->GetConditions(), 0)
 					{
+						ImGui::PushID(i);
 						RenderCondition(&transition->GetConditions()[i]);
 
 						if (ImGui::Button("-")) {
@@ -430,11 +447,14 @@ namespace BaldLion {
 						ImGui::NextColumn();
 
 						ImGui::Separator();
+						ImGui::PopID();
 					}
 
 					BL_DYNAMICARRAY_FOR(i, parametersToDestroy, 0)
 					{
+						ImGui::PushID(i);
 						transition->RemoveCondition(parametersToDestroy[i]);
+						ImGui::PopID();
 					}
 				}
 
@@ -471,9 +491,11 @@ namespace BaldLion {
 
 				const char* combo_preview_value = parameterName != 0 ? BL_STRINGID_TO_STR_C(parameterName) : "";
 				if (ImGui::BeginCombo("Condition Parameter", combo_preview_value, ImGuiComboFlags_PopupAlignLeft))
-				{
+				{	
+					ui32 imguiID = 0;
 					BL_HASHTABLE_FOR(m_currentAnimator->GetAllParameters(), it)
 					{
+						ImGui::PushID(imguiID++);
 						const bool is_selected = (parameterName == it.GetKey());
 
 						if (ImGui::Selectable(BL_STRINGID_TO_STR_C(it.GetKey()), is_selected))
@@ -482,6 +504,8 @@ namespace BaldLion {
 						// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 						if (is_selected)
 							ImGui::SetItemDefaultFocus();
+
+						ImGui::PopID();
 					}
 					ImGui::EndCombo();
 				}

@@ -3148,4 +3148,7 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Input.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="BaldLionContainers.natvis" />
+  </ItemGroup>
 </Project>

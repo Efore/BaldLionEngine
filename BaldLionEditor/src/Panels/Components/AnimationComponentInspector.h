@@ -85,8 +85,10 @@ namespace BaldLion
 				ImGui::BeginChild("animator_parameters");
 				ImGui::Columns(2);
 
+				ui32 newID = 0;
 				BL_HASHTABLE_FOR(animationComponent->animatorParameters, it)
 				{
+					ImGui::PushID(newID++);
 					ImGui::Text(BL_STRINGID_TO_STR_C(it.GetKey())); ImGui::NextColumn();
 					ImGui::Separator();
 					
@@ -110,6 +112,7 @@ namespace BaldLion
 						break;
 					}
 					ImGui::NextColumn();
+					ImGui::PopID();
 				}
 
 				ImGui::EndChild();				

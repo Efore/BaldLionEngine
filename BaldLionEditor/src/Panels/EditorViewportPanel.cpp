@@ -75,6 +75,12 @@ namespace BaldLion {
 
 			//Gizmos
 			ECS::ECSEntityID selectedEntityID = m_sceneHierarchyPanel->GetSelectedEntityID();
+			if (selectedEntityID < 0)
+			{
+				ImGui::End();
+				return;
+			}
+
 			ECS::ECSComponentLookUp selectedEntityComponents;			
 			
 			glm::mat4 cameraView = glm::inverse(ECS::SingletonSystems::CameraSystem::GetMainCameraTransform()->GetTransformMatrix());

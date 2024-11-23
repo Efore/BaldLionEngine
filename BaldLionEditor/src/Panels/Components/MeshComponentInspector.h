@@ -28,7 +28,7 @@ namespace BaldLion
 
 				ComponentInspector::EndComponentRender();
 
-				if (sceneHierarchyPanel->GetSelectedEntityID() > 0)
+				if (sceneHierarchyPanel->GetSelectedEntityID() >= 0)
 				{
 					const ECS::ECSTransformComponent* meshTransform = SceneManager::GetECSManager()->GetEntityComponents().Get(sceneHierarchyPanel->GetSelectedEntityID()).Read< ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
 

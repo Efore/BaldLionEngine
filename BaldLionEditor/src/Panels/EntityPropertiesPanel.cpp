@@ -44,10 +44,17 @@ namespace BaldLion {
 
 			if (!SceneManagement::SceneManager::GetMainScene())
 			{
+				ImGui::End();
 				return;
 			}
 
 			const ECS::ECSEntityID selectedEntityID = m_sceneHierarchyPanel->GetSelectedEntityID();
+
+			if (selectedEntityID < 0)
+			{
+				ImGui::End();
+				return;
+			}
 
 			ECS::ECSEntity* entity = nullptr;
 			if (SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityMap().TryGet(selectedEntityID, entity)) {
@@ -199,7 +206,7 @@ namespace BaldLion {
 
 									break;
 								}
-							}
+							}							
 						}
 					}
 					
@@ -233,14 +240,13 @@ namespace BaldLion {
 					if (ImGui::BeginPopupModal(animatorPopup, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 					{
 						BL_HASHTABLE_FOR(Animation::AnimationManager::GetAnimators(), hashMapIterator)
-						{
+						{							
 							if (ImGui::Selectable(BL_STRINGID_TO_STR_C(hashMapIterator.GetValue()->GetResourcePath())))
 							{
 								newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSAnimationComponent>(ECSComponentType::Animation,
 									hashMapIterator.GetValue()->GetResourceID(),
 									hashMapIterator.GetValue()->GetInitialAnimationID());
-							}
-							
+							}							
 						}
 						ImGui::EndPopup();
 					}

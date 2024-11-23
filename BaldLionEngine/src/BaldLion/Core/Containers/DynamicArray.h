@@ -450,23 +450,14 @@ namespace BaldLion
 			PopBack();
 		}
 		else
-		{
-			const ui32 capacity = m_capacity;
-			T* newLocation = MemoryManager::NewArray<T>("Dynamic Array", m_allocationType, capacity);
-			const ui32 newSize = m_size - 1;
+		{										
+			m_elements[index].~T();
+			--m_size;
 
-			if (index > 0)
+			for (ui32 i = index; i < m_size; ++i)
 			{
-				memcpy(newLocation, m_elements, index * sizeof(T));
+				memcpy(&(m_elements[i]), &(m_elements[i + 1]), sizeof(T));
 			}
-
-			memcpy(&(newLocation[index]), &(m_elements[index+1]), (m_size - (index + 1)) * sizeof(T));
-
-			Delete();
-
-			m_elements = newLocation;
-			m_size = newSize;
-			m_capacity = capacity;
 		}
 	}
 

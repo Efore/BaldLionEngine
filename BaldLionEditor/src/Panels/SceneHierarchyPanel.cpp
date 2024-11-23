@@ -26,7 +26,7 @@ namespace BaldLion {
 
 			if (!SceneManagement::SceneManager::GetMainScene())
 			{
-				m_selectedEntityID = 0;
+				m_selectedEntityID = -1;
 				return;
 			}
 
@@ -101,9 +101,11 @@ namespace BaldLion {
 			}
 
 			BL_DYNAMICARRAY_FOR(i, SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntities(), 0)
-			{				
+			{		
+				ImGui::PushID(i);
 				bool selectedThisFrame = false;
 				DrawEntityElement(SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntities()[i], true, selectedThisFrame);
+				ImGui::PopID();
 			}
 
 			ImGui::End();
@@ -124,10 +126,10 @@ namespace BaldLion {
 
 				case BL_KEY_DELETE:
 
-					if (m_selectedEntityID > 0)
+					if (m_selectedEntityID >= 0)
 					{
 						SceneManagement::SceneManager::GetMainScene()->GetECSManager()->RemoveEntity(m_selectedEntityID);
-						m_selectedEntityID = 0;
+						m_selectedEntityID = -1;
 					}
 					break;
 
@@ -153,29 +155,44 @@ namespace BaldLion {
 
 				if (ImGui::IsItemClicked())
 				{
-					m_selectedEntityID = entity.GetEntityID();
-					selectedThisFrame = true;
+					if (m_selectedEntityID == entity.GetEntityID())
+					{
+						m_selectedEntityID = -1;						
+					}
+					else
+					{
+						m_selectedEntityID = entity.GetEntityID();
+						selectedThisFrame = true;
+					}
 				}
 			}
 			else 
 			{
 				bool open = ImGui::TreeNodeEx((void*)(uint32_t)entity.GetEntityID(), flags, BL_STRINGID_TO_STR_C(entity.GetEntityName()));
-				bool selectNode = ImGui::IsItemClicked();
-				bool selectedThisFrame = false;
+				bool selectNode = ImGui::IsItemClicked();				
 
 				if (open) 
 				{
 					BL_DYNAMICARRAY_FOREACH(entity.GetChildrenIDs())
 					{
+						ImGui::PushID(i);
 						DrawEntityElement(*SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityMap().Get(entity.GetChildrenIDs()[i]), false, selectedThisFrame);
+						ImGui::PopID();
 					}	
 					ImGui::TreePop();
 				}
 
 				if(!selectedThisFrame && selectNode)
 				{
-					m_selectedEntityID = entity.GetEntityID();
-					selectedThisFrame = true;
+					if (m_selectedEntityID == entity.GetEntityID())
+					{
+						m_selectedEntityID = -1;
+					}
+					else
+					{
+						m_selectedEntityID = entity.GetEntityID();
+						selectedThisFrame = true;
+					}
 				}
 			}		
 		}

@@ -202,6 +202,11 @@ namespace BaldLion {
 			{
 				ImGui::OpenPopup("Create Input Entry");
 			}
+			ImGui::SameLine();
+			if (ImGui::Button("Save Input entries"))
+			{
+				Input::InputSystem::SerializeInputEntries();
+			}
 
 			if (ImGui::BeginPopupModal("Create Input Entry", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 			{
@@ -289,7 +294,7 @@ namespace BaldLion {
 
 			auto& inputActions = Input::InputSystem::GetInputActions();
 			ui32 imguiID = 0;
-			ImGui::PushID(imguiID);
+			ImGui::PushID(imguiID++);
 			BL_HASHTABLE_FOR(inputActions, it)
 			{			
 				ImGui::Text("ACTION: %s", BL_STRINGID_TO_STR_C(it.GetKey())); 
@@ -302,8 +307,7 @@ namespace BaldLion {
 
 				auto& inputEntries = it.GetValue();
 				
-				++imguiID;
-				ImGui::PushID(imguiID);
+				ImGui::PushID(imguiID++);
 				BL_DYNAMICARRAY_FOREACH(inputEntries)
 				{
 					ImGui::PushID(i);
@@ -349,7 +353,7 @@ namespace BaldLion {
 					BL_IMGUI_LEFT_LABEL(ImGui::InputFloat, "Dead Zone", &deadZone);
 					entry.deadZone = deadZone;
 
-					if (ImGui::Button("X"))
+					if (ImGui::Button("Remove Entry"))
 					{
 						inputEntries.RemoveAt(i);
 						ImGui::PopID();
@@ -366,10 +370,6 @@ namespace BaldLion {
 			}
 			ImGui::PopID();
 
-			if (ImGui::Button("Save Input entries"))
-			{
-				Input::InputSystem::SerializeInputEntries();
-			}
 
 
 			ImGui::End();

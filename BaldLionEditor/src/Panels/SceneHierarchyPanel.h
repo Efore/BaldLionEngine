@@ -26,7 +26,7 @@ namespace BaldLion {
 
 		private:
 
-			ECS::ECSEntityID m_selectedEntityID = 0;
+			ECS::ECSEntityID m_selectedEntityID = -1;
 		};
 	}
 }

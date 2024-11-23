@@ -57,7 +57,7 @@ namespace BaldLion
 		{
 			const ui32 workerThreadCount = s_workerThreads.Capacity();
 			const ui32 iterationsPerBatchBase = iterationCount / workerThreadCount;
-			ui32 iterationsPerBatchRemainder = iterationCount % workerThreadCount;
+			ui32 iterationsPerBatchRemaining = iterationCount % workerThreadCount;
 
 			const ui32 requiredBatches = glm::min(iterationCount, workerThreadCount);
 
@@ -69,10 +69,10 @@ namespace BaldLion
 			{
 				ui32 iterationsForThisBatch = iterationsPerBatchBase;
 
-				if (iterationsPerBatchRemainder > 0u)
+				if (iterationsPerBatchRemaining > 0u)
 				{
 					iterationsForThisBatch++;
-					iterationsPerBatchRemainder--;
+					iterationsPerBatchRemaining--;
 				}
 
 				TaskEntry newEntry;
