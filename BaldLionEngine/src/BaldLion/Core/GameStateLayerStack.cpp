@@ -15,7 +15,7 @@ namespace BaldLion
 
 	void GameStateLayerStack::Init()
 	{
-		m_layers = DynamicArray<GameStateLayer*>(Memory::AllocationType::FreeList_Main, 10);
+		m_layers = DynamicArray<GameStateLayer*>(Memory::AllocationType::FreeList_Main, 8);
 	}
 
 	void GameStateLayerStack::Delete()

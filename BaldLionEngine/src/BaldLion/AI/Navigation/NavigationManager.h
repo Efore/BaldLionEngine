@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 #include "Recast.h"
 #include "DetourNavMesh.h"

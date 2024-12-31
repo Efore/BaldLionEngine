@@ -147,6 +147,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h" />
+    <ClInclude Include="src\BaldLion\AI\HTN\HTNAgent.h" />
+    <ClInclude Include="src\BaldLion\AI\HTN\HTNOperator.h" />
+    <ClInclude Include="src\BaldLion\AI\HTN\HTNManager.h" />
+    <ClInclude Include="src\BaldLion\AI\HTN\HTNTask.h" />
+    <ClInclude Include="src\BaldLion\AI\HTN\HTNTypes.h" />
     <ClInclude Include="src\BaldLion\AI\Navigation\NavMeshBuilder.h" />
     <ClInclude Include="src\BaldLion\AI\Navigation\NavigationManager.h" />
     <ClInclude Include="src\BaldLion\AI\Navigation\RecastClasses\BuildContext.h" />
@@ -186,6 +191,7 @@
     <ClInclude Include="src\BaldLion\Core\Threading\Task.h" />
     <ClInclude Include="src\BaldLion\Core\Threading\TaskScheduler.h" />
     <ClInclude Include="src\BaldLion\Core\Time.h" />
+    <ClInclude Include="src\BaldLion\Core\Variant.h" />
     <ClInclude Include="src\BaldLion\Core\Window.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSAnimationComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSCameraFollowComponent.h" />
@@ -919,6 +925,10 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\BaldLion\AI\HTN\HTNAgent.cpp" />
+    <ClCompile Include="src\BaldLion\AI\HTN\HTNOperator.cpp" />
+    <ClCompile Include="src\BaldLion\AI\HTN\HTNManager.cpp" />
+    <ClCompile Include="src\BaldLion\AI\HTN\HTNTask.cpp" />
     <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp" />
     <ClCompile Include="src\BaldLion\AI\Navigation\NavigationManager.cpp" />
     <ClCompile Include="src\BaldLion\AI\Navigation\RecastClasses\BuildContext.cpp" />
@@ -944,6 +954,7 @@
     <ClCompile Include="src\BaldLion\Core\Threading\Task.cpp" />
     <ClCompile Include="src\BaldLion\Core\Threading\TaskScheduler.cpp" />
     <ClCompile Include="src\BaldLion\Core\Time.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Variant.cpp" />
     <ClCompile Include="src\BaldLion\Core\Window.cpp" />
     <ClCompile Include="src\BaldLion\ECS\SingletonSystems\CameraSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\SingletonSystems\LightningSystem.cpp" />

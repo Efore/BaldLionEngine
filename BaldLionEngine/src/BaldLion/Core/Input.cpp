@@ -424,7 +424,7 @@ namespace BaldLion
 
 		void InputSystem::Init()
 		{			
-			s_actionBindings = HashTable<StringId, DynamicArray<InputEntry>>(Memory::AllocationType::FreeList_Main, 50);
+			s_actionBindings = HashTable<StringId, DynamicArray<InputEntry>>(Memory::AllocationType::FreeList_Main, 64);
 			s_initialized = true;
 			s_gamepadIsConected = PlatformInput::GetGamepadIsConnected(0);
 

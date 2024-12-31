@@ -80,6 +80,8 @@ namespace BaldLion
 			HashTable(Memory::AllocationType allocationType, ui32 capacity);
 			HashTable(Memory::AllocationType allocationType, const HashTable<K,V>& other);
 
+			HashTable(const HashTable<K, V>& other);
+
 			bool Contains(const K& key) const;			
 
 			void Emplace(const K& key, V&& value) noexcept;
@@ -158,6 +160,19 @@ namespace BaldLion
 		m_beginIterator = HashTable<K, V>::Iterator(this, FindFirstElementIndex());
 		m_endIterator = HashTable<K, V>::Iterator(this, m_capacity);
 	}
+
+
+	template <typename K, typename V>
+	BaldLion::HashTable<K, V>::HashTable(const HashTable<K, V>& other) :
+		m_size(other.m_size),
+		m_capacity(other.m_capacity),
+		m_allocationType(other.m_allocationType)
+	{
+		m_table = DynamicArray<HashTableNode<K, V>>(m_allocationType, other.m_table);
+		m_beginIterator = HashTable<K, V>::Iterator(this, FindFirstElementIndex());
+		m_endIterator = HashTable<K, V>::Iterator(this, m_capacity);
+	}
+
 
 	template <typename K, typename V>
 	bool BaldLion::HashTable<K, V>::Contains(const K& key) const

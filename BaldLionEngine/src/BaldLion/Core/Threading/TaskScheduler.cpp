@@ -19,7 +19,7 @@ namespace BaldLion
 		void TaskScheduler::Init(ui32 threadsCount /*= std::thread::hardware_concurrency() / 2*/)
 		{
 			s_workerThreads = DynamicArray<std::thread>(AllocationType::FreeList_Main, threadsCount);
-			s_taskQueue = Queue<TaskEntry>(AllocationType::FreeList_Main, 1000);
+			s_taskQueue = Queue<TaskEntry>(AllocationType::FreeList_Main, 512);
 			s_running = true;
 			for (ui32 i = 0; i < threadsCount; ++i)
 			{

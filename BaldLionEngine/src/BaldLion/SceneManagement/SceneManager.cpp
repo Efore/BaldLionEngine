@@ -17,7 +17,7 @@ namespace BaldLion
 
 		void SceneManager::Init()
 		{
-			s_activeScenes = HashMap<StringId, Scene*>(AllocationType::FreeList_ECS, 10);
+			s_activeScenes = HashMap<StringId, Scene*>(AllocationType::FreeList_ECS, 8);
 
 			std::ifstream lastSceneFile(LAST_SCENE_PATH);			
 			if (lastSceneFile.is_open())
@@ -84,14 +84,22 @@ namespace BaldLion
 
 		bool SceneManager::OpenScene(const char* filepath)
 		{
-			bool success = SceneSerializer::DeserializeScene(filepath);
-			if (!success)
+			try
 			{
-				return false;
-			}
+				bool success = SceneSerializer::DeserializeScene(filepath);
+				if (!success)
+				{
+					return false;
+				}
 
-			s_mainScenePathFile = filepath;
-			return true;
+				s_mainScenePathFile = filepath;
+				return true;
+			}
+			catch (...)
+			{
+				
+			}
+			return false;			
 		}
 
 		void SceneManager::SaveScene(const char* filepath)

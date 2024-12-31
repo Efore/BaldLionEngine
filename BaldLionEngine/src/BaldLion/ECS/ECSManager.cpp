@@ -13,46 +13,46 @@ namespace BaldLion
 
 		ECSManager::ECSManager()
 		{
-			m_entityComponents = HashTable<ECSEntityID, ECSComponentLookUp>(AllocationType::FreeList_ECS,1000);
-			m_entitySignatures = HashTable<ECSEntityID, ECSSignature>(AllocationType::FreeList_ECS, 1000);
-			m_entitiyMap = HashTable<ECSEntityID, ECSEntity*>(AllocationType::FreeList_ECS, 1000);
+			m_entityComponents = HashTable<ECSEntityID, ECSComponentLookUp>(AllocationType::FreeList_ECS,1024);
+			m_entitySignatures = HashTable<ECSEntityID, ECSSignature>(AllocationType::FreeList_ECS, 1024);
+			m_entitiyMap = HashTable<ECSEntityID, ECSEntity*>(AllocationType::FreeList_ECS, 1024);
 
 			memset(m_systems, 0, sizeof(ECSSystem*) * (ui32)ECSSystemType::Count);
 
-			m_entities = DynamicArray<ECSEntity>(AllocationType::FreeList_ECS,1000);		
-			m_cachedEntityHierarchy = DynamicArray<ECSTransformHierarchyEntry>(AllocationType::FreeList_ECS, 1000);
+			m_entities = DynamicArray<ECSEntity>(AllocationType::FreeList_ECS,1024);		
+			m_cachedEntityHierarchy = DynamicArray<ECSTransformHierarchyEntry>(AllocationType::FreeList_ECS, 1024);
 
-			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_ECS, 1000);
+			m_transformComponentPool = DynamicArray<ECSTransformComponent>(AllocationType::FreeList_ECS, 1024);
 			m_componentsPool[(ui32)ECSComponentType::Transform] = &m_transformComponentPool;
 
-			m_projectionCameraComponentPool = DynamicArray<ECSProjectionCameraComponent>(AllocationType::FreeList_ECS, 10);
+			m_projectionCameraComponentPool = DynamicArray<ECSProjectionCameraComponent>(AllocationType::FreeList_ECS, 2);
 			m_componentsPool[(ui32)ECSComponentType::ProjectionCamera] = &m_projectionCameraComponentPool;
 			
-			m_meshComponentPool = DynamicArray<ECSMeshComponent>(AllocationType::FreeList_ECS, 1000);
+			m_meshComponentPool = DynamicArray<ECSMeshComponent>(AllocationType::FreeList_ECS, 1024);
 			m_componentsPool[(ui32)ECSComponentType::Mesh] = &m_meshComponentPool;
 
-			m_skeletonComponentPool = DynamicArray<ECSSkeletonComponent>(AllocationType::FreeList_ECS, 40);
+			m_skeletonComponentPool = DynamicArray<ECSSkeletonComponent>(AllocationType::FreeList_ECS, 32);
 			m_componentsPool[(ui32)ECSComponentType::Skeleton] = &m_skeletonComponentPool;
 
-			m_directionalLightComponentPool = DynamicArray<ECSDirectionalLightComponent>(AllocationType::FreeList_ECS, 10);
+			m_directionalLightComponentPool = DynamicArray<ECSDirectionalLightComponent>(AllocationType::FreeList_ECS, 4);
 			m_componentsPool[(ui32)ECSComponentType::DirectionalLight] = &m_directionalLightComponentPool;
 
-			m_animationComponentPool = DynamicArray<ECSAnimationComponent>(AllocationType::FreeList_ECS, 40);
+			m_animationComponentPool = DynamicArray<ECSAnimationComponent>(AllocationType::FreeList_ECS, 32);
 			m_componentsPool[(ui32)ECSComponentType::Animation] = &m_animationComponentPool;
 
-			m_physicsBodyComponentPool = DynamicArray<ECSPhysicsBodyComponent>(AllocationType::FreeList_ECS, 40);
+			m_physicsBodyComponentPool = DynamicArray<ECSPhysicsBodyComponent>(AllocationType::FreeList_ECS, 32);
 			m_componentsPool[(ui32)ECSComponentType::PhysicsBody] = &m_physicsBodyComponentPool;
 
-			m_navMeshAgentComponentPool = DynamicArray<ECSNavMeshAgentComponent>(AllocationType::FreeList_ECS, 40);
+			m_navMeshAgentComponentPool = DynamicArray<ECSNavMeshAgentComponent>(AllocationType::FreeList_ECS, 32);
 			m_componentsPool[(ui32)ECSComponentType::NavMeshAgent] = &m_navMeshAgentComponentPool;
 
-			m_locomotionComponentPool = DynamicArray<ECSLocomotionComponent>(AllocationType::FreeList_ECS, 40);
+			m_locomotionComponentPool = DynamicArray<ECSLocomotionComponent>(AllocationType::FreeList_ECS, 32);
 			m_componentsPool[(ui32)ECSComponentType::Locomotion] = &m_locomotionComponentPool;
 
 			m_cameraFollowComponentPool = DynamicArray<ECSCameraFollowComponent>(AllocationType::FreeList_ECS, 2);
 			m_componentsPool[(ui32)ECSComponentType::CameraFollow] = &m_cameraFollowComponentPool;
 
-			m_playerControllerComponentPool = DynamicArray<ECSPlayerControllerComponent>(AllocationType::FreeList_ECS, 40);
+			m_playerControllerComponentPool = DynamicArray<ECSPlayerControllerComponent>(AllocationType::FreeList_ECS, 2);
 			m_componentsPool[(ui32)ECSComponentType::PlayerController] = &m_playerControllerComponentPool;
 		}
 

@@ -97,8 +97,8 @@ namespace BaldLion
 			if (!s_initialized)
 			{
 				s_initialized = true;
-				s_registeredAnimators = HashTable<ui32, Animator*>(AllocationType::FreeList_Main, 10);
-				s_jointMapping = HashTable<StringId, JointType>(AllocationType::FreeList_Main, 130);
+				s_registeredAnimators = HashTable<ui32, Animator*>(AllocationType::FreeList_Main, 16);
+				s_jointMapping = HashTable<StringId, JointType>(AllocationType::FreeList_Main,128);
 
 				for (ui32 i = 0; i < 65; ++i)
 				{					

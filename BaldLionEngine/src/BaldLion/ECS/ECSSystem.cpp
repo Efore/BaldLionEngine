@@ -15,8 +15,8 @@ namespace BaldLion {
 			m_parallelize(parallelize),
 			m_refreshComponentLookUps(false)
 		{
-			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_ECS, 100);
-			m_entityIDs = DynamicArray<ECSEntityID>(AllocationType::FreeList_ECS, 100);
+			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_ECS, 96);
+			m_entityIDs = DynamicArray<ECSEntityID>(AllocationType::FreeList_ECS, 96);
 			
 			BL_HASHMAP_FOR(m_ecsManager->GetEntitySignatures(), iterator)
 			{

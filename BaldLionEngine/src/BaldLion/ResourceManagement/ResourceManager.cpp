@@ -20,7 +20,7 @@ namespace BaldLion
 
 		void ResourceManager::Init()
 		{
-			s_resourceMap = HashMap<ui32, Resource*>(AllocationType::FreeList_Resources, 100);			
+			s_resourceMap = HashMap<ui32, Resource*>(AllocationType::FreeList_Resources, 96);			
 		}
 
 		void ResourceManager::Stop()
@@ -195,7 +195,7 @@ namespace BaldLion
 
 		void ResourceManager::LoadAssets()
 		{
-			DynamicArray<std::string> metaPaths(AllocationType::Linear_Frame, 100);
+			DynamicArray<std::string> metaPaths(AllocationType::Linear_Frame, 96);
 			for (const auto & entry : fs::recursive_directory_iterator(ASSETS_PATH))
 			{		
 				ResourceType entryType = GetResourceTypeFromPath(entry.path().string());

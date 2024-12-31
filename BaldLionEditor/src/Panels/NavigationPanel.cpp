@@ -19,7 +19,7 @@ namespace BaldLion
 	{
 		NavigationPanel::NavigationPanel() : EditorPanel("Navigation"),m_agentCount(0), m_currentTarget(0.0f), m_manageAgents(false)
 		{
-			m_tileIndexToDraw = DynamicArray<ui32>(Memory::AllocationType::FreeList_Main, 10);
+			m_tileIndexToDraw = DynamicArray<ui32>(Memory::AllocationType::FreeList_Main, 8);
 		}
 
 		NavigationPanel::~NavigationPanel()

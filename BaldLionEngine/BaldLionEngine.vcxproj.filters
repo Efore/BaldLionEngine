@@ -2592,6 +2592,12 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\HTN\HTNTask.h" />
+    <ClInclude Include="src\BaldLion\AI\HTN\HTNOperator.h" />
+    <ClInclude Include="src\BaldLion\AI\HTN\HTNManager.h" />
+    <ClInclude Include="src\BaldLion\AI\HTN\HTNAgent.h" />
+    <ClInclude Include="src\BaldLion\AI\HTN\HTNTypes.h" />
+    <ClInclude Include="src\BaldLion\Core\Variant.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp">
@@ -3147,6 +3153,11 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Input.cpp" />
+    <ClCompile Include="src\BaldLion\AI\HTN\HTNTask.cpp" />
+    <ClCompile Include="src\BaldLion\AI\HTN\HTNOperator.cpp" />
+    <ClCompile Include="src\BaldLion\AI\HTN\HTNManager.cpp" />
+    <ClCompile Include="src\BaldLion\AI\HTN\HTNAgent.cpp" />
+    <ClCompile Include="src\BaldLion\Core\Variant.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="BaldLionContainers.natvis" />

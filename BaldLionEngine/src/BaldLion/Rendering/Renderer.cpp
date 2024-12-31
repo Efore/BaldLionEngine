@@ -73,7 +73,7 @@ namespace BaldLion
 				s_shadowMapTex
 			});
 
-			s_renderingComponentLookUps = DynamicArray<ECS::ECSComponentLookUp*>(AllocationType::FreeList_Renderer, 1000);
+			s_renderingComponentLookUps = DynamicArray<ECS::ECSComponentLookUp*>(AllocationType::FreeList_Renderer, 1024);
 			s_renderingEcsSignature = ECS::GenerateSignature(2, ECS::ECSComponentType::Mesh, ECS::ECSComponentType::Transform);
 
 			s_depthMapShader = ResourceManagement::ResourceManager::AddResource<Shader>("assets/editorAssets/shaders/depthMap.glsl",ResourceManagement::ResourceType::Shader);

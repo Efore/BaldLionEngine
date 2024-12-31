@@ -13,7 +13,7 @@ namespace BaldLion
 		const glm::vec3 Vector3UnitX	= glm::vec3(1.0f, 0.0f, 0.0f);
 		const glm::vec3 Vector3UnitY	= glm::vec3(0.0f, 1.0f, 0.0f);
 		const glm::vec3 Vector3UnitZ	= glm::vec3(0.0f, 0.0f, 1.0f);
-		const glm::vec3 Vector3Zero	= glm::vec3(0.0f);
+		const glm::vec3 Vector3Zero = glm::vec3(0.0f);
 		
 		static glm::quat QuaternionIdentity = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 
@@ -122,5 +122,24 @@ namespace BaldLion
 			glm::vec4 perspective;
 			glm::decompose(transform, scale, rotation, translation, skew, perspective);
 		}
+
+		static bool AlmostEqual(const glm::vec2& vecA, const glm::vec2& vecB, float epsilon = glm::epsilon<float>())
+		{
+			glm::bvec2 almostEqual = glm::epsilonEqual(vecA, vecB, epsilon);
+			return almostEqual.x && almostEqual.y;
+		}
+
+		static bool AlmostEqual(const glm::vec3& vecA, const glm::vec3& vecB, float epsilon = glm::epsilon<float>())
+		{
+			glm::bvec3 almostEqual = glm::epsilonEqual(vecA, vecB, epsilon);
+			return almostEqual.x && almostEqual.y && almostEqual.z;
+		}
+
+		static bool AlmostEqual(const glm::quat& quatA, const glm::quat& quatB, float epsilon = glm::epsilon<float>())
+		{
+			glm::bvec4 almostEqual = glm::epsilonEqual(quatA, quatB, epsilon);
+			return almostEqual.x && almostEqual.y && almostEqual.z;
+		}
+
 	} 
 }

@@ -11,7 +11,7 @@ namespace BaldLion {
 	{
 		s_timerIDprovider = 1;
 		s_globalTimer = Timer(s_timerIDprovider++, 0.0f);
-		s_additionalTimers = HashTable<ui32, Timer*>(AllocationType::FreeList_Main, 10);
+		s_additionalTimers = HashTable<ui32, Timer*>(AllocationType::FreeList_Main, 8);
 	}
 
 	void Time::Stop()

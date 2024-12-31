@@ -28,7 +28,7 @@ namespace BaldLion
 			auto shaderSources = PreProcess(source);
 			Compile(shaderSources);
 
-			m_uniformLocationCache = HashTable<StringId, int>(BaldLion::Memory::AllocationType::FreeList_Renderer, 120);
+			m_uniformLocationCache = HashTable<StringId, int>(BaldLion::Memory::AllocationType::FreeList_Renderer, 128);
 		}
 
 		OpenGLShader::~OpenGLShader()

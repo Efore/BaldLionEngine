@@ -19,7 +19,6 @@ namespace BaldLion
 		~DynamicArray();
 
 		ui32 Size() const { return m_size; }
-		void SetSize(ui32 size) { m_size = size; }
 
 		ui32 Capacity() const { return m_capacity; }
 
