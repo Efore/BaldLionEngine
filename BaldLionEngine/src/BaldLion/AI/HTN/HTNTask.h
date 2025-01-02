@@ -29,7 +29,7 @@ namespace BaldLion::AI::HTN
 
 		DynamicArray<HTNMethod> methods;
 		//OperatorFunc
-		DynamicArray<HTNWorldStateEffect> effects;
+		DynamicArray<HTNWorldStateProperty> effects;
 		void ApplyEffects(HTNWorldStateBlackboard& worldStateBlackboard) const;
 	};
 }

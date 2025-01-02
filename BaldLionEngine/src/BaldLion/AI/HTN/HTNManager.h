@@ -19,8 +19,10 @@ namespace BaldLion::AI::HTN
 		static DynamicArray<HTNTask> s_DefinedTasks;
 		static HashMap<StringId, HTNDomain> s_DefinedDomains;
 
-		static bool CheckTask(HTNWorldStateBlackboard& worldStateBlackboard,
-			ui32 taskIndex, DynamicArray<ui32>& plan);
+		static bool CheckTask(HTNWorldStateBlackboard& tempWorldStateBlackboard,
+			DynamicArray<HTNWorldStateProperty>& prevBlackboardValues,
+			ui32 taskIndex, 
+			DynamicArray<ui32>& plan);
 	};
 }
 

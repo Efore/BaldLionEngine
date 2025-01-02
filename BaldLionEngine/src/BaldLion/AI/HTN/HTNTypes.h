@@ -10,19 +10,19 @@ namespace BaldLion::AI::HTN
 	struct HTNWorldStateCondition
 	{
 		Variant value;
-		VariantComparisonType comparisonType;
 		StringId blackboardKey;
+		VariantComparisonType comparisonType;
 	};
 
-	struct HTNWorldStateEffect
+	struct HTNWorldStateProperty
 	{
-		Variant newValue;
 		StringId blackboardKey;
+		Variant blackboardValue;
 	};
 
 	struct HTNDomain
 	{
 		StringId domainID;
-		ui32 mainTask;;
+		ui32 mainTask;
 	};
 }

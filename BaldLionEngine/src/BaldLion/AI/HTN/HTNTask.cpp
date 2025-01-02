@@ -59,11 +59,11 @@ namespace BaldLion::AI::HTN
 	{
 		BL_DYNAMICARRAY_FOREACH(effects)
 		{
-			const HTNWorldStateEffect& effect = effects[i];
+			const HTNWorldStateProperty& effect = effects[i];
 			Variant* blackboardEntry;
 			if (worldStateBlackboard.TryGet(effect.blackboardKey, blackboardEntry))
 			{
-				(*blackboardEntry) = effect.newValue;
+				(*blackboardEntry) = effect.blackboardValue;
 			}
 		}
 	}
