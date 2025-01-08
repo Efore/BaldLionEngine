@@ -25,4 +25,12 @@ namespace BaldLion::AI::HTN
 		StringId domainID;
 		ui32 mainTask;
 	};
+	
+	enum class HTNOperatorType
+	{
+		MoveTo,
+		PlayAnimation,
+
+		Count
+	};
 }

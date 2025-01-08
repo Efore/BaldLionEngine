@@ -3,7 +3,6 @@
 
 namespace BaldLion::AI::HTN
 {
-	class HTNOperator;
 	class HTNTask;
 
 	class HTNMethod
@@ -24,12 +23,14 @@ namespace BaldLion::AI::HTN
 			CompoundTask
 		};
 
+		DynamicArray<HTNMethod> methods;		
+		DynamicArray<HTNWorldStateProperty> effects;
+
 		StringId taskID;
 		TaskType type = TaskType::CompoundTask;
 
-		DynamicArray<HTNMethod> methods;
-		//OperatorFunc
-		DynamicArray<HTNWorldStateProperty> effects;
+		HTNOperatorType operatorType = HTNOperatorType::Count;
+
 		void ApplyEffects(HTNWorldStateBlackboard& worldStateBlackboard) const;
 	};
 }

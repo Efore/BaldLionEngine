@@ -7,6 +7,7 @@
 #include "BaldLion/ResourceManagement/ResourceManager.h"
 #include "BaldLion/Physics/PhysicsManager.h"
 #include "BaldLion/AI/Navigation/NavigationManager.h"
+#include "BaldLion/AI/HTN/HTNManager.h"
 #include "BaldLion/Core/Input.h"
 
 #include <GLFW/glfw3.h>
@@ -30,6 +31,7 @@ namespace BaldLion
 		Threading::TaskScheduler::Init();
 		ResourceManagement::ResourceManager::Init();		
 		AI::Navigation::NavigationManager::Init();
+		AI::HTN::HTNManager::Init();
 
 		m_window = Window::Create(WindowProps(applicationName));
 		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
@@ -64,6 +66,7 @@ namespace BaldLion
 
 		Time::Stop();
 
+		AI::HTN::HTNManager::Stop();
 		AI::Navigation::NavigationManager::Stop();
 		ResourceManagement::ResourceManager::Stop();
 		Threading::TaskScheduler::Stop();

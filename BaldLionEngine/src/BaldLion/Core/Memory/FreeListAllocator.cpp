@@ -8,7 +8,7 @@ namespace BaldLion
 
 		FreeListAllocator::FreeListAllocator(const char* allocatorName, size_t size, void* start) : Allocator(allocatorName, size, start), m_allocationBlocksBegin((AllocationBlock*)start)
 		{
-			BL_ASSERT(size > sizeof(FreeListAllocator::AllocationBlock), "Size must be bigger than size of AllocationBlock");
+			BL_ASSERT_LOG(size > sizeof(FreeListAllocator::AllocationBlock), "Size must be bigger than size of AllocationBlock");
 
 			m_allocationBlocksBegin->size = size;
 			m_allocationBlocksBegin->nextBlock = nullptr;
@@ -23,7 +23,7 @@ namespace BaldLion
 		{
 			const std::lock_guard<std::mutex> lock(m_mutex);
 
-			BL_ASSERT(size != 0 && alignment != 0, "Size and alignment must be bigger than 0");
+			BL_ASSERT_LOG(size != 0 && alignment != 0, "Size and alignment must be bigger than 0");
 
 			AllocationBlock* bestFitBlock = nullptr;
 			AllocationBlock* bestFitPrevBlock = nullptr;
@@ -68,7 +68,7 @@ namespace BaldLion
 				BL_LOG_CORE_ERROR("{0}: Not enough memory", BL_STRINGID_TO_STR_C(m_allocatorName));
 			}
 
-			BL_ASSERT(bestFitBlock != nullptr, "");
+			BL_ASSERT_LOG(bestFitBlock != nullptr, "");
 
 			//If the size of the current best fit block after allocating wont be enought to allocate more elements, 
 			//it becomes full and "unnaccessible"
@@ -86,7 +86,7 @@ namespace BaldLion
 			else
 			{
 				//Prevent new block from overwriting best fit block info
-				BL_ASSERT(bestFitTotalSize > sizeof(AllocationBlock),"bestFitTotalSize must be bigger than size of AllocationBlock");
+				BL_ASSERT_LOG(bestFitTotalSize > sizeof(AllocationBlock),"bestFitTotalSize must be bigger than size of AllocationBlock");
 
 				// create a new FreeBlock containing remaining memory
 				AllocationBlock* new_block = (AllocationBlock*)(AddPointerOffset(bestFitBlock, bestFitTotalSize));
@@ -106,7 +106,7 @@ namespace BaldLion
 			header->size = bestFitTotalSize;
 			header->adjustment = bestFitAdjustment;
 			
-			BL_ASSERT(IsAligned(header), "Header must be aligned");
+			BL_ASSERT_LOG(IsAligned(header), "Header must be aligned");
 
 			m_used_memory += bestFitTotalSize;
 			m_num_allocations++; 
@@ -118,7 +118,7 @@ namespace BaldLion
 		{
 			const std::lock_guard<std::mutex> lock(m_mutex);
 
-			BL_ASSERT(p != nullptr, "p cannot be null");
+			BL_ASSERT_LOG(p != nullptr, "p cannot be null");
 
 			//Getting the header of the element to deallocate
 			AllocationHeader* header = (AllocationHeader*)SubstractPointerOffset(p, sizeof(AllocationHeader));

@@ -133,7 +133,7 @@ namespace BaldLion
 			T* result = nullptr;
 
 			{
-				BL_ASSERT(s_memorySize > 0, "Memory Manager not init");
+				BL_ASSERT_LOG(s_memorySize > 0, "Memory Manager not init");
 
 				switch (allocationType)
 				{
@@ -170,7 +170,7 @@ namespace BaldLion
 		template <class T>
 		void MemoryManager::DeleteNoDestructor(T* element)
 		{
-			BL_ASSERT(element != nullptr, "element cannot be null");
+			BL_ASSERT_LOG(element != nullptr, "element cannot be null");
 
 			auto it = s_allocationMap.find(element);
 			if (it == s_allocationMap.end())
@@ -228,7 +228,7 @@ namespace BaldLion
 		template <class T>
 		void MemoryManager::Delete(T* element)
 		{
-			BL_ASSERT(element != nullptr, "element cannot be null");
+			BL_ASSERT_LOG(element != nullptr, "element cannot be null");
 
 			element->~T();
 			DeleteNoDestructor(element);

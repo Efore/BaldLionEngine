@@ -21,7 +21,7 @@ namespace BaldLion {
 			ECS::ECSTransformComponent* transformComponent;
 			ECSEntityID entityID;
 			i32 parentIndex;
-			bool hasChanged;
+			bool transformHasChanged;
 		};
 
 		class ECSManager {
@@ -56,7 +56,7 @@ namespace BaldLion {
 			//Hierarchy
 			void SetEntityParent(ECSEntityID entityID, ECSEntityID parentID);
 			void GenerateCachedHierarchyRoot();
-			void MarkEntityAsChangedInHierarchy(ECSEntityID entityID);
+			void MarkEntityTransformAsChangedInHierarchy(ECSEntityID entityID);
 
 			//Main loop
 			void StartSystems();

@@ -1,6 +1,7 @@
 #include "blpch.h"
 #include "NavigationManager.h"
 #include "NavMeshBuilder.h"
+#include "BaldLion/Utils/MathUtils.h"
 
 namespace BaldLion::AI::Navigation
 {
@@ -11,6 +12,8 @@ namespace BaldLion::AI::Navigation
 	bool NavigationManager::s_navigationActive = false;
 
 	Threading::Task NavigationManager::s_updateTask;
+	DynamicArray<i32> NavigationManager::s_walkingAgents;
+
 
 	void NavigationManager::Init()
 	{
@@ -23,6 +26,8 @@ namespace BaldLion::AI::Navigation
 		memset(&s_agentDebug, 0, sizeof(s_agentDebug));
 		s_agentDebug.idx = -1;
 		s_agentDebug.vod = s_vod;
+
+		s_walkingAgents = DynamicArray<i32>(AllocationType::FreeList_Main, MAX_AGENTS);
 	}
 
 	void NavigationManager::Stop()
@@ -31,6 +36,7 @@ namespace BaldLion::AI::Navigation
 		NavMeshBuilder::Stop();
 		dtFreeCrowd(s_crowd);
 		dtFreeObstacleAvoidanceDebugData(s_vod);
+		s_walkingAgents.Delete();
 	}	
 
 	void NavigationManager::InitCrowd()
@@ -79,10 +85,14 @@ namespace BaldLion::AI::Navigation
 
 	void NavigationManager::Update(float deltaTime)
 	{
+		s_updateTask.Wait();
+
 		if (!s_navigationActive) 
 		{
 			return;
 		}
+
+		CheckWalkingAgents();
 
 		Threading::TaskScheduler::KickSingleTask(s_updateTask, [deltaTime] {
 			BL_PROFILE_SCOPE("Crowd update",Optick::Category::GameLogic);
@@ -137,6 +147,8 @@ namespace BaldLion::AI::Navigation
 		if (!ag->m_isActive) return;
 
 		s_crowd->requestMoveTarget(agentIndex, targetRef, targetPosition);
+
+		s_walkingAgents.EmplaceBack(agentIndex);
 	}
 
 	void NavigationManager::UpdateCrowdAgent(i32 agentIndex, float maxSpeed, float maxAcceleration)
@@ -157,6 +169,21 @@ namespace BaldLion::AI::Navigation
 		if (!ag->m_isActive) return glm::vec3(0.0f);
 
 		return *(glm::vec3*)ag->npos;
+	}
+
+	void NavigationManager::CheckWalkingAgents()
+	{
+		BL_DYNAMICARRAY_INVERSE_FOREACH(s_walkingAgents)
+		{
+			const dtCrowdAgent* agent = s_crowd->getAgent(s_walkingAgents[i]);
+			const glm::vec3 agentTargetPos = *(glm::vec3*)(agent->targetPos);
+			const glm::vec3 agentCurrentPos = *(glm::vec3*)(agent->npos);
+			if (glm::epsilonEqual(agent->desiredSpeed, 0.0f, glm::epsilon<float>()) && MathUtils::AlmostEqual(agentTargetPos, agentCurrentPos))
+			{
+				//Throw event for destination reached
+				s_walkingAgents.RemoveAtFast(i);
+			}
+		}
 	}
 
 }

@@ -2,6 +2,7 @@
 
 #include "Task.h"
 #include "BaldLion/Core/Containers/Queue.h"
+#include "BaldLion/Core/Containers/LockFree.h"
 
 #include <thread>
 #include <future>
@@ -14,7 +15,7 @@ namespace BaldLion
 	namespace Threading
 	{
 		typedef std::function<void()> SingleJobFunction;
-		typedef std::function<void(ui32 firstIterationIndex, ui32 lastIterationIndex)> ParallelJobFunction;
+		typedef std::function<void(ui32 firstIterationIndex, ui32 lastIterationIndex)> ParallelJobFunction;		
 
 		struct TaskEntry
 		{
@@ -32,8 +33,8 @@ namespace BaldLion
 
 			static void WaitForAllJobs();
 
-			static void KickSingleTask(Task& task, SingleJobFunction jobFunction);
-			static void KickParallelTask(Task& task, ui32 iterationCount, ParallelJobFunction jobFunction);
+			static void KickSingleTask(Task& task, SingleJobFunction jobFunction, OnTaskFinishedCallback callbackFunction = nullptr);
+			static void KickParallelTask(Task& task, ui32 iterationCount, ParallelJobFunction jobFunction, OnTaskFinishedCallback callbackFunction = nullptr);
 
 			static void* ThreadProcess(ui32 threadIndex);
 

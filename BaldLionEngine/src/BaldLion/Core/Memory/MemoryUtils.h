@@ -29,7 +29,7 @@ namespace BaldLion
 		template <class T> 
 		T* AllocateArray(Allocator& allocator, size_t length)
 		{
-			BL_ASSERT(length != 0, "Length must be higher than 0");
+			BL_ASSERT_LOG(length != 0, "Length must be higher than 0");
 			uint8_t headerSize = sizeof(size_t) / sizeof(T);
 
 			if (sizeof(size_t) % sizeof(T) > 0) 
@@ -48,7 +48,7 @@ namespace BaldLion
 		template <class T>
 		T* AllocateArrayWithoutConstruct(Allocator& allocator, size_t length)
 		{
-			BL_ASSERT(length != 0, "Length must be higher than 0");
+			BL_ASSERT_LOG(length != 0, "Length must be higher than 0");
 			uint8_t headerSize = sizeof(size_t) / sizeof(T);
 
 			if (sizeof(size_t) % sizeof(T) > 0) 

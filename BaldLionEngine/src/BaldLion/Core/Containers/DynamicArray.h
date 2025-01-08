@@ -50,7 +50,7 @@ namespace BaldLion
 		void Populate(const T& value);
 		void Populate(T&& value);
 
-		int FindIndex(const T& element) const;
+		i32 FindIndex(const T& element) const;
 		bool Contains(const T& element) const;
 
 		T* Data();
@@ -71,11 +71,11 @@ namespace BaldLion
 		const T& Back() const { return m_elements[m_size - 1]; }
 
 		T& operator[](size_t index) {
-			BL_ASSERT(index < m_size, "Index is bigger than size");
+			BL_ASSERT_LOG(index < m_size, "Index is bigger than size");
 			return index > (m_size - 1) ? Back() : m_elements[index];
 		}
 		const T& operator[](size_t index) const {
-			BL_ASSERT(index < m_size, "Index is bigger than size");
+			BL_ASSERT_LOG(index < m_size, "Index is bigger than size");
 			return index > (m_size - 1) ? Back() : m_elements[index];
 		}		
 
@@ -204,6 +204,7 @@ namespace BaldLion
 		//{
 		//	DeleteNoDestructor();
 		//}
+		m_elements = nullptr;
 	}
 
 	template <typename T>
@@ -249,7 +250,7 @@ namespace BaldLion
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
-		BL_ASSERT(m_capacity > 0, "Capacity is 0");
+		BL_ASSERT_LOG(m_capacity > 0, "Capacity is 0");
 
 		if (m_size == m_capacity)
 		{	
@@ -264,7 +265,7 @@ namespace BaldLion
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
-		BL_ASSERT(m_capacity > 0, "Capacity is 0");
+		BL_ASSERT_LOG(m_capacity > 0, "Capacity is 0");
 
 		if (m_size == m_capacity)
 		{	
@@ -279,7 +280,7 @@ namespace BaldLion
 	{	
 		BL_DEEP_PROFILE_FUNCTION();
 
-		BL_ASSERT(m_capacity > 0, "Capacity is 0");
+		BL_ASSERT_LOG(m_capacity > 0, "Capacity is 0");
 
 		if (m_size == m_capacity)
 		{		
@@ -320,7 +321,7 @@ namespace BaldLion
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
-		BL_ASSERT(m_capacity > 0, "Capacity is 0");
+		BL_ASSERT_LOG(m_capacity > 0, "Capacity is 0");
 
 		if (index >= m_size - 1)
 		{
@@ -355,8 +356,8 @@ namespace BaldLion
 	template <typename T>
 	void BaldLion::DynamicArray<T>::PushAt(T&& element, ui32 index)
 	{
-		BL_ASSERT(m_capacity > 0, "Capacity is 0");
-		BL_ASSERT(index < m_size, "Index is bigger than size");
+		BL_ASSERT_LOG(m_capacity > 0, "Capacity is 0");
+		BL_ASSERT_LOG(index < m_size, "Index is bigger than size");
 
 		if (index >= m_size - 1)
 		{
@@ -442,7 +443,7 @@ namespace BaldLion
 	template <typename T>
 	void BaldLion::DynamicArray<T>::RemoveAt(ui32 index)
 	{
-		BL_ASSERT(index < m_size, "Index can't be bigger than or equal to m_size");
+		BL_ASSERT_LOG(index < m_size, "Index can't be bigger than or equal to m_size");
 
 		if (index == m_size - 1)
 		{
@@ -463,7 +464,7 @@ namespace BaldLion
 	template <typename T>
 	void BaldLion::DynamicArray<T>::RemoveAtFast(ui32 index)
 	{		
-		BL_ASSERT(index < m_size, "Index can't be bigger than or equal to m_size");
+		BL_ASSERT_LOG(index < m_size, "Index can't be bigger than or equal to m_size");
 
 		if (index == (m_size - 1))
 		{			
@@ -478,7 +479,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	int BaldLion::DynamicArray<T>::FindIndex(const T& element) const
+	i32 BaldLion::DynamicArray<T>::FindIndex(const T& element) const
 	{
 		for (ui32 i = 0; i < m_size; ++i)
 		{

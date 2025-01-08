@@ -56,7 +56,7 @@ namespace BaldLion
 	template <typename T, typename Comparison /*= std::less<>*/>
 	const T* BaldLion::Heap<T, Comparison>::GetAtIndex(ui32 index) const
 	{
-		BL_ASSERT(index < m_size, "Index is bigger than size");
+		BL_ASSERT_LOG(index < m_size, "Index is bigger than size");
 
 		return &m_content[index];
 	}

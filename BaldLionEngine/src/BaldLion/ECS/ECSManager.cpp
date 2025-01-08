@@ -215,9 +215,22 @@ namespace BaldLion
 		void ECSManager::RemoveComponentFromPool(ECSComponentType componentType, const ECSComponent* componentToRemove)
 		{
 			DynamicArray<ECSComponent>* componentPool = (DynamicArray<ECSComponent>*)m_componentsPool[(ui32)componentType];
-			componentPool->RemoveFast(*componentToRemove);
 
-			m_componentsPool[(ui32)componentType] = componentPool;
+			i32 componentIndexInPool = componentPool->FindIndex(*componentToRemove);
+			componentPool->RemoveAtFast(componentIndexInPool);
+
+			if (componentPool->Size() > 0)
+			{
+				ECSComponent* switchedComponent = &(*componentPool)[componentIndexInPool];
+				BL_HASHTABLE_FOR(m_entityComponents, iterator)
+				{
+					if (iterator.GetValue()[(ui32)componentType] == switchedComponent)
+					{
+						iterator.GetValue().Set(componentType, switchedComponent);
+						break;
+					}
+				}
+			}
 		}
 
 		void ECSManager::FillEntityHierarchyList(ECSEntityID rootID, DynamicArray<ECSEntityID>& entitiesIDlist)
@@ -297,7 +310,7 @@ namespace BaldLion
 		{
 			BL_DYNAMICARRAY_FOREACH(m_cachedEntityHierarchy)
 			{
-				if (m_cachedEntityHierarchy[i].parentIndex > -1 && m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].hasChanged)
+				if (m_cachedEntityHierarchy[i].parentIndex > -1 && m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].transformHasChanged)
 				{
 					ECS::ECSTransformComponent* transformComponent = m_cachedEntityHierarchy[i].transformComponent;
 					const glm::mat4 transformMatrix = transformComponent->GetTransformMatrix();
@@ -324,24 +337,24 @@ namespace BaldLion
 					transformComponent->scale = newParentScale + relativeScale;
 
 					m_cachedEntityHierarchy[i].parentWorldTransform = newParentWorldTransform;
-					m_cachedEntityHierarchy[i].hasChanged = true;
+					m_cachedEntityHierarchy[i].transformHasChanged = true;
 				}
 			}
 
 			//Restoring hasChanged values
 			BL_DYNAMICARRAY_FOREACH(m_cachedEntityHierarchy)
 			{
-				m_cachedEntityHierarchy[i].hasChanged = false;
+				m_cachedEntityHierarchy[i].transformHasChanged = false;
 			}
 		}
 
-		void ECSManager::MarkEntityAsChangedInHierarchy(ECSEntityID entityID) 
+		void ECSManager::MarkEntityTransformAsChangedInHierarchy(ECSEntityID entityID) 
 		{
 			BL_DYNAMICARRAY_FOREACH(m_cachedEntityHierarchy)
 			{
 				if (m_cachedEntityHierarchy[i].entityID == entityID)
 				{
-					m_cachedEntityHierarchy[i].hasChanged = true;
+					m_cachedEntityHierarchy[i].transformHasChanged = true;
 					break;
 				}
 			}

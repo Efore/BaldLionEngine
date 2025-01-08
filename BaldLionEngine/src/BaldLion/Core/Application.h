@@ -4,6 +4,7 @@
 #include "Window.h"
 
 #include "BaldLion/Events/ApplicationEvent.h"
+#include "BaldLion/Events/GameplayEvent.h"
 #include "BaldLion/Core/GameStateLayerStack.h"
 
 #include "BaldLion/ImGui/ImGuiLayer.h"

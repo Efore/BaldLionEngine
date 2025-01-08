@@ -144,7 +144,7 @@ namespace BaldLion
 
 	Variant::operator bool() const
 	{
-		BL_ASSERT(m_valueType == VariantType::Bool, "Variant is not bool type");
+		BL_ASSERT_LOG(m_valueType == VariantType::Bool, "Variant is not bool type");
 		return As<bool>();
 	}
 
@@ -168,7 +168,7 @@ namespace BaldLion
 			return (i32)As<float>();
 			break;
 		default:
-			BL_ASSERT(false, "Incorrect Variant type");
+			BL_ASSERT_LOG(false, "Incorrect Variant type");
 			break;
 		}
 
@@ -186,7 +186,7 @@ namespace BaldLion
 			return As<ui8>();
 			break;
 		default:
-			BL_ASSERT(false, "Incorrect Variant type");
+			BL_ASSERT_LOG(false, "Incorrect Variant type");
 			break;
 		}
 
@@ -207,7 +207,7 @@ namespace BaldLion
 			return As<ui16>();
 			break;
 		default:
-			BL_ASSERT(false, "Incorrect Variant type");
+			BL_ASSERT_LOG(false, "Incorrect Variant type");
 			break;
 		}
 
@@ -234,7 +234,7 @@ namespace BaldLion
 			return As<ui32>();
 			break;
 		default:
-			BL_ASSERT(false, "Incorrect Variant type");
+			BL_ASSERT_LOG(false, "Incorrect Variant type");
 			break;
 		}
 
@@ -267,7 +267,7 @@ namespace BaldLion
 			return (ui64)As<ui32>();
 			break;
 		default:
-			BL_ASSERT(false, "Incorrect Variant type");
+			BL_ASSERT_LOG(false, "Incorrect Variant type");
 			break;
 		}
 
@@ -276,25 +276,25 @@ namespace BaldLion
 
 	Variant::operator float() const
 	{
-		BL_ASSERT(m_valueType == VariantType::Float, "Incorrect Variant type");		
+		BL_ASSERT_LOG(m_valueType == VariantType::Float, "Incorrect Variant type");		
 		return As<float>();
 	}
 
 	Variant::operator glm::vec2() const
 	{
-		BL_ASSERT(m_valueType == VariantType::Vector2, "Incorrect Variant type");
+		BL_ASSERT_LOG(m_valueType == VariantType::Vector2, "Incorrect Variant type");
 		return As<glm::vec2>();
 	}
 
 	Variant::operator glm::vec3() const
 	{
-		BL_ASSERT(m_valueType == VariantType::Vector3, "Incorrect Variant type");
+		BL_ASSERT_LOG(m_valueType == VariantType::Vector3, "Incorrect Variant type");
 		return As<glm::vec3>();
 	}
 
 	Variant::operator glm::quat() const
 	{
-		BL_ASSERT(m_valueType == VariantType::Quaternion, "Incorrect Variant type");
+		BL_ASSERT_LOG(m_valueType == VariantType::Quaternion, "Incorrect Variant type");
 		return As<glm::quat>();
 	}
 

@@ -40,14 +40,14 @@ namespace BaldLion
 	void GameStateLayerStack::PopLayer(GameStateLayer * layer)
 	{		
 		layer->OnDeactivate();
-		m_layers.RemoveAtFast(m_layerInsertIndex);
+		m_layers.RemoveAt(m_layerInsertIndex);
 		--m_layerInsertIndex;
 		m_layers[m_layerInsertIndex]->OnActivate();
 	}
 
 	void GameStateLayerStack::PopOverlay(GameStateLayer * overlay)
 	{
-		m_layers.RemoveFast(overlay);
+		m_layers.Remove(overlay);
 		overlay->OnDeactivate();
 	}
 

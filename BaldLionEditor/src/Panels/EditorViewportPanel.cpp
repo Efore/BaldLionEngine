@@ -125,7 +125,7 @@ namespace BaldLion {
 						entityTransformComponent->scale = scale;	
 						
 						m_isManipulatingGizmo = false;
-						SceneManager::GetECSManager()->MarkEntityAsChangedInHierarchy(selectedEntityID);						
+						SceneManager::GetECSManager()->MarkEntityTransformAsChangedInHierarchy(selectedEntityID);						
 					}
 										
 				}

@@ -9,18 +9,17 @@ namespace BaldLion
 {
 	namespace Threading
 	{
+		typedef std::function<void()> OnTaskFinishedCallback;
+
 		struct Task
 		{
-			void Wait() const;
+			inline void Wait() const
+			{
+				while (counter > 0);
+			}
 
-			void SetCounter(ui32 counter);
-			void ReduceCounter();
-
-		private:
-
-			std::atomic<ui32> m_counter;
-			std::condition_variable m_jobsFinishedCV;
-			std::mutex m_waitForJobsMutex;
+			OnTaskFinishedCallback callback;
+			std::atomic<ui32> counter;
 		};
 	}
 }

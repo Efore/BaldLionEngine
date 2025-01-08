@@ -87,9 +87,9 @@ namespace BaldLion
 
 		private:
 
-			ui32 m_tableIndex = 0;
 			HashMapNode<K, V>* m_currentNode = nullptr;
 			DynamicArray<HashMapNode<K,V>*>* m_tableToIterate = nullptr;
+			ui32 m_tableIndex = 0;
 		};
 
 		public:
@@ -146,10 +146,11 @@ namespace BaldLion
 			HashMap<K, V>::Iterator m_beginIterator;
 			HashMap<K, V>::Iterator m_endIterator;
 
+			DynamicArray<HashMapNode<K,V>*> m_table;
+
 			ui32 m_capacity = 0;
 			ui32 m_size = 0;
 
-			DynamicArray<HashMapNode<K,V>*> m_table;
 			AllocationType m_allocationType = AllocationType::FreeList_Main;	
 	};
 
@@ -276,7 +277,7 @@ namespace BaldLion
 		const hashType hashedMapKey = std::hash<K>()(key);
 		HashMapNode<K, V>* node = FindNode(hashedMapKey);
 
-		BL_ASSERT(node, "Key not contained");		
+		BL_ASSERT_LOG(node, "Key not contained");		
 		return node->nodeValue;
 	}
 
@@ -286,7 +287,7 @@ namespace BaldLion
 		const hashType hashedMapKey = std::hash<K>()(key);
 		const HashMapNode<K, V>* node = FindNode(hashedMapKey);
 
-		BL_ASSERT(node, "Key not contained");
+		BL_ASSERT_LOG(node, "Key not contained");
 		return node->nodeValue;
 	}
 	
@@ -296,7 +297,7 @@ namespace BaldLion
 		const hashType hashedMapKey = std::hash<K>()(key);
 		HashMapNode<K, V>* node = FindNode(hashedMapKey);
 
-		BL_ASSERT(node, "Key not contained");
+		BL_ASSERT_LOG(node, "Key not contained");
 		node->nodeValue = std::move(value);
 	}
 
@@ -306,7 +307,7 @@ namespace BaldLion
 		const hashType hashedMapKey = std::hash<K>()(key);
 		HashMapNode<K, V>* node = FindNode(hashedMapKey);
 
-		BL_ASSERT(node, "Key not contained");
+		BL_ASSERT_LOG(node, "Key not contained");
 		node->nodeValue = value;
 	}
 
@@ -486,7 +487,7 @@ namespace BaldLion
 		const hashType hashedMapKey = std::hash<K>()(key);
 		const i32 tableIndex = FindIndex(hashedMapKey);
 
-		BL_ASSERT(tableIndex >= 0, "Key not contained");
+		BL_ASSERT_LOG(tableIndex >= 0, "Key not contained");
 
 		return (ui32)tableIndex;
 	}

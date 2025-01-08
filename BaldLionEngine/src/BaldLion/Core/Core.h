@@ -5,9 +5,11 @@
 #define BL_ENABLE_ASSERTS
 
 #ifdef BL_ENABLE_ASSERTS
-	#define BL_ASSERT(x, ...) { if(!(x)) { BL_LOG_ERROR ("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+	#define BL_ASSERT(x) { if(!(x)) { __debugbreak(); } }
+	#define BL_ASSERT_LOG(x, ...) { if(!(x)) { BL_LOG_ERROR ("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 	#define BL_CORE_ASSERT(x, ...) { if(!(x)) { BL_LOG_CORE_ERROR ("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #else
+	#define BL_ASSERT(x) 
 	#define BL_ASSERT(x, ...)
 	#define BL_CORE_ASSERT(x,...)
 #endif

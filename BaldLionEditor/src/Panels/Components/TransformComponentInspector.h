@@ -97,7 +97,7 @@ namespace BaldLion
 				scaleEdited = false;
 				modified = false;
 
-				SceneManager::GetECSManager()->MarkEntityAsChangedInHierarchy(entity->GetEntityID());				
+				SceneManager::GetECSManager()->MarkEntityTransformAsChangedInHierarchy(entity->GetEntityID());				
 
 				ComponentInspector::EndComponentRender();
 			}

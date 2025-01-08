@@ -29,8 +29,12 @@ namespace BaldLion::AI::Navigation
 		static void UpdateCrowdAgent(i32 agentIndex, float maxSpeed, float maxAcceleration);
 
 	private:
+			
+		static void CheckWalkingAgents();
+
+	private:
 		
-		static const int MAX_AGENTS = 128;
+		static constexpr int MAX_AGENTS = 128;
 
 		static dtCrowdAgentDebugInfo s_agentDebug;
 		static dtCrowd* s_crowd;
@@ -38,6 +42,8 @@ namespace BaldLion::AI::Navigation
 
 		static bool s_navigationActive;
 		static Threading::Task s_updateTask;
+
+		static DynamicArray<i32> s_walkingAgents;
 
 	};
 }

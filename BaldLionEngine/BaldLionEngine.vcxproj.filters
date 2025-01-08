@@ -2593,11 +2593,12 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\AI\HTN\HTNTask.h" />
-    <ClInclude Include="src\BaldLion\AI\HTN\HTNOperator.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNManager.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNAgent.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNTypes.h" />
     <ClInclude Include="src\BaldLion\Core\Variant.h" />
+    <ClInclude Include="src\BaldLion\Events\GameplayEvent.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\LockFree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp">
@@ -2662,9 +2663,6 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\StringId.cpp">
       <Filter>src\BaldLion\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\Threading\Task.cpp">
-      <Filter>src\BaldLion\Core\Threading</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Threading\TaskScheduler.cpp">
       <Filter>src\BaldLion\Core\Threading</Filter>
@@ -3154,7 +3152,6 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Input.cpp" />
     <ClCompile Include="src\BaldLion\AI\HTN\HTNTask.cpp" />
-    <ClCompile Include="src\BaldLion\AI\HTN\HTNOperator.cpp" />
     <ClCompile Include="src\BaldLion\AI\HTN\HTNManager.cpp" />
     <ClCompile Include="src\BaldLion\AI\HTN\HTNAgent.cpp" />
     <ClCompile Include="src\BaldLion\Core\Variant.cpp" />

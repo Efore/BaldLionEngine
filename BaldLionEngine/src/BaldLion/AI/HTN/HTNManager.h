@@ -1,28 +1,49 @@
 #pragma once
 #include "HTNTypes.h"
 #include "HTNTask.h"
+#include "HTNAgent.h"
 #include "BaldLion/Core/Containers/HashMap.h"
+#include "BaldLion/Events/GameplayEvent.h"
 
 namespace BaldLion::AI::HTN
 {
+
+	struct HTNOperator
+	{
+		typedef void (*htnOperatorFunc)(HTNAgent* htnAgent);
+
+		htnOperatorFunc OperatorStartFunc;
+		htnOperatorFunc OperatorInterruptFunc;
+	};
+
 	class HTNManager
 	{
 		//static void GenerateTask(HTNTask::TaskType TaskType, )
+	public:
+		using EventDelegate = std::function<void(Event&)>;
 
 		static void Init();
 		static void Stop();
 
 		static bool RunPlanner(const HTNWorldStateBlackboard& worldStateBlackboard, 
-			const HTNDomain& domain, DynamicArray<ui32>& plan);
-		
+			StringId domainID, DynamicArray<ui32>& plan);
+
+		static const HTNTask& GetTask(ui32 taskIndex);
+		static const HTNOperator& GetOperator(HTNOperatorType operatorType);
+
+		static void ThrowOperatorEvent(GameplayEvent& e);
+
 	private:
-		static DynamicArray<HTNTask> s_DefinedTasks;
-		static HashMap<StringId, HTNDomain> s_DefinedDomains;
+		static HashMap<StringId, HTNDomain> s_definedDomains;
+		static HashMap <HTNOperatorType, HTNOperator> s_definedOperators;
+		static DynamicArray<HTNTask> s_definedTasks;
+		static DynamicArray<HTNAgent> s_agents;
 
 		static bool CheckTask(HTNWorldStateBlackboard& tempWorldStateBlackboard,
 			DynamicArray<HTNWorldStateProperty>& prevBlackboardValues,
 			ui32 taskIndex, 
 			DynamicArray<ui32>& plan);
+
 	};
 }
 

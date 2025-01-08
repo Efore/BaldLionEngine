@@ -290,7 +290,7 @@ namespace BaldLion
 		const hashType hashedKey = std::hash<K>()(key);
 		const i32 tableIndex = FindIndex(hashedKey);
 
-		BL_ASSERT(tableIndex >= 0, "Key not contained");
+		BL_ASSERT_LOG(tableIndex >= 0, "Key not contained");
 
 		return m_table[tableIndex].nodeValue;
 	}
@@ -301,7 +301,7 @@ namespace BaldLion
 		const hashType hashedKey = std::hash<K>()(key);
 		const i32 tableIndex = FindIndex(hashedKey);
 
-		BL_ASSERT(tableIndex >= 0, "Key not contained");
+		BL_ASSERT_LOG(tableIndex >= 0, "Key not contained");
 
 		return m_table[tableIndex].nodeValue;
 	}
@@ -312,7 +312,7 @@ namespace BaldLion
 		const hashType hashedKey = std::hash<K>()(key);
 		const i32 tableIndex = FindIndex(hashedKey);
 
-		BL_ASSERT(tableIndex >= 0, "Key not contained");
+		BL_ASSERT_LOG(tableIndex >= 0, "Key not contained");
 
 		m_table[tableIndex].nodeValue = std::move(value);
 	}
@@ -323,7 +323,7 @@ namespace BaldLion
 		const hashType hashedKey = std::hash<K>()(key);
 		const i32 tableIndex = FindIndex(hashedKey);
 
-		BL_ASSERT(tableIndex >= 0, "Key not contained");
+		BL_ASSERT_LOG(tableIndex >= 0, "Key not contained");
 
 		m_table[tableIndex].nodeValue = value;
 	}
@@ -457,7 +457,7 @@ namespace BaldLion
 		const hashType hashedKey = std::hash<K>()(key);
 		const i32 tableIndex = FindIndex(hashedKey);
 
-		BL_ASSERT(tableIndex >= 0, "Key not contained");
+		BL_ASSERT_LOG(tableIndex >= 0, "Key not contained");
 
 		return (ui32)tableIndex;
 	}

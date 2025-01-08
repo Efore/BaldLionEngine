@@ -8,7 +8,7 @@ namespace BaldLion
 
 		LinearAllocator::LinearAllocator(const char* allocatorName, size_t size, void* start) : Allocator(allocatorName, size, start), m_current_position(start)
 		{
-			BL_ASSERT(size > 0, "Size must be bigger than 0");
+			BL_ASSERT_LOG(size > 0, "Size must be bigger than 0");
 		}
 
 		LinearAllocator::~LinearAllocator()
@@ -20,7 +20,7 @@ namespace BaldLion
 		{
 			const std::lock_guard<std::mutex> lock(m_mutex);
 
-			BL_ASSERT(size != 0 && alignment != 0, "Size and alignment must be bigger than 0");
+			BL_ASSERT_LOG(size != 0 && alignment != 0, "Size and alignment must be bigger than 0");
 
 			uint8_t adjustment = AlignForwardAdjustment(m_current_position, alignment);
 			size_t totalSize = size + adjustment;

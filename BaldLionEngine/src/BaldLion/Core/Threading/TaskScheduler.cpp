@@ -10,6 +10,7 @@ namespace BaldLion
 		//--------------------------------------------------------------------------
 		DynamicArray<std::thread> TaskScheduler::s_workerThreads;
 		Queue<TaskEntry> TaskScheduler::s_taskQueue;
+
 		std::mutex TaskScheduler::s_taskQueueMutex;
 		bool TaskScheduler::s_running = false;
 
@@ -20,6 +21,7 @@ namespace BaldLion
 		{
 			s_workerThreads = DynamicArray<std::thread>(AllocationType::FreeList_Main, threadsCount);
 			s_taskQueue = Queue<TaskEntry>(AllocationType::FreeList_Main, 512);
+
 			s_running = true;
 			for (ui32 i = 0; i < threadsCount; ++i)
 			{
@@ -39,9 +41,10 @@ namespace BaldLion
 			while (s_activeJobs > 0);
 		}
 
-		void TaskScheduler::KickSingleTask(Task& task, SingleJobFunction jobFunction)
+		void TaskScheduler::KickSingleTask(Task& task, SingleJobFunction jobFunction, OnTaskFinishedCallback callbackFunction)
 		{
-			task.SetCounter(1);
+			task.counter.fetch_add(1,std::memory_order_relaxed);
+			task.callback = callbackFunction;
 
 			TaskEntry newEntry;
 
@@ -53,7 +56,7 @@ namespace BaldLion
 			s_taskQueueMutex.unlock();
 		}
 
-		void TaskScheduler::KickParallelTask(Task& task, ui32 iterationCount, ParallelJobFunction jobFunction)
+		void TaskScheduler::KickParallelTask(Task& task, ui32 iterationCount, ParallelJobFunction jobFunction, OnTaskFinishedCallback callbackFunction)
 		{
 			const ui32 workerThreadCount = s_workerThreads.Capacity();
 			const ui32 iterationsPerBatchBase = iterationCount / workerThreadCount;
@@ -63,7 +66,8 @@ namespace BaldLion
 
 			ui32 iterationsDispatched = 0u;
 						
-			task.SetCounter(requiredBatches);
+			task.counter.fetch_add(1, std::memory_order_relaxed);
+			task.callback = callbackFunction;
 
 			for (ui32 i = 0u; i < requiredBatches; i++)
 			{
@@ -115,8 +119,15 @@ namespace BaldLion
 				if (entry.task != nullptr)
 				{					
 					entry.job();
-					entry.task->ReduceCounter();
+					entry.task->counter.fetch_sub(1);
 					s_activeJobs.fetch_sub(1);
+
+					//Dangerous since the callback will be called from this thread
+					if (entry.task->counter == 0 && entry.task->callback != nullptr)
+					{
+						entry.task->callback();
+						entry.task->callback = nullptr;
+					}
 				}
 			}
 			return nullptr;

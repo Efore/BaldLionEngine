@@ -148,7 +148,6 @@
   <ItemGroup>
     <ClInclude Include="src\BaldLion.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNAgent.h" />
-    <ClInclude Include="src\BaldLion\AI\HTN\HTNOperator.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNManager.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNTask.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNTypes.h" />
@@ -171,6 +170,7 @@
     <ClInclude Include="src\BaldLion\Core\Containers\HashMap.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\HashTable.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\Heap.h" />
+    <ClInclude Include="src\BaldLion\Core\Containers\LockFree.h" />
     <ClInclude Include="src\BaldLion\Core\Containers\Queue.h" />
     <ClInclude Include="src\BaldLion\Core\Core.h" />
     <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
@@ -224,6 +224,7 @@
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.h" />
     <ClInclude Include="src\BaldLion\Events\ApplicationEvent.h" />
     <ClInclude Include="src\BaldLion\Events\Event.h" />
+    <ClInclude Include="src\BaldLion\Events\GameplayEvent.h" />
     <ClInclude Include="src\BaldLion\Events\KeyboardInputEvent.h" />
     <ClInclude Include="src\BaldLion\Events\MouseEvent.h" />
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h" />
@@ -926,7 +927,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\HTN\HTNAgent.cpp" />
-    <ClCompile Include="src\BaldLion\AI\HTN\HTNOperator.cpp" />
     <ClCompile Include="src\BaldLion\AI\HTN\HTNManager.cpp" />
     <ClCompile Include="src\BaldLion\AI\HTN\HTNTask.cpp" />
     <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp" />
@@ -951,7 +951,6 @@
     <ClCompile Include="src\BaldLion\Core\Memory\MemoryManager.cpp" />
     <ClCompile Include="src\BaldLion\Core\Memory\StackAllocator.cpp" />
     <ClCompile Include="src\BaldLion\Core\StringId.cpp" />
-    <ClCompile Include="src\BaldLion\Core\Threading\Task.cpp" />
     <ClCompile Include="src\BaldLion\Core\Threading\TaskScheduler.cpp" />
     <ClCompile Include="src\BaldLion\Core\Time.cpp" />
     <ClCompile Include="src\BaldLion\Core\Variant.cpp" />

@@ -185,7 +185,7 @@ namespace BaldLion
 	template <typename... Args >
 	void BaldLion::Queue<T>::EmplaceBack(Args&&... args)
 	{
-		BL_ASSERT(m_capacity > 0, "Capacity is 0");
+		BL_ASSERT_LOG(m_capacity > 0, "Capacity is 0");
 
 		if (m_size == m_capacity)
 		{
@@ -198,7 +198,7 @@ namespace BaldLion
 	template <typename T>
 	void BaldLion::Queue<T>::PushBack(const T& element)
 	{
-		BL_ASSERT(m_capacity > 0, "Capacity is 0");
+		BL_ASSERT_LOG(m_capacity > 0, "Capacity is 0");
 
 		if (m_size == m_capacity)
 		{
@@ -211,7 +211,7 @@ namespace BaldLion
 	template <typename T>
 	void BaldLion::Queue<T>::PushBack(T&& element)
 	{
-		BL_ASSERT(m_capacity > 0, "Capacity is 0");
+		BL_ASSERT_LOG(m_capacity > 0, "Capacity is 0");
 
 		if (m_size == m_capacity)
 		{
@@ -230,21 +230,21 @@ namespace BaldLion
 	template <typename T>
 	T& BaldLion::Queue<T>::Front()
 	{
-		BL_ASSERT(m_size > 0, "Size is 0");		
+		BL_ASSERT_LOG(m_size > 0, "Size is 0");		
 		return m_elements[m_frontIndex];
 	}
 
 	template <typename T>
 	const T& BaldLion::Queue<T>::Front() const
 	{
-		BL_ASSERT(m_size > 0, "Size is 0");
+		BL_ASSERT_LOG(m_size > 0, "Size is 0");
 		return m_elements[m_frontIndex];
 	}
 
 	template <typename T>
 	void BaldLion::Queue<T>::Pop()
 	{
-		BL_ASSERT(m_size > 0, "Size is 0");
+		BL_ASSERT_LOG(m_size > 0, "Size is 0");
 
 		if (++m_frontIndex == m_size)
 		{

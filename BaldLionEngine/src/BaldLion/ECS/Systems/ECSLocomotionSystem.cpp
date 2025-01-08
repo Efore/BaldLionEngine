@@ -76,7 +76,7 @@ namespace BaldLion
 				}
 			}		
 
-			m_ecsManager->MarkEntityAsChangedInHierarchy(entityID);
+			m_ecsManager->MarkEntityTransformAsChangedInHierarchy(entityID);
 		}
 	}
 }
