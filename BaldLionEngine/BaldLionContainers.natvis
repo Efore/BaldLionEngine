@@ -22,4 +22,20 @@
       </ArrayItems>
     </Expand>
   </Type>
+  <Type Name="BaldLion::LockFreeStack&lt;*&gt;">
+    <DisplayString>{{size = {*(unsigned int *)&amp;m_size}}}</DisplayString>
+    <Expand>
+      <Item Name="[size]">*(unsigned int *)&amp;m_size</Item>
+      <ArrayItems>
+        <Size>*(unsigned int *)&amp;m_size</Size>
+        <ValuePointer>m_elements</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="BaldLion::StringId">
+    <DisplayString>{{value = {value}}</DisplayString>
+    <Expand>
+      <Item Name="String">BaldLion::StringIdToStrC(value)</Item>
+    </Expand>
+  </Type>
 </AutoVisualizer>

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "BaldLion/Events/Event.h"
 #include "BaldLion/Core/Time.h"
 
 namespace BaldLion
@@ -17,7 +16,6 @@ namespace BaldLion
 		virtual void OnPause();
 		virtual void OnResume();
 		virtual void OnImGuiRender() {}
-		virtual void OnEvent(Event& e) {}
 
 	protected:
 		Timer m_gameStateTimer;

@@ -27,13 +27,12 @@ namespace BaldLion
 
 			virtual void OnUpdate() override;
 			virtual void OnImGuiRender() override;
-			virtual void OnEvent(Event& e) override;
 
 		private:
 			void SetupEditorCamera();
 			void RenderDockSpace();
-			bool OnWindowResizeEvent(WindowResizeEvent& e);
-			bool OnKeyPressedEvent(KeyPressedEvent& e);
+			bool OnWindowResizedEvent(const EventEntry& e);
+			bool OnKeyPressedEvent(const EventEntry& e);
 
 			void OpenScene();
 			void SaveScene();

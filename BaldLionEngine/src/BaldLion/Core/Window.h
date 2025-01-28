@@ -3,7 +3,6 @@
 #include "blpch.h"
 
 #include "BaldLion/Core/Core.h"
-#include "BaldLion/Events/Event.h"
 
 namespace BaldLion
 {
@@ -26,8 +25,6 @@ namespace BaldLion
 	class  Window
 	{
 	public:
-		using EventCallbackFn = std::function<void(Event&)>;
-
 		virtual ~Window() {}
 
 		virtual void OnUpdate() = 0;
@@ -36,7 +33,6 @@ namespace BaldLion
 		virtual ui32 GetHeight() const = 0;
 
 		//Windows attributes
-		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 

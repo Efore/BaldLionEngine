@@ -11,12 +11,12 @@ namespace BaldLion
 		{
 		public:
 
-			enum class RendererPlatform
+			enum class RendererPlatform : ui8
 			{
 				None = 0, OpenGL = 1
 			};
 
-			enum class FaceCulling {
+			enum class FaceCulling : ui8 {
 				Front,
 				Back,
 				Both

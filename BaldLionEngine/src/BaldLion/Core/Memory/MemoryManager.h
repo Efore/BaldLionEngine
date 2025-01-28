@@ -12,7 +12,7 @@ namespace BaldLion
 {
 	namespace Memory
 	{
-		enum class AllocationType {
+		enum class AllocationType : ui8 {
 			FreeList_Main,
 			Linear_Frame,
 			Stack,
@@ -113,7 +113,7 @@ namespace BaldLion
 
 				if (allocation != nullptr) {
 					const std::lock_guard<std::mutex> lock(s_mutex);
-					s_allocationMap.emplace((void*)allocation, AllocationInfo(BL_STRING_TO_STRINGID(allocationName), allocationType, sizeof(T)));
+					s_allocationMap.emplace((void*)allocation, AllocationInfo(BL_STRING_TO_STRINGID(allocationName), allocationType, sizeof(T)));					
 				}
 			}
 
@@ -160,7 +160,7 @@ namespace BaldLion
 				if (result != nullptr)
 				{
 					const std::lock_guard<std::mutex> lock(s_mutex);
-					s_allocationMap.emplace((void*)result, AllocationInfo(BL_STRING_TO_STRINGID(allocationName), allocationType, size * sizeof(T)));
+					s_allocationMap.emplace((void*)result, AllocationInfo(BL_STRING_TO_STRINGID(allocationName), allocationType, size * sizeof(T)));					
 				}
 			}
 

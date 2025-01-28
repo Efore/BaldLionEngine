@@ -6,13 +6,13 @@
 
 namespace BaldLion::Physics
 {
-	enum class PhysicsShape {
+	enum class PhysicsShape : ui8 {
 		Box,
 		Sphere,
 		Capsule
 	};
 
-	enum class PhysicsBodyType {
+	enum class PhysicsBodyType : ui8 {
 		Dynamic,
 		Static,
 		Kinematic

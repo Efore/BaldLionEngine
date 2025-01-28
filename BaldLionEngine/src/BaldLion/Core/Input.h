@@ -4,8 +4,6 @@
 #include <glm/glm.hpp>
 #include "BaldLion/Core/Containers/HashTable.h"
 #include "BaldLion/Core/Containers/DynamicArray.h"
-#include "BaldLion/Events/KeyboardInputEvent.h"
-#include "BaldLion/Events/MouseEvent.h"
 #include "BaldLion/Core/Threading/TaskScheduler.h"
 
 namespace BaldLion
@@ -232,7 +230,7 @@ namespace BaldLion
 
 				bool operator== (const InputEntry& other)
 				{
-					bool inputCodesEqual = memcmp(&inputCodes, &other.inputCodes, sizeof(this->inputCodes)) == 0;
+					const bool inputCodesEqual = memcmp(&inputCodes, &other.inputCodes, sizeof(this->inputCodes)) == 0;
 					return inputCodesEqual && inputType == other.inputType && inputSource == other.inputSource;
 				}
 			};
@@ -240,6 +238,7 @@ namespace BaldLion
 		public:
 
 			static void Init();
+			static void Stop();
 
 			static InputValue GetActionValue(StringId inputAction);
 
@@ -252,7 +251,6 @@ namespace BaldLion
 			static void SerializeInputEntries();
 			static void AddInputEntry(StringId actionName, const InputEntry& entry);
 
-			static void Stop();
 
 		private:			
 

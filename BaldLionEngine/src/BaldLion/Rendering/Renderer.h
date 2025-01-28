@@ -17,7 +17,7 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		enum class RenderingGroup
+		enum class RenderingGroup : ui8
 		{
 			StaticMesh,
 			DynamicMesh,
@@ -48,7 +48,7 @@ namespace BaldLion
 			static void Init(ui32 width, ui32 height);
 			static void Stop();
 
-			static void OnWindowResize(ui32 width, ui32 height);
+			static void OnWindowResized(ui32 width, ui32 height);
 
 			static void BeginScene();
 			static void DrawScene();

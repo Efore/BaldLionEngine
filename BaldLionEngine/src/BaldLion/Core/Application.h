@@ -3,8 +3,7 @@
 #include "Core.h" 
 #include "Window.h"
 
-#include "BaldLion/Events/ApplicationEvent.h"
-#include "BaldLion/Events/GameplayEvent.h"
+#include "BaldLion/Core/EventManager.h"
 #include "BaldLion/Core/GameStateLayerStack.h"
 
 #include "BaldLion/ImGui/ImGuiLayer.h"
@@ -17,8 +16,6 @@ namespace BaldLion
 		virtual ~Application();
 
 		void Run();
-
-		void OnEvent(Event& e);
 
 		void PushLayer(GameStateLayer* layer);
 		void PushOverlay(GameStateLayer* overlay);
@@ -35,8 +32,8 @@ namespace BaldLion
 	protected:
 		Application(const std::string& applicationName);
 
-		bool OnWindowClose(WindowCloseEvent& e);
-		bool OnWindowMinimized(WindowMinimizeEvent& e);
+		bool OnWindowClose(const EventEntry& e);
+		bool OnWindowMinimized(const EventEntry& e);
 
 	protected:
 		Window* m_window;

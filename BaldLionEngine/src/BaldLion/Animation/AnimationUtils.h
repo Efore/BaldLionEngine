@@ -13,7 +13,7 @@ namespace BaldLion
 				bool boolean;
 			} Value;
 
-			enum class ValueType
+			enum class ValueType : ui8
 			{
 				Int = 0,
 				Float = 1,
@@ -23,7 +23,7 @@ namespace BaldLion
 
 		struct AnimatorCondition {
 
-			enum class ComparisonType {
+			enum class ComparisonType : ui8 {
 				Lower = 0,
 				LowerOrEqual = 1,
 				Equal = 2,

@@ -40,7 +40,8 @@ project "BaldLionEngine"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
-
+	debuggertype "NativeOnly"
+	
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
@@ -159,7 +160,8 @@ project "BaldLionGame"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
-
+	debuggertype "NativeOnly"
+	
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
@@ -247,6 +249,7 @@ project "BaldLionEditor"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
+	debuggertype "NativeOnly"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")

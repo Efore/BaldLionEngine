@@ -26,6 +26,8 @@ namespace BaldLion
 		void BaldLionGameLayer::OnActivate()
 		{
 			Physics::PhysicsManager::SetIsPhysicsActive(true);
+			EventManager::RegisterHandler("WindowResizedEvent", BL_BIND_FUNCTION(BaldLionGameLayer::OnWindowResizedEvent));
+			EventManager::RegisterHandler("KeyPressedEvent", BL_BIND_FUNCTION(BaldLionGameLayer::OnKeyPressedEvent));
 
 			SceneManagement::SceneManager::OpenScene(SceneManagement::SceneManager::GetMainScenePathFile().c_str());
 
@@ -45,7 +47,8 @@ namespace BaldLion
 
 		void BaldLionGameLayer::OnDeactivate()
 		{		
-			
+			EventManager::UnregisterHandler("WindowResizedEvent", BL_BIND_FUNCTION(BaldLionGameLayer::OnWindowResizedEvent));
+			EventManager::UnregisterHandler("KeyPressedEvent", BL_BIND_FUNCTION(BaldLionGameLayer::OnKeyPressedEvent));
 		}
 
 		void BaldLionGameLayer::OnUpdate()
@@ -79,29 +82,21 @@ namespace BaldLion
 
 		}
 
-		void BaldLionGameLayer::OnEvent(Event& e)
+		bool BaldLionGameLayer::OnWindowResizedEvent(const EventEntry& e)
 		{
-			BaldLion::EventDispatcher dispatcher(e);
-			
-			dispatcher.Dispatch<BaldLion::WindowResizeEvent>(BL_BIND_FUNCTION(BaldLionGameLayer::OnWindowResizeEvent));
-			dispatcher.Dispatch<BaldLion::KeyPressedEvent>(BL_BIND_FUNCTION(BaldLionGameLayer::OnKeyPressedEvent));
-		}
-
-		bool BaldLionGameLayer::OnWindowResizeEvent(WindowResizeEvent& e)
-		{
-			ui32 width = e.GetWidth();
-			ui32 height = e.GetHeight();
+			ui32 width = e.eventData1;
+			ui32 height = e.eventData1;
 
 			ECS::SingletonSystems::CameraSystem::SetCameraSize((float)width, (float)height);
 
-			Renderer::OnWindowResize(width, height);
+			Renderer::OnWindowResized(width, height);
 
 			return true;
 		}
 		
-		bool BaldLionGameLayer::OnKeyPressedEvent(KeyPressedEvent& e)
+		bool BaldLionGameLayer::OnKeyPressedEvent(const EventEntry& e)
 		{
-			if (e.GetRepeatCount() > 0)
+			if ((ui32)e.eventData2 > 0)
 				return false;			
 
 			return false;

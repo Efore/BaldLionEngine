@@ -95,6 +95,9 @@ namespace BaldLion {
 
 			void RemoveComponentFromPool(ECSComponentType componentType, const ECSComponent* componentToRemove);
 
+			template<typename T>
+			void InternalRemoveComponentFromPool(ECSComponentType componentType, const T* componentToRemove);
+
 			void FillEntityHierarchyList(ECSEntityID rootID, DynamicArray<ECSEntityID>& entitiesIDlist);
 			void InternalRemoveEntity(ECSEntityID entityID);
 
@@ -129,6 +132,38 @@ namespace BaldLion {
 			static ui32 s_entityIDProvider;
 			static ui32 s_componentIDProvider;
 		};
+
+		template<typename T>
+		void BaldLion::ECS::ECSManager::InternalRemoveComponentFromPool(ECSComponentType componentType, const T* componentToRemove)
+		{
+			static_assert(std::is_base_of<ECSComponent, T>::value, "T must inherit from Component");
+			DynamicArray<T>* componentPool = static_cast<DynamicArray<T>*>(m_componentsPool[(ui32)componentType]);
+			
+			i32 componentIndexInPool = componentPool->FindIndex(*componentToRemove);
+			ECSComponentLookUp* componentLookUp = nullptr;
+
+			//Since we will use remove at fast, we need to account for the swapped element and make sure that the componentLookUp that is 
+			//referenzing it is corrected
+			if (componentPool->Size() > 1 && componentIndexInPool < (componentPool->Size() - 1))
+			{
+				T* switchingComponent = &(componentPool->Back());
+				BL_HASHTABLE_FOR(m_entityComponents, iterator)
+				{
+					if (iterator.GetValue()[(ui32)componentType] == switchingComponent)
+					{
+						componentLookUp = &iterator.GetValue();
+						break;
+					}
+				}
+			}
+
+			componentPool->RemoveAtFast(componentIndexInPool);
+
+			if (componentLookUp != nullptr)
+			{
+				componentLookUp->Set(componentType, static_cast<ECSComponent*>(&(*componentPool)[componentIndexInPool]));
+			}
+		}
 
 		template <typename T>
 		const DynamicArray<T>*

@@ -3,7 +3,6 @@
 #include "HTNTask.h"
 #include "HTNAgent.h"
 #include "BaldLion/Core/Containers/HashMap.h"
-#include "BaldLion/Events/GameplayEvent.h"
 
 namespace BaldLion::AI::HTN
 {
@@ -20,8 +19,6 @@ namespace BaldLion::AI::HTN
 	{
 		//static void GenerateTask(HTNTask::TaskType TaskType, )
 	public:
-		using EventDelegate = std::function<void(Event&)>;
-
 		static void Init();
 		static void Stop();
 
@@ -31,7 +28,6 @@ namespace BaldLion::AI::HTN
 		static const HTNTask& GetTask(ui32 taskIndex);
 		static const HTNOperator& GetOperator(HTNOperatorType operatorType);
 
-		static void ThrowOperatorEvent(GameplayEvent& e);
 
 	private:
 		static HashMap<StringId, HTNDomain> s_definedDomains;

@@ -214,22 +214,45 @@ namespace BaldLion
 
 		void ECSManager::RemoveComponentFromPool(ECSComponentType componentType, const ECSComponent* componentToRemove)
 		{
-			DynamicArray<ECSComponent>* componentPool = (DynamicArray<ECSComponent>*)m_componentsPool[(ui32)componentType];
-
-			i32 componentIndexInPool = componentPool->FindIndex(*componentToRemove);
-			componentPool->RemoveAtFast(componentIndexInPool);
-
-			if (componentPool->Size() > 0)
+			switch(componentType)
 			{
-				ECSComponent* switchedComponent = &(*componentPool)[componentIndexInPool];
-				BL_HASHTABLE_FOR(m_entityComponents, iterator)
-				{
-					if (iterator.GetValue()[(ui32)componentType] == switchedComponent)
-					{
-						iterator.GetValue().Set(componentType, switchedComponent);
-						break;
-					}
-				}
+			case ECSComponentType::Transform:
+				InternalRemoveComponentFromPool<ECSTransformComponent>(componentType, (ECSTransformComponent*)componentToRemove);
+				break;
+			case ECSComponentType::ProjectionCamera:
+				InternalRemoveComponentFromPool<ECSProjectionCameraComponent>(componentType, (ECSProjectionCameraComponent*)componentToRemove);
+				break;
+			case ECSComponentType::Mesh:
+				InternalRemoveComponentFromPool<ECSMeshComponent>(componentType, (ECSMeshComponent*)componentToRemove);
+				break;
+			case ECSComponentType::Skeleton:
+				InternalRemoveComponentFromPool<ECSSkeletonComponent>(componentType, (ECSSkeletonComponent*)componentToRemove);
+				break;
+			case ECSComponentType::DirectionalLight:
+				InternalRemoveComponentFromPool<ECSDirectionalLightComponent>(componentType, (ECSDirectionalLightComponent*)componentToRemove);
+				break;
+			case ECSComponentType::Animation:
+				InternalRemoveComponentFromPool<ECSAnimationComponent>(componentType, (ECSAnimationComponent*)componentToRemove);
+				break;
+			case ECSComponentType::PhysicsBody:
+				InternalRemoveComponentFromPool<ECSPhysicsBodyComponent>(componentType, (ECSPhysicsBodyComponent*)componentToRemove);
+				break;
+			case ECSComponentType::NavMeshAgent:
+				InternalRemoveComponentFromPool<ECSNavMeshAgentComponent>(componentType, (ECSNavMeshAgentComponent*)componentToRemove);
+				break;
+			case ECSComponentType::Locomotion:
+				InternalRemoveComponentFromPool<ECSLocomotionComponent>(componentType, (ECSLocomotionComponent*)componentToRemove);
+				break;
+			case ECSComponentType::CameraFollow:
+				InternalRemoveComponentFromPool<ECSCameraFollowComponent>(componentType, (ECSCameraFollowComponent*)componentToRemove);
+				break;
+			case ECSComponentType::PlayerController:
+				InternalRemoveComponentFromPool<ECSPlayerControllerComponent>(componentType, (ECSPlayerControllerComponent*)componentToRemove);
+				break;
+			case ECSComponentType::Count:
+				break;
+			default:
+				break;
 			}
 		}
 

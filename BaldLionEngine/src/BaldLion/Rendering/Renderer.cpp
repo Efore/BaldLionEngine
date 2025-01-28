@@ -98,7 +98,7 @@ namespace BaldLion
 			DebugDrawRenderProvider::Destroy(s_debugDrawRender);
 		}
 
-		void Renderer::OnWindowResize(ui32 width, ui32 height)
+		void Renderer::OnWindowResized(ui32 width, ui32 height)
 		{
 			s_rendererPlatformInterface->SetViewport(0, 0, width, height);			
 			s_framebuffer->Resize(width, height);

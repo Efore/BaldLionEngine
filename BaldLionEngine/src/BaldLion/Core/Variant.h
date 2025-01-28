@@ -5,14 +5,17 @@
 
 namespace BaldLion
 {	
-	enum class VariantType
+	enum class VariantType : ui16
 	{
 		Unknown,
 		Bool,
-		Int,
+		Int8,
 		UInt8,
+		Int16,
 		UInt16,
+		Int32,
 		UInt32,
+		Int64,
 		UInt64,
 		Float,
 		Vector2,
@@ -21,7 +24,7 @@ namespace BaldLion
 		StringID
 	};
 	
-	enum class VariantComparisonType {
+	enum class VariantComparisonType : ui8 {
 		Lower = 0,
 		LowerOrEqual = 1,
 		Equal = 2,
@@ -43,10 +46,13 @@ namespace BaldLion
 
 		Variant();
 		Variant(bool val);
-		Variant(i32 val);
 		Variant(ui8 val);
+		Variant(i8 val);
+		Variant(i16 val);
 		Variant(ui16 val);
+		Variant(i32 val);
 		Variant(ui32 val);
+		Variant(const i64& val);
 		Variant(const ui64& val);
 		Variant(float val);
 		Variant(const glm::vec2& val);
@@ -54,10 +60,13 @@ namespace BaldLion
 		Variant(const glm::quat& val);
 
 		Variant operator=(bool val);
-		Variant operator=(i32 val);
+		Variant operator=(i8 val);
 		Variant operator=(ui8 val);
+		Variant operator=(i16 val);
 		Variant operator=(ui16 val);
+		Variant operator=(i32 val);
 		Variant operator=(ui32 val);
+		Variant operator=(const i64& val);
 		Variant operator=(const ui64& val);
 		Variant operator=(float val);
 		Variant operator=(const glm::vec2& val);
@@ -65,10 +74,13 @@ namespace BaldLion
 		Variant operator=(const glm::quat& val);
 
 		operator bool() const;
-		operator i32() const;
+		operator i8() const;
 		operator ui8() const;
+		operator i16() const;
 		operator ui16() const;
+		operator i32() const;
 		operator ui32() const;
+		operator i64() const;
 		operator ui64() const;
 		operator float() const;
 		operator glm::vec2() const;
@@ -93,10 +105,13 @@ namespace BaldLion
 		union VariantValue
 		{
 			bool Bool;
-			i32 Int;
+			i8 Int8;
 			ui8 UInt8;
+			i16 Int16;
 			ui16 UInt16;
+			i32 Int32;
 			ui32 UInt32;
+			i64 Int64;
 			ui64 UInt64;
 			float Float;
 			glm::vec2 Vec2;

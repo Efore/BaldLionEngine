@@ -16,13 +16,12 @@ namespace BaldLion
 			virtual void OnDeactivate() override;
 
 			virtual void OnUpdate() override;
-			virtual void OnImGuiRender() override;
-			virtual void OnEvent(Event& e) override;			
+			virtual void OnImGuiRender() override;		
 
 		private:
 
-			bool OnWindowResizeEvent(WindowResizeEvent& e);
-			bool OnKeyPressedEvent(KeyPressedEvent& e);
+			bool OnWindowResizedEvent(const EventEntry& e);
+			bool OnKeyPressedEvent(const EventEntry& e);
 
 			
 		private:

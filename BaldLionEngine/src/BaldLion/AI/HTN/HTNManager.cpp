@@ -122,9 +122,4 @@ namespace BaldLion::AI::HTN
 		return s_definedOperators.Get(operatorType);
 	}
 
-	void HTNManager::ThrowOperatorEvent(GameplayEvent& e)
-	{
-		
-	}
-
 }

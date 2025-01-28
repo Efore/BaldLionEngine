@@ -40,6 +40,9 @@ namespace BaldLion
 			m_isActive = true;
 			Physics::PhysicsManager::SetIsPhysicsActive(false);
 
+			EventManager::RegisterHandler("WindowResizedEvent", BL_BIND_FUNCTION(BaldLionEditorLayer::OnWindowResizedEvent));
+			EventManager::RegisterHandler("KeyPressedEvent", BL_BIND_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
+
 			if (SceneManagement::SceneManager::GetMainScenePathFile().empty() || 
 				!SceneManagement::SceneManager::OpenScene(SceneManagement::SceneManager::GetMainScenePathFile().c_str()))
 			{
@@ -59,6 +62,8 @@ namespace BaldLion
 		void BaldLionEditorLayer::OnDeactivate()
 		{		
 			m_isActive = false;
+			EventManager::UnregisterHandler("WindowResizedEvent", BL_BIND_FUNCTION(BaldLionEditorLayer::OnWindowResizedEvent));
+			EventManager::UnregisterHandler("KeyPressedEvent", BL_BIND_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
 		}
 
 		void BaldLionEditorLayer::OnUpdate()
@@ -95,14 +100,6 @@ namespace BaldLion
 			m_resourcesPanel.OnImGuiRender(deltaTime);
 			m_animatorPanel.OnImGuiRender(deltaTime);
 			m_navigationPanel.OnImGuiRender(deltaTime);
-		}
-
-		void BaldLionEditorLayer::OnEvent(Event& e)
-		{
-			BaldLion::EventDispatcher dispatcher(e);
-			
-			dispatcher.Dispatch<BaldLion::WindowResizeEvent>(BL_BIND_FUNCTION(BaldLionEditorLayer::OnWindowResizeEvent));
-			dispatcher.Dispatch<BaldLion::KeyPressedEvent>(BL_BIND_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
 		}
 
 		void BaldLionEditorLayer::SetupEditorCamera()
@@ -227,24 +224,24 @@ namespace BaldLion
 			ImGui::End();
 		}
 
-		bool BaldLionEditorLayer::OnWindowResizeEvent(WindowResizeEvent& e)
+		bool BaldLionEditorLayer::OnWindowResizedEvent(const EventEntry& e)
 		{
-			ui32 width = e.GetWidth();
-			ui32 height = e.GetHeight();
+			ui32 width = e.eventData1;
+			ui32 height = e.eventData2;
 
 			ECS::SingletonSystems::CameraSystem::SetCameraSize((float)width, (float)height);
 
-			Renderer::OnWindowResize(width, height);
+			Renderer::OnWindowResized(width, height);
 
 			return true;
 		}
 		
-		bool BaldLionEditorLayer::OnKeyPressedEvent(KeyPressedEvent& e)
+		bool BaldLionEditorLayer::OnKeyPressedEvent(const EventEntry& e)
 		{
-			if (e.GetRepeatCount() > 0)
+			if ((ui32)e.eventData2 > 0)
 				return false;
 
-			switch (e.GetKeyCode())
+			switch ((ui32)e.eventData1)
 			{
 			case BL_KEY_S:
 				if (Input::PlatformInput::IsKeyPressed(BL_KEY_LEFT_CONTROL) || Input::PlatformInput::IsKeyPressed(BL_KEY_RIGHT_CONTROL))
@@ -279,11 +276,11 @@ namespace BaldLion
 				break;
 			}
 
-			m_sceneHierarchyPanel.OnKeyPressed(e.GetKeyCode());
-			m_editorViewportPanel.OnKeyPressed(e.GetKeyCode());
-			m_entityPropertiesPanel.OnKeyPressed(e.GetKeyCode());
-			m_memoryAllocationPanel.OnKeyPressed(e.GetKeyCode());
-			m_renderingDataPanel.OnKeyPressed(e.GetKeyCode());
+			m_sceneHierarchyPanel.OnKeyPressed((ui32)e.eventData1);
+			m_editorViewportPanel.OnKeyPressed((ui32)e.eventData1);
+			m_entityPropertiesPanel.OnKeyPressed((ui32)e.eventData1);
+			m_memoryAllocationPanel.OnKeyPressed((ui32)e.eventData1);
+			m_renderingDataPanel.OnKeyPressed((ui32)e.eventData1);
 
 			return false;
 		}

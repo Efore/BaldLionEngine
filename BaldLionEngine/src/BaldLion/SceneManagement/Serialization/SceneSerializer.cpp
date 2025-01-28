@@ -429,7 +429,7 @@ namespace BaldLion
 
 			case BaldLion::ECS::ECSComponentType::Animation:
 			{
-				StringId animatorID = yamlComponent[YAML_KEY_ANIMATOR_ID].as<StringId>();
+				StringId animatorID = yamlComponent[YAML_KEY_ANIMATOR_ID].as<ui32>();
 				StringId initAnimationID = Animation::AnimationManager::GetAnimator(animatorID)->GetInitialAnimationID();
 
 				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSAnimationComponent>(ECS::ECSComponentType::Animation, animatorID, initAnimationID);

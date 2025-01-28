@@ -93,7 +93,6 @@ namespace BaldLion
 				new_block->size = bestFitBlock->size - bestFitTotalSize;
 				new_block->nextBlock = bestFitBlock->nextBlock;
 
-
 				if (bestFitPrevBlock != nullptr)
 					bestFitPrevBlock->nextBlock = new_block;
 				else

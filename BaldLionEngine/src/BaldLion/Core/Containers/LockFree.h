@@ -5,20 +5,43 @@ namespace BaldLion
 {
 	using namespace Memory;
 
-	template <typename T, uint64_t Capacity> 
+	template <typename T, ui32 capacity> 
 	class LockFreeStack
 	{
 	public:
 		LockFreeStack() = default;
 
-		LockFreeStack(Memory::AllocationType allocationType)
+		LockFreeStack(Memory::AllocationType allocationType) : m_size(0)
+		{			
+			m_elements = MemoryManager::NewArray<T>("Dynamic array", allocationType, capacity);
+		}
+
+		LockFreeStack& operator= (const LockFreeStack& other)
 		{
-			m_elements = MemoryManager::NewArray<T>("Dynamic array", allocationType, Capacity);
-			m_capacity = Capacity;
-			m_size = 0u;
+			if (&other == this)
+				return *this;
+
+			if (m_elements != nullptr)
+			{
+				for (ui32 i = 0; i < m_size; ++i)
+				{
+					m_elements[i].~T();
+				}
+				MemoryManager::DeleteNoDestructor(m_elements);
+			}
+
+			m_elements = other.m_elements;
+			m_size.store(other.m_size);
+
+			return *this;
 		}
 
 		~LockFreeStack()
+		{
+
+		}
+
+		void Delete()
 		{
 			for (ui32 i = 0; i < m_size; ++i)
 			{
@@ -30,27 +53,28 @@ namespace BaldLion
 
 		inline void PushBack(const T& element)
 		{
-			const uint64_t oldSize = m_size.fetch_add(1u, std::memory_order_relaxed);
+			BL_ASSERT_LOG(m_size < capacity, "Capacity reached");
+			const ui32 oldSize = m_size.fetch_add(1u, std::memory_order_relaxed);
 			m_elements[oldSize] = element;
 		}
 
 		inline T PopBack()
 		{
-			const uint64_t oldSize = m_size.fetch_sub(1u, std::memory_order_relaxed);
+			const ui32 oldSize = m_size.fetch_sub(1u, std::memory_order_relaxed);
 			return m_elements[oldSize - 1u];
 		}
 
-		inline void Resize(uint64_t size)
+		inline void Resize(ui32 size)
 		{
 			BL_ASSERT_LOG(size <= Capacity, "Size cannot be bigger than capacity");
 
 			// Free old elements
 			if (size < m_size)
 			{
-				const uint64_t elementsToFree = m_size - size;
+				const ui32 elementsToFree = m_size - size;
 				T* ptr = &m_elements[size];
 
-				for (uint64_t i = 0u; i < elementsToFree; ++i)
+				for (ui32 i = 0u; i < elementsToFree; ++i)
 					(ptr++)->~T();
 			}
 
@@ -67,6 +91,11 @@ namespace BaldLion
 			return m_size == 0u;
 		}
 
+		inline bool IsFull() const 
+		{
+			return m_size == capacity;
+		}
+
 		inline T& Back()
 		{
 			BL_ASSERT(!Empty());
@@ -79,12 +108,12 @@ namespace BaldLion
 			return m_elements[m_size - 1u];
 		}
 
-		inline uint64_t Capacity() const
+		inline ui32 Capacity() const
 		{
-			return m_capacity;
+			return capacity;
 		}
 
-		inline uint64_t Size() const
+		inline ui32 Size() const
 		{
 			return m_size;
 		}
@@ -109,30 +138,29 @@ namespace BaldLion
 			return &m_elements[m_size];
 		}
 
-		inline T& operator[](uint64_t index)
+		inline T& operator[](ui32 index)
 		{
 			BL_ASSERT(index < m_size);
 			return m_elements[index];
 		}
 
-		inline T& operator[](uint64_t index) const
+		inline T& operator[](ui32 index) const
 		{
 			BL_ASSERT(index < m_size);
 			return m_elements[index];
 		}
 
 		inline void Insert(const DynamicArray<T>& array)
-		{
-			const uint64_t oldSize =
+		{	
+			const ui32 oldSize =
 				m_size.fetch_add(array.Size(), std::memory_order_relaxed);
-			BL_ASSERT(oldSize + array.Size() <= m_capacity);
+			BL_ASSERT(oldSize + array.Size() <= Capacity);
 			memcpy(&m_elements[oldSize], array.Data(), array.Size() * sizeof(T));
 		}
 
 		T* m_elements = nullptr;
 
 	private:
-		uint64_t m_capacity;
-		std::atomic<uint64_t> m_size;
+		std::atomic<ui32> m_size;
 	};
 }

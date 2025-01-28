@@ -1,10 +1,41 @@
 #pragma once
 #include "Core.h"
 
-typedef ui32 StringId; 
+namespace BaldLion
+{
+	struct StringId
+	{
+		StringId() = default;
 
+		StringId(ui32 value) : value(value){}
+
+		StringId& operator=(ui32 value)
+		{
+			value = value;
+			return *this;
+		}
+
+		operator ui32() const
+		{
+			return value;
+		}
+
+	private:
+		ui32 value;
+
+	};
+}
 namespace std
 {
+	template <>
+	struct hash<BaldLion::StringId>
+	{
+		size_t operator()(BaldLion::StringId stringID) const
+		{
+			return std::hash<i32>()((ui32)stringID);
+		}
+	};
+
 	template <>
 	struct hash<const char *>
 	{

@@ -12,25 +12,25 @@ namespace BaldLion
 
 		class Material : public ResourceManagement::Resource {
 		public:
-			enum class BlendMode {
+			enum class BlendMode : ui8 {
 				None,
 				Alpha,
 				Aditive
 			};
 
-			enum class DepthBufferMode {
+			enum class DepthBufferMode : ui8 {
 				NoDepth,
 				TestOnly,
 				TestAndWrite
 			};
 
-			enum class CullingMode {
+			enum class CullingMode : ui8 {
 				Back,
 				Front,
 				None
 			};
 
-			enum class TextureSlots
+			enum class TextureSlots : ui8
 			{
 				AmbientTexture = 0,
 				DiffuseTexture = 1,
@@ -40,7 +40,7 @@ namespace BaldLion
 				ShadowMap = 5
 			};
 			
-			enum class ShadowsSettingsBitMask
+			enum class ShadowsSettingsBitMask : ui8
 			{
 				CastShadows = 1 << 0,
 				ReceiveShadows = 1 << 1

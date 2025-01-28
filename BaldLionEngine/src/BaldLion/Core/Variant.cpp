@@ -16,12 +16,12 @@ namespace BaldLion
 	{
 		m_valueType = VariantType::Bool;
 		memcpy(&m_value, &val, sizeof(bool));
-	}
+	}	
 
-	Variant::Variant(i32 val)
+	Variant::Variant(i8 val)
 	{
-		m_valueType = VariantType::Int;
-		memcpy(&m_value, &val, sizeof(i32));
+		m_valueType = VariantType::Int8;
+		memcpy(&m_value, &val, sizeof(i8));
 	}
 
 	Variant::Variant(ui8 val)
@@ -30,16 +30,34 @@ namespace BaldLion
 		memcpy(&m_value, &val, sizeof(ui8));
 	}
 
+	Variant::Variant(i16 val)
+	{
+		m_valueType = VariantType::Int16;
+		memcpy(&m_value, &val, sizeof(i16));
+	}
+
 	Variant::Variant(ui16 val)
 	{
 		m_valueType = VariantType::UInt16;
 		memcpy(&m_value, &val, sizeof(ui16));
 	}
 
+	Variant::Variant(i32 val)
+	{
+		m_valueType = VariantType::Int32;
+		memcpy(&m_value, &val, sizeof(i32));
+	}
+
 	Variant::Variant(ui32 val)
 	{
 		m_valueType = VariantType::UInt32;
 		memcpy(&m_value, &val, sizeof(ui32));
+	}
+
+	Variant::Variant(const i64& val)
+	{
+		m_valueType = VariantType::Int64;
+		memcpy(&m_value, &val, sizeof(i64));
 	}
 
 	Variant::Variant(const ui64& val)
@@ -79,10 +97,10 @@ namespace BaldLion
 		return *this;
 	}
 
-	Variant Variant::operator=(i32 val)
+	Variant Variant::operator=(i8 val)
 	{
-		m_valueType = VariantType::Int;
-		memcpy(&m_value, &val, sizeof(i32));
+		m_valueType = VariantType::Int8;
+		memcpy(&m_value, &val, sizeof(i8));
 		return *this;
 	}
 
@@ -93,6 +111,13 @@ namespace BaldLion
 		return *this;
 	}
 
+	Variant Variant::operator=(i16 val)
+	{
+		m_valueType = VariantType::Int16;
+		memcpy(&m_value, &val, sizeof(i16));
+		return *this;
+	}
+
 	Variant Variant::operator=(ui16 val)
 	{
 		m_valueType = VariantType::UInt16;
@@ -100,10 +125,24 @@ namespace BaldLion
 		return *this;
 	}
 
+	Variant Variant::operator=(i32 val)
+	{
+		m_valueType = VariantType::Int32;
+		memcpy(&m_value, &val, sizeof(i32));
+		return *this;
+	}
+
 	Variant Variant::operator=(ui32 val)
 	{
 		m_valueType = VariantType::UInt32;
 		memcpy(&m_value, &val, sizeof(ui32));
+		return *this;
+	}
+
+	Variant Variant::operator=(const i64& val)
+	{
+		m_valueType = VariantType::Int64;
+		memcpy(&m_value, &val, sizeof(i64));
 		return *this;
 	}
 
@@ -148,24 +187,18 @@ namespace BaldLion
 		return As<bool>();
 	}
 
-	Variant::operator i32() const
+	Variant::operator i8() const
 	{
 		switch (m_valueType)
 		{
-		case VariantType::Bool:		
-			return As<bool>() ? 1 : 0;		
+		case VariantType::Bool:
+			return As<bool>() ? 1 : 0;
 			break;
-		case VariantType::Int:
-			return As<i32>();
+		case VariantType::Int8:
+			return As<i8>();
 			break;
 		case VariantType::UInt8:
-			return (i32)As<ui8>();
-			break;
-		case VariantType::UInt16:
-			return (i32)As<ui16>();
-			break;
-		case VariantType::Float:
-			return (i32)As<float>();
+			return (i8)As<ui8>();
 			break;
 		default:
 			BL_ASSERT_LOG(false, "Incorrect Variant type");
@@ -182,8 +215,38 @@ namespace BaldLion
 		case VariantType::Bool:
 			return As<bool>() ? 1 : 0;
 			break;
+		case VariantType::Int8:
+			return (ui8)As<i8>();
+			break;
 		case VariantType::UInt8:
 			return As<ui8>();
+			break;
+		default:
+			BL_ASSERT_LOG(false, "Incorrect Variant type");
+			break;
+		}
+
+		return 0;
+	}
+
+	Variant::operator i16() const
+	{
+		switch (m_valueType)
+		{
+		case VariantType::Bool:
+			return As<bool>() ? 1 : 0;
+			break;
+		case VariantType::Int8:
+			return (i16)As<i8>();
+			break;
+		case VariantType::UInt8:
+			return (i16)As<ui8>();
+			break;
+		case VariantType::Int16:
+			return As<i16>();
+			break;
+		case VariantType::UInt16:
+			return (i16)As<ui16>();
 			break;
 		default:
 			BL_ASSERT_LOG(false, "Incorrect Variant type");
@@ -200,11 +263,53 @@ namespace BaldLion
 		case VariantType::Bool:
 			return As<bool>() ? 1 : 0;
 			break;
+		case VariantType::Int8:
+			return (ui16)As<i8>();
+			break;
 		case VariantType::UInt8:
 			return (ui16)As<ui8>();
 			break;
+		case VariantType::Int16:
+			return (ui16)As<i16>();
+			break;
 		case VariantType::UInt16:
 			return As<ui16>();
+			break;
+		default:
+			BL_ASSERT_LOG(false, "Incorrect Variant type");
+			break;
+		}
+
+		return 0;
+	}
+
+	Variant::operator i32() const
+	{
+		switch (m_valueType)
+		{
+		case VariantType::Bool:		
+			return As<bool>() ? 1 : 0;		
+			break;
+		case VariantType::Int8:
+			return (i32)As<i8>();
+			break;
+		case VariantType::UInt8:
+			return (i32)As<ui8>();
+			break;
+		case VariantType::Int16:
+			return (i32)As<i16>();
+			break;
+		case VariantType::UInt16:
+			return (i32)As<ui16>();
+			break;
+		case VariantType::Int32:
+			return As<i32>();
+			break;
+		case VariantType::UInt32:
+			return (i32)As<ui32>();
+			break;
+		case VariantType::Float:
+			return (i32)As<float>();
 			break;
 		default:
 			BL_ASSERT_LOG(false, "Incorrect Variant type");
@@ -221,17 +326,68 @@ namespace BaldLion
 		case VariantType::Bool:
 			return As<bool>() ? 1 : 0;
 			break;
+		case VariantType::Int8:
+			return (ui32)As<i8>();
+			break;
 		case VariantType::UInt8:
 			return (ui32)As<ui8>();
+			break;
+		case VariantType::Int16:
+			return (ui32)As<i16>();
 			break;
 		case VariantType::UInt16:
 			return (ui32)As<ui16>();
 			break;
+		case VariantType::Int32:
+			return (ui32)As<i32>();
+			break;
 		case VariantType::UInt32:
 			return As<ui32>();
 			break;
+		case VariantType::Float:
+			return (ui32)As<float>();
+			break;
+		default:
+			BL_ASSERT_LOG(false, "Incorrect Variant type");
+			break;
+		}
+
+		return 0;
+	}
+
+	Variant::operator i64() const
+	{
+		switch (m_valueType)
+		{
+		case VariantType::Bool:
+			return As<bool>() ? 1 : 0;
+			break;
+		case VariantType::Int8:
+			return (i64)As<i8>();
+			break;
+		case VariantType::UInt8:
+			return (i64)As<ui8>();
+			break;
+		case VariantType::Int16:
+			return (i64)As<i16>();
+			break;
+		case VariantType::UInt16:
+			return (i64)As<ui16>();
+			break;
+		case VariantType::Int32:
+			return (i64)As<i32>();
+			break;
+		case VariantType::UInt32:
+			return (i64)As<ui32>();
+			break;
+		case VariantType::Int64:
+			return As<i64>();
+			break;
+		case VariantType::UInt64:
+			return (i64)As<ui64>();
+			break;
 		case VariantType::StringID:
-			return As<ui32>();
+			return (i64)As<ui32>();
 			break;
 		default:
 			BL_ASSERT_LOG(false, "Incorrect Variant type");
@@ -248,17 +404,26 @@ namespace BaldLion
 		case VariantType::Bool:
 			return As<bool>() ? 1 : 0;
 			break;
-		case VariantType::Int:
-			return (ui64)As<i32>() ? 1 : 0;
+		case VariantType::Int8:
+			return (ui64)As<i8>();
 			break;
 		case VariantType::UInt8:
 			return (ui64)As<ui8>();
 			break;
+		case VariantType::Int16:
+			return (ui64)As<i16>();
+			break;
 		case VariantType::UInt16:
 			return (ui64)As<ui16>();
 			break;
+		case VariantType::Int32:
+			return (ui64)As<i32>();
+			break;
 		case VariantType::UInt32:
 			return (ui64)As<ui32>();
+			break;
+		case VariantType::Int64:
+			return (ui64)As<i64>();
 			break;
 		case VariantType::UInt64:
 			return As<ui64>();
@@ -308,17 +473,26 @@ namespace BaldLion
 		case VariantType::Bool:
 			return false;
 			break;
-		case VariantType::Int:
-			return As<i32>() < other.As<i32>();
+		case VariantType::Int8:
+			return As<i8>() < other.As<i8>();
 			break;
 		case VariantType::UInt8:
 			return As<ui8>() < other.As<ui8>();
 			break;
+		case VariantType::Int16:
+			return As<i16>() < other.As<i16>();
+			break;
 		case VariantType::UInt16:
 			return As<ui16>() < other.As<ui16>();
 			break;
+		case VariantType::Int32:
+			return As<i32>() < other.As<i32>();
+			break;
 		case VariantType::UInt32:
 			return As<ui32>() < other.As<ui32>();
+			break;
+		case VariantType::Int64:
+			return As<i64>() < other.As<i64>();
 			break;
 		case VariantType::UInt64:
 			return As<ui64>() < other.As<ui64>();
@@ -353,17 +527,26 @@ namespace BaldLion
 		case VariantType::Bool:
 			return false;
 			break;
-		case VariantType::Int:
-			return As<i32>() <= other.As<i32>();
+		case VariantType::Int8:
+			return As<i8>() <= other.As<i8>();
 			break;
 		case VariantType::UInt8:
 			return As<ui8>() <= other.As<ui8>();
 			break;
+		case VariantType::Int16:
+			return As<i16>() <= other.As<i16>();
+			break;
 		case VariantType::UInt16:
 			return As<ui16>() <= other.As<ui16>();
 			break;
+		case VariantType::Int32:
+			return As<i32>() <= other.As<i32>();
+			break;
 		case VariantType::UInt32:
 			return As<ui32>() <= other.As<ui32>();
+			break;
+		case VariantType::Int64:
+			return As<i64>() <= other.As<i64>();
 			break;
 		case VariantType::UInt64:
 			return As<ui64>() <= other.As<ui64>();
@@ -398,17 +581,26 @@ namespace BaldLion
 		case VariantType::Bool:
 			return false;
 			break;
-		case VariantType::Int:
-			return As<i32>() >= other.As<i32>();
+		case VariantType::Int8:
+			return As<i8>() >= other.As<i8>();
 			break;
 		case VariantType::UInt8:
 			return As<ui8>() >= other.As<ui8>();
 			break;
+		case VariantType::Int16:
+			return As<i16>() >= other.As<i16>();
+			break;
 		case VariantType::UInt16:
 			return As<ui16>() >= other.As<ui16>();
 			break;
+		case VariantType::Int32:
+			return As<i32>() >= other.As<i32>();
+			break;
 		case VariantType::UInt32:
 			return As<ui32>() >= other.As<ui32>();
+			break;
+		case VariantType::Int64:
+			return As<i64>() >= other.As<i64>();
 			break;
 		case VariantType::UInt64:
 			return As<ui64>() >= other.As<ui64>();
@@ -443,17 +635,26 @@ namespace BaldLion
 		case VariantType::Bool:
 			return false;
 			break;
-		case VariantType::Int:
-			return As<i32>() > other.As<i32>();
+		case VariantType::Int8:
+			return As<i8>() > other.As<i8>();
 			break;
 		case VariantType::UInt8:
 			return As<ui8>() > other.As<ui8>();
 			break;
+		case VariantType::Int16:
+			return As<i16>() > other.As<i16>();
+			break;
 		case VariantType::UInt16:
 			return As<ui16>() > other.As<ui16>();
 			break;
+		case VariantType::Int32:
+			return As<i32>() > other.As<i32>();
+			break;
 		case VariantType::UInt32:
 			return As<ui32>() > other.As<ui32>();
+			break;
+		case VariantType::Int64:
+			return As<i64>() > other.As<i64>();
 			break;
 		case VariantType::UInt64:
 			return As<ui64>() > other.As<ui64>();
@@ -488,17 +689,26 @@ namespace BaldLion
 		case VariantType::Bool:
 			return As<bool>() != other.As<bool>();
 			break;
-		case VariantType::Int:
-			return As<i32>() != other.As<i32>();
+		case VariantType::Int8:
+			return As<i8>() != other.As<i8>();
 			break;
 		case VariantType::UInt8:
 			return As<ui8>() != other.As<ui8>();
 			break;
+		case VariantType::Int16:
+			return As<i16>() != other.As<i16>();
+			break;
 		case VariantType::UInt16:
 			return As<ui16>() != other.As<ui16>();
 			break;
+		case VariantType::Int32:
+			return As<i32>() != other.As<i32>();
+			break;
 		case VariantType::UInt32:
 			return As<ui32>() != other.As<ui32>();
+			break;
+		case VariantType::Int64:
+			return As<i64>() != other.As<i64>();
 			break;
 		case VariantType::UInt64:
 			return As<ui64>() != other.As<ui64>();
@@ -533,14 +743,17 @@ namespace BaldLion
 		case VariantType::Bool:
 			return As<bool>() == other.As<bool>();
 			break;
-		case VariantType::Int:
-			return As<i32>() == other.As<i32>();
+		case VariantType::Int8:
+			return As<i8>() == other.As<i8>();
 			break;
 		case VariantType::UInt8:
 			return As<ui8>() == other.As<ui8>();
 			break;
 		case VariantType::UInt16:
 			return As<ui16>() == other.As<ui16>();
+			break;
+		case VariantType::Int32:
+			return As<i32>() == other.As<i32>();
 			break;
 		case VariantType::UInt32:
 			return As<ui32>() == other.As<ui32>();

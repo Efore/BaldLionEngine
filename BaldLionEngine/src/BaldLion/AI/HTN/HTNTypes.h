@@ -26,7 +26,7 @@ namespace BaldLion::AI::HTN
 		ui32 mainTask;
 	};
 	
-	enum class HTNOperatorType
+	enum class HTNOperatorType : ui32
 	{
 		MoveTo,
 		PlayAnimation,

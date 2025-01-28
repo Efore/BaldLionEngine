@@ -9,7 +9,7 @@
 #include "BaldLion/Core/Input.h"
 #include "BaldLion/Core/BLKeyCodes.h"
 #include "BaldLion/Core/MouseButtonCodes.h"
-
+#include "BaldLion/Core/EventManager.h"
 #include "BaldLion/ImGui/ImGuiLayer.h"
 
 // --------------- Renderer -----------------------

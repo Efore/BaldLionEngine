@@ -18,7 +18,6 @@ namespace BaldLion
 		inline ui32 GetHeight() const override { return m_data.Height; }
 
 		//Window attributes
-		inline void SetEventCallback(const EventCallbackFn& callback) override { m_data.EventCallback = callback; }
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 
@@ -36,8 +35,6 @@ namespace BaldLion
 			StringId Title;
 			ui32 Width, Height;
 			bool VSync;
-
-			EventCallbackFn EventCallback;
 		};
 
 		WindowData m_data;

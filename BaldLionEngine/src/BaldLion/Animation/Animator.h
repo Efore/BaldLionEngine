@@ -24,14 +24,14 @@ namespace BaldLion
 			const ui32 GetInitialAnimationID() const { return m_initAnimationID; }
 			void SetInitialAnimation(const ui32 animationID);
 
-			const HashTable<ui32, AnimationClip*>& GetAllAnimations() const { return m_animations; }
+			const HashTable<StringId, AnimationClip*>& GetAllAnimations() const { return m_animations; }
 
 			void AddAnimationTransition(AnimatorTransition* animationTransition);		
 			void RemoveTransition(ui32 initialAnimationID, ui32 finalAnimationID);
 
 			const DynamicArray<AnimatorTransition*>* GetTransitionsOfAnimation(ui32 initialAnimationID) const;
 			DynamicArray<AnimatorTransition*>* GetTransitionsOfAnimation(ui32 initialAnimationID);
-			const HashTable<ui32, DynamicArray<AnimatorTransition*>>& GetAllTransitions() const { return m_transitions; }
+			const HashTable<StringId, DynamicArray<AnimatorTransition*>>& GetAllTransitions() const { return m_transitions; }
 
 			const HashTable<StringId, AnimatorParameter>& GetAllParameters() const { return m_parameters; }
 
@@ -44,8 +44,8 @@ namespace BaldLion
 
 		private:	
 
-			HashTable<ui32, AnimationClip*> m_animations;
-			HashTable<ui32, DynamicArray<AnimatorTransition*>> m_transitions;
+			HashTable<StringId, AnimationClip*> m_animations;
+			HashTable<StringId, DynamicArray<AnimatorTransition*>> m_transitions;
 			HashTable<StringId, AnimatorParameter> m_parameters;
 
 			ui32 m_initAnimationID;

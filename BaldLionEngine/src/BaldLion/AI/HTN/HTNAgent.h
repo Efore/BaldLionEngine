@@ -1,6 +1,7 @@
 #pragma once
 #include "HTNTypes.h"
 #include "BaldLion/Core/Threading/TaskScheduler.h"
+#include "BaldLion/Core/EventManager.h"
 
 namespace BaldLion::AI::HTN
 {
@@ -14,10 +15,9 @@ namespace BaldLion::AI::HTN
 		void RequestPlan();
 		void RunPlan();		
 		void StopPlan();
-		void AdvancePlan();
 
 		ui32 GetAgentId() const { return m_agentID; }
-
+		bool OnOperatorFinished(const EventEntry& e);
 
 	private:
 		HTNWorldStateBlackboard m_worldStateBlackboard;
@@ -26,7 +26,7 @@ namespace BaldLion::AI::HTN
 		i32 m_agentID = -1;			
 
 		Threading::Task m_requestPlanTask;
-		bool m_validPlan;
+		bool m_validPlan = false;
 
 	public:
 		HTNOperatorType currentOperatorType = HTNOperatorType::Count;

@@ -66,6 +66,9 @@
     <ClInclude Include="src\Panels\EntityPropertiesPanel.h">
       <Filter>src\Panels</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\InputManagementPanel.h">
+      <Filter>src\Panels</Filter>
+    </ClInclude>
     <ClInclude Include="src\Panels\MemoryAllocationPanel.h">
       <Filter>src\Panels</Filter>
     </ClInclude>
@@ -87,7 +90,6 @@
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
       <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panels\InputManagementPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp">
@@ -103,6 +105,9 @@
       <Filter>src\Panels</Filter>
     </ClCompile>
     <ClCompile Include="src\Panels\EntityPropertiesPanel.cpp">
+      <Filter>src\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Panels\InputManagementPanel.cpp">
       <Filter>src\Panels</Filter>
     </ClCompile>
     <ClCompile Include="src\Panels\MemoryAllocationPanel.cpp">
@@ -123,6 +128,5 @@
     <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
       <Filter>vendor\ImGuizmo</Filter>
     </ClCompile>
-    <ClCompile Include="src\Panels\InputManagementPanel.cpp" />
   </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@ namespace BaldLion
 {
 	namespace Rendering
 	{
-		enum class FramebufferUsage
+		enum class FramebufferUsage : ui8
 		{
 			ColorBuffer = 1 << 0,
 			DepthBuffer = 1 << 1,

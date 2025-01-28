@@ -16,7 +16,6 @@ namespace BaldLion
 
 		std::atomic<ui32> TaskScheduler::s_activeJobs = 0;
 
-
 		void TaskScheduler::Init(ui32 threadsCount /*= std::thread::hardware_concurrency() / 2*/)
 		{
 			s_workerThreads = DynamicArray<std::thread>(AllocationType::FreeList_Main, threadsCount);

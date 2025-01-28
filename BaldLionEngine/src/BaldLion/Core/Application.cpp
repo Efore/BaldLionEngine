@@ -9,14 +9,14 @@
 #include "BaldLion/AI/Navigation/NavigationManager.h"
 #include "BaldLion/AI/HTN/HTNManager.h"
 #include "BaldLion/Core/Input.h"
+#include "BaldLion/Core/EventManager.h"
 
+#include <functional>
 #include <GLFW/glfw3.h>
 
 
 namespace BaldLion
 {
-#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
-
 	Application* Application::s_instance = nullptr;
 
 	Application::Application(const std::string& applicationName)
@@ -29,20 +29,25 @@ namespace BaldLion
 
 		Memory::MemoryManager::Init(0);
 		Threading::TaskScheduler::Init();
+		EventManager::Init();
 		ResourceManagement::ResourceManager::Init();		
+
+		m_window = Window::Create(WindowProps(applicationName));
+		EventManager::RegisterHandler("WindowClosedEvent", BL_BIND_FUNCTION(Application::OnWindowClose));
+		EventManager::RegisterHandler("WindowMinimizedEvent", BL_BIND_FUNCTION(Application::OnWindowMinimized));
+
+		Time::Init();
+
 		AI::Navigation::NavigationManager::Init();
 		AI::HTN::HTNManager::Init();
 
-		m_window = Window::Create(WindowProps(applicationName));
-		m_window->SetEventCallback(BIND_EVENT_FN(OnEvent));
-
-		Time::Init();
 		Animation::AnimationManager::Init();
 		SceneManagement::SceneManager::Init();
 		Rendering::Renderer::Init(m_window->GetWidth(), m_window->GetHeight());
-		ResourceManagement::ResourceManager::LoadAssets();
 		Physics::PhysicsManager::Init(1.0f/60.0f);
 		Input::InputSystem::Init();
+
+		ResourceManagement::ResourceManager::LoadAssets();
 
 		m_layerStack.Init();
 
@@ -53,22 +58,28 @@ namespace BaldLion
 	Application::~Application()
 	{		
 		OPTICK_SHUTDOWN();
-		Input::InputSystem::Stop();
 
 		m_layerStack.PopOverlay(m_imGuiLayer);
 		m_layerStack.Delete();
-		Window::Destroy(m_window);
 
+		Input::InputSystem::Stop();
 		Physics::PhysicsManager::Stop();
 		Rendering::Renderer::Stop();
 		SceneManagement::SceneManager::Stop();
 		Animation::AnimationManager::Stop();
 
-		Time::Stop();
-
 		AI::HTN::HTNManager::Stop();
 		AI::Navigation::NavigationManager::Stop();
+
+		Time::Stop();
+
+		EventManager::UnregisterHandler("WindowClosedEvent", BL_BIND_FUNCTION(Application::OnWindowClose));
+		EventManager::UnregisterHandler("WindowMinimizedEvent", BL_BIND_FUNCTION(Application::OnWindowMinimized));
+
+		Window::Destroy(m_window);
+
 		ResourceManagement::ResourceManager::Stop();
+		EventManager::Stop();
 		Threading::TaskScheduler::Stop();
 		Memory::MemoryManager::Stop();
 	}
@@ -127,7 +138,7 @@ namespace BaldLion
 	
 			BL_PROFILE_FRAME();
 
-			Input::InputSystem::UpdateEntries();
+			Input::InputSystem::UpdateEntries();			
 
 			if (!m_minimized)
 			{
@@ -148,33 +159,20 @@ namespace BaldLion
 			}
 
 			m_window->OnUpdate();			
+			EventManager::DispatchEvents();
 			MemoryManager::Delete(AllocationType::Linear_Frame);
 		}	
 	}
 
-	void Application::OnEvent(Event & e)
-	{
-		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-		dispatcher.Dispatch<WindowMinimizeEvent>(BIND_EVENT_FN(OnWindowMinimized));
-
-		for (ui32 i = 0; i < m_layerStack.Size(); ++i)
-		{
-			m_layerStack[i]->OnEvent(e);
-			if (e.IsHandled())
-				break;
-		}	
-	}
-
-	bool Application::OnWindowClose(WindowCloseEvent & e)
+	bool Application::OnWindowClose(const EventEntry& e)
 	{
 		Close();
 		return true;
 	}
 
-	bool Application::OnWindowMinimized(WindowMinimizeEvent& e)
+	bool Application::OnWindowMinimized(const EventEntry& e)
 	{
-		m_minimized = e.GetMinimized();
+		m_minimized = (bool)e.eventData1;
 		return true;
 	}
 

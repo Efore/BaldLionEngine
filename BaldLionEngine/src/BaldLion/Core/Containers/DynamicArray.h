@@ -96,26 +96,26 @@ namespace BaldLion
 	};	
 
 	template <typename T>
-	T* BaldLion::DynamicArray<T>::Data()
+	T* DynamicArray<T>::Data()
 	{
 		return m_elements;
 	}
 
 	template <typename T>
-	const T* BaldLion::DynamicArray<T>::Data() const
+	const T* DynamicArray<T>::Data() const
 	{
 		return m_elements;
 	}
 
 	template <typename T>
-	BaldLion::DynamicArray<T>::DynamicArray(Memory::AllocationType allocationType, ui32 capacity)
+	DynamicArray<T>::DynamicArray(Memory::AllocationType allocationType, ui32 capacity)
 		: m_allocationType (allocationType), m_size(0)
 	{
 		Reserve(capacity);
 	}
 
 	template <typename T>
-	BaldLion::DynamicArray<T>::DynamicArray(Memory::AllocationType allocationType, const DynamicArray<T>& other)
+	DynamicArray<T>::DynamicArray(Memory::AllocationType allocationType, const DynamicArray<T>& other)
 		: m_allocationType(allocationType), m_size(other.Size())
 	{
 		Reserve(other.m_capacity);
@@ -126,7 +126,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	BaldLion::DynamicArray<T>::DynamicArray(const DynamicArray<T>& other)
+	DynamicArray<T>::DynamicArray(const DynamicArray<T>& other)
 		: m_allocationType(other.m_allocationType), m_size(other.Size())
 	{
 		Reserve(other.m_capacity);
@@ -137,7 +137,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	BaldLion::DynamicArray<T>::DynamicArray(DynamicArray<T>&& other) noexcept
+	DynamicArray<T>::DynamicArray(DynamicArray<T>&& other) noexcept
 		: m_allocationType(other.m_allocationType), m_size(other.Size()), m_capacity(other.m_capacity)
 	{
 		m_elements = other.m_elements;
@@ -148,7 +148,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	DynamicArray<T>& BaldLion::DynamicArray<T>::operator=(const DynamicArray<T>& other)
+	DynamicArray<T>& DynamicArray<T>::operator=(const DynamicArray<T>& other)
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
@@ -176,7 +176,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	DynamicArray<T>& BaldLion::DynamicArray<T>::operator=(DynamicArray<T>&& other) noexcept
+	DynamicArray<T>& DynamicArray<T>::operator=(DynamicArray<T>&& other) noexcept
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
@@ -198,7 +198,7 @@ namespace BaldLion
 	}	
 
 	template <typename T>
-	BaldLion::DynamicArray<T>::~DynamicArray()
+	DynamicArray<T>::~DynamicArray()
 	{
 		//if (m_elements != nullptr)
 		//{
@@ -208,7 +208,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::Clear()
+	void DynamicArray<T>::Clear()
 	{
 		if (m_elements == nullptr)
 			return;
@@ -217,7 +217,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::Delete()
+	void DynamicArray<T>::Delete()
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
@@ -233,7 +233,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::DeleteNoDestructor()
+	void DynamicArray<T>::DeleteNoDestructor()
 	{
 		if (m_elements == nullptr)
 			return;
@@ -246,7 +246,7 @@ namespace BaldLion
 
 	template <typename T>
 	template <typename... Args >
-	T* BaldLion::DynamicArray<T>::EmplaceBack(Args&&... args)
+	T* DynamicArray<T>::EmplaceBack(Args&&... args)
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
@@ -261,7 +261,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::PushBack(const T& element)
+	void DynamicArray<T>::PushBack(const T& element)
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
@@ -276,7 +276,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::PushBack(T&& element)
+	void DynamicArray<T>::PushBack(T&& element)
 	{	
 		BL_DEEP_PROFILE_FUNCTION();
 
@@ -291,7 +291,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::PushBackRange(const DynamicArray<T>& other, ui32 size)
+	void DynamicArray<T>::PushBackRange(const DynamicArray<T>& other, ui32 size)
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
@@ -305,7 +305,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::PushBackRange(const T* other, ui32 size)
+	void DynamicArray<T>::PushBackRange(const T* other, ui32 size)
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
@@ -317,7 +317,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::PushAt(const T& element, ui32 index)
+	void DynamicArray<T>::PushAt(const T& element, ui32 index)
 	{
 		BL_DEEP_PROFILE_FUNCTION();
 
@@ -354,7 +354,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::PushAt(T&& element, ui32 index)
+	void DynamicArray<T>::PushAt(T&& element, ui32 index)
 	{
 		BL_ASSERT_LOG(m_capacity > 0, "Capacity is 0");
 		BL_ASSERT_LOG(index < m_size, "Index is bigger than size");
@@ -390,7 +390,7 @@ namespace BaldLion
 	}
 	
 	template <typename T>
-	void BaldLion::DynamicArray<T>::PopBack()
+	void DynamicArray<T>::PopBack()
 	{		
 		if (m_size == 0)
 			return;
@@ -400,7 +400,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::Remove(const T& element)
+	void DynamicArray<T>::Remove(const T& element)
 	{
 		if (m_size == 0)
 		{
@@ -420,7 +420,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::RemoveFast(const T& element)
+	void DynamicArray<T>::RemoveFast(const T& element)
 	{
 		if (m_size == 0)
 		{
@@ -441,7 +441,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::RemoveAt(ui32 index)
+	void DynamicArray<T>::RemoveAt(ui32 index)
 	{
 		BL_ASSERT_LOG(index < m_size, "Index can't be bigger than or equal to m_size");
 
@@ -452,17 +452,15 @@ namespace BaldLion
 		else
 		{										
 			m_elements[index].~T();
-			--m_size;
 
-			for (ui32 i = index; i < m_size; ++i)
-			{
-				memcpy(&(m_elements[i]), &(m_elements[i + 1]), sizeof(T));
-			}
+			const ui32 copySize = m_size - index - 1;
+			memcpy(&(m_elements[index]), &(m_elements[index + 1]), sizeof(T) * copySize);
+			--m_size;			
 		}
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::RemoveAtFast(ui32 index)
+	void DynamicArray<T>::RemoveAtFast(ui32 index)
 	{		
 		BL_ASSERT_LOG(index < m_size, "Index can't be bigger than or equal to m_size");
 
@@ -479,7 +477,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	i32 BaldLion::DynamicArray<T>::FindIndex(const T& element) const
+	i32 DynamicArray<T>::FindIndex(const T& element) const
 	{
 		for (ui32 i = 0; i < m_size; ++i)
 		{
@@ -492,13 +490,13 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	bool BaldLion::DynamicArray<T>::Contains(const T& element) const
+	bool DynamicArray<T>::Contains(const T& element) const
 	{
 		return FindIndex(element) != -1;
 	}
 	   	
 	template <typename T>
-	void BaldLion::DynamicArray<T>::Populate()
+	void DynamicArray<T>::Populate()
 	{
 		m_size = m_capacity;
 
@@ -510,7 +508,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::Populate(const T& value)
+	void DynamicArray<T>::Populate(const T& value)
 	{	
 		m_size = m_capacity;
 
@@ -521,7 +519,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::Populate(T&& value)
+	void DynamicArray<T>::Populate(T&& value)
 	{
 		m_size = m_capacity;
 
@@ -532,7 +530,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::Reserve(ui32 capacity)
+	void DynamicArray<T>::Reserve(ui32 capacity)
 	{
 		m_capacity = capacity;
 		if (capacity > 0)
@@ -542,7 +540,7 @@ namespace BaldLion
 	}
 
 	template <typename T>
-	void BaldLion::DynamicArray<T>::Reallocate(ui32 newCapacity)
+	void DynamicArray<T>::Reallocate(ui32 newCapacity)
 	{	
 		BL_DEEP_PROFILE_FUNCTION();
 

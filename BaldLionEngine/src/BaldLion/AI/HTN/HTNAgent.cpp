@@ -17,38 +17,29 @@ namespace BaldLion::AI::HTN
 		m_worldStateBlackboard.Delete();
 	}
 
-	void HTNAgent::AdvancePlan()
-	{
-		const HTNTask& newTask = HTNManager::GetTask(m_currentPlanStep);
-		newTask.ApplyEffects(m_worldStateBlackboard);
-
-		++m_currentPlanStep;
+	void HTNAgent::RunPlan()
+	{		
 		if (m_currentPlanStep < m_plan.Size())
 		{
 			const HTNTask& newTask = HTNManager::GetTask(m_currentPlanStep);
 			currentOperatorType = newTask.operatorType;
-			HTNManager::GetOperator(currentOperatorType).OperatorStartFunc(this);			
+			EventManager::RegisterHandler("OnOperatorFinished", BL_BIND_FUNCTION(HTNAgent::OnOperatorFinished));
+			HTNManager::GetOperator(currentOperatorType).OperatorStartFunc(this);
 		}
 		else
 		{
-			m_currentPlanStep = 0;
-			RunPlan();
+			RequestPlan();
 		}
-	}
-
-	void HTNAgent::RunPlan()
-	{		
-		const HTNTask& newTask = HTNManager::GetTask(m_currentPlanStep);
-		currentOperatorType = newTask.operatorType;
-		HTNManager::GetOperator(currentOperatorType).OperatorStartFunc(this);		
 	}
 
 	void HTNAgent::StopPlan()
 	{
 		if (currentOperatorType < HTNOperatorType::Count)
 		{
+			EventManager::UnregisterHandler("OnOperatorFinished", BL_BIND_FUNCTION(HTNAgent::OnOperatorFinished));
 			HTNManager::GetOperator(currentOperatorType).OperatorInterruptFunc(this);
 			currentOperatorType = HTNOperatorType::Count;
+			m_currentPlanStep = 0;
 			m_plan.Clear();
 		}
 	}
@@ -64,6 +55,27 @@ namespace BaldLion::AI::HTN
 			[this] {
 				if (m_validPlan) RunPlan();
 			});
+	}
+
+	bool HTNAgent::OnOperatorFinished(const EventEntry& e)
+	{
+		const HTNOperatorType typeFinished = (HTNOperatorType)(ui32)e.eventData1;
+		if (typeFinished == currentOperatorType)
+		{
+			EventManager::UnregisterHandler("OnOperatorFinished", BL_BIND_FUNCTION(HTNAgent::OnOperatorFinished));
+			if (e.eventData2) //Success?
+			{
+				const HTNTask& newTask = HTNManager::GetTask(m_currentPlanStep);
+				newTask.ApplyEffects(m_worldStateBlackboard);
+				++m_currentPlanStep;
+				RunPlan();
+			}
+			else
+			{
+				RequestPlan();			
+			}
+		}
+		return true;
 	}
 
 }
