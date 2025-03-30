@@ -40,8 +40,8 @@ namespace BaldLion
 			m_isActive = true;
 			Physics::PhysicsManager::SetIsPhysicsActive(false);
 
-			EventManager::RegisterHandler("WindowResizedEvent", BL_BIND_FUNCTION(BaldLionEditorLayer::OnWindowResizedEvent));
-			EventManager::RegisterHandler("KeyPressedEvent", BL_BIND_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
+			EventManager::RegisterHandler("WindowResizedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnWindowResizedEvent));
+			EventManager::RegisterHandler("KeyPressedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
 
 			if (SceneManagement::SceneManager::GetMainScenePathFile().empty() || 
 				!SceneManagement::SceneManager::OpenScene(SceneManagement::SceneManager::GetMainScenePathFile().c_str()))
@@ -54,7 +54,7 @@ namespace BaldLion
 			//Panel Setup
 			m_entityPropertiesPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);
 			m_editorViewportPanel.SetHierarchyPanel(&m_sceneHierarchyPanel);
-			m_navigationPanel.SetNavigationPanel(&m_editorViewportPanel);
+			m_navigationPanel.SetViewportPanel(&m_editorViewportPanel);
 
 			ECS::SingletonSystems::CameraSystem::SetMainCamera(m_viewportCamera, m_viewportCameraTransform);
 		}
@@ -62,8 +62,8 @@ namespace BaldLion
 		void BaldLionEditorLayer::OnDeactivate()
 		{		
 			m_isActive = false;
-			EventManager::UnregisterHandler("WindowResizedEvent", BL_BIND_FUNCTION(BaldLionEditorLayer::OnWindowResizedEvent));
-			EventManager::UnregisterHandler("KeyPressedEvent", BL_BIND_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
+			EventManager::UnregisterHandler("WindowResizedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnWindowResizedEvent));
+			EventManager::UnregisterHandler("KeyPressedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
 		}
 
 		void BaldLionEditorLayer::OnUpdate()
@@ -100,6 +100,7 @@ namespace BaldLion
 			m_resourcesPanel.OnImGuiRender(deltaTime);
 			m_animatorPanel.OnImGuiRender(deltaTime);
 			m_navigationPanel.OnImGuiRender(deltaTime);
+			m_htnPanel.OnImGuiRender(deltaTime);
 		}
 
 		void BaldLionEditorLayer::SetupEditorCamera()

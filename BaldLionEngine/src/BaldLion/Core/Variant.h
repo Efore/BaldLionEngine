@@ -94,6 +94,8 @@ namespace BaldLion
 		bool operator>=(const Variant& other) const;
 		bool operator>(const Variant& other) const;
 
+		VariantType m_valueType;
+		
 	private:	
 
 		template <class T>
@@ -120,6 +122,6 @@ namespace BaldLion
 			StringId String;
 		} m_value;		
 
-		VariantType m_valueType;
+		
 	};
 }

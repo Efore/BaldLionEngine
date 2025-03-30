@@ -150,6 +150,7 @@
     <ClInclude Include="src\Panels\EditorUtils.h" />
     <ClInclude Include="src\Panels\EditorViewportPanel.h" />
     <ClInclude Include="src\Panels\EntityPropertiesPanel.h" />
+    <ClInclude Include="src\Panels\HTNPanel.h" />
     <ClInclude Include="src\Panels\InputManagementPanel.h" />
     <ClInclude Include="src\Panels\MemoryAllocationPanel.h" />
     <ClInclude Include="src\Panels\NavigationPanel.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="src\Panels\AnimatorPanel.cpp" />
     <ClCompile Include="src\Panels\EditorViewportPanel.cpp" />
     <ClCompile Include="src\Panels\EntityPropertiesPanel.cpp" />
+    <ClCompile Include="src\Panels\HTNPanel.cpp" />
     <ClCompile Include="src\Panels\InputManagementPanel.cpp" />
     <ClCompile Include="src\Panels\MemoryAllocationPanel.cpp" />
     <ClCompile Include="src\Panels\NavigationPanel.cpp" />

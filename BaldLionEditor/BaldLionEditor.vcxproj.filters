@@ -90,6 +90,7 @@
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
       <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\HTNPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLionEditorApp.cpp">
@@ -128,5 +129,6 @@
     <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
       <Filter>vendor\ImGuizmo</Filter>
     </ClCompile>
+    <ClCompile Include="src\Panels\HTNPanel.cpp" />
   </ItemGroup>
 </Project>

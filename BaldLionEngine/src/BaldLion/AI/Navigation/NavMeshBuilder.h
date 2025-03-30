@@ -86,7 +86,7 @@ namespace BaldLion::AI::Navigation
 		static bool s_isBakingNavmesh;
 		static bool s_geomMeshAdded;
 
-		static Threading::Task s_bakeNavMeshTask;
+		static Threading::TaskID s_bakeNavMeshTask;
 	};
 }
 

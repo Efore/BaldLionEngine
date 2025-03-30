@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Task.h"
 #include "BaldLion/Core/Containers/Queue.h"
 #include "BaldLion/Core/Containers/LockFree.h"
 
@@ -17,9 +16,19 @@ namespace BaldLion
 		typedef std::function<void()> SingleJobFunction;
 		typedef std::function<void(ui32 firstIterationIndex, ui32 lastIterationIndex)> ParallelJobFunction;		
 
-		struct TaskEntry
+		struct TaskID
 		{
-			Task* task = nullptr;
+			inline void Wait() const
+			{
+				while (counter > 0);
+			}
+
+			std::atomic<ui32> counter;
+		};
+
+		struct Task
+		{
+			TaskID* taskID = nullptr;
 			SingleJobFunction job;
 		};
 
@@ -33,15 +42,15 @@ namespace BaldLion
 
 			static void WaitForAllJobs();
 
-			static void KickSingleTask(Task& task, SingleJobFunction jobFunction, OnTaskFinishedCallback callbackFunction = nullptr);
-			static void KickParallelTask(Task& task, ui32 iterationCount, ParallelJobFunction jobFunction, OnTaskFinishedCallback callbackFunction = nullptr);
+			static void KickSingleTask(TaskID& taskID, SingleJobFunction jobFunction);
+			static void KickParallelTask(TaskID& taskID, ui32 iterationCount, ParallelJobFunction jobFunction);
 
 			static void* ThreadProcess(ui32 threadIndex);
 
 		private:
 
 			static DynamicArray<std::thread > s_workerThreads;
-			static Queue<TaskEntry> s_taskQueue;
+			static Queue<Task> s_taskQueue;
 			static std::mutex s_taskQueueMutex;
 			static std::atomic<ui32> s_activeJobs;
 			static bool s_running;

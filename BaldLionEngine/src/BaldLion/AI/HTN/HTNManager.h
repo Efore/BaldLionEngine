@@ -6,15 +6,6 @@
 
 namespace BaldLion::AI::HTN
 {
-
-	struct HTNOperator
-	{
-		typedef void (*htnOperatorFunc)(HTNAgent* htnAgent);
-
-		htnOperatorFunc OperatorStartFunc;
-		htnOperatorFunc OperatorInterruptFunc;
-	};
-
 	class HTNManager
 	{
 		//static void GenerateTask(HTNTask::TaskType TaskType, )
@@ -22,21 +13,19 @@ namespace BaldLion::AI::HTN
 		static void Init();
 		static void Stop();
 
-		static bool RunPlanner(const HTNWorldStateBlackboard& worldStateBlackboard, 
+		static bool RunPlanner(ui32 worldStateBlackboardIndex, 
 			StringId domainID, DynamicArray<ui32>& plan);
 
-		static const HTNTask& GetTask(ui32 taskIndex);
-		static const HTNOperator& GetOperator(HTNOperatorType operatorType);
-
-
-	private:
-		static HashMap<StringId, HTNDomain> s_definedDomains;
+		static DynamicArray<HTNWorldStateBlackboard> s_definedWorldStateBlackboards;
 		static HashMap <HTNOperatorType, HTNOperator> s_definedOperators;
+		static HashMap<StringId, HTNDomain> s_definedDomains;
 		static DynamicArray<HTNTask> s_definedTasks;
 		static DynamicArray<HTNAgent> s_agents;
 
+	private:
+
 		static bool CheckTask(HTNWorldStateBlackboard& tempWorldStateBlackboard,
-			DynamicArray<HTNWorldStateProperty>& prevBlackboardValues,
+			DynamicArray<HTNWorldStateEffect>& prevBlackboardValues,
 			ui32 taskIndex, 
 			DynamicArray<ui32>& plan);
 

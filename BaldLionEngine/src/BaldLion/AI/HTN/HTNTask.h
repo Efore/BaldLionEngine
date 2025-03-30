@@ -24,10 +24,10 @@ namespace BaldLion::AI::HTN
 		};
 
 		DynamicArray<HTNMethod> methods;		
-		DynamicArray<HTNWorldStateProperty> effects;
+		DynamicArray<HTNWorldStateEffect> effects;
 
 		StringId taskID;
-		TaskType type = TaskType::CompoundTask;
+		TaskType type = TaskType::PrimitiveTask;
 
 		HTNOperatorType operatorType = HTNOperatorType::Count;
 

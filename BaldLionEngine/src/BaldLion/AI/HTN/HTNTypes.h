@@ -14,7 +14,7 @@ namespace BaldLion::AI::HTN
 		VariantComparisonType comparisonType;
 	};
 
-	struct HTNWorldStateProperty
+	struct HTNWorldStateEffect
 	{
 		StringId blackboardKey;
 		Variant blackboardValue;
@@ -22,8 +22,7 @@ namespace BaldLion::AI::HTN
 
 	struct HTNDomain
 	{
-		StringId domainID;
-		ui32 mainTask;
+		i32 mainTask = -1;
 	};
 	
 	enum class HTNOperatorType : ui32
@@ -32,5 +31,13 @@ namespace BaldLion::AI::HTN
 		PlayAnimation,
 
 		Count
+	};
+
+	struct HTNOperator
+	{
+		typedef void (*htnOperatorFunc)(class HTNAgent* htnAgent);
+
+		htnOperatorFunc OperatorStartFunc;
+		htnOperatorFunc OperatorInterruptFunc;
 	};
 }

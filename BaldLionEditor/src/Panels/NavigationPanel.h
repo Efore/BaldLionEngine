@@ -14,7 +14,7 @@ namespace BaldLion
 			NavigationPanel();
 			~NavigationPanel();
 
-			void SetNavigationPanel(EditorViewportPanel* editorViewPortPanel);
+			void SetViewportPanel(EditorViewportPanel* editorViewPortPanel);
 			virtual void OnImGuiRender(float deltaTime) override;
 
 		private:

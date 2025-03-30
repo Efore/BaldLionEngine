@@ -28,7 +28,7 @@ namespace BaldLion
 
 			void SetParallelDependencies(ui32 count, ...);
 
-			const Threading::Task& GetParallelTask() const { return m_parallelTask; }
+			const Threading::TaskID& GetParallelTask() const { return m_parallelTask; }
 
 		protected:
 
@@ -38,7 +38,7 @@ namespace BaldLion
 			DynamicArray<ECSEntityID> m_entityIDs;
 			DynamicArray<ECSComponentLookUp*> m_componentLookUps;
 
-			const Threading::Task* m_parallelDependencies[(ui32)ECSSystemType::Count];
+			const Threading::TaskID* m_parallelDependencies[(ui32)ECSSystemType::Count];
 			ui32 m_parallelDependenciesCount = 0;
 
 			class ECSManager* m_ecsManager;		
@@ -47,7 +47,7 @@ namespace BaldLion
 			bool m_firstFrame = true;
 
 			bool m_parallelize;
-			Threading::Task m_parallelTask;
+			Threading::TaskID m_parallelTask;
 		};
 
 		#define BL_GENERATE_SYSTEM(SystemName, SystemClass, SystemType, EcsManager, ...)	\

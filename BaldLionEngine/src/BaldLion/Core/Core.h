@@ -16,7 +16,8 @@
 
 #define BIT(x) (1 << x)
 
-#define BL_BIND_FUNCTION(fn) std::bind(&fn, this, std::placeholders::_1)
+#define BL_BIND_OBJECT_FUNCTION(fn) std::bind(&fn, this, std::placeholders::_1)
+#define BL_BIND_STATIC_FUNCTION(fn) std::bind(fn, std::placeholders::_1)
 #define BL_NUMARGS(...) std::tuple_size<decltype(std::make_tuple(__VA_ARGS__))>::value
 
 using ui64 = uint64_t;

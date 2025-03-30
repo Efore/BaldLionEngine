@@ -3,6 +3,7 @@
 #include "BaldLion/SceneManagement/SceneManager.h"
 #include "BaldLion/ECS/Components/ECSHierarchyComponent.h"
 #include "BaldLion/ECS/Components/ECSTransformComponent.h"
+#include "BaldLion/Core/Variant.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -341,6 +342,227 @@ namespace BaldLion
 				return false;
 			}
 			
+			static bool DrawVariant(char const* label, Variant& variant, bool editing)
+			{
+				bool modified = false;
+
+				ImGui::Columns(3);
+				
+				ImGui::Text(label);				
+				ImGui::NextColumn();
+
+				const char* variantTypes[] = {
+						"Unknown",
+						"Bool",
+						"Int8",
+						"UInt8",
+						"Int16",
+						"UInt16",
+						"Int32",
+						"UInt32",
+						"Int64",
+						"UInt64",
+						"Float",
+						"Vector2",
+						"Vector3",
+						"Quaternion2",
+						"StringID"
+					};
+
+				if (editing)
+				{
+					ImGui::Text(variantTypes[(ui32)variant.m_valueType]);					
+				}
+				else
+				{
+					static int item_current_idx = 0;
+					const char* combo_preview_value = variantTypes[item_current_idx];
+					ImGuiComboFlags flags = ImGuiComboFlags_PopupAlignLeft;
+
+					if (ImGui::BeginCombo("Variant Type", combo_preview_value, flags))
+					{
+						for (int n = 0; n < IM_ARRAYSIZE(variantTypes); n++)
+						{
+							const bool is_selected = (item_current_idx == n);
+							if (ImGui::Selectable(variantTypes[n], is_selected))
+							{
+								variant.m_valueType = (VariantType)n;
+								item_current_idx = n;
+								modified = true;
+							}
+
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+						}
+						ImGui::EndCombo();
+					}
+				}
+
+				ImGui::NextColumn();
+
+				if (editing)
+				{
+					switch (variant.m_valueType)
+					{
+					case VariantType::Bool:
+					{
+						static bool data = false;
+						if (ImGui::Checkbox("", &data))
+						{
+							modified = true;
+							variant = data;
+						}
+					}
+					break;
+					case VariantType::Int8:
+					{
+						static int data = 0;
+						if (ImGui::InputInt("", &data))
+						{
+							modified = true;
+							variant = (i8)data;
+						}
+					}
+					break;
+					case VariantType::UInt8:
+					{
+						static int data = 0;
+						if (ImGui::InputInt("", &data))
+						{
+							if (data < 0)
+							{
+								data = 0;
+							}
+							modified = true;
+							variant = (ui8)data;
+						}
+					}
+					break;
+					case VariantType::Int16:
+					{
+						static int data = 0;
+						if (ImGui::InputInt("", &data))
+						{
+							modified = true;
+							variant = (i16)data;
+						}
+					}
+					break;
+					case VariantType::UInt16:
+					{
+						static int data = 0;
+						if (ImGui::InputInt("", &data))
+						{
+							if (data < 0)
+							{
+								data = 0;
+							}
+							modified = true;
+							variant = (ui16)data;
+						}
+					}
+					break;
+					case VariantType::Int32:
+					{
+						static int data = 0;
+						if (ImGui::InputInt("", &data))
+						{
+							modified = true;
+							variant = (i32)data;
+						}
+					}
+					break;
+					case VariantType::UInt32:
+					{
+						static int data = 0;
+						if (ImGui::InputInt("", &data))
+						{
+							if (data < 0)
+							{
+								data = 0;
+							}
+							modified = true;
+							variant = (ui32)data;
+						}
+					}
+					break;
+					case VariantType::Int64:
+					{
+						static int data = 0;
+						if (ImGui::InputInt("", &data))
+						{
+							modified = true;
+							variant = (i64)data;
+						}
+					}
+					break;
+					case VariantType::UInt64:
+					{
+						static int data = 0;
+						if (ImGui::InputInt("", &data))
+						{
+							if (data < 0)
+							{
+								data = 0;
+							}
+							modified = true;
+							variant = (ui64)data;
+						}
+					}
+					break;
+					case VariantType::Float:
+					{
+						static float data = 0;
+						if (ImGui::InputFloat("", &data))
+						{
+							modified = true;
+							variant = data;
+						}
+					}
+					break;
+					case VariantType::Vector2:
+					{
+						static glm::vec2 data = glm::vec2(0.0f);
+						if (DrawVec2Handler("", data))
+						{
+							modified = true;
+							variant = data;
+						}
+					}
+					break;
+					case VariantType::Vector3:
+					{
+						static glm::vec3 data = glm::vec3(0.0f);
+						if (DrawVec3Handler("", data))
+						{
+							modified = true;
+							variant = data;
+						}
+					}
+					break;
+					case VariantType::StringID:
+					{
+						static char data[64];
+
+						if (ImGui::InputText("", data, IM_ARRAYSIZE(data)))
+						{
+							modified = true;
+							variant = BL_STRING_TO_STRINGID(data);
+						}
+					}
+					break;
+					default:
+						break;
+
+					}
+				}
+
+
+				ImGui::Columns(1);
+
+				return modified;
+			}
 		}
 	}
 }

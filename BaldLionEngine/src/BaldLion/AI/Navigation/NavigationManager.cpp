@@ -1,6 +1,7 @@
 #include "blpch.h"
 #include "NavigationManager.h"
 #include "NavMeshBuilder.h"
+#include "BaldLion/Core/EventManager.h"
 #include "BaldLion/Utils/MathUtils.h"
 
 namespace BaldLion::AI::Navigation
@@ -11,7 +12,7 @@ namespace BaldLion::AI::Navigation
 
 	bool NavigationManager::s_navigationActive = false;
 
-	Threading::Task NavigationManager::s_updateTask;
+	Threading::TaskID NavigationManager::s_updateTask;
 	DynamicArray<i32> NavigationManager::s_walkingAgents;
 
 
@@ -176,10 +177,69 @@ namespace BaldLion::AI::Navigation
 		BL_DYNAMICARRAY_INVERSE_FOREACH(s_walkingAgents)
 		{
 			const dtCrowdAgent* agent = s_crowd->getAgent(s_walkingAgents[i]);
+
+			if (!agent->m_isActive)
+			{
+				EventEntry moveToFinishedEvent;
+
+				moveToFinishedEvent.eventID = BL_STRING_TO_STRINGID("MoveToFinished");
+				moveToFinishedEvent.senderID = BL_STRING_TO_STRINGID("NavigationManager");
+
+				moveToFinishedEvent.eventData1 = (i32)s_walkingAgents[i];
+				moveToFinishedEvent.eventData2 = (ui8)MoveToResult::InvalidAgent;
+
+				EventManager::QueueEvent(moveToFinishedEvent);
+
+				s_walkingAgents.RemoveAtFast(i);
+				continue;
+			}
+
+			if(agent->state != CrowdAgentState::DT_CROWDAGENT_STATE_WALKING)
+			{
+				EventEntry moveToFinishedEvent;
+
+				moveToFinishedEvent.eventID = BL_STRING_TO_STRINGID("MoveToFinished");
+				moveToFinishedEvent.senderID = BL_STRING_TO_STRINGID("NavigationManager");
+
+				moveToFinishedEvent.eventData1 = (i32)s_walkingAgents[i];
+				moveToFinishedEvent.eventData2 = (ui8)MoveToResult::InvalidAgent;
+
+				EventManager::QueueEvent(moveToFinishedEvent);
+
+				s_walkingAgents.RemoveAtFast(i);
+				continue;
+			}
+
+			if (agent->targetState == MoveRequestState::DT_CROWDAGENT_TARGET_FAILED)
+			{
+				EventEntry moveToFinishedEvent;
+
+				moveToFinishedEvent.eventID = BL_STRING_TO_STRINGID("MoveToFinished");
+				moveToFinishedEvent.senderID = BL_STRING_TO_STRINGID("NavigationManager");
+
+				moveToFinishedEvent.eventData1 = (i32)s_walkingAgents[i];
+				moveToFinishedEvent.eventData2 = (ui8)MoveToResult::InvalidPath;
+
+				EventManager::QueueEvent(moveToFinishedEvent);
+
+				s_walkingAgents.RemoveAtFast(i);
+				continue;
+			}
+
 			const glm::vec3 agentTargetPos = *(glm::vec3*)(agent->targetPos);
 			const glm::vec3 agentCurrentPos = *(glm::vec3*)(agent->npos);
 			if (glm::epsilonEqual(agent->desiredSpeed, 0.0f, glm::epsilon<float>()) && MathUtils::AlmostEqual(agentTargetPos, agentCurrentPos))
 			{
+				EventEntry moveToFinishedEvent;
+
+				moveToFinishedEvent.eventID = BL_STRING_TO_STRINGID("MoveToFinished");
+				moveToFinishedEvent.senderID = BL_STRING_TO_STRINGID("NavigationManager");
+
+				moveToFinishedEvent.eventData1 = (i32)s_walkingAgents[i];
+				moveToFinishedEvent.eventData2 = (ui8)MoveToResult::Sucess;
+
+				EventManager::QueueEvent(moveToFinishedEvent);
+
 				//Throw event for destination reached
 				s_walkingAgents.RemoveAtFast(i);
 			}

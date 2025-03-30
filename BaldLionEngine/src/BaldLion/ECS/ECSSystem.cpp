@@ -28,7 +28,7 @@ namespace BaldLion {
 				}
 			}
 
-			memset(m_parallelDependencies, 0, sizeof(Threading::Task*) * (ui32)ECSSystemType::Count);
+			memset(m_parallelDependencies, 0, sizeof(Threading::TaskID*) * (ui32)ECSSystemType::Count);
 		}
 
 		ECSSystem::~ECSSystem()

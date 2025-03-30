@@ -9,6 +9,7 @@
 #include "Panels/ResourcesPanel.h"
 #include "Panels/AnimatorPanel.h"
 #include "Panels/NavigationPanel.h"
+#include "Panels/HTNPanel.h"
 #include "../../BaldLionGame/src/BaldLionGameLayer.h"
 
 namespace BaldLion
@@ -61,6 +62,7 @@ namespace BaldLion
 			ResourcesPanel m_resourcesPanel;
 			AnimatorPanel m_animatorPanel;
 			NavigationPanel m_navigationPanel;
+			HTNPanel m_htnPanel;
 
 
 			ECS::ECSProjectionCameraComponent* m_viewportCamera;

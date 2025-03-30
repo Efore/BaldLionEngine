@@ -26,8 +26,8 @@ namespace BaldLion
 		void BaldLionGameLayer::OnActivate()
 		{
 			Physics::PhysicsManager::SetIsPhysicsActive(true);
-			EventManager::RegisterHandler("WindowResizedEvent", BL_BIND_FUNCTION(BaldLionGameLayer::OnWindowResizedEvent));
-			EventManager::RegisterHandler("KeyPressedEvent", BL_BIND_FUNCTION(BaldLionGameLayer::OnKeyPressedEvent));
+			EventManager::RegisterHandler("WindowResizedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionGameLayer::OnWindowResizedEvent));
+			EventManager::RegisterHandler("KeyPressedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionGameLayer::OnKeyPressedEvent));
 
 			SceneManagement::SceneManager::OpenScene(SceneManagement::SceneManager::GetMainScenePathFile().c_str());
 
@@ -47,8 +47,8 @@ namespace BaldLion
 
 		void BaldLionGameLayer::OnDeactivate()
 		{		
-			EventManager::UnregisterHandler("WindowResizedEvent", BL_BIND_FUNCTION(BaldLionGameLayer::OnWindowResizedEvent));
-			EventManager::UnregisterHandler("KeyPressedEvent", BL_BIND_FUNCTION(BaldLionGameLayer::OnKeyPressedEvent));
+			EventManager::UnregisterHandler("WindowResizedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionGameLayer::OnWindowResizedEvent));
+			EventManager::UnregisterHandler("KeyPressedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionGameLayer::OnKeyPressedEvent));
 		}
 
 		void BaldLionGameLayer::OnUpdate()

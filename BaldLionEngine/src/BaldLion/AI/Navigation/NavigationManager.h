@@ -10,6 +10,13 @@
 
 namespace BaldLion::AI::Navigation
 {
+	enum MoveToResult : ui8
+	{
+		InvalidAgent,
+		InvalidPath,
+		Sucess
+	};
+
 	class NavigationManager {
 
 
@@ -41,7 +48,7 @@ namespace BaldLion::AI::Navigation
 		static dtObstacleAvoidanceDebugData* s_vod;
 
 		static bool s_navigationActive;
-		static Threading::Task s_updateTask;
+		static Threading::TaskID s_updateTask;
 
 		static DynamicArray<i32> s_walkingAgents;
 

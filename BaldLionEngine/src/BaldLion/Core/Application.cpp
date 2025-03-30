@@ -33,8 +33,8 @@ namespace BaldLion
 		ResourceManagement::ResourceManager::Init();		
 
 		m_window = Window::Create(WindowProps(applicationName));
-		EventManager::RegisterHandler("WindowClosedEvent", BL_BIND_FUNCTION(Application::OnWindowClose));
-		EventManager::RegisterHandler("WindowMinimizedEvent", BL_BIND_FUNCTION(Application::OnWindowMinimized));
+		EventManager::RegisterHandler("WindowClosedEvent", BL_BIND_OBJECT_FUNCTION(Application::OnWindowClose));
+		EventManager::RegisterHandler("WindowMinimizedEvent", BL_BIND_OBJECT_FUNCTION(Application::OnWindowMinimized));
 
 		Time::Init();
 
@@ -73,8 +73,8 @@ namespace BaldLion
 
 		Time::Stop();
 
-		EventManager::UnregisterHandler("WindowClosedEvent", BL_BIND_FUNCTION(Application::OnWindowClose));
-		EventManager::UnregisterHandler("WindowMinimizedEvent", BL_BIND_FUNCTION(Application::OnWindowMinimized));
+		EventManager::UnregisterHandler("WindowClosedEvent", BL_BIND_OBJECT_FUNCTION(Application::OnWindowClose));
+		EventManager::UnregisterHandler("WindowMinimizedEvent", BL_BIND_OBJECT_FUNCTION(Application::OnWindowMinimized));
 
 		Window::Destroy(m_window);
 

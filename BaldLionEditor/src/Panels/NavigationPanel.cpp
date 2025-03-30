@@ -27,7 +27,7 @@ namespace BaldLion
 			m_tileIndexToDraw.Delete();
 		}
 
-		void NavigationPanel::SetNavigationPanel(EditorViewportPanel* editorViewPortPanel)
+		void NavigationPanel::SetViewportPanel(EditorViewportPanel* editorViewPortPanel)
 		{
 			m_editorViewportPanel = editorViewPortPanel;
 		}

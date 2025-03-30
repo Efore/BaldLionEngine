@@ -35,7 +35,7 @@ namespace BaldLion::AI::Navigation
 	bool NavMeshBuilder::s_isBakingNavmesh = false;	
 	bool NavMeshBuilder::s_geomMeshAdded = false;
 
-	Threading::Task NavMeshBuilder::s_bakeNavMeshTask;
+	Threading::TaskID NavMeshBuilder::s_bakeNavMeshTask;
 
 	void NavMeshBuilder::Init()
 	{

@@ -408,9 +408,6 @@
     <ClInclude Include="src\BaldLion\Core\StringId.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\Threading\Task.h">
-      <Filter>src\BaldLion\Core\Threading</Filter>
-    </ClInclude>
     <ClInclude Include="src\BaldLion\Core\Threading\TaskScheduler.h">
       <Filter>src\BaldLion\Core\Threading</Filter>
     </ClInclude>
@@ -2604,6 +2601,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\HTN\Operators\HTNOperatorMoveTo.h" />
+    <ClInclude Include="src\BaldLion\AI\HTN\Serialization\HTNSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\HTN\HTNAgent.cpp">
@@ -3173,6 +3172,7 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\BaldLion\AI\HTN\Serialization\HTNSerializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="BaldLionContainers.natvis" />

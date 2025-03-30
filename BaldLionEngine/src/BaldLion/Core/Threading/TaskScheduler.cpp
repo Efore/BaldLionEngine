@@ -9,7 +9,7 @@ namespace BaldLion
 	{
 		//--------------------------------------------------------------------------
 		DynamicArray<std::thread> TaskScheduler::s_workerThreads;
-		Queue<TaskEntry> TaskScheduler::s_taskQueue;
+		Queue<Task> TaskScheduler::s_taskQueue;
 
 		std::mutex TaskScheduler::s_taskQueueMutex;
 		bool TaskScheduler::s_running = false;
@@ -19,7 +19,7 @@ namespace BaldLion
 		void TaskScheduler::Init(ui32 threadsCount /*= std::thread::hardware_concurrency() / 2*/)
 		{
 			s_workerThreads = DynamicArray<std::thread>(AllocationType::FreeList_Main, threadsCount);
-			s_taskQueue = Queue<TaskEntry>(AllocationType::FreeList_Main, 512);
+			s_taskQueue = Queue<Task>(AllocationType::FreeList_Main, 512);
 
 			s_running = true;
 			for (ui32 i = 0; i < threadsCount; ++i)
@@ -40,14 +40,13 @@ namespace BaldLion
 			while (s_activeJobs > 0);
 		}
 
-		void TaskScheduler::KickSingleTask(Task& task, SingleJobFunction jobFunction, OnTaskFinishedCallback callbackFunction)
+		void TaskScheduler::KickSingleTask(TaskID& taskID, SingleJobFunction jobFunction)
 		{
-			task.counter.fetch_add(1,std::memory_order_relaxed);
-			task.callback = callbackFunction;
+			taskID.counter.fetch_add(1,std::memory_order_relaxed);			
 
-			TaskEntry newEntry;
+			Task newEntry;
 
-			newEntry.task = &task;
+			newEntry.taskID = &taskID;
 			newEntry.job = jobFunction;
 
 			s_taskQueueMutex.lock();
@@ -55,7 +54,7 @@ namespace BaldLion
 			s_taskQueueMutex.unlock();
 		}
 
-		void TaskScheduler::KickParallelTask(Task& task, ui32 iterationCount, ParallelJobFunction jobFunction, OnTaskFinishedCallback callbackFunction)
+		void TaskScheduler::KickParallelTask(TaskID& taskID, ui32 iterationCount, ParallelJobFunction jobFunction)
 		{
 			const ui32 workerThreadCount = s_workerThreads.Capacity();
 			const ui32 iterationsPerBatchBase = iterationCount / workerThreadCount;
@@ -65,8 +64,7 @@ namespace BaldLion
 
 			ui32 iterationsDispatched = 0u;
 						
-			task.counter.fetch_add(1, std::memory_order_relaxed);
-			task.callback = callbackFunction;
+			taskID.counter.fetch_add(1, std::memory_order_relaxed);
 
 			for (ui32 i = 0u; i < requiredBatches; i++)
 			{
@@ -78,9 +76,9 @@ namespace BaldLion
 					iterationsPerBatchRemaining--;
 				}
 
-				TaskEntry newEntry;
+				Task newEntry;
 
-				newEntry.task = &task;
+				newEntry.taskID = &taskID;
 				newEntry.job = [jobFunction,iterationsDispatched, iterationsForThisBatch]()
 					{
 						jobFunction(iterationsDispatched, iterationsDispatched + iterationsForThisBatch - 1u);
@@ -104,7 +102,7 @@ namespace BaldLion
 				BL_PROFILE_THREAD(name);
 #endif
 
-				TaskEntry entry;
+				Task entry;
 
 				s_taskQueueMutex.lock();
 				if (s_taskQueue.Size() > 0)
@@ -115,18 +113,11 @@ namespace BaldLion
 				}
 				s_taskQueueMutex.unlock();
 
-				if (entry.task != nullptr)
+				if (entry.taskID != nullptr)
 				{					
 					entry.job();
-					entry.task->counter.fetch_sub(1);
+					entry.taskID->counter.fetch_sub(1);
 					s_activeJobs.fetch_sub(1);
-
-					//Dangerous since the callback will be called from this thread
-					if (entry.task->counter == 0 && entry.task->callback != nullptr)
-					{
-						entry.task->callback();
-						entry.task->callback = nullptr;
-					}
 				}
 			}
 			return nullptr;
