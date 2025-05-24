@@ -36,8 +36,6 @@ namespace BaldLion
 
 	#define VARIANT_SIZE sizeof(glm::quat)
 
-	class Variant;
-
 	class Variant
 	{
 	public:

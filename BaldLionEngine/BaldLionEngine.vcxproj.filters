@@ -13,6 +13,12 @@
     <Filter Include="src\BaldLion\AI\HTN">
       <UniqueIdentifier>{D33D64DF-3F9F-41ED-C80C-889F346D78AC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\BaldLion\AI\HTN\Operators">
+      <UniqueIdentifier>{6164E5EB-CD7C-CC15-9629-5CAF020161AF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\BaldLion\AI\HTN\Serialization">
+      <UniqueIdentifier>{A0CBE814-0C3A-3E94-5523-F993C1D03330}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\BaldLion\AI\Navigation">
       <UniqueIdentifier>{996FBD07-857F-69D8-EE38-CEF6DA675871}</UniqueIdentifier>
     </Filter>
@@ -48,9 +54,6 @@
     </Filter>
     <Filter Include="src\BaldLion\ECS\Systems">
       <UniqueIdentifier>{7252BEC0-5E77-0D41-87C2-F2D073460C5F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\BaldLion\Events">
-      <UniqueIdentifier>{657105EC-D1D2-E2F9-5A40-29ACC6A019B9}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\BaldLion\ImGui">
       <UniqueIdentifier>{8B0E0574-77F2-C5C9-E052-C01CCC55B04B}</UniqueIdentifier>
@@ -297,6 +300,12 @@
     <ClInclude Include="src\BaldLion\AI\HTN\HTNTypes.h">
       <Filter>src\BaldLion\AI\HTN</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\HTN\Operators\HTNOperatorMoveTo.h">
+      <Filter>src\BaldLion\AI\HTN\Operators</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\HTN\Serialization\HTNSerializer.h">
+      <Filter>src\BaldLion\AI\HTN\Serialization</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\AI\Navigation\NavMeshBuilder.h">
       <Filter>src\BaldLion\AI\Navigation</Filter>
     </ClInclude>
@@ -367,6 +376,9 @@
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\EntryPoint.h">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaldLion\Core\EventManager.h">
       <Filter>src\BaldLion\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\Core\GameStateLayer.h">
@@ -506,9 +518,6 @@
     </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\Core\EventManager.h">
-      <Filter>src\BaldLion\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h">
       <Filter>src\BaldLion\ImGui</Filter>
@@ -2601,8 +2610,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\AI\HTN\Operators\HTNOperatorMoveTo.h" />
-    <ClInclude Include="src\BaldLion\AI\HTN\Serialization\HTNSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\HTN\HTNAgent.cpp">
@@ -2613,6 +2620,9 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\AI\HTN\HTNTask.cpp">
       <Filter>src\BaldLion\AI\HTN</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\AI\HTN\Serialization\HTNSerializer.cpp">
+      <Filter>src\BaldLion\AI\HTN\Serialization</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\AI\Navigation\NavMeshBuilder.cpp">
       <Filter>src\BaldLion\AI\Navigation</Filter>
@@ -2648,6 +2658,9 @@
       <Filter>src\BaldLion\Animation</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\Application.cpp">
+      <Filter>src\BaldLion\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\Core\EventManager.cpp">
       <Filter>src\BaldLion\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\Core\GameStateLayer.cpp">
@@ -2724,9 +2737,6 @@
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.cpp">
       <Filter>src\BaldLion\ECS\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaldLion\Core\EventManager.cpp">
-      <Filter>src\BaldLion\Events</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp">
       <Filter>src\BaldLion\ImGui</Filter>
@@ -3172,9 +3182,5 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\AI\HTN\Serialization\HTNSerializer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="BaldLionContainers.natvis" />
   </ItemGroup>
 </Project>

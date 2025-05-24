@@ -82,7 +82,6 @@ namespace BaldLion
 			}
 		}
 
-
 		bool AnimatorSerializer::DeserializeAnimator(const char* filepath)
 		{
 			std::ifstream stream(filepath);

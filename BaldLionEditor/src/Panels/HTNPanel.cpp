@@ -1,5 +1,6 @@
 #include "HTNPanel.h"
 #include "EditorUtils.h"
+#include "BaldLion/AI/HTN/HTNManager.h"
 
 namespace BaldLion::Editor
 {
@@ -41,6 +42,10 @@ namespace BaldLion::Editor
 			}
 			ImGui::PopID();
 			ImGui::EndTabBar();
+		}
+		if (ImGui::Button("Save"))
+		{
+			HTNManager::Serialize();
 		}
 		ImGui::End();
 		imguiID = 0;
@@ -259,10 +264,10 @@ namespace BaldLion::Editor
 
 		ImGui::BeginChild("##EditTask", ImVec2(child_w, 200.0f), true, 0);
 
-		int taskType = (int)task.type;
+		int taskType = (int)task.taskType;
 		if (ImGui::Combo("Task Type", &taskType, "Primitive Task\0Compound Task"))
 		{
-			if (task.type != (HTNTask::TaskType)taskType)
+			if (task.taskType != (HTNTask::TaskType)taskType)
 			{
 				//Cleaning if changed type
 				BL_DYNAMICARRAY_FOREACH(task.methods)
@@ -273,13 +278,13 @@ namespace BaldLion::Editor
 
 				task.methods.Clear();
 
-				task.type = (HTNTask::TaskType)taskType;
+				task.taskType = (HTNTask::TaskType)taskType;
 			}
 		}		
 
 		ImGui::Separator();
 
-		if (task.type == HTNTask::PrimitiveTask)
+		if (task.taskType == HTNTask::PrimitiveTask)
 		{
 			const char* operatorTypes[] = {
 				"Operator Move To",
@@ -297,7 +302,7 @@ namespace BaldLion::Editor
 					const bool is_selected = (operator_type_idx == n);
 					if (ImGui::Selectable(operatorTypes[n], is_selected))
 					{
-						task.operatorType = (HTNOperatorType)n;
+						task.taskOperatorType = (HTNOperatorType)n;
 						operator_type_idx = n;
 					}
 

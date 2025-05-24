@@ -20,7 +20,7 @@ namespace BaldLion::AI::HTN
 		if (m_currentPlanStep < m_plan.Size())
 		{
 			const HTNTask& newTask = HTNManager::s_definedTasks[m_plan[m_currentPlanStep]];
-			currentOperatorType = newTask.operatorType;
+			currentOperatorType = newTask.taskOperatorType;
 			HTNManager::s_definedOperators.Get(currentOperatorType).OperatorStartFunc(this);
 		}
 		else

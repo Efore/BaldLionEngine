@@ -1,5 +1,6 @@
 #include "blpch.h"
 #include "HTNManager.h"
+#include "Serialization/HTNSerializer.h"
 #include "Operators/HTNOperatorMoveTo.h"
 
 namespace BaldLion::AI::HTN
@@ -12,14 +13,16 @@ namespace BaldLion::AI::HTN
 
 	void HTNManager::Init()
 	{
-		s_definedDomains = HashMap<StringId, HTNDomain>(AllocationType::FreeList_Main, 8);
 		s_definedOperators = HashMap<HTNOperatorType, HTNOperator>(AllocationType::FreeList_Main, 128);
+		s_definedDomains = HashMap<StringId, HTNDomain>(AllocationType::FreeList_Main, 8);
 		s_definedTasks = DynamicArray<HTNTask>(AllocationType::FreeList_Main, 256);
 		s_agents = DynamicArray<HTNAgent>(AllocationType::FreeList_Main, 16);
 		s_definedWorldStateBlackboards = DynamicArray<HTNWorldStateBlackboard>(AllocationType::FreeList_Main, 16);
 
 		HTNOperatorMoveTo::Init();
 		s_definedOperators.Emplace(HTNOperatorType::MoveTo, { HTNOperatorMoveTo::OperatorStartFunc ,  HTNOperatorMoveTo::OperatorInterruptFunc });
+
+		HTNSerializer::DeserializeHTNData();
 	}
 
 	void HTNManager::Stop()
@@ -49,7 +52,7 @@ namespace BaldLion::AI::HTN
 		DynamicArray<ui32>& plan)
 	{
 		const HTNTask& htnTask = s_definedTasks[taskIndex];
-		if (htnTask.type == HTNTask::PrimitiveTask)
+		if (htnTask.taskType == HTNTask::PrimitiveTask)
 		{					
 			//We need to keep track of the world state values before being modified in case of backtracking.
 			//Therefore, we add the prev value to a list
@@ -58,7 +61,7 @@ namespace BaldLion::AI::HTN
 				Variant blackboardEntry;
 				if (tempWorldStateBlackboard.TryGet(htnTask.effects[0].blackboardKey, blackboardEntry))
 				{
-					HTNWorldStateEffect prevValue{ htnTask.effects[0].blackboardKey, blackboardEntry };
+					HTNWorldStateEffect prevValue{ blackboardEntry, htnTask.effects[0].blackboardKey };
 					prevBlackboardValues.EmplaceBack(prevValue);
 				}
 			}
@@ -116,4 +119,10 @@ namespace BaldLion::AI::HTN
 
 		return false;
 	}
+
+	void HTNManager::Serialize()
+	{
+		HTNSerializer::SerializeHTNData();
+	}
+
 }

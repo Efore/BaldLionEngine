@@ -16,8 +16,8 @@ namespace BaldLion::AI::HTN
 
 	struct HTNWorldStateEffect
 	{
-		StringId blackboardKey;
 		Variant blackboardValue;
+		StringId blackboardKey;
 	};
 
 	struct HTNDomain

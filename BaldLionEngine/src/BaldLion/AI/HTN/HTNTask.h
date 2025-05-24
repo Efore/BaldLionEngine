@@ -17,7 +17,7 @@ namespace BaldLion::AI::HTN
 	class HTNTask
 	{
 	public:
-		enum TaskType
+		enum TaskType : ui8
 		{
 			PrimitiveTask,
 			CompoundTask
@@ -27,9 +27,9 @@ namespace BaldLion::AI::HTN
 		DynamicArray<HTNWorldStateEffect> effects;
 
 		StringId taskID;
-		TaskType type = TaskType::PrimitiveTask;
+		TaskType taskType = TaskType::PrimitiveTask;
 
-		HTNOperatorType operatorType = HTNOperatorType::Count;
+		HTNOperatorType taskOperatorType = HTNOperatorType::Count;
 
 		void ApplyEffects(HTNWorldStateBlackboard& worldStateBlackboard) const;
 	};

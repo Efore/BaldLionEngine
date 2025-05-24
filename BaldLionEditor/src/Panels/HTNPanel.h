@@ -24,8 +24,7 @@ namespace BaldLion {
 			void RenderDomains();
 			void RenderEditDomain(StringId domainID, HTNDomain& domain);
 
-
-			void RenderWorldStateCondition(HTNWorldStateCondition& condition);
+			//void RenderWorldStateCondition(HTNWorldStateCondition& condition);
 			
 			int imguiID = 0;
 		};

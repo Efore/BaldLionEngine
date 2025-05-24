@@ -177,6 +177,7 @@
     <ClInclude Include="src\BaldLion\Core\Containers\Queue.h" />
     <ClInclude Include="src\BaldLion\Core\Core.h" />
     <ClInclude Include="src\BaldLion\Core\EntryPoint.h" />
+    <ClInclude Include="src\BaldLion\Core\EventManager.h" />
     <ClInclude Include="src\BaldLion\Core\GameStateLayer.h" />
     <ClInclude Include="src\BaldLion\Core\GameStateLayerStack.h" />
     <ClInclude Include="src\BaldLion\Core\Input.h" />
@@ -223,7 +224,6 @@
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.h" />
-    <ClInclude Include="src\BaldLion\Core\EventManager.h" />
     <ClInclude Include="src\BaldLion\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\BaldLion\Physics\PhysicsCollider.h" />
     <ClInclude Include="src\BaldLion\Physics\PhysicsManager.h" />
@@ -939,6 +939,7 @@
     <ClCompile Include="src\BaldLion\Animation\Serialization\AnimatorSerializer.cpp" />
     <ClCompile Include="src\BaldLion\Animation\Skeleton.cpp" />
     <ClCompile Include="src\BaldLion\Core\Application.cpp" />
+    <ClCompile Include="src\BaldLion\Core\EventManager.cpp" />
     <ClCompile Include="src\BaldLion\Core\GameStateLayer.cpp" />
     <ClCompile Include="src\BaldLion\Core\GameStateLayerStack.cpp" />
     <ClCompile Include="src\BaldLion\Core\Input.cpp" />
@@ -964,7 +965,6 @@
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSPlayerControllerSystem.cpp" />
-    <ClCompile Include="src\BaldLion\Core\EventManager.cpp" />
     <ClCompile Include="src\BaldLion\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\BaldLion\Physics\PhysicsManager.cpp" />
     <ClCompile Include="src\BaldLion\Rendering\Buffer.cpp" />
@@ -1357,9 +1357,6 @@
     <ProjectReference Include="vendor\yaml\yaml-cpp.vcxproj">
       <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="BaldLionContainers.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
