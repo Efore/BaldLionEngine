@@ -33,7 +33,6 @@ namespace BaldLion {
 		s_stringIdTableMutex.lock();
 
 		std::unordered_map<StringId, const char*>::const_iterator it = s_stringIdTable.find(sid);
-
 		BL_CORE_ASSERT(it != s_stringIdTable.end(), "String Id doesnt exist");
 		const char* result = it->second;
 

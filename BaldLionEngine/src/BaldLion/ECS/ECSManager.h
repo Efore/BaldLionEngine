@@ -173,7 +173,6 @@ namespace BaldLion {
 			return static_cast<const DynamicArray<T>*>(m_componentsPool[(ui32)componentType]);			
 		}
 
-
 		template<typename T>
 		void BaldLion::ECS::ECSManager::CleanComponentPool(ECSComponentType componentType)
 		{

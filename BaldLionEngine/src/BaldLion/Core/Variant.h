@@ -40,6 +40,24 @@ namespace BaldLion
 	{
 	public:
 
+		union VariantValue
+		{
+			bool Bool;
+			i8 Int8;
+			ui8 UInt8;
+			i16 Int16;
+			ui16 UInt16;
+			i32 Int32;
+			ui32 UInt32;
+			i64 Int64;
+			ui64 UInt64;
+			float Float;
+			glm::vec2 Vec2;
+			glm::vec3 Vec3;
+			glm::quat Quat;
+			StringId String;
+		};
+
 		static Variant EmptyVariant;
 
 		Variant();
@@ -91,9 +109,17 @@ namespace BaldLion
 		bool operator!=(const Variant& other) const;
 		bool operator>=(const Variant& other) const;
 		bool operator>(const Variant& other) const;
-
-		VariantType m_valueType;
 		
+		const VariantValue& GetValue() const
+		{
+			return m_value;
+		}
+
+		VariantValue& GetValue()
+		{
+			return m_value;
+		}
+
 	private:	
 
 		template <class T>
@@ -102,24 +128,9 @@ namespace BaldLion
 			return *(T*)&m_value;
 		}
 
-		union VariantValue
-		{
-			bool Bool;
-			i8 Int8;
-			ui8 UInt8;
-			i16 Int16;
-			ui16 UInt16;
-			i32 Int32;
-			ui32 UInt32;
-			i64 Int64;
-			ui64 UInt64;
-			float Float;
-			glm::vec2 Vec2;
-			glm::vec3 Vec3;
-			glm::quat Quat;
-			StringId String;
-		} m_value;		
+		VariantValue m_value;		
 
-		
+	public:
+		VariantType m_valueType;
 	};
 }

@@ -2,6 +2,11 @@
 #include "HTNSerializer.h"
 #include "BaldLion/AI/HTN/HTNManager.h"
 
+#define YAML_KEY_WORLD_STATE_BLACKBOARDS			"WorldStateBlackboards"
+#define YAML_KEY_WORLD_STATE_BLACKBOARD				"WorldStateBlackboard"
+#define YAML_KEY_WORLD_STATE_BLACKBOARD_KEY			"WorldStateBlackboardKey"
+#define YAML_KEY_WORLD_STATE_BLACKBOARD_VARIANT		"WorldStateBlackboardVariant"
+
 #define YAML_KEY_DOMAINS							"Domains"
 #define YAML_KEY_DOMAIN_ID							"DomainID"
 #define YAML_KEY_DOMAIN_MAIN_TASK					"DomainMainTask"
@@ -22,7 +27,6 @@
 
 #define YAML_KEY_CONDITION_BLACKBOARD_KEY			"ConditionBlackboardKey"
 #define YAML_KEY_CONDITION_VARIANT					"ConditionVariant"
-#define YAML_KEY_CONDITION_COMPARISON_TYPE			"ConditionComparisonType"
 
 
 namespace BaldLion::AI::HTN
@@ -32,8 +36,9 @@ namespace BaldLion::AI::HTN
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 
-		SerializeDefinedHTNTasks(out);		
+		SerializeHTNTasks(out);		
 		SerializeHTNDomains(out);
+		SerializeWorldStateBlackboards(out);
 
 		out << YAML::EndMap;
 
@@ -51,7 +56,7 @@ namespace BaldLion::AI::HTN
 
 		YAML::Node data = YAML::Load(strStream.str());		
 
-		if (!data[YAML_KEY_TASKS] || !data[YAML_KEY_DOMAINS])
+		if (!data[YAML_KEY_TASKS] || !data[YAML_KEY_DOMAINS] || !data[YAML_KEY_WORLD_STATE_BLACKBOARDS])
 			return false;
 
 		auto tasks = data[YAML_KEY_TASKS];
@@ -74,12 +79,21 @@ namespace BaldLion::AI::HTN
 			}
 		}
 
+		auto blackboards = data[YAML_KEY_WORLD_STATE_BLACKBOARDS];
+
+		if (blackboards)
+		{
+			for (auto blackboard : blackboards)
+			{
+				DeserializeWorldStateBlackboard(blackboard);
+			}
+		}
+
 		return true;
 	}
 
-	void HTNSerializer::SerializeDefinedHTNTasks(YAML::Emitter& out)
-	{
-		out << YAML::BeginMap;
+	void HTNSerializer::SerializeHTNTasks(YAML::Emitter& out)
+	{		
 		out << YAML::Key << YAML_KEY_TASKS << YAML::Value << YAML::BeginSeq;
 				
 		BL_DYNAMICARRAY_FOREACH(HTNManager::s_definedTasks)
@@ -88,13 +102,12 @@ namespace BaldLion::AI::HTN
 		}
 
 		out << YAML::EndSeq;
-		out << YAML::EndMap;
 	}
 
 	void HTNSerializer::SerializeHTNTask(const HTNTask& htnTask, YAML::Emitter& out)
 	{
 		out << YAML::BeginMap;
-		out << YAML::Key << YAML_KEY_TASK_ID << YAML::Value << (htnTask.taskID);
+		out << YAML::Key << YAML_KEY_TASK_ID << YAML::Value << BL_STRINGID_TO_STRING(htnTask.taskID);
 		out << YAML::Key << YAML_KEY_TASK_TYPE << YAML::Value << (ui8)(htnTask.taskType);
 		out << YAML::Key << YAML_KEY_TASK_OPERATOR_TYPE << YAML::Value << (ui32)(htnTask.taskOperatorType);
 
@@ -113,8 +126,7 @@ namespace BaldLion::AI::HTN
 
 				out << YAML::BeginMap;
 
-				out << YAML::Key << YAML_KEY_CONDITION_BLACKBOARD_KEY << YAML::Value << (condition.blackboardKey);
-				out << YAML::Key << YAML_KEY_CONDITION_COMPARISON_TYPE << YAML::Value << (ui8)(condition.comparisonType);
+				out << YAML::Key << YAML_KEY_CONDITION_BLACKBOARD_KEY << YAML::Value << BL_STRINGID_TO_STRING(condition.blackboardKey);
 				SerializeVariant(out, YAML_KEY_CONDITION_VARIANT, condition.value);
 
 				out << YAML::EndMap;
@@ -145,7 +157,7 @@ namespace BaldLion::AI::HTN
 			const HTNWorldStateEffect& effect = htnTask.effects[i];
 			out << YAML::BeginMap;
 
-			out << YAML::Key << YAML_KEY_EFFECT_ID << YAML::Value << (effect.blackboardKey);
+			out << YAML::Key << YAML_KEY_EFFECT_ID << YAML::Value << BL_STRINGID_TO_STRING(effect.blackboardKey);
 			SerializeVariant(out, YAML_KEY_EFFECT_VARIANT, effect.blackboardValue);
 
 			out << YAML::EndMap;
@@ -160,7 +172,7 @@ namespace BaldLion::AI::HTN
 	{
 		HTNTask* newTask = HTNManager::s_definedTasks.EmplaceBack();
 
-		newTask->taskID = yamlTask[YAML_KEY_TASK_ID].as<ui32>();
+		newTask->taskID = BL_STRING_TO_STRINGID(yamlTask[YAML_KEY_TASK_ID].as<std::string>());
 		newTask->taskType = (HTNTask::TaskType)(yamlTask[YAML_KEY_TASK_TYPE].as<ui8>());
 		newTask->taskOperatorType = (HTNOperatorType)(yamlTask[YAML_KEY_TASK_OPERATOR_TYPE].as<ui32>());
 		newTask->methods = DynamicArray<HTNMethod>(AllocationType::FreeList_Main, 8);
@@ -181,9 +193,7 @@ namespace BaldLion::AI::HTN
 					for (auto condition : conditions)
 					{
 						HTNWorldStateCondition* newCondition = newMethod->conditions.EmplaceBack();
-						newCondition->blackboardKey = condition[YAML_KEY_CONDITION_BLACKBOARD_KEY].as<ui32>();
-						newCondition->comparisonType = (VariantComparisonType)condition[YAML_KEY_CONDITION_COMPARISON_TYPE].as<ui8>();
-
+						newCondition->blackboardKey = BL_STRING_TO_STRINGID(condition[YAML_KEY_CONDITION_BLACKBOARD_KEY].as<std::string>());
 						DeserializeVariant(condition, YAML_KEY_CONDITION_VARIANT, newCondition->value);
 					}
 				}
@@ -207,7 +217,7 @@ namespace BaldLion::AI::HTN
 			for (auto effect : effects)
 			{
 				HTNWorldStateEffect* newEffect = newTask->effects.EmplaceBack();
-				newEffect->blackboardKey = effect[YAML_KEY_EFFECT_ID].as<ui32>();
+				newEffect->blackboardKey = BL_STRING_TO_STRINGID(effect[YAML_KEY_EFFECT_ID].as<std::string>());
 				DeserializeVariant(effect, YAML_KEY_EFFECT_VARIANT, newEffect->blackboardValue);				
 			}
 		}
@@ -215,53 +225,98 @@ namespace BaldLion::AI::HTN
 
 	void HTNSerializer::SerializeHTNDomains(YAML::Emitter& out)
 	{
-		out << YAML::BeginMap;
 		out << YAML::Key << YAML_KEY_DOMAINS << YAML::Value << YAML::BeginSeq;
 
 		BL_HASHMAP_FOR(HTNManager::s_definedDomains, it)
 		{
 			out << YAML::BeginMap;
 
-			out << YAML::Key << YAML_KEY_DOMAIN_ID << YAML::Value << it.GetKey();
+			out << YAML::Key << YAML_KEY_DOMAIN_ID << YAML::Value << BL_STRINGID_TO_STRING(it.GetKey());
 			out << YAML::Key << YAML_KEY_DOMAIN_MAIN_TASK << YAML::Value << (i32)(it.GetValue().mainTask);
 
 			out << YAML::EndMap;
 		}
 
 		out << YAML::EndSeq;
-		out << YAML::EndMap;
 	}
 
 	void HTNSerializer::DeserializeHTNDomain(const YAML::detail::iterator_value& yamlDomain)
 	{
-		StringId domainID = yamlDomain[YAML_KEY_DOMAIN_ID].as<ui32>();
+		StringId domainID = BL_STRING_TO_STRINGID(yamlDomain[YAML_KEY_DOMAIN_ID].as<std::string>());
 		i32 mainTaskIndex = yamlDomain[YAML_KEY_DOMAIN_MAIN_TASK].as<i32>();
 
 		HTNManager::s_definedDomains.Emplace(domainID, { mainTaskIndex });
 	}
 
-	void HTNSerializer::SerializeVariant(YAML::Emitter& out, const std::string& key, const Variant& variant)
+	void HTNSerializer::SerializeWorldStateBlackboards(YAML::Emitter& out)
 	{
-		out << YAML::Key << (key + "_TYPE") << YAML::Value << (ui16)(variant.m_valueType);
+		out << YAML::Key << YAML_KEY_WORLD_STATE_BLACKBOARDS << YAML::Value << YAML::BeginSeq;
+
+		BL_DYNAMICARRAY_FOREACH(HTNManager::s_definedWorldStateBlackboards)
+		{
+			const HTNWorldStateBlackboard& woldStateBlackboard = HTNManager::s_definedWorldStateBlackboards[i];
+
+			out << YAML::BeginMap;
+			out << YAML::Key << YAML_KEY_WORLD_STATE_BLACKBOARD << YAML::Value << YAML::BeginSeq;
+
+			BL_HASHMAP_FOR(woldStateBlackboard, it)
+			{
+				out << YAML::BeginMap;
+
+				out << YAML::Key << YAML_KEY_WORLD_STATE_BLACKBOARD_KEY << YAML::Value << BL_STRINGID_TO_STRING(it.GetKey());
+				SerializeVariant(out, YAML_KEY_WORLD_STATE_BLACKBOARD_VARIANT, it.GetValue());
+
+				out << YAML::EndMap;
+			}
+
+			out << YAML::EndSeq;
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndSeq;
+	}
+
+	void HTNSerializer::DeserializeWorldStateBlackboard(const YAML::detail::iterator_value& yamlBlackboard)
+	{
+		HTNWorldStateBlackboard* newBlackboard = HTNManager::s_definedWorldStateBlackboards.EmplaceBack();
+		(*newBlackboard) = HashTable<StringId, Variant>(AllocationType::FreeList_Main, 16);
+
+		auto yamlBlackboardEntry = yamlBlackboard[YAML_KEY_WORLD_STATE_BLACKBOARD];
+
+		if (yamlBlackboardEntry)
+		{
+			for (auto yamlBlackboardEntryValue : yamlBlackboardEntry)
+			{
+				StringId blackboardKey = BL_STRING_TO_STRINGID(yamlBlackboardEntryValue[YAML_KEY_WORLD_STATE_BLACKBOARD_KEY].as<std::string>());
+				Variant blackboardValue;
+				DeserializeVariant(yamlBlackboardEntryValue, YAML_KEY_WORLD_STATE_BLACKBOARD_VARIANT, blackboardValue);
+
+				newBlackboard->Emplace(blackboardKey, blackboardValue);
+			}
+		}
+	}
+
+	void HTNSerializer::SerializeVariant(YAML::Emitter& out, const std::string& yamlKey, const Variant& variant)
+	{
+		out << YAML::Key << (yamlKey + "_TYPE") << YAML::Value << (ui16)(variant.m_valueType);
 		
-		unsigned char* data = (unsigned char*)&variant;
+		unsigned char* data = (unsigned char*)&variant.GetValue();
 
 		ui64 firstHalf = (ui64)(*data);
-		out << YAML::Key << (key + "_VALUE_1") << YAML::Value << firstHalf;
+		out << YAML::Key << (yamlKey + "_VALUE_1") << YAML::Value << firstHalf;
 
 		ui64 secondHalf = (ui64)(data[8]);
-		out << YAML::Key << (key + "_VALUE_2") << YAML::Value << firstHalf;
+		out << YAML::Key << (yamlKey + "_VALUE_2") << YAML::Value << secondHalf;
 	}
 
-	void HTNSerializer::DeserializeVariant(const YAML::Node& node, const std::string& key, Variant& result)
+	void HTNSerializer::DeserializeVariant(const YAML::Node& node, const std::string& yamlKey, Variant& result)
 	{
-		result.m_valueType = (VariantType)node[key + "_TYPE"].as<ui16>();
-		ui64 firstHalf = node[key + "_VALUE_1"].as<ui64>();
-		ui64 secondHalf = node[key + "_VALUE_2"].as<ui64>();
+		result.m_valueType = (VariantType)node[yamlKey + "_TYPE"].as<ui16>();
+		ui64 firstHalf = node[yamlKey + "_VALUE_1"].as<ui64>();
+		ui64 secondHalf = node[yamlKey + "_VALUE_2"].as<ui64>();
 
-		unsigned char* data = (unsigned char*)&result;
+		unsigned char* data = (unsigned char*)&result.GetValue();
 		data[0] = firstHalf;
 		data[8] = secondHalf;		
-	}
-
+	}	
 }

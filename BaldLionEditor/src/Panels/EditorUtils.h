@@ -407,7 +407,7 @@ namespace BaldLion
 					{
 					case VariantType::Bool:
 					{
-						static bool data = false;
+						static bool data = variant;
 						if (ImGui::Checkbox("", &data))
 						{
 							modified = true;
@@ -417,7 +417,7 @@ namespace BaldLion
 					break;
 					case VariantType::Int8:
 					{
-						static int data = 0;
+						static int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							modified = true;
@@ -427,7 +427,7 @@ namespace BaldLion
 					break;
 					case VariantType::UInt8:
 					{
-						static int data = 0;
+						static int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							if (data < 0)
@@ -441,7 +441,7 @@ namespace BaldLion
 					break;
 					case VariantType::Int16:
 					{
-						static int data = 0;
+						static int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							modified = true;
@@ -451,7 +451,7 @@ namespace BaldLion
 					break;
 					case VariantType::UInt16:
 					{
-						static int data = 0;
+						static int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							if (data < 0)
@@ -465,7 +465,7 @@ namespace BaldLion
 					break;
 					case VariantType::Int32:
 					{
-						static int data = 0;
+						static int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							modified = true;
@@ -475,7 +475,7 @@ namespace BaldLion
 					break;
 					case VariantType::UInt32:
 					{
-						static int data = 0;
+						static int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							if (data < 0)
@@ -489,7 +489,7 @@ namespace BaldLion
 					break;
 					case VariantType::Int64:
 					{
-						static int data = 0;
+						static int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							modified = true;
@@ -499,7 +499,7 @@ namespace BaldLion
 					break;
 					case VariantType::UInt64:
 					{
-						static int data = 0;
+						static int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							if (data < 0)
@@ -513,7 +513,7 @@ namespace BaldLion
 					break;
 					case VariantType::Float:
 					{
-						static float data = 0;
+						static float data = variant;
 						if (ImGui::InputFloat("", &data))
 						{
 							modified = true;

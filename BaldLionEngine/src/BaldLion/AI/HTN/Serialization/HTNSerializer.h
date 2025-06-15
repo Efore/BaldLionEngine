@@ -14,16 +14,19 @@ namespace BaldLion::AI::HTN
 		static void SerializeHTNData();
 		static bool DeserializeHTNData();
 
-		static void SerializeDefinedHTNTasks(YAML::Emitter& out);		
+		static void SerializeHTNTasks(YAML::Emitter& out);		
+		static void DeserializeHTNTask(const YAML::detail::iterator_value& yamlTask);
 
 		static void SerializeHTNTask(const HTNTask& htnTask, YAML::Emitter& out);
-		static void DeserializeHTNTask(const YAML::detail::iterator_value& yamlTask);
 
 		static void SerializeHTNDomains(YAML::Emitter& out);
 		static void DeserializeHTNDomain(const YAML::detail::iterator_value& yamlDomain);
 
-		static void SerializeVariant(YAML::Emitter& out, const std::string& key, const Variant& variant);
-		static void DeserializeVariant(const YAML::Node& node, const std::string& key, Variant& result);
+		static void SerializeWorldStateBlackboards(YAML::Emitter& out);
+		static void DeserializeWorldStateBlackboard(const YAML::detail::iterator_value& yamlTask);
+
+		static void SerializeVariant(YAML::Emitter& out, const std::string& yamlKey, const Variant& variant);
+		static void DeserializeVariant(const YAML::Node& node, const std::string& yamlKey, Variant& result);
 
 		friend class HTNManager;
 	};
