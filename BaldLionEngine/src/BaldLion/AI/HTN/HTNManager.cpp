@@ -9,7 +9,7 @@ namespace BaldLion::AI::HTN
 	HashMap<StringId, HTNDomain> HTNManager::s_definedDomains;
 	DynamicArray<HTNTask> HTNManager::s_definedTasks;	
 	DynamicArray<HTNAgent> HTNManager::s_agents;
-	DynamicArray<HTNWorldStateBlackboard> HTNManager::s_definedWorldStateBlackboards;
+	HashMap<StringId, HTNWorldStateBlackboard> HTNManager::s_definedWorldStateBlackboards;
 
 	void HTNManager::Init()
 	{
@@ -17,7 +17,7 @@ namespace BaldLion::AI::HTN
 		s_definedDomains = HashMap<StringId, HTNDomain>(AllocationType::FreeList_Main, 8);
 		s_definedTasks = DynamicArray<HTNTask>(AllocationType::FreeList_Main, 256);
 		s_agents = DynamicArray<HTNAgent>(AllocationType::FreeList_Main, 16);
-		s_definedWorldStateBlackboards = DynamicArray<HTNWorldStateBlackboard>(AllocationType::FreeList_Main, 16);
+		s_definedWorldStateBlackboards = HashMap<StringId, HTNWorldStateBlackboard>(AllocationType::FreeList_Main, 16);
 
 		HTNOperatorMoveTo::Init();
 		s_definedOperators.Emplace(HTNOperatorType::MoveTo, { HTNOperatorMoveTo::OperatorStartFunc ,  HTNOperatorMoveTo::OperatorInterruptFunc });
@@ -35,15 +35,19 @@ namespace BaldLion::AI::HTN
 		HTNOperatorMoveTo::Stop();
 	}
 
-	bool HTNManager::RunPlanner(ui32 worldStateBlackboardIndex,
+	bool HTNManager::RunPlanner(StringId worldStateBlackboardId,
 		StringId domainID, DynamicArray<ui32>& plan)
 	{
-		const HTNWorldStateBlackboard& worldStateBlackboard = s_definedWorldStateBlackboards[worldStateBlackboardIndex];
-		HTNWorldStateBlackboard tempWorldStateBlackboard(AllocationType::Linear_Frame, worldStateBlackboard);
-		DynamicArray<HTNWorldStateEffect> prevValues(AllocationType::Linear_Frame, 64);
-		const HTNDomain& domain = s_definedDomains.Get(domainID);
+		HTNWorldStateBlackboard* worldStateBlackboard = nullptr;
+		if (s_definedWorldStateBlackboards.TryGet(worldStateBlackboardId, worldStateBlackboard))
+		{
+			HTNWorldStateBlackboard tempWorldStateBlackboard(AllocationType::Linear_Frame, *worldStateBlackboard);
+			DynamicArray<HTNWorldStateEffect> prevValues(AllocationType::Linear_Frame, 64);
+			const HTNDomain& domain = s_definedDomains.Get(domainID);
 
-		return CheckTask(tempWorldStateBlackboard, prevValues, domain.mainTask, plan);
+			return CheckTask(tempWorldStateBlackboard, prevValues, domain.mainTask, plan);
+		}
+		return false;
 	}
 
 	bool HTNManager::CheckTask(HTNWorldStateBlackboard& tempWorldStateBlackboard, 

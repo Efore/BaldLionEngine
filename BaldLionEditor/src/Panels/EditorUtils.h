@@ -523,7 +523,7 @@ namespace BaldLion
 					break;
 					case VariantType::Vector2:
 					{
-						static glm::vec2 data = glm::vec2(0.0f);
+						static glm::vec2 data = variant;
 						if (DrawVec2Handler("", data))
 						{
 							modified = true;
@@ -533,7 +533,7 @@ namespace BaldLion
 					break;
 					case VariantType::Vector3:
 					{
-						static glm::vec3 data = glm::vec3(0.0f);
+						static glm::vec3 data = variant;
 						if (DrawVec3Handler("", data))
 						{
 							modified = true;
@@ -544,6 +544,12 @@ namespace BaldLion
 					case VariantType::StringID:
 					{
 						static char data[64];
+
+						if (variant != Variant::EmptyVariant)
+						{
+							const char* text = BL_STRINGID_TO_STR_C((ui32)variant);
+							memcpy(data, text, sizeof(text));
+						}
 
 						if (ImGui::InputText("", data, IM_ARRAYSIZE(data)))
 						{

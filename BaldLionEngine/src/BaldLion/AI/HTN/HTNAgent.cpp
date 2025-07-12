@@ -47,7 +47,7 @@ namespace BaldLion::AI::HTN
 		Threading::TaskScheduler::KickSingleTask(m_requestPlanTask, 
 			[this] {
 				BL_PROFILE_SCOPE("HTN Planner", Optick::Category::GameLogic);
-				m_validPlan = HTNManager::RunPlanner(m_worldStateBlackboardIndex, currentDomainId, m_plan);
+				m_validPlan = HTNManager::RunPlanner(m_worldStateBlackboardId, currentDomainId, m_plan);
 
 				EventEntry runPlannerFinished;
 
@@ -67,7 +67,12 @@ namespace BaldLion::AI::HTN
 			if (success)
 			{
 				const HTNTask& newTask = HTNManager::s_definedTasks[m_plan[m_currentPlanStep]];
-				newTask.ApplyEffects(HTNManager::s_definedWorldStateBlackboards[m_worldStateBlackboardIndex]);
+
+				HTNWorldStateBlackboard* worldStateBlackboard = nullptr;
+				if (HTNManager::s_definedWorldStateBlackboards.TryGet(m_worldStateBlackboardId, worldStateBlackboard))
+				{
+					newTask.ApplyEffects(*worldStateBlackboard);
+				}
 				++m_currentPlanStep;
 				RunPlan();
 			}
@@ -93,6 +98,11 @@ namespace BaldLion::AI::HTN
 		}
 
 		return true;
+	}
+
+	void HTNAgent::SetWorldStateBlackboardId(StringId worldStateBlackboardId)
+	{
+		m_worldStateBlackboardId = worldStateBlackboardId;
 	}
 
 }

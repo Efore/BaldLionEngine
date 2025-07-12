@@ -15,12 +15,12 @@ namespace BaldLion::AI::HTN
 		
 		static void Serialize();
 
-		static bool RunPlanner(ui32 worldStateBlackboardIndex, 
+		static bool RunPlanner(StringId worldStateBlackboardId,
 			StringId domainID, DynamicArray<ui32>& plan);
 
 		static HashMap <HTNOperatorType, HTNOperator> s_definedOperators;
 
-		static DynamicArray<HTNWorldStateBlackboard> s_definedWorldStateBlackboards;
+		static HashMap<StringId, HTNWorldStateBlackboard> s_definedWorldStateBlackboards;
 		static HashMap<StringId, HTNDomain> s_definedDomains;
 		static DynamicArray<HTNTask> s_definedTasks;
 		static DynamicArray<HTNAgent> s_agents;

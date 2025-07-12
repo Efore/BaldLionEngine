@@ -61,32 +61,44 @@ namespace BaldLion::Editor
 			child_w = 1.0f;
 
 		ImGui::BeginChild("##Domains", ImVec2(child_w, 200.0f), true, 0);
-		static StringId node_clicked = -1;
 
-		int i = 0;
-		
+		static StringId node_clicked = 0;	
+
 		BL_HASHTABLE_FOR(HTNManager::s_definedDomains, it)
 		{
 			if (node_clicked == it.GetKey())
 			{
 				base_flags |= ImGuiTreeNodeFlags_Selected;
 			}
+			else
+			{
+				base_flags &= ~ImGuiTreeNodeFlags_Selected;
+			}
 
 			HTNDomain& domain = it.GetValue();
-			ImGui::TreeNodeEx((void*)(uint32_t)(i), base_flags, BL_STRINGID_TO_STR_C(it.GetKey()));
+			ImGui::TreeNodeEx((void*)(uint32_t)(node_clicked), base_flags, BL_STRINGID_TO_STR_C(it.GetKey()));
 
 			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 			{
 				node_clicked = it.GetKey();
 			}
-			i++;
 		}		
+
+		HTNDomain* domain = nullptr;
+		if (HTNManager::s_definedDomains.TryGet(node_clicked, domain))
+		{
+			if (ImGui::Button("Remove selected"))
+			{
+				HTNManager::s_definedDomains.Remove(node_clicked);
+				domain = nullptr;
+			}
+		}
 
 		static char newDomainName[64];
 		ImGui::InputText("New Domain Name", newDomainName, IM_ARRAYSIZE(newDomainName));
 		if (strlen(newDomainName) > 0 && ImGui::Button("+"))
 		{
-			HTNManager::s_definedDomains.Emplace(BL_STRING_TO_STRINGID(newDomainName), {-1});
+			HTNManager::s_definedDomains.Emplace(BL_STRING_TO_STRINGID(newDomainName), {});
 			memset(newDomainName, 0, IM_ARRAYSIZE(newDomainName));
 		}
 
@@ -96,8 +108,8 @@ namespace BaldLion::Editor
 
 		ImGui::BeginChild("##EditDomains", ImVec2(child_w, 200.0f), true, 0);
 
-		HTNDomain* domain = nullptr;
-		if (node_clicked > -1 && HTNManager::s_definedDomains.TryGet(node_clicked,domain))
+		domain = nullptr;
+		if (HTNManager::s_definedDomains.TryGet(node_clicked,domain))
 		{			
 			RenderEditDomain(node_clicked, *domain);
 		}
@@ -159,6 +171,10 @@ namespace BaldLion::Editor
 			if (node_clicked == i)
 			{
 				base_flags |= ImGuiTreeNodeFlags_Selected;
+			}
+			else
+			{
+				base_flags &= ~ImGuiTreeNodeFlags_Selected;
 			}
 
 			HTNTask& task = HTNManager::s_definedTasks[i];
@@ -396,10 +412,8 @@ namespace BaldLion::Editor
 			ImGui::Text(BL_STRINGID_TO_STR_C(method.conditions[i].blackboardKey));
 
 			int comparisonType = (int)method.conditions[i].comparisonType;
-			if (ImGui::Combo("##", &comparisonType, "<\0<=\0==\0!=\0>=\0>"))
-			{
-				method.conditions[i].comparisonType = (VariantComparisonType)comparisonType;
-			}			
+			ImGui::Combo("##ComparisonType", &comparisonType, "<\0<=\0==\0!=\0>=\0>");
+			method.conditions[i].comparisonType = (VariantComparisonType)comparisonType;						
 
 			EditorUtils::DrawVariant("", method.conditions[i].value, true);
 			ImGui::SameLine();
@@ -423,10 +437,8 @@ namespace BaldLion::Editor
 
 		int comparisonInt = (int)comparisonType;
 
-		if (ImGui::Combo("##", &comparisonInt, "<\0<=\0==\0!=\0>=\0>"))
-		{
-			comparisonType = (VariantComparisonType)comparisonInt;
-		}
+		ImGui::Combo("##NewComparisonType", &comparisonInt, "<\0<=\0==\0!=\0>=\0>");		
+		comparisonType = (VariantComparisonType)comparisonInt;		
 
 		EditorUtils::DrawVariant("", blackboardValue, false);
 		ImGui::SameLine();
@@ -484,7 +496,7 @@ namespace BaldLion::Editor
 
 			ImGuiComboFlags flags = ImGuiComboFlags_PopupAlignLeft;
 
-			if (ImGui::BeginCombo("##", task_preview_value, flags))
+			if (ImGui::BeginCombo("##TasksIDs", task_preview_value, flags))
 			{
 				BL_DYNAMICARRAY_FOREACH(tasksIDs)
 				{
@@ -521,28 +533,45 @@ namespace BaldLion::Editor
 			child_w = 1.0f;
 
 		ImGui::BeginChild("##RenderWorldStateBlackboards", ImVec2(child_w, 200.0f), true, 0);
-		static int node_clicked = -1;
+		static StringId node_clicked = 0;
 		
-		BL_DYNAMICARRAY_FOREACH(HTNManager::s_definedWorldStateBlackboards)
+		BL_HASHMAP_FOR(HTNManager::s_definedWorldStateBlackboards,it)
 		{
-			if (node_clicked == i)
+			if (node_clicked == it.GetKey())
 			{
 				base_flags |= ImGuiTreeNodeFlags_Selected;
 			}
+			else
+			{
+				base_flags &= ~ImGuiTreeNodeFlags_Selected;
+			}
 
-			HTNWorldStateBlackboard& blackboard = HTNManager::s_definedWorldStateBlackboards[i];
-			ImGui::TreeNodeEx((void*)(intptr_t)i, base_flags, "Blackboard %d", i);
+			HTNWorldStateBlackboard& blackboard = it.GetValue();
+			ImGui::TreeNodeEx((void*)(intptr_t)it.GetKey(), base_flags, BL_STRINGID_TO_STR_C(it.GetKey()));
 			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 			{
-				node_clicked = i;
+				node_clicked = it.GetKey();
+			}
+		}			
+
+		HTNWorldStateBlackboard* blackboard = nullptr;
+		if (HTNManager::s_definedWorldStateBlackboards.TryGet(node_clicked, blackboard))
+		{
+			if (ImGui::Button("Remove Selected WorldStateBlackboard"))
+			{
+				blackboard->Delete();
+				HTNManager::s_definedWorldStateBlackboards.Remove(node_clicked);
+				node_clicked = -1;
 			}
 		}
-			
 
-		if (ImGui::Button("+"))
-		{
-			HTNWorldStateBlackboard* newBlackboard = HTNManager::s_definedWorldStateBlackboards.EmplaceBack();
-			(*newBlackboard) = HashTable<StringId, Variant>(AllocationType::FreeList_Main, 16);
+		static char newBlackboardName[64];
+		ImGui::InputText("New WorldStateBlackboard Name", newBlackboardName, IM_ARRAYSIZE(newBlackboardName));
+		if (strlen(newBlackboardName) > 0 && ImGui::Button("+"))
+		{		
+			const StringId blackboardName = BL_STRING_TO_STRINGID(newBlackboardName);
+			HTNManager::s_definedWorldStateBlackboards.Emplace(blackboardName, HashTable<StringId, Variant>(AllocationType::FreeList_Main,16));
+			memset(newBlackboardName, 0, 64);
 		}
 
 		ImGui::EndChild();
@@ -551,18 +580,18 @@ namespace BaldLion::Editor
 
 		ImGui::BeginChild("##Blackboards", ImVec2(child_w, 200.0f), true, 0);
 
-		if (node_clicked > -1)
-		{
-			HTNWorldStateBlackboard& blackboard = HTNManager::s_definedWorldStateBlackboards[node_clicked];					
-
-			BL_HASHTABLE_FOR(blackboard, it)
+		blackboard = nullptr;
+		if(HTNManager::s_definedWorldStateBlackboards.TryGet(node_clicked, blackboard))
+		{			
+			DynamicArray<StringId> blackboardKeysToRemove(AllocationType::Linear_Frame, blackboard->Size());
+			BL_HASHTABLE_FOR(*blackboard, it)
 			{
 				ImGui::PushID(imguiID++);
 				EditorUtils::DrawVariant(BL_STRINGID_TO_STR_C(it.GetKey()), it.GetValue(),true);
 				ImGui::SameLine();
 				if (ImGui::Button("-"))
 				{
-					blackboard.Remove(it.GetKey());
+					blackboard->Remove(it.GetKey());
 					ImGui::PopID();
 					break;
 				}
@@ -574,12 +603,13 @@ namespace BaldLion::Editor
 
 			ImGui::PushID(imguiID++);
 
-			ImGui::InputText("##", blackboardKey, IM_ARRAYSIZE(blackboardKey));			
+			ImGui::InputText("##BlackboardKey", blackboardKey, IM_ARRAYSIZE(blackboardKey));			
 			EditorUtils::DrawVariant("", blackboardValue, false);
 			ImGui::SameLine();
+
 			if (strlen(blackboardKey) > 0 && ImGui::Button("+"))
 			{
-				blackboard.Emplace(BL_STRING_TO_STRINGID(blackboardKey), blackboardValue);
+				blackboard->Emplace(BL_STRING_TO_STRINGID(blackboardKey), blackboardValue);
 				memset(blackboardKey, 0, 64);
 				memset(&blackboardValue, 0, sizeof(blackboardValue));
 			}
@@ -587,6 +617,7 @@ namespace BaldLion::Editor
 			ImGui::PopID();
 
 		}
+
 		ImGui::EndChild();
 	}
 

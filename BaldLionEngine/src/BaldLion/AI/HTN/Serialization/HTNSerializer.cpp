@@ -2,10 +2,11 @@
 #include "HTNSerializer.h"
 #include "BaldLion/AI/HTN/HTNManager.h"
 
-#define YAML_KEY_WORLD_STATE_BLACKBOARDS			"WorldStateBlackboards"
-#define YAML_KEY_WORLD_STATE_BLACKBOARD				"WorldStateBlackboard"
-#define YAML_KEY_WORLD_STATE_BLACKBOARD_KEY			"WorldStateBlackboardKey"
-#define YAML_KEY_WORLD_STATE_BLACKBOARD_VARIANT		"WorldStateBlackboardVariant"
+#define YAML_KEY_WORLD_STATE_BLACKBOARDS				"WorldStateBlackboards"
+#define YAML_KEY_WORLD_STATE_BLACKBOARD					"WorldStateBlackboard"
+#define YAML_KEY_WORLD_STATE_BLACKBOARD_NAME			"WorldStateBlackboardName"
+#define YAML_KEY_WORLD_STATE_BLACKBOARD_ENTRY_KEY		"WorldStateBlackboardEntryKey"
+#define YAML_KEY_WORLD_STATE_BLACKBOARD_ENTRY_VARIANT	"WorldStateBlackboardEntryVariant"
 
 #define YAML_KEY_DOMAINS							"Domains"
 #define YAML_KEY_DOMAIN_ID							"DomainID"
@@ -252,19 +253,20 @@ namespace BaldLion::AI::HTN
 	{
 		out << YAML::Key << YAML_KEY_WORLD_STATE_BLACKBOARDS << YAML::Value << YAML::BeginSeq;
 
-		BL_DYNAMICARRAY_FOREACH(HTNManager::s_definedWorldStateBlackboards)
+		BL_HASHMAP_FOR(HTNManager::s_definedWorldStateBlackboards, it)
 		{
-			const HTNWorldStateBlackboard& woldStateBlackboard = HTNManager::s_definedWorldStateBlackboards[i];
+			const HTNWorldStateBlackboard& woldStateBlackboard = it.GetValue();
 
 			out << YAML::BeginMap;
+			out << YAML::Key << YAML_KEY_WORLD_STATE_BLACKBOARD_NAME << YAML::Value << BL_STRINGID_TO_STRING(it.GetKey());
 			out << YAML::Key << YAML_KEY_WORLD_STATE_BLACKBOARD << YAML::Value << YAML::BeginSeq;
 
-			BL_HASHMAP_FOR(woldStateBlackboard, it)
+			BL_HASHMAP_FOR(woldStateBlackboard, it2)
 			{
 				out << YAML::BeginMap;
 
-				out << YAML::Key << YAML_KEY_WORLD_STATE_BLACKBOARD_KEY << YAML::Value << BL_STRINGID_TO_STRING(it.GetKey());
-				SerializeVariant(out, YAML_KEY_WORLD_STATE_BLACKBOARD_VARIANT, it.GetValue());
+				out << YAML::Key << YAML_KEY_WORLD_STATE_BLACKBOARD_ENTRY_KEY << YAML::Value << BL_STRINGID_TO_STRING(it2.GetKey());
+				SerializeVariant(out, YAML_KEY_WORLD_STATE_BLACKBOARD_ENTRY_VARIANT, it2.GetValue());
 
 				out << YAML::EndMap;
 			}
@@ -278,20 +280,24 @@ namespace BaldLion::AI::HTN
 
 	void HTNSerializer::DeserializeWorldStateBlackboard(const YAML::detail::iterator_value& yamlBlackboard)
 	{
-		HTNWorldStateBlackboard* newBlackboard = HTNManager::s_definedWorldStateBlackboards.EmplaceBack();
-		(*newBlackboard) = HashTable<StringId, Variant>(AllocationType::FreeList_Main, 16);
+		StringId blackboardName = BL_STRING_TO_STRINGID(yamlBlackboard[YAML_KEY_WORLD_STATE_BLACKBOARD_NAME].as<std::string>());
 
-		auto yamlBlackboardEntry = yamlBlackboard[YAML_KEY_WORLD_STATE_BLACKBOARD];
-
-		if (yamlBlackboardEntry)
+		HTNManager::s_definedWorldStateBlackboards.Emplace(blackboardName, HashTable<StringId, Variant>(AllocationType::FreeList_Main, 16));
+		HTNWorldStateBlackboard* newBlackboard;
+		if (HTNManager::s_definedWorldStateBlackboards.TryGet(blackboardName, newBlackboard))
 		{
-			for (auto yamlBlackboardEntryValue : yamlBlackboardEntry)
-			{
-				StringId blackboardKey = BL_STRING_TO_STRINGID(yamlBlackboardEntryValue[YAML_KEY_WORLD_STATE_BLACKBOARD_KEY].as<std::string>());
-				Variant blackboardValue;
-				DeserializeVariant(yamlBlackboardEntryValue, YAML_KEY_WORLD_STATE_BLACKBOARD_VARIANT, blackboardValue);
+			auto yamlBlackboardEntry = yamlBlackboard[YAML_KEY_WORLD_STATE_BLACKBOARD];
 
-				newBlackboard->Emplace(blackboardKey, blackboardValue);
+			if (yamlBlackboardEntry)
+			{
+				for (auto yamlBlackboardEntryValue : yamlBlackboardEntry)
+				{
+					StringId blackboardKey = BL_STRING_TO_STRINGID(yamlBlackboardEntryValue[YAML_KEY_WORLD_STATE_BLACKBOARD_ENTRY_KEY].as<std::string>());
+					Variant blackboardValue;
+					DeserializeVariant(yamlBlackboardEntryValue, YAML_KEY_WORLD_STATE_BLACKBOARD_ENTRY_VARIANT, blackboardValue);
+
+					newBlackboard->Emplace(blackboardKey, blackboardValue);
+				}
 			}
 		}
 	}

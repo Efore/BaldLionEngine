@@ -429,7 +429,7 @@ namespace BaldLion
 		if (tableIndex == m_beginIterator.GetTableIndex())
 		{
 			ui32 firstElement = FindFirstElementIndex();
-			m_beginIterator = HashMap<K, V>::Iterator(this, firstElement, m_table[firstElement]);
+			m_beginIterator = HashMap<K, V>::Iterator(this, firstElement, firstElement >= m_table.Size() ? nullptr : m_table[firstElement]);
 		}
 
 		m_endIterator = HashMap<K, V>::Iterator(this, m_capacity, nullptr);

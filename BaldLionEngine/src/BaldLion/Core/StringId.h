@@ -25,6 +25,7 @@ namespace BaldLion
 
 	};
 }
+
 namespace std
 {
 	template <>

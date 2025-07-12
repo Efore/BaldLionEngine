@@ -16,13 +16,15 @@ namespace BaldLion::AI::HTN
 		void RunPlan();		
 		void StopPlan();
 
+		void SetWorldStateBlackboardId(StringId worldStateBlackboardId);
+
 		ui32 GetAgentId() const { return m_agentID; }
 		void OnOperatorFinished(HTNOperatorType typeFinished, bool success);
 		bool OnRunPlannerFinished(const EventEntry& e);
 
 	private:
 		DynamicArray<ui32> m_plan;
-		ui32 m_worldStateBlackboardIndex;
+		StringId m_worldStateBlackboardId;
 		ui32 m_currentPlanStep = 0;
 		i32 m_agentID = -1;			
 
