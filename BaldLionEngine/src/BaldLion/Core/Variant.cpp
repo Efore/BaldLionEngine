@@ -4,8 +4,6 @@
 
 namespace BaldLion
 {
-	Variant Variant::EmptyVariant;
-
 	Variant::Variant()
 	{
 		memset(&m_value, 0, sizeof(VariantValue));
@@ -678,6 +676,8 @@ namespace BaldLion
 
 		return false;
 	}
+
+	const Variant Variant::EmptyVariant;
 
 	bool Variant::operator!=(const Variant& other) const
 	{

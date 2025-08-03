@@ -198,6 +198,7 @@
     <ClInclude Include="src\BaldLion\ECS\Components\ECSAnimationComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSCameraFollowComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSDirectionalLightComponent.h" />
+    <ClInclude Include="src\BaldLion\ECS\Components\ECSHTNAgentComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSHierarchyComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSLocomotionComponent.h" />
     <ClInclude Include="src\BaldLion\ECS\Components\ECSMeshComponent.h" />
@@ -220,6 +221,7 @@
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSCameraFollowSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.h" />
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSHTNPlannerSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.h" />
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.h" />
@@ -961,6 +963,7 @@
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSAnimationSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSCameraFollowSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.cpp" />
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSHTNPlannerSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSNavigationSystem.cpp" />
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSPhysicsSystem.cpp" />

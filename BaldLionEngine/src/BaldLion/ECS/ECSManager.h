@@ -91,7 +91,7 @@ namespace BaldLion {
 		private:
 
 			template<typename T>
-			void CleanComponentPool(ECSComponentType componentType);	
+			void ClearComponentPool(ECSComponentType componentType);	
 
 			void RemoveComponentFromPool(ECSComponentType componentType, const ECSComponent* componentToRemove);
 
@@ -128,6 +128,7 @@ namespace BaldLion {
 			DynamicArray<class ECSLocomotionComponent> m_locomotionComponentPool;
 			DynamicArray<class ECSCameraFollowComponent> m_cameraFollowComponentPool;
 			DynamicArray<class ECSPlayerControllerComponent> m_playerControllerComponentPool;
+			DynamicArray<class ECSHTNAgentComponent> m_htnAgentComponentPool;
 
 			static ui32 s_entityIDProvider;
 			static ui32 s_componentIDProvider;
@@ -174,7 +175,7 @@ namespace BaldLion {
 		}
 
 		template<typename T>
-		void BaldLion::ECS::ECSManager::CleanComponentPool(ECSComponentType componentType)
+		void BaldLion::ECS::ECSManager::ClearComponentPool(ECSComponentType componentType)
 		{
 			static_assert(std::is_base_of<ECSComponent, T>::value, "T must inherit from Component");
 			((DynamicArray<T>*)m_componentsPool[(ui32)componentType])->Delete();

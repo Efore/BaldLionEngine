@@ -20,6 +20,7 @@ namespace BaldLion
 			Locomotion,
 			CameraFollow,
 			PlayerController,
+			HTNAgent,
 
 			Count
 		};
@@ -33,6 +34,7 @@ namespace BaldLion
 			AnimationSystem,
 			CameraFollowSystem,
 			FrustrumCullingSystem,
+			HTNPlannerSystem,
 
 			Count
 		};

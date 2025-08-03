@@ -35,6 +35,33 @@ namespace BaldLion::AI::HTN
 		HTNOperatorMoveTo::Stop();
 	}
 
+	i32 HTNManager::RequestAgent(StringId worldStateBlackboardId, StringId domainId)
+	{
+		BL_DYNAMICARRAY_FOR(i, s_agents, 0)
+		{
+			if (!s_agents[i].m_isActive)
+			{
+				s_agents[i].m_worldStateBlackboardID = worldStateBlackboardId;
+				s_agents[i].m_currentDomainID = domainId;
+				s_agents[i].m_isActive = true;
+				return i;
+			}
+		}
+
+		HTNAgent* newAgent = s_agents.EmplaceBack(worldStateBlackboardId, domainId, s_agents.Size());
+		newAgent->m_isActive = true;
+		return s_agents.Size() - 1;
+	}
+
+	void HTNManager::DeactivateAgent(i32 agentIdx)
+	{
+		if (s_agents[agentIdx].m_isActive)
+		{
+			s_agents[agentIdx].m_isActive = false;
+			s_agents[agentIdx].m_currentState = HTNAgent::HTNAgentState::Idle;
+		}
+	}
+
 	bool HTNManager::RunPlanner(StringId worldStateBlackboardId,
 		StringId domainID, DynamicArray<ui32>& plan)
 	{

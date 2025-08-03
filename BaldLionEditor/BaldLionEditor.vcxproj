@@ -140,6 +140,7 @@
     <ClInclude Include="src\Panels\Components\CameraFollowComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\ComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\DirectionalLightComponentInspector.h" />
+    <ClInclude Include="src\Panels\Components\HTNAgentComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\LocomotionComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\MeshComponentInspector.h" />
     <ClInclude Include="src\Panels\Components\NavMeshAgentComponentInspector.h" />

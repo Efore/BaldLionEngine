@@ -18,6 +18,9 @@ namespace BaldLion::AI::HTN
 		static bool RunPlanner(StringId worldStateBlackboardId,
 			StringId domainID, DynamicArray<ui32>& plan);
 
+		static i32 RequestAgent(StringId worldStateBlackboardId, StringId domainId);
+		static void DeactivateAgent(i32 agentIdx);
+		
 		static HashMap <HTNOperatorType, HTNOperator> s_definedOperators;
 
 		static HashMap<StringId, HTNWorldStateBlackboard> s_definedWorldStateBlackboards;

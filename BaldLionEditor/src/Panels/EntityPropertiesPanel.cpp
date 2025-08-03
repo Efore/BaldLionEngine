@@ -11,6 +11,7 @@
 #include "Components/PhyisicsBodyComponentInspector.h"
 #include "Components/LocomotionComponentInspector.h"
 #include "Components/NavMeshAgentComponentInspector.h"
+#include "Components/HTNAgentComponentInspector.h"
 
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/ECSComponentsInclude.h"
@@ -106,6 +107,7 @@ namespace BaldLion {
 					const char* animatorPopup = "Choose Animator";
 					const char* physicsBodyPopup = "Physics Body Shape";
 					const char* followedEntityPopup = "Choose Followed Entity";
+					const char* htnAgentPopup = "Choose HTN Domain and World State Blackboard";
 
 					if (SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityComponents().TryGet(selectedEntityID, selectedEntityComponents))
 					{
@@ -201,6 +203,11 @@ namespace BaldLion {
 										break;
 									case ECS::ECSComponentType::PlayerController:
 										newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSPlayerControllerComponent>(ECSComponentType::PlayerController);
+										break;
+									case ECS::ECSComponentType::HTNAgent:
+									{
+										ImGui::OpenPopup(htnAgentPopup);
+									}
 										break;
 									}
 
@@ -304,6 +311,76 @@ namespace BaldLion {
 						ImGui::EndPopup();
 					}
 
+					if (ImGui::BeginPopupModal(htnAgentPopup, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+					{
+						DynamicArray<StringId> domainNames = DynamicArray<StringId>(AllocationType::Linear_Frame, AI::HTN::HTNManager::s_definedDomains.Size());
+						BL_HASHMAP_FOR(AI::HTN::HTNManager::s_definedDomains, it)
+						{
+							domainNames.EmplaceBack(it.GetKey());
+						}
+
+						static int domainName_idx = 0;
+						const char* domainName_value = BL_STRINGID_TO_STR_C(domainNames[domainName_idx]);
+						ImGuiComboFlags flags = ImGuiComboFlags_PopupAlignLeft;
+
+						static StringId domainID;
+
+						if (ImGui::BeginCombo("Domain", domainName_value, flags))
+						{
+							for (int n = 0; n < domainNames.Size(); n++)
+							{
+								const bool is_selected = (domainName_idx == n);
+								if (ImGui::Selectable(BL_STRINGID_TO_STR_C(domainNames[n]), is_selected))
+								{
+									domainID = domainNames[n];
+									domainName_idx = n;
+								}
+
+								// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+								if (is_selected)
+									ImGui::SetItemDefaultFocus();
+							}
+							ImGui::EndCombo();
+						}
+
+						DynamicArray<StringId> blackboardNames = DynamicArray<StringId>(AllocationType::Linear_Frame, AI::HTN::HTNManager::s_definedWorldStateBlackboards.Size());
+						BL_HASHMAP_FOR(AI::HTN::HTNManager::s_definedWorldStateBlackboards, it)
+						{
+							blackboardNames.EmplaceBack(it.GetKey());
+						}
+
+						static StringId worldStateBlackboardID;
+
+						static int blackboardName_idx = 0;
+						const char* blackboardName_value = BL_STRINGID_TO_STR_C(blackboardNames[blackboardName_idx]);
+
+						if (ImGui::BeginCombo("World State Blackboard", blackboardName_value, flags))
+						{
+							for (int n = 0; n < blackboardNames.Size(); n++)
+							{
+								const bool is_selected = (blackboardName_idx == n);
+								if (ImGui::Selectable(BL_STRINGID_TO_STR_C(blackboardNames[n]), is_selected))
+								{
+									worldStateBlackboardID = blackboardNames[n];
+									blackboardName_idx = n;
+								}
+
+								// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+								if (is_selected)
+									ImGui::SetItemDefaultFocus();
+							}
+							ImGui::EndCombo();
+						}
+
+						if (domainID > 0 && worldStateBlackboardID > 0)
+						{
+							newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSHTNAgentComponent>(ECSComponentType::HTNAgent,
+								domainID, worldStateBlackboardID);
+						}
+
+						ImGui::EndPopup();
+					}
+
 					if (newComponent) 
 					{
 						SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddComponentToEntity(selectedEntityID, newComponent);
@@ -390,6 +467,9 @@ namespace BaldLion {
 				case ECS::ECSComponentType::PlayerController:
 					ComponentInspector::BeginComponentRender("Player Controller", ECS::ECSComponentType::PlayerController, m_sceneHierarchyPanel, GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f);
 					ComponentInspector::EndComponentRender();
+					break;
+				case ECS::ECSComponentType::HTNAgent:
+					HTNAgentComponentInspector::OnImGuiRender(component, m_sceneHierarchyPanel);
 					break;
 				default:
 					break;

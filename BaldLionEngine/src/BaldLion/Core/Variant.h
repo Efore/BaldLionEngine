@@ -40,6 +40,8 @@ namespace BaldLion
 	{
 	public:
 
+		const static Variant EmptyVariant;
+
 		union VariantValue
 		{
 			bool Bool;
@@ -56,9 +58,9 @@ namespace BaldLion
 			glm::vec3 Vec3;
 			glm::quat Quat;
 			StringId String;
-		};
 
-		static Variant EmptyVariant;
+			VariantValue() { memset(this, 0, sizeof(*this)); }
+		};
 
 		Variant();
 		Variant(bool val);

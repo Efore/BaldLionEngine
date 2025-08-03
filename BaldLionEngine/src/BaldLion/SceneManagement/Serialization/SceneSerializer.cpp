@@ -75,6 +75,10 @@ using namespace BaldLion::ECS;
 #define YAML_KEY_CAMERAFOLLOW_ZOFFSET		"CameraFollowZOffset"
 #define YAML_KEY_CAMERAFOLLOW_ROTSPEED		"CameraFollowRotationSpeed"
 
+//HTN Agent
+#define YAML_KEY_HTNAGENT_INITIALDOMAIN_ID			"HTNAgentInitialDomainID"
+#define YAML_KEY_HTNAGENT_WORLDSTATE_BLACKBOARD_ID	"HTNAgentWorldStateBBID"
+
 //Hierarchy
 #define YAML_KEY_PARENTID			"ParentEntityID"
 #define YAML_KEY_CHILDENTITIES		"ChildEntities"
@@ -331,7 +335,13 @@ namespace BaldLion
 			{
 			}
 			break;
-
+			case ECS::ECSComponentType::HTNAgent:
+			{
+				ECSHTNAgentComponent* htnAgentComponent = (ECSHTNAgentComponent*)component;
+				out << YAML::Key << YAML_KEY_HTNAGENT_INITIALDOMAIN_ID << YAML::Value << htnAgentComponent->initialDomainID;
+				out << YAML::Key << YAML_KEY_HTNAGENT_WORLDSTATE_BLACKBOARD_ID << YAML::Value << htnAgentComponent->worldStateBlackboardID;
+			}
+			break;
 			}
 			out << YAML::EndMap;
 		}
@@ -501,6 +511,15 @@ namespace BaldLion
 			{
 				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSPlayerControllerComponent>(
 					ECS::ECSComponentType::PlayerController);
+			}
+			break;
+			case BaldLion::ECS::ECSComponentType::HTNAgent:
+			{
+				StringId initialDomainID = yamlComponent[YAML_KEY_HTNAGENT_INITIALDOMAIN_ID].as<ui32>();
+				StringId worldStateBlackboardID = yamlComponent[YAML_KEY_HTNAGENT_WORLDSTATE_BLACKBOARD_ID].as<ui32>();
+
+				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSHTNAgentComponent>(
+					ECS::ECSComponentType::HTNAgent, initialDomainID, worldStateBlackboardID);
 			}
 			break;
 			default:

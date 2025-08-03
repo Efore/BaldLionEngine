@@ -21,7 +21,7 @@ namespace BaldLion
 		}
 
 	private:
-		ui32 value;
+		ui32 value = 0;
 
 	};
 }

@@ -54,6 +54,9 @@ namespace BaldLion
 
 			m_playerControllerComponentPool = DynamicArray<ECSPlayerControllerComponent>(AllocationType::FreeList_ECS, 2);
 			m_componentsPool[(ui32)ECSComponentType::PlayerController] = &m_playerControllerComponentPool;
+
+			m_htnAgentComponentPool = DynamicArray<ECSHTNAgentComponent>(AllocationType::FreeList_ECS, 32);
+			m_componentsPool[(ui32)ECSComponentType::HTNAgent] = &m_htnAgentComponentPool;
 		}
 
 		ECSManager::~ECSManager()
@@ -68,17 +71,18 @@ namespace BaldLion
 				MemoryManager::Delete(m_systems[i]);
 			}	
 
-			CleanComponentPool<ECSTransformComponent>(ECSComponentType::Transform);
-			CleanComponentPool<ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera);
-			CleanComponentPool<ECSMeshComponent>(ECSComponentType::Mesh);
-			CleanComponentPool<ECSSkeletonComponent>(ECSComponentType::Skeleton);
-			CleanComponentPool<ECSDirectionalLightComponent>(ECSComponentType::DirectionalLight);
-			CleanComponentPool<ECSAnimationComponent>(ECSComponentType::Animation);
-			CleanComponentPool<ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);
-			CleanComponentPool<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent);
-			CleanComponentPool<ECSLocomotionComponent>(ECSComponentType::Locomotion);
-			CleanComponentPool<ECSCameraFollowComponent>(ECSComponentType::CameraFollow);
-			CleanComponentPool<ECSPlayerControllerComponent>(ECSComponentType::PlayerController);
+			ClearComponentPool<ECSTransformComponent>(ECSComponentType::Transform);
+			ClearComponentPool<ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera);
+			ClearComponentPool<ECSMeshComponent>(ECSComponentType::Mesh);
+			ClearComponentPool<ECSSkeletonComponent>(ECSComponentType::Skeleton);
+			ClearComponentPool<ECSDirectionalLightComponent>(ECSComponentType::DirectionalLight);
+			ClearComponentPool<ECSAnimationComponent>(ECSComponentType::Animation);
+			ClearComponentPool<ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);
+			ClearComponentPool<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent);
+			ClearComponentPool<ECSLocomotionComponent>(ECSComponentType::Locomotion);
+			ClearComponentPool<ECSCameraFollowComponent>(ECSComponentType::CameraFollow);
+			ClearComponentPool<ECSPlayerControllerComponent>(ECSComponentType::PlayerController);
+			ClearComponentPool<ECSHTNAgentComponent>(ECSComponentType::HTNAgent);
 
 		}
 
@@ -248,6 +252,9 @@ namespace BaldLion
 				break;
 			case ECSComponentType::PlayerController:
 				InternalRemoveComponentFromPool<ECSPlayerControllerComponent>(componentType, (ECSPlayerControllerComponent*)componentToRemove);
+				break;
+			case ECSComponentType::HTNAgent:
+				InternalRemoveComponentFromPool<ECSHTNAgentComponent>(componentType, (ECSHTNAgentComponent*)componentToRemove);
 				break;
 			case ECSComponentType::Count:
 				break;
