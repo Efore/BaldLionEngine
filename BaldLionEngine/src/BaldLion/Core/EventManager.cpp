@@ -3,126 +3,140 @@
 
 namespace BaldLion
 {
-	std::mutex EventManager::s_handlerMapMutex;
 	HashTable<StringId, DynamicArray<EventHandler>> EventManager::s_handlerMap;
 	LockFreeStack<EventEntry, 256> EventManager::s_eventStack;
+
+	LockFreeStack<EventManager::EventHandlerEntry, 16> EventManager::s_eventHandlerRegistrationStack;
+	LockFreeStack<EventManager::EventHandlerEntry, 16> EventManager::s_eventHandlerUnregistrationStack;
 
 	void EventManager::Init()
 	{
 		s_handlerMap = HashTable<StringId, DynamicArray<EventHandler>>(AllocationType::FreeList_Main, 256);
 		s_eventStack = LockFreeStack<EventEntry, 256>(AllocationType::FreeList_Main);
+		s_eventHandlerRegistrationStack = LockFreeStack<EventHandlerEntry, 16>(AllocationType::FreeList_Main);
+		s_eventHandlerUnregistrationStack = LockFreeStack<EventHandlerEntry, 16>(AllocationType::FreeList_Main);
 	}
 
 	void EventManager::Stop()
 	{
 		s_handlerMap.Delete();
 		s_eventStack.Delete();
+		s_eventHandlerRegistrationStack.Delete();
+		s_eventHandlerUnregistrationStack.Delete();
 	}
 
-	void EventManager::RegisterHandler(const char* eventID, EventHandlerFunc eventHandlerFunc)
+	void EventManager::RegisterEventHandler(const char* eventID, EventHandlerFunc eventHandlerFunc)
 	{
-		const StringId eventStringID = BL_STRING_TO_STRINGID(eventID);
-		EventHandler eventHandler{ eventHandlerFunc };
+		BL_ASSERT_LOG(!s_eventHandlerRegistrationStack.IsFull(), "HandlerRegistration Stack full, increase capacity.");		
+		s_eventHandlerRegistrationStack.EmplaceBack(eventID, eventHandlerFunc);		
+	}
 
-		s_handlerMapMutex.lock();
+	void EventManager::UnregisterEventHandler(const char* eventID, EventHandlerFunc eventHandlerFunc)
+	{
+		BL_ASSERT_LOG(!s_eventHandlerUnregistrationStack.IsFull(), "HandlerUnregistration Stack full, increase capacity.");
+		s_eventHandlerUnregistrationStack.EmplaceBack(eventID, eventHandlerFunc);
+	}
 
-		DynamicArray<EventHandler>* handlersForEvent = nullptr;
-		if (s_handlerMap.TryGet(eventStringID, handlersForEvent))
+	void EventManager::ProcessHandlerRegistrations()
+	{
+		for (ui32 i = 0; i < s_eventHandlerRegistrationStack.Size(); ++i)
 		{
-			bool handlerFound = false;
+			EventHandlerEntry& handlerRegistrationEntry = s_eventHandlerRegistrationStack[i];
 
-			BL_DYNAMICARRAY_FOREACH(*handlersForEvent)
-			{
-				if ((*handlersForEvent)[i] == eventHandler)
-				{
-					//If the event handler already exists, is not included
-					handlerFound = true;
-					break;
-				}
-			}
-			
-			if (!handlerFound)
-			{
-				handlersForEvent->EmplaceBack(eventHandler);
-			}
-		}
-		else
-		{
-			s_handlerMap.Emplace(eventStringID, AllocationType::FreeList_Main, 16u);
+			const StringId eventStringID = BL_STRING_TO_STRINGID(handlerRegistrationEntry.eventID);
+
 			DynamicArray<EventHandler>* handlersForEvent = nullptr;
 			if (s_handlerMap.TryGet(eventStringID, handlersForEvent))
 			{
-				handlersForEvent->EmplaceBack(eventHandler);
-			}
-		}
+				bool handlerFound = false;
 
-		s_handlerMapMutex.unlock();
-	}
-
-	void EventManager::UnregisterHandler(const char* eventID, EventHandlerFunc eventHandlerFunc)
-	{
-		const StringId eventStringID = BL_STRING_TO_STRINGID(eventID);
-		EventHandler eventHandler{ eventHandlerFunc };
-
-		s_handlerMapMutex.lock();
-
-		DynamicArray<EventHandler>* handlersForEvent = nullptr;
-		if (s_handlerMap.TryGet(eventStringID, handlersForEvent))
-		{
-			i32 handlerIndex = -1;
-
-			BL_DYNAMICARRAY_FOREACH(*handlersForEvent)
-			{
-				if ((*handlersForEvent)[i] == eventHandler)
+				BL_DYNAMICARRAY_FOREACH(*handlersForEvent)
 				{
-					handlerIndex = i;
-					break;
+					if ((*handlersForEvent)[i] == handlerRegistrationEntry.eventHandler)
+					{
+						//If the event handler already exists, is not included
+						handlerFound = true;
+						break;
+					}
+				}
+
+				if (!handlerFound)
+				{
+					handlersForEvent->EmplaceBack(handlerRegistrationEntry.eventHandler);
 				}
 			}
-
-			if (handlerIndex >= 0)
+			else
 			{
-				handlersForEvent->RemoveAtFast(handlerIndex);
+				s_handlerMap.Emplace(eventStringID, AllocationType::FreeList_Main, 16u);
+				DynamicArray<EventHandler>* handlersForEvent = nullptr;
+				if (s_handlerMap.TryGet(eventStringID, handlersForEvent))
+				{
+					handlersForEvent->EmplaceBack(handlerRegistrationEntry.eventHandler);
+				}
 			}
 		}
-
-		s_handlerMapMutex.unlock();
+		s_eventHandlerRegistrationStack.Clear();
 	}
 
-	void EventManager::DispatchEvents()
+	void EventManager::ProcessHandlerUnregistrations()
 	{
+		for (ui32 i = 0; i < s_eventHandlerUnregistrationStack.Size(); ++i)
+		{
+			EventHandlerEntry& handlerUnregistrationEntry = s_eventHandlerUnregistrationStack[i];
+
+			const StringId eventStringID = BL_STRING_TO_STRINGID(handlerUnregistrationEntry.eventID);
+
+			DynamicArray<EventHandler>* handlersForEvent = nullptr;
+			if (s_handlerMap.TryGet(eventStringID, handlersForEvent))
+			{
+				i32 handlerIndex = -1;
+
+				BL_DYNAMICARRAY_FOREACH(*handlersForEvent)
+				{
+					if ((*handlersForEvent)[i] == handlerUnregistrationEntry.eventHandler)
+					{
+						handlerIndex = i;
+						break;
+					}
+				}
+
+				if (handlerIndex >= 0)
+				{
+					handlersForEvent->RemoveAtFast(handlerIndex);
+				}
+			}
+		}
+		s_eventHandlerUnregistrationStack.Clear();
+	}
+
+	void EventManager::Update()
+	{
+		ProcessHandlerRegistrations();
+
+		//Dispatching events
 		for (ui32 i = 0; i < s_eventStack.Size(); ++i)
 		{
 			EventEntry& eventEntry = s_eventStack[i];
 
-			s_handlerMapMutex.lock();
-
 			DynamicArray<EventHandler>* handlersForEvent = nullptr;
 			if (s_handlerMap.TryGet(eventEntry.eventID, handlersForEvent))
-			{
-				//Dispatching events
+			{				
 				BL_DYNAMICARRAY_FOREACH(*handlersForEvent)
 				{
 					(*handlersForEvent)[i].eventHandlerFunc(eventEntry);
 				}
 			}
-
-			s_handlerMapMutex.unlock();
 		}
 
 		s_eventStack.Clear();
+
+		ProcessHandlerUnregistrations();
 	}
 
 	void EventManager::QueueEvent(const EventEntry& e)
 	{
-		if (!s_eventStack.IsFull())
-		{
-			s_eventStack.PushBack(e);
-		}
-		else
-		{
-			BL_LOG_CORE_ERROR("Event Stack full, increase capacity.");
-		}
+		BL_ASSERT_LOG(!s_eventStack.IsFull(), "Event Stack full, increase capacity.");		
+		s_eventStack.PushBack(e);		
 	}
 
 }

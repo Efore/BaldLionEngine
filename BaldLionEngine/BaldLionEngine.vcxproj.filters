@@ -510,6 +510,9 @@
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\ECS\Systems\ECSHTNPlannerSystem.h">
+      <Filter>src\BaldLion\ECS\Systems</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.h">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClInclude>
@@ -2613,7 +2616,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaldLion\ECS\Systems\ECSHTNPlannerSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\HTN\HTNAgent.cpp">
@@ -2728,6 +2730,9 @@
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSFrustrumCullingSystem.cpp">
+      <Filter>src\BaldLion\ECS\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaldLion\ECS\Systems\ECSHTNPlannerSystem.cpp">
       <Filter>src\BaldLion\ECS\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\BaldLion\ECS\Systems\ECSLocomotionSystem.cpp">
@@ -3186,6 +3191,5 @@
     <ClCompile Include="vendor\stb_image\std_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaldLion\ECS\Systems\ECSHTNPlannerSystem.cpp" />
   </ItemGroup>
 </Project>

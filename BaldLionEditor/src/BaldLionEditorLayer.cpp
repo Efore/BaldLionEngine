@@ -40,8 +40,8 @@ namespace BaldLion
 			m_isActive = true;
 			Physics::PhysicsManager::SetIsPhysicsActive(false);
 
-			EventManager::RegisterHandler("WindowResizedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnWindowResizedEvent));
-			EventManager::RegisterHandler("KeyPressedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
+			EventManager::RegisterEventHandler("WindowResizedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnWindowResizedEvent));
+			EventManager::RegisterEventHandler("KeyPressedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
 
 			if (SceneManagement::SceneManager::GetMainScenePathFile().empty() || 
 				!SceneManagement::SceneManager::OpenScene(SceneManagement::SceneManager::GetMainScenePathFile().c_str()))
@@ -62,8 +62,8 @@ namespace BaldLion
 		void BaldLionEditorLayer::OnDeactivate()
 		{		
 			m_isActive = false;
-			EventManager::UnregisterHandler("WindowResizedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnWindowResizedEvent));
-			EventManager::UnregisterHandler("KeyPressedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
+			EventManager::UnregisterEventHandler("WindowResizedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnWindowResizedEvent));
+			EventManager::UnregisterEventHandler("KeyPressedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
 		}
 
 		void BaldLionEditorLayer::OnUpdate()

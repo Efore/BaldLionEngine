@@ -27,7 +27,7 @@ namespace BaldLion::AI::HTN
 			AgentsInOperator.EmplaceBack(htnAgent->GetAgentId());
 			if (AgentsInOperator.Size() == 1)
 			{
-				EventManager::RegisterHandler("MoveToFinished", BL_BIND_STATIC_FUNCTION(HTNOperatorMoveTo::OnMoveToFinished));
+				EventManager::RegisterEventHandler("MoveToFinished", BL_BIND_STATIC_FUNCTION(HTNOperatorMoveTo::OnMoveToFinished));
 			}
 
 			//TODO Find a way to get the nav agent from the htn Agent
@@ -40,7 +40,7 @@ namespace BaldLion::AI::HTN
 			AgentsInOperator.RemoveFast(htnAgent->GetAgentId());
 			if (AgentsInOperator.Size() == 0)
 			{
-				EventManager::UnregisterHandler("MoveToFinished", BL_BIND_STATIC_FUNCTION(HTNOperatorMoveTo::OnMoveToFinished));
+				EventManager::UnregisterEventHandler("MoveToFinished", BL_BIND_STATIC_FUNCTION(HTNOperatorMoveTo::OnMoveToFinished));
 			}
 
 			htnAgent->OnOperatorFinished(HTNOperatorType::MoveTo, false);
@@ -61,7 +61,7 @@ namespace BaldLion::AI::HTN
 					AgentsInOperator.RemoveAtFast(agentIDIndex);
 					if (AgentsInOperator.Size() == 0)
 					{
-						EventManager::UnregisterHandler("MoveToFinished", BL_BIND_STATIC_FUNCTION(HTNOperatorMoveTo::OnMoveToFinished));
+						EventManager::UnregisterEventHandler("MoveToFinished", BL_BIND_STATIC_FUNCTION(HTNOperatorMoveTo::OnMoveToFinished));
 					}
 
 					HTNAgent& htnAgent = HTNManager::s_agents[htnAgentID];

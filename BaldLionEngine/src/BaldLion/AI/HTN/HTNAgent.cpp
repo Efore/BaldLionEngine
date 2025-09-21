@@ -45,25 +45,28 @@ namespace BaldLion::AI::HTN
 
 	void HTNAgent::RequestPlan()
 	{
-		m_requestPlanTask.Wait();
-		m_currentState = HTNAgentState::WaitingForPlan;
+		if (m_currentDomainID > 0 && m_worldStateBlackboardID > 0)
+		{
+			m_requestPlanTask.Wait();
+			m_currentState = HTNAgentState::WaitingForPlan;
 
-		EventManager::RegisterHandler("RunPlannerFinished", BL_BIND_OBJECT_FUNCTION(HTNAgent::OnRunPlannerFinished));
+			EventManager::RegisterEventHandler("RunPlannerFinished", BL_BIND_OBJECT_FUNCTION(HTNAgent::OnRunPlannerFinished));
 
-		Threading::TaskScheduler::KickSingleTask(m_requestPlanTask, 
-			[this] {
-				BL_PROFILE_SCOPE("HTN Planner", Optick::Category::GameLogic);
-				m_validPlan = HTNManager::RunPlanner(m_worldStateBlackboardID, m_currentDomainID, m_plan);
+			Threading::TaskScheduler::KickSingleTask(m_requestPlanTask,
+				[this] {
+					BL_PROFILE_SCOPE("HTN Planner", Optick::Category::GameLogic);
+					m_validPlan = HTNManager::RunPlanner(m_worldStateBlackboardID, m_currentDomainID, m_plan);
 
-				EventEntry runPlannerFinished;
+					EventEntry runPlannerFinished;
 
-				runPlannerFinished.eventID = BL_STRING_TO_STRINGID("RunPlannerFinished");
-				runPlannerFinished.senderID = m_agentIdx;
+					runPlannerFinished.eventID = BL_STRING_TO_STRINGID("RunPlannerFinished");
+					runPlannerFinished.senderID = m_agentIdx;
 
-				runPlannerFinished.eventData1 = m_validPlan;
+					runPlannerFinished.eventData1 = m_validPlan;
 
-				EventManager::QueueEvent(runPlannerFinished);				
-			});
+					EventManager::QueueEvent(runPlannerFinished);
+				});
+		}
 	}
 
 	void HTNAgent::OnOperatorFinished(HTNOperatorType typeFinished, bool success)
@@ -96,7 +99,7 @@ namespace BaldLion::AI::HTN
 			return false;
 		}
 
-		EventManager::UnregisterHandler("RunPlannerFinished", BL_BIND_OBJECT_FUNCTION(HTNAgent::OnRunPlannerFinished));
+		EventManager::UnregisterEventHandler("RunPlannerFinished", BL_BIND_OBJECT_FUNCTION(HTNAgent::OnRunPlannerFinished));
 
 		if ((bool)e.eventData1) //Valid plan?
 		{

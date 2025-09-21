@@ -35,20 +35,38 @@ namespace BaldLion
 		static void Init();
 		static void Stop();
 
-		static void DispatchEvents();
+		static void Update();
 
 		static void QueueEvent(const EventEntry& e);
 
-		static void RegisterHandler(const char* eventID, EventHandlerFunc eventHandlerFunc);
-		static void UnregisterHandler(const char* eventID, EventHandlerFunc eventHandlerFunc);
+		static void RegisterEventHandler(const char* eventID, EventHandlerFunc eventHandlerFunc);
+		static void UnregisterEventHandler(const char* eventID, EventHandlerFunc eventHandlerFunc);
+
 
 	private:
+		static void ProcessHandlerRegistrations();
+		static void ProcessHandlerUnregistrations();
+
+		struct EventHandlerEntry
+		{
+			EventHandlerEntry() = default;
+
+			EventHandlerEntry(const char* eventID, const EventHandlerFunc& eventHandlerFunc) : eventID(eventID), eventHandler(eventHandlerFunc)
+			{
+			
+			}
+
+			const char* eventID;
+			EventHandler eventHandler;			
+		};
+
 
 		static LockFreeStack<EventEntry, 256> s_eventStack;
+		static LockFreeStack<EventHandlerEntry, 16> s_eventHandlerRegistrationStack;
+		static LockFreeStack<EventHandlerEntry, 16> s_eventHandlerUnregistrationStack;
 
 		static HashTable<StringId, DynamicArray<EventHandler>> s_handlerMap;
 
-		static std::mutex s_handlerMapMutex;
 
 	};
 }

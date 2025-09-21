@@ -51,6 +51,9 @@ namespace BaldLion
 			m_elements = nullptr;
 		}
 
+		template <typename... Args >
+		T* EmplaceBack(Args&&... args);
+
 		inline void PushBack(const T& element)
 		{
 			BL_ASSERT_LOG(m_size < capacity, "Capacity reached");
@@ -163,4 +166,15 @@ namespace BaldLion
 	private:
 		std::atomic<ui32> m_size;
 	};
+
+	template <typename T, ui32 capacity>
+	template <typename... Args >
+	T* LockFreeStack<T, capacity>::EmplaceBack(Args&&... args)
+	{
+		BL_ASSERT_LOG(m_size < capacity, "Capacity reached");
+		const ui32 oldSize = m_size.fetch_add(1u, std::memory_order_relaxed);
+
+		return new (&m_elements[oldSize]) T(std::forward<Args>(args)...);
+	}
+
 }

@@ -74,7 +74,8 @@ namespace BaldLion {
 										"NavMesh Agent",
 										"Locomotion",
 										"Camera Follow",
-										"Player Controller"
+										"Player Controller",
+										"HTN Agent"
 									};
 
 				const char* physicsBodyShapes[] = {
@@ -206,7 +207,15 @@ namespace BaldLion {
 										break;
 									case ECS::ECSComponentType::HTNAgent:
 									{
-										ImGui::OpenPopup(htnAgentPopup);
+										if (AI::HTN::HTNManager::s_definedDomains.Size() > 0)
+										{
+											ImGui::OpenPopup(htnAgentPopup);
+										}
+										else
+										{
+											newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSHTNAgentComponent>(ECSComponentType::HTNAgent,
+												0, 0);
+										}
 									}
 										break;
 									}
@@ -311,6 +320,7 @@ namespace BaldLion {
 						ImGui::EndPopup();
 					}
 
+					
 					if (ImGui::BeginPopupModal(htnAgentPopup, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 					{
 						DynamicArray<StringId> domainNames = DynamicArray<StringId>(AllocationType::Linear_Frame, AI::HTN::HTNManager::s_definedDomains.Size());
@@ -380,6 +390,7 @@ namespace BaldLion {
 
 						ImGui::EndPopup();
 					}
+					
 
 					if (newComponent) 
 					{
