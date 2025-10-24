@@ -369,25 +369,27 @@ namespace BaldLion
 						"StringID"
 					};
 
+
 				if (editing)
 				{
 					ImGui::Text(variantTypes[(ui32)variant.m_valueType]);					
 				}
 				else
-				{
-					static int item_current_idx = 0;
-					const char* combo_preview_value = variantTypes[item_current_idx];
+				{					
+					int variantTypes_current_idx = (int)variant.m_valueType;
+
+					const char* combo_preview_value = variantTypes[variantTypes_current_idx];
 					ImGuiComboFlags flags = ImGuiComboFlags_PopupAlignLeft;
 
 					if (ImGui::BeginCombo("Variant Type", combo_preview_value, flags))
 					{
 						for (int n = 0; n < IM_ARRAYSIZE(variantTypes); n++)
 						{
-							const bool is_selected = (item_current_idx == n);
+							const bool is_selected = (variantTypes_current_idx == n);
 							if (ImGui::Selectable(variantTypes[n], is_selected))
 							{
 								variant.m_valueType = (VariantType)n;
-								item_current_idx = n;
+								variantTypes_current_idx = n;
 								modified = true;
 							}
 
@@ -407,7 +409,7 @@ namespace BaldLion
 					{
 					case VariantType::Bool:
 					{
-						static bool data = variant;
+						bool data = variant;
 						if (ImGui::Checkbox("", &data))
 						{
 							modified = true;
@@ -417,7 +419,7 @@ namespace BaldLion
 					break;
 					case VariantType::Int8:
 					{
-						static int data = variant;
+						int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							modified = true;
@@ -427,7 +429,7 @@ namespace BaldLion
 					break;
 					case VariantType::UInt8:
 					{
-						static int data = variant;
+						int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							if (data < 0)
@@ -441,7 +443,7 @@ namespace BaldLion
 					break;
 					case VariantType::Int16:
 					{
-						static int data = variant;
+						int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							modified = true;
@@ -451,7 +453,7 @@ namespace BaldLion
 					break;
 					case VariantType::UInt16:
 					{
-						static int data = variant;
+						int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							if (data < 0)
@@ -465,7 +467,7 @@ namespace BaldLion
 					break;
 					case VariantType::Int32:
 					{
-						static int data = variant;
+						int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							modified = true;
@@ -475,7 +477,7 @@ namespace BaldLion
 					break;
 					case VariantType::UInt32:
 					{
-						static int data = variant;
+						int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							if (data < 0)
@@ -489,7 +491,7 @@ namespace BaldLion
 					break;
 					case VariantType::Int64:
 					{
-						static int data = variant;
+						int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							modified = true;
@@ -499,7 +501,7 @@ namespace BaldLion
 					break;
 					case VariantType::UInt64:
 					{
-						static int data = variant;
+						int data = variant;
 						if (ImGui::InputInt("", &data))
 						{
 							if (data < 0)
@@ -513,7 +515,7 @@ namespace BaldLion
 					break;
 					case VariantType::Float:
 					{
-						static float data = variant;
+						float data = variant;
 						if (ImGui::InputFloat("", &data))
 						{
 							modified = true;
@@ -523,7 +525,7 @@ namespace BaldLion
 					break;
 					case VariantType::Vector2:
 					{
-						static glm::vec2 data = variant;
+						glm::vec2 data = variant;
 						if (DrawVec2Handler("", data))
 						{
 							modified = true;
@@ -533,7 +535,7 @@ namespace BaldLion
 					break;
 					case VariantType::Vector3:
 					{
-						static glm::vec3 data = variant;
+						glm::vec3 data = variant;
 						if (DrawVec3Handler("", data))
 						{
 							modified = true;
@@ -543,7 +545,7 @@ namespace BaldLion
 					break;
 					case VariantType::StringID:
 					{
-						static char data[64];
+						char data[64];
 
 						if (variant != Variant::EmptyVariant)
 						{

@@ -307,7 +307,7 @@ namespace BaldLion::Editor
 				"Operator Play Animation"
 			};
 
-			static int operator_type_idx = 0;
+			int operator_type_idx = (int)task.taskOperatorType;
 			const char* operator_preview_value = operatorTypes[operator_type_idx];
 			ImGuiComboFlags flags = ImGuiComboFlags_PopupAlignLeft;
 
@@ -561,7 +561,7 @@ namespace BaldLion::Editor
 			{
 				blackboard->Delete();
 				HTNManager::s_definedWorldStateBlackboards.Remove(node_clicked);
-				node_clicked = -1;
+				node_clicked = 0;
 			}
 		}
 

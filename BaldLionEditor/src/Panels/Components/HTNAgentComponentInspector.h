@@ -25,6 +25,12 @@ namespace BaldLion
 					}
 
 					static int domainName_idx = 0;
+
+					if (domainName_idx >= domainNames.Size())
+					{
+						domainName_idx = 0;
+					}
+
 					const char* domainName_value = BL_STRINGID_TO_STR_C(domainNames[domainName_idx]);					
 
 					if (ImGui::BeginCombo("Domain", domainName_value, ImGuiComboFlags_PopupAlignLeft))
@@ -56,6 +62,12 @@ namespace BaldLion
 					}
 
 					static int blackboardName_idx = 0;
+
+					if (blackboardName_idx >= blackboardNames.Size())
+					{
+						blackboardName_idx = 0;
+					}
+
 					const char* blackboardName_value = BL_STRINGID_TO_STR_C(blackboardNames[blackboardName_idx]);
 
 					if (ImGui::BeginCombo("World State Blackboard", blackboardName_value, ImGuiComboFlags_PopupAlignLeft))
