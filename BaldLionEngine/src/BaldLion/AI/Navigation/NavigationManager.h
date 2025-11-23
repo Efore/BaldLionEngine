@@ -12,9 +12,10 @@ namespace BaldLion::AI::Navigation
 {
 	enum MoveToResult : ui8
 	{
+		MoveToInterrupted,
 		InvalidAgent,
 		InvalidPath,
-		Sucess
+		Success
 	};
 
 	class NavigationManager {
@@ -32,7 +33,9 @@ namespace BaldLion::AI::Navigation
 
 		static const dtCrowdAgent* GetCrowdAgent(i32 agentIdx);
 		static glm::vec3 GetCrowdAgentPosition(i32 agentIdx);
-		static void RequestMoveTarget(i32 agentIndex, const glm::vec3& targetPos);
+		static void RequestMoveTo(i32 agentIndex, const glm::vec3& targetPos);
+		static void InterruptMoveTo(i32 agentIndex);
+
 		static void UpdateCrowdAgent(i32 agentIndex, float maxSpeed, float maxAcceleration);
 
 	private:

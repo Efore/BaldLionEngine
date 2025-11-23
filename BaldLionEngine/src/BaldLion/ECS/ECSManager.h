@@ -82,8 +82,8 @@ namespace BaldLion {
 			static ui32 GetNextEntityID() { return s_entityIDProvider++; }
 			static ui32 GetNextComponentID() { return s_componentIDProvider++; }
 
-			static ui32 GetLatestEntityID() { return s_entityIDProvider; }
-			static ui32 GetLatestComponentID() { return s_componentIDProvider; }
+			static ui32 GetLastProvidedEntityID() { return s_entityIDProvider; }
+			static ui32 GetLastProvidedComponentID() { return s_componentIDProvider; }
 
 			static void SetEntityIDProvider(ui32 value) { s_entityIDProvider = value; }
 			static void SetComponentIDProvider(ui32 value) { s_componentIDProvider = value; }

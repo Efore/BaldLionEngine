@@ -93,7 +93,7 @@ namespace BaldLion
 			YAML::Emitter out;
 			out << YAML::BeginMap;
 
-			out << YAML::Key << YAML_KEY_ENTITYID_PROVIDER << YAML::Value << ECS::ECSManager::GetLatestEntityID();
+			out << YAML::Key << YAML_KEY_ENTITYID_PROVIDER << YAML::Value << ECS::ECSManager::GetLastProvidedEntityID();
 			out << YAML::Key << YAML_KEY_SCENEID << YAML::Value << BL_STRINGID_TO_STR_C(scene->GetSceneID());
 			out << YAML::Key << YAML_KEY_SCENENAME << YAML::Value << BL_STRINGID_TO_STR_C(scene->GetSceneName());
 			out << YAML::Key << YAML_KEY_ENTITIES << YAML::Value << YAML::BeginSeq;

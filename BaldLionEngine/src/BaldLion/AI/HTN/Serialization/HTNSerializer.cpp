@@ -70,7 +70,7 @@ namespace BaldLion::AI::HTN
 			}
 		}
 
-		auto domains = data[YAML_KEY_TASKS];
+		auto domains = data[YAML_KEY_DOMAINS];
 
 		if (domains)
 		{
@@ -109,7 +109,7 @@ namespace BaldLion::AI::HTN
 	{
 		out << YAML::BeginMap;
 		out << YAML::Key << YAML_KEY_TASK_ID << YAML::Value << BL_STRINGID_TO_STRING(htnTask.taskID);
-		out << YAML::Key << YAML_KEY_TASK_TYPE << YAML::Value << (ui8)(htnTask.taskType);
+		out << YAML::Key << YAML_KEY_TASK_TYPE << YAML::Value << (ui16)(htnTask.taskType);
 		out << YAML::Key << YAML_KEY_TASK_OPERATOR_TYPE << YAML::Value << (ui32)(htnTask.taskOperatorType);
 
 		out << YAML::Key << YAML_KEY_TASK_METHODS << YAML::Value << YAML::BeginSeq;
@@ -174,7 +174,7 @@ namespace BaldLion::AI::HTN
 		HTNTask* newTask = HTNManager::s_definedTasks.EmplaceBack();
 
 		newTask->taskID = BL_STRING_TO_STRINGID(yamlTask[YAML_KEY_TASK_ID].as<std::string>());
-		newTask->taskType = (HTNTask::TaskType)(yamlTask[YAML_KEY_TASK_TYPE].as<ui8>());
+		newTask->taskType = (HTNTask::TaskType)(yamlTask[YAML_KEY_TASK_TYPE].as<ui16>());
 		newTask->taskOperatorType = (HTNOperatorType)(yamlTask[YAML_KEY_TASK_OPERATOR_TYPE].as<ui32>());
 		newTask->methods = DynamicArray<HTNMethod>(AllocationType::FreeList_Main, 8);
 		newTask->effects = DynamicArray<HTNWorldStateEffect>(AllocationType::FreeList_Main, 8);

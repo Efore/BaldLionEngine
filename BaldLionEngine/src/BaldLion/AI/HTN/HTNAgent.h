@@ -26,7 +26,7 @@ namespace BaldLion::AI::HTN
 
 		void SetCurrentDomain(StringId domainID);
 
-		ui32 GetAgentId() const { return m_agentIdx; }
+		ui32 GetAgentIdx() const { return m_agentIdx; }
 		void OnOperatorFinished(HTNOperatorType typeFinished, bool success);
 		bool OnRunPlannerFinished(const EventEntry& e);
 

@@ -17,7 +17,7 @@ namespace BaldLion::AI::HTN
 	class HTNTask
 	{
 	public:
-		enum TaskType : ui8
+		enum TaskType : ui16
 		{
 			PrimitiveTask,
 			CompoundTask

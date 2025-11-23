@@ -133,7 +133,7 @@ namespace BaldLion::AI::Navigation
 		return s_crowd->getAgent(agentIdx);
 	}
 
-	void NavigationManager::RequestMoveTarget(i32 agentIndex, const glm::vec3& targetPos)
+	void NavigationManager::RequestMoveTo(i32 agentIndex, const glm::vec3& targetPos)
 	{
 		const dtQueryFilter* filter = s_crowd->getFilter(0);
 		const float* ext = s_crowd->getQueryExtents();
@@ -147,9 +147,29 @@ namespace BaldLion::AI::Navigation
 		const dtCrowdAgent* ag = s_crowd->getAgent(agentIndex);
 		if (!ag->m_isActive) return;
 
-		s_crowd->requestMoveTarget(agentIndex, targetRef, targetPosition);
+		s_crowd->requestMoveTarget(agentIndex, targetRef, targetPosition);		
 
 		s_walkingAgents.EmplaceBack(agentIndex);
+	}
+
+	void NavigationManager::InterruptMoveTo(i32 agentIndex)
+	{
+		const dtCrowdAgent* ag = s_crowd->getAgent(agentIndex);
+		if (!ag->m_isActive) return;
+
+		s_crowd->resetMoveTarget(agentIndex);
+
+		EventEntry moveToFinishedEvent;
+
+		moveToFinishedEvent.eventID = BL_STRING_TO_STRINGID("MoveToFinished");
+		moveToFinishedEvent.senderID = BL_STRING_TO_STRINGID("NavigationManager");
+
+		moveToFinishedEvent.eventData1 = (i32)agentIndex;
+		moveToFinishedEvent.eventData2 = (ui8)MoveToResult::MoveToInterrupted;
+
+		EventManager::QueueEvent(moveToFinishedEvent);
+
+		s_walkingAgents.RemoveFast(agentIndex);
 	}
 
 	void NavigationManager::UpdateCrowdAgent(i32 agentIndex, float maxSpeed, float maxAcceleration)
@@ -236,7 +256,7 @@ namespace BaldLion::AI::Navigation
 				moveToFinishedEvent.senderID = BL_STRING_TO_STRINGID("NavigationManager");
 
 				moveToFinishedEvent.eventData1 = (i32)s_walkingAgents[i];
-				moveToFinishedEvent.eventData2 = (ui8)MoveToResult::Sucess;
+				moveToFinishedEvent.eventData2 = (ui8)MoveToResult::Success;
 
 				EventManager::QueueEvent(moveToFinishedEvent);
 

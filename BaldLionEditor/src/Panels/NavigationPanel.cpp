@@ -455,7 +455,7 @@ namespace BaldLion
 
 				if (navMeshAgentComponent != nullptr)
 				{
-					NavigationManager::RequestMoveTarget(navMeshAgentComponent->crowdAgentIdx, pos);
+					NavigationManager::RequestMoveTo(navMeshAgentComponent->crowdAgentIdx, pos);
 				}
 			}
 		}

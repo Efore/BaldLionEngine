@@ -179,6 +179,7 @@ namespace BaldLion
 		{
 			const ECSComponentType componentType = component->GetComponentType();
 			component->SetComponentID(ECSManager::GetNextComponentID());
+			component->SetOwnerEntityID(entityID);
 
 			ECSSignature componentSignature;
 			componentSignature.set((ui32)componentType);
