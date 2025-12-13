@@ -23,7 +23,7 @@ namespace BaldLion::AI::HTN
 			m_currentState = HTNAgentState::RunningPlan;
 			const HTNTask& newTask = HTNManager::s_definedTasks[m_plan[m_currentPlanStep]];
 			m_currentOperatorType = newTask.taskOperatorType;
-			HTNManager::s_definedOperators.Get(m_currentOperatorType).OperatorStartFunc(this);
+			HTNManager::s_definedOperators.Get(m_currentOperatorType).OperatorStartFunc(this, newTask.taskOperatorData);
 		}
 		else
 		{
@@ -35,7 +35,7 @@ namespace BaldLion::AI::HTN
 	{
 		if (m_currentOperatorType < HTNOperatorType::Count)
 		{
-			HTNManager::s_definedOperators.Get(m_currentOperatorType).OperatorInterruptFunc(this);
+			HTNManager::s_definedOperators.Get(m_currentOperatorType).OperatorInterruptFunc(this,nullptr);
 			m_currentOperatorType = HTNOperatorType::Count;
 			m_currentPlanStep = 0;
 			m_currentState = HTNAgentState::Idle;

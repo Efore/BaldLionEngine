@@ -25,7 +25,7 @@ namespace BaldLion::AI::HTN
 		i32 mainTask = -1;
 	};
 	
-	enum class HTNOperatorType : ui32
+	enum class HTNOperatorType : ui16
 	{
 		MoveTo,
 		PlayAnimation,
@@ -35,7 +35,7 @@ namespace BaldLion::AI::HTN
 
 	struct HTNOperator
 	{
-		typedef void (*htnOperatorFunc)(class HTNAgent* htnAgent);
+		typedef void (*htnOperatorFunc)(class HTNAgent* htnAgent, const Variant* operatorData);
 
 		htnOperatorFunc OperatorStartFunc;
 		htnOperatorFunc OperatorInterruptFunc;

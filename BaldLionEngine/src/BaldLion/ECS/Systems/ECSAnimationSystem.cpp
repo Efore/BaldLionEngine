@@ -8,6 +8,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <BaldLion/Core/EventManager.h>
 
 namespace BaldLion {
 
@@ -21,11 +22,19 @@ namespace BaldLion {
 			ECSAnimationComponent* animationComponent = componentLookUp->Write<ECSAnimationComponent>(ECSComponentType::Animation);
 			
 			const Animator* entityAnimator = AnimationManager::GetAnimator(animationComponent->animatorID);
-			const AnimationClip* currentAnimation = entityAnimator->GetAnimationClip(animationComponent->currentAnimationID);
+			const AnimationClip* currentAnimation = entityAnimator->GetAnimationClip(animationComponent->currentOneShotAnimationID == 0 
+				? animationComponent->currentAnimationID 
+				: animationComponent->currentOneShotAnimationID);
 			 
-			animationComponent->currentAnimationTime = glm::mod(animationComponent->currentAnimationTime + animationComponent->timer.GetDeltaTime(), currentAnimation->AnimationTimeLength);
+			animationComponent->currentAnimationTime = animationComponent->currentOneShotAnimationID == 0
+				? glm::mod(animationComponent->currentAnimationTime + animationComponent->timer.GetDeltaTime(), currentAnimation->AnimationTimeLength)
+				: glm::max(animationComponent->currentAnimationTime + animationComponent->timer.GetDeltaTime(), currentAnimation->AnimationTimeLength);
 
-			const AnimatorTransition* currentTransition = entityAnimator->CheckTransition(animationComponent->currentAnimationID, animationComponent->currentAnimationTime, animationComponent->animatorParameters);
+			
+
+			const AnimatorTransition* currentTransition = animationComponent->currentOneShotAnimationID == 0
+				? entityAnimator->CheckTransition(animationComponent->currentAnimationID, animationComponent->currentAnimationTime, animationComponent->animatorParameters) 
+				: nullptr; 
 
 			float currentTransitionTime = 0.0f;
 
@@ -57,6 +66,23 @@ namespace BaldLion {
 
 					entitySkeleton->joints[i].UpdateJointTransforms(currentAnimation->InverseRootTransform, parentTransform, animationTransform);
 				}
+			}
+
+			if (animationComponent->currentOneShotAnimationID > 0 
+				&& glm::epsilonEqual(animationComponent->currentAnimationTime, currentAnimation->AnimationTimeLength, glm::epsilon<float>()))
+			{
+
+				animationComponent->currentOneShotAnimationID = 0;
+				animationComponent->currentAnimationTime = 0.0f;
+
+				EventEntry oneShotAnimationFinishedEvent;
+
+				oneShotAnimationFinishedEvent.eventID = BL_STRING_TO_STRINGID("OneShotAnimationFinished");
+				oneShotAnimationFinishedEvent.senderID = BL_STRING_TO_STRINGID("ECSAnimationSystem");
+
+				oneShotAnimationFinishedEvent.eventData1 = (i32)entityID;
+
+				EventManager::QueueEvent(oneShotAnimationFinishedEvent);
 			}
 		}	
 

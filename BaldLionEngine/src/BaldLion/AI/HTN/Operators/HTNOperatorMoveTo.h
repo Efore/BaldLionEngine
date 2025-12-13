@@ -9,6 +9,7 @@
 #include "BaldLion/ECS/Components/ECSHTNAgentComponent.h"
 #include "BaldLion/ECS/Components/ECSNavMeshAgentComponent.h"
 #include "BaldLion/Core/EventManager.h"
+using namespace BaldLion::ECS;
 
 namespace BaldLion::AI::HTN
 {
@@ -29,24 +30,27 @@ namespace BaldLion::AI::HTN
 			NavAgentsIdxInOperator.Delete();
 		}
 
-		static void OperatorStartFunc(HTNAgent* htnAgent)
+		static void OperatorStartFunc(HTNAgent* htnAgent, const Variant* operatorData)
 		{
 			const ui32 htnAgentIdx = htnAgent->GetAgentIdx();
+
 
 			i32 navAgentIdx = -1;
 
 			const DynamicArray<ECS::ECSHTNAgentComponent>* htnAgentComponents =
 				SceneManagement::SceneManager::GetECSManager()->GetComponentPool<ECS::ECSHTNAgentComponent>(ECS::ECSComponentType::HTNAgent);
 
-			//We iterate through all htnAgentComponents to find the operating agint
+			//We iterate through all htnAgentComponents to find the operating agent
 			BL_DYNAMICARRAY_FOREACH(*htnAgentComponents)
 			{
 				if ((*htnAgentComponents)[i].htnAgentIdx == htnAgentIdx)
 				{
+					ECSEntityID entityID = entityID = (*htnAgentComponents)[i].GetOwnerEntityID();
+
 					//If found, we get the component look up of that entity and get the nav mesh agent component from there
 					ECS::ECSComponentLookUp* entityComponentLookUp = nullptr;
 					if (SceneManagement::SceneManager::GetECSManager()->GetEntityComponents().
-						TryGet((*htnAgentComponents)[i].GetOwnerEntityID(), entityComponentLookUp))
+						TryGet(entityID, entityComponentLookUp))
 					{
 						const ECS::ECSNavMeshAgentComponent* navMeshAgentComponent = 
 							entityComponentLookUp->Read<ECS::ECSNavMeshAgentComponent>(ECS::ECSComponentType::NavMeshAgent);
@@ -75,13 +79,20 @@ namespace BaldLion::AI::HTN
 				//Get the move to target from the blackboard and request a move to it
 				const HTNWorldStateBlackboard& agentBlackboard = HTNManager::s_definedWorldStateBlackboards.Get(htnAgent->m_worldStateBlackboardID);
 
-				const Variant& movetoTarget = agentBlackboard.Get(BL_STRING_TO_STRINGID("MoveToTarget"));
+				const StringId& moveToBBKey = (ui32)operatorData[0];
+				const Variant& movetoTarget = agentBlackboard.Get(moveToBBKey);
 
 				AI::Navigation::NavigationManager::RequestMoveTo(navAgentIdx, movetoTarget);
+
+				//Success and early out
+				return;
 			}
+
+			//At this point, the start function has failed so we interrupt it
+			OperatorInterruptFunc(htnAgent, operatorData);
 		}
 
-		static void OperatorInterruptFunc(HTNAgent* htnAgent)
+		static void OperatorInterruptFunc(HTNAgent* htnAgent, const Variant* operatorData)
 		{			
 			const i32 agentIdxInOperator = HTNAgentsIdxInOperator.FindIndex(htnAgent->GetAgentIdx());
 

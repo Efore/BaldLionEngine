@@ -2616,6 +2616,9 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\HTN\Operators\HTNOperatorPlayAnimation.h">
+      <Filter>src\BaldLion\AI\HTN\Operators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaldLion\AI\HTN\HTNAgent.cpp">

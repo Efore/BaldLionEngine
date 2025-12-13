@@ -30,6 +30,8 @@ namespace BaldLion::AI::HTN
 		TaskType taskType = TaskType::PrimitiveTask;
 
 		HTNOperatorType taskOperatorType = HTNOperatorType::MoveTo;
+		Variant taskOperatorData[4];
+		
 
 		void ApplyEffects(HTNWorldStateBlackboard& worldStateBlackboard) const;
 	};

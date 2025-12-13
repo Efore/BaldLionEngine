@@ -2,6 +2,7 @@
 #include "HTNManager.h"
 #include "Serialization/HTNSerializer.h"
 #include "Operators/HTNOperatorMoveTo.h"
+#include "Operators/HTNOperatorPlayAnimation.h"
 
 namespace BaldLion::AI::HTN
 {
@@ -21,6 +22,9 @@ namespace BaldLion::AI::HTN
 
 		HTNOperatorMoveTo::Init();
 		s_definedOperators.Emplace(HTNOperatorType::MoveTo, { HTNOperatorMoveTo::OperatorStartFunc ,  HTNOperatorMoveTo::OperatorInterruptFunc });
+
+		HTNOperatorPlayAnimation::Init();
+		s_definedOperators.Emplace(HTNOperatorType::PlayAnimation, { HTNOperatorPlayAnimation::OperatorStartFunc ,  HTNOperatorPlayAnimation::OperatorInterruptFunc });
 
 		HTNSerializer::DeserializeHTNData();
 	}

@@ -16,6 +16,10 @@
 #define YAML_KEY_TASK_ID							"TaskID"
 #define YAML_KEY_TASK_TYPE							"TaskType"
 #define YAML_KEY_TASK_OPERATOR_TYPE					"TaskOperatorType"
+#define YAML_KEY_TASK_OPERATOR_DATA_0				"TaskOperatorData0"
+#define YAML_KEY_TASK_OPERATOR_DATA_1				"TaskOperatorData1"
+#define YAML_KEY_TASK_OPERATOR_DATA_2				"TaskOperatorData2"
+#define YAML_KEY_TASK_OPERATOR_DATA_3				"TaskOperatorData3"
 #define YAML_KEY_TASK_METHODS						"TaskMethods"
 #define YAML_KEY_TASK_EFFECTS						"TaskEffects"
 
@@ -112,6 +116,12 @@ namespace BaldLion::AI::HTN
 		out << YAML::Key << YAML_KEY_TASK_TYPE << YAML::Value << (ui16)(htnTask.taskType);
 		out << YAML::Key << YAML_KEY_TASK_OPERATOR_TYPE << YAML::Value << (ui32)(htnTask.taskOperatorType);
 
+		SerializeVariant(out, YAML_KEY_TASK_OPERATOR_DATA_0, htnTask.taskOperatorData[0]);
+		SerializeVariant(out, YAML_KEY_TASK_OPERATOR_DATA_1, htnTask.taskOperatorData[1]);
+		SerializeVariant(out, YAML_KEY_TASK_OPERATOR_DATA_2, htnTask.taskOperatorData[2]);
+		SerializeVariant(out, YAML_KEY_TASK_OPERATOR_DATA_3, htnTask.taskOperatorData[3]);
+
+
 		out << YAML::Key << YAML_KEY_TASK_METHODS << YAML::Value << YAML::BeginSeq;
 
 		BL_DYNAMICARRAY_FOREACH(htnTask.methods)
@@ -175,7 +185,13 @@ namespace BaldLion::AI::HTN
 
 		newTask->taskID = BL_STRING_TO_STRINGID(yamlTask[YAML_KEY_TASK_ID].as<std::string>());
 		newTask->taskType = (HTNTask::TaskType)(yamlTask[YAML_KEY_TASK_TYPE].as<ui16>());
-		newTask->taskOperatorType = (HTNOperatorType)(yamlTask[YAML_KEY_TASK_OPERATOR_TYPE].as<ui32>());
+		newTask->taskOperatorType = (HTNOperatorType)(yamlTask[YAML_KEY_TASK_OPERATOR_TYPE].as<ui16>());
+
+		DeserializeVariant(yamlTask, YAML_KEY_TASK_OPERATOR_DATA_0, newTask->taskOperatorData[0]);
+		DeserializeVariant(yamlTask, YAML_KEY_TASK_OPERATOR_DATA_1, newTask->taskOperatorData[1]);
+		DeserializeVariant(yamlTask, YAML_KEY_TASK_OPERATOR_DATA_2, newTask->taskOperatorData[2]);
+		DeserializeVariant(yamlTask, YAML_KEY_TASK_OPERATOR_DATA_3, newTask->taskOperatorData[3]);
+
 		newTask->methods = DynamicArray<HTNMethod>(AllocationType::FreeList_Main, 8);
 		newTask->effects = DynamicArray<HTNWorldStateEffect>(AllocationType::FreeList_Main, 8);
 

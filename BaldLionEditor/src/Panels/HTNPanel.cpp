@@ -329,7 +329,29 @@ namespace BaldLion::Editor
 				ImGui::EndCombo();
 			}
 
-			//TODO Render operator type
+			switch (task.taskOperatorType)
+			{
+			case AI::HTN::HTNOperatorType::MoveTo:
+			{
+				StringId stringID(task.taskOperatorData[0]);		
+				static char blackboardKey[64];
+				if (stringID > 0)
+				{
+					memcpy(blackboardKey, &task.taskOperatorData[0], sizeof(Variant));
+				}
+
+				ImGui::InputText("Move To BB Key", blackboardKey, IM_ARRAYSIZE(blackboardKey));
+				task.taskOperatorData[0] = BL_STRING_TO_STRINGID(blackboardKey);
+			}
+			break;
+			case AI::HTN::HTNOperatorType::PlayAnimation:
+				break;
+			case AI::HTN::HTNOperatorType::Count:
+				break;
+			default:
+				break;
+
+			}
 		}
 		else
 		{

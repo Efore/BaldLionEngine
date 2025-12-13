@@ -88,6 +88,8 @@ namespace BaldLion {
 
 			ui32 animatorID;
 			ui32 currentAnimationID;
+			ui32 currentOneShotAnimationID;
+			
 			Timer timer;
 
 			float currentAnimationTime;

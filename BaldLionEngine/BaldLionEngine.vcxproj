@@ -146,6 +146,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\BaldLion\AI\HTN\Operators\HTNOperatorPlayAnimation.h" />
     <ClInclude Include="src\BaldLion.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNAgent.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNManager.h" />
