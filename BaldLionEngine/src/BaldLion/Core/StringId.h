@@ -20,6 +20,9 @@ namespace BaldLion
 			return value;
 		}
 
+		static void SerializeStringIdMap();
+		static void DeserializeStringIdMap();
+
 	private:
 		ui32 value = 0;
 
@@ -70,6 +73,8 @@ namespace BaldLion {
 	extern StringId StringToStringId(const std::string& str);
 	extern const char* StringIdToStrC(StringId sid);
 	extern std::string StringIdToString(StringId sid);
+
+
 
 #define BL_STRING_TO_STRINGID(x) ::BaldLion::StringToStringId(x)
 #define BL_STRINGID_TO_STR_C(x) ::BaldLion::StringIdToStrC(x)

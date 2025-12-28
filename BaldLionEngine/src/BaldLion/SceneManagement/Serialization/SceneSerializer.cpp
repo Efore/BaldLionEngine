@@ -576,5 +576,30 @@ namespace BaldLion
 
 			return glm::quat(w, x, y, z);
 		}
+
+
+		void SceneSerializer::SerializeVariant(YAML::Emitter& out, const std::string& yamlKey, const Variant& variant)
+		{
+			out << YAML::Key << (yamlKey + "_TYPE") << YAML::Value << (ui16)(variant.m_valueType);
+
+			void* data = (void*)&variant.GetValue();
+
+			ui64 firstHalf = ((ui64*)data)[0];
+			out << YAML::Key << (yamlKey + "_VALUE_1") << YAML::Value << firstHalf;
+
+			ui64 secondHalf = ((ui64*)data)[1];
+			out << YAML::Key << (yamlKey + "_VALUE_2") << YAML::Value << secondHalf;
+		}
+
+		void SceneSerializer::DeserializeVariant(const YAML::Node& node, const std::string& yamlKey, Variant& result)
+		{
+			result.m_valueType = (VariantType)node[yamlKey + "_TYPE"].as<ui16>();
+			ui64 firstHalf = node[yamlKey + "_VALUE_1"].as<ui64>();
+			ui64 secondHalf = node[yamlKey + "_VALUE_2"].as<ui64>();
+
+			unsigned char* data = (unsigned char*)&result.GetValue();
+			data[0] = firstHalf;
+			data[8] = secondHalf;
+		}
 	}
 }

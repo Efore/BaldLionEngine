@@ -225,8 +225,8 @@ namespace BaldLion {
 							}							
 						}
 					}
-					
-					Rendering::Mesh* mesh = EditorUtils::RenderResourceInspectorPopup<Rendering::Mesh>(meshPopup, ResourceManagement::ResourceType::Mesh);
+					Rendering::Mesh* mesh = nullptr;
+					EditorUtils::RenderResourceInspectorPopup<Rendering::Mesh>(meshPopup, ResourceManagement::ResourceType::Mesh, mesh);
 
 					if (mesh)
 					{	

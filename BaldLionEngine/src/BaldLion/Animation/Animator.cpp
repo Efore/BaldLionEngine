@@ -133,7 +133,7 @@ namespace BaldLion
 
 		void Animator::SetInitialAnimation(const ui32 animationID)
 		{
-			if (!m_animations.Contains(animationID))
+			if (m_animations.Contains(animationID))
 			{
 				m_initAnimationID = animationID;
 			}

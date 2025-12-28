@@ -24,7 +24,8 @@ namespace BaldLion {
 				ImGui::OpenPopup("load_animator");
 			}
 
-			Animator* animatorToLoad = EditorUtils::RenderResourceInspectorPopup<Animator>("load_animator", ResourceManagement::ResourceType::Animator);
+			Animator* animatorToLoad = nullptr;
+			EditorUtils::RenderResourceInspectorPopup<Animator>("load_animator", ResourceManagement::ResourceType::Animator, animatorToLoad);
 
 			if (animatorToLoad != nullptr)
 			{
@@ -271,7 +272,8 @@ namespace BaldLion {
 				ImGui::OpenPopup("add_animation");
 			}
 
-			AnimationClip* animationDataToLoad = EditorUtils::RenderResourceInspectorPopup<AnimationClip>("add_animation", ResourceManagement::ResourceType::Animation);
+			AnimationClip* animationDataToLoad = nullptr;
+			EditorUtils::RenderResourceInspectorPopup<AnimationClip>("add_animation", ResourceManagement::ResourceType::Animation, animationDataToLoad);
 
 			if (animationDataToLoad != nullptr)
 			{

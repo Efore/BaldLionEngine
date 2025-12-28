@@ -1,6 +1,7 @@
 #include "HTNPanel.h"
 #include "EditorUtils.h"
 #include "BaldLion/AI/HTN/HTNManager.h"
+#include <BaldLion/Animation/AnimationClip.h>
 
 namespace BaldLion::Editor
 {
@@ -129,8 +130,8 @@ namespace BaldLion::Editor
 			
 		if (tasksIDs.Size() > 0)
 		{
-			static int item_current_idx = 0;
-			const char* task_preview_value = BL_STRINGID_TO_STR_C(tasksIDs[item_current_idx]);
+			static int item_current_idx = domain.mainTask >= 0 ? domain.mainTask : 0;
+			const char* task_preview_value = BL_STRINGID_TO_STR_C(tasksIDs[item_current_idx]) ;
 
 			ImGuiComboFlags flags = ImGuiComboFlags_PopupAlignLeft;
 
@@ -333,18 +334,49 @@ namespace BaldLion::Editor
 			{
 			case AI::HTN::HTNOperatorType::MoveTo:
 			{
-				StringId stringID(task.taskOperatorData[0]);		
-				static char blackboardKey[64];
-				if (stringID > 0)
-				{
-					memcpy(blackboardKey, &task.taskOperatorData[0], sizeof(Variant));
+				static char blackboardKey[64] = "";
+
+				if (task.taskOperatorData[0] != Variant::EmptyVariant)
+				{					
+					const char* taskOperatorKey = BL_STRINGID_TO_STR_C((ui32)(task.taskOperatorData[0]));
+					memcpy(blackboardKey, taskOperatorKey, 64);					
 				}
 
 				ImGui::InputText("Move To BB Key", blackboardKey, IM_ARRAYSIZE(blackboardKey));
-				task.taskOperatorData[0] = BL_STRING_TO_STRINGID(blackboardKey);
+
+				if (blackboardKey[0] != '\0')
+				{
+					if (ImGui::Button("Set"))
+					{
+						task.taskOperatorData[0] = BL_STRING_TO_STRINGID(blackboardKey);
+					}
+				}
 			}
 			break;
 			case AI::HTN::HTNOperatorType::PlayAnimation:
+			{
+				if (ImGui::Button("Choose animation"))
+				{
+					ImGui::OpenPopup("choose_animation");
+				}
+
+				static AnimationClip* animationDataToAssign = nullptr;
+
+				EditorUtils::RenderResourceInspectorPopup<AnimationClip>("choose_animation", ResourceManagement::ResourceType::Animation, animationDataToAssign);
+
+				if (animationDataToAssign != nullptr)
+				{
+					const char* animationName = BL_STRINGID_TO_STR_C(animationDataToAssign->GetResourceName());
+					ImGui::LabelText(animationName, "Animation to play: ");
+					task.taskOperatorData[0] = animationDataToAssign->GetResourceID();
+				}
+				else
+				{
+					ImGui::LabelText("", "Animation to play: ");
+					task.taskOperatorData[0] = 0;
+				}
+			
+			}
 				break;
 			case AI::HTN::HTNOperatorType::Count:
 				break;

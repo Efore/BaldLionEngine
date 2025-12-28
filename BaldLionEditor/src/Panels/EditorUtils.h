@@ -22,11 +22,11 @@ namespace BaldLion
 			const glm::vec3 ColorBlue	= glm::vec3(0.0f, 0.0f, 1.0f);
 
 			template<typename T>
-			static T* RenderResourceInspectorPopup(const char* popupName, ResourceManagement::ResourceType resourceType)
+			static bool RenderResourceInspectorPopup(const char* popupName, ResourceManagement::ResourceType resourceType, T*& Resource)
 			{
 				static_assert(std::is_base_of<ResourceManagement::Resource, T>::value, "T must inherit from Resource");
 
-				T* result = nullptr;
+				bool result = false;
 
 				if (ImGui::BeginPopupModal(popupName, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 				{
@@ -35,8 +35,9 @@ namespace BaldLion
 						if (hashMapIterator.GetValue()->GetResourceType() == resourceType)
 						{
 							if (ImGui::Selectable(BL_STRINGID_TO_STR_C(hashMapIterator.GetValue()->GetResourceID())))
-							{
-								result = (T*)hashMapIterator.GetValue();
+							{								
+								Resource = (T*)hashMapIterator.GetValue();
+								result = true;
 								ImGui::CloseCurrentPopup();
 							}
 						}
@@ -44,7 +45,10 @@ namespace BaldLion
 
 					ImGui::Separator();
 
-					if (ImGui::Button("Close")) {
+					if (ImGui::Button("Close")) 
+					{
+						Resource = nullptr;
+						result = true;
 						ImGui::CloseCurrentPopup();
 					}
 

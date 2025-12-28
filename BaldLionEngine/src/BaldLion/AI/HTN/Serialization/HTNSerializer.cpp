@@ -1,5 +1,6 @@
 #include "blpch.h"
 #include "HTNSerializer.h"
+#include "BaldLion/SceneManagement/Serialization/SceneSerializer.h"
 #include "BaldLion/AI/HTN/HTNManager.h"
 
 #define YAML_KEY_WORLD_STATE_BLACKBOARDS				"WorldStateBlackboards"
@@ -32,6 +33,8 @@
 
 #define YAML_KEY_CONDITION_BLACKBOARD_KEY			"ConditionBlackboardKey"
 #define YAML_KEY_CONDITION_VARIANT					"ConditionVariant"
+
+#define HTN_DATA_PATH "assets/gameAssets/htnData.meta"
 
 
 namespace BaldLion::AI::HTN
@@ -116,10 +119,10 @@ namespace BaldLion::AI::HTN
 		out << YAML::Key << YAML_KEY_TASK_TYPE << YAML::Value << (ui16)(htnTask.taskType);
 		out << YAML::Key << YAML_KEY_TASK_OPERATOR_TYPE << YAML::Value << (ui32)(htnTask.taskOperatorType);
 
-		SerializeVariant(out, YAML_KEY_TASK_OPERATOR_DATA_0, htnTask.taskOperatorData[0]);
-		SerializeVariant(out, YAML_KEY_TASK_OPERATOR_DATA_1, htnTask.taskOperatorData[1]);
-		SerializeVariant(out, YAML_KEY_TASK_OPERATOR_DATA_2, htnTask.taskOperatorData[2]);
-		SerializeVariant(out, YAML_KEY_TASK_OPERATOR_DATA_3, htnTask.taskOperatorData[3]);
+		SceneManagement::SceneSerializer::SerializeVariant(out, YAML_KEY_TASK_OPERATOR_DATA_0, htnTask.taskOperatorData[0]);
+		SceneManagement::SceneSerializer::SerializeVariant(out, YAML_KEY_TASK_OPERATOR_DATA_1, htnTask.taskOperatorData[1]);
+		SceneManagement::SceneSerializer::SerializeVariant(out, YAML_KEY_TASK_OPERATOR_DATA_2, htnTask.taskOperatorData[2]);
+		SceneManagement::SceneSerializer::SerializeVariant(out, YAML_KEY_TASK_OPERATOR_DATA_3, htnTask.taskOperatorData[3]);
 
 
 		out << YAML::Key << YAML_KEY_TASK_METHODS << YAML::Value << YAML::BeginSeq;
@@ -138,7 +141,7 @@ namespace BaldLion::AI::HTN
 				out << YAML::BeginMap;
 
 				out << YAML::Key << YAML_KEY_CONDITION_BLACKBOARD_KEY << YAML::Value << BL_STRINGID_TO_STRING(condition.blackboardKey);
-				SerializeVariant(out, YAML_KEY_CONDITION_VARIANT, condition.value);
+				SceneManagement::SceneSerializer::SerializeVariant(out, YAML_KEY_CONDITION_VARIANT, condition.value);
 
 				out << YAML::EndMap;
 			}
@@ -169,7 +172,7 @@ namespace BaldLion::AI::HTN
 			out << YAML::BeginMap;
 
 			out << YAML::Key << YAML_KEY_EFFECT_ID << YAML::Value << BL_STRINGID_TO_STRING(effect.blackboardKey);
-			SerializeVariant(out, YAML_KEY_EFFECT_VARIANT, effect.blackboardValue);
+			SceneManagement::SceneSerializer::SerializeVariant(out, YAML_KEY_EFFECT_VARIANT, effect.blackboardValue);
 
 			out << YAML::EndMap;
 		}
@@ -187,10 +190,10 @@ namespace BaldLion::AI::HTN
 		newTask->taskType = (HTNTask::TaskType)(yamlTask[YAML_KEY_TASK_TYPE].as<ui16>());
 		newTask->taskOperatorType = (HTNOperatorType)(yamlTask[YAML_KEY_TASK_OPERATOR_TYPE].as<ui16>());
 
-		DeserializeVariant(yamlTask, YAML_KEY_TASK_OPERATOR_DATA_0, newTask->taskOperatorData[0]);
-		DeserializeVariant(yamlTask, YAML_KEY_TASK_OPERATOR_DATA_1, newTask->taskOperatorData[1]);
-		DeserializeVariant(yamlTask, YAML_KEY_TASK_OPERATOR_DATA_2, newTask->taskOperatorData[2]);
-		DeserializeVariant(yamlTask, YAML_KEY_TASK_OPERATOR_DATA_3, newTask->taskOperatorData[3]);
+		SceneManagement::SceneSerializer::DeserializeVariant(yamlTask, YAML_KEY_TASK_OPERATOR_DATA_0, newTask->taskOperatorData[0]);
+		SceneManagement::SceneSerializer::DeserializeVariant(yamlTask, YAML_KEY_TASK_OPERATOR_DATA_1, newTask->taskOperatorData[1]);
+		SceneManagement::SceneSerializer::DeserializeVariant(yamlTask, YAML_KEY_TASK_OPERATOR_DATA_2, newTask->taskOperatorData[2]);
+		SceneManagement::SceneSerializer::DeserializeVariant(yamlTask, YAML_KEY_TASK_OPERATOR_DATA_3, newTask->taskOperatorData[3]);
 
 		newTask->methods = DynamicArray<HTNMethod>(AllocationType::FreeList_Main, 8);
 		newTask->effects = DynamicArray<HTNWorldStateEffect>(AllocationType::FreeList_Main, 8);
@@ -211,7 +214,7 @@ namespace BaldLion::AI::HTN
 					{
 						HTNWorldStateCondition* newCondition = newMethod->conditions.EmplaceBack();
 						newCondition->blackboardKey = BL_STRING_TO_STRINGID(condition[YAML_KEY_CONDITION_BLACKBOARD_KEY].as<std::string>());
-						DeserializeVariant(condition, YAML_KEY_CONDITION_VARIANT, newCondition->value);
+						SceneManagement::SceneSerializer::DeserializeVariant(condition, YAML_KEY_CONDITION_VARIANT, newCondition->value);
 					}
 				}
 
@@ -235,7 +238,7 @@ namespace BaldLion::AI::HTN
 			{
 				HTNWorldStateEffect* newEffect = newTask->effects.EmplaceBack();
 				newEffect->blackboardKey = BL_STRING_TO_STRINGID(effect[YAML_KEY_EFFECT_ID].as<std::string>());
-				DeserializeVariant(effect, YAML_KEY_EFFECT_VARIANT, newEffect->blackboardValue);				
+				SceneManagement::SceneSerializer::DeserializeVariant(effect, YAML_KEY_EFFECT_VARIANT, newEffect->blackboardValue);
 			}
 		}
 	}
@@ -282,7 +285,7 @@ namespace BaldLion::AI::HTN
 				out << YAML::BeginMap;
 
 				out << YAML::Key << YAML_KEY_WORLD_STATE_BLACKBOARD_ENTRY_KEY << YAML::Value << BL_STRINGID_TO_STRING(it2.GetKey());
-				SerializeVariant(out, YAML_KEY_WORLD_STATE_BLACKBOARD_ENTRY_VARIANT, it2.GetValue());
+				SceneManagement::SceneSerializer::SerializeVariant(out, YAML_KEY_WORLD_STATE_BLACKBOARD_ENTRY_VARIANT, it2.GetValue());
 
 				out << YAML::EndMap;
 			}
@@ -310,35 +313,11 @@ namespace BaldLion::AI::HTN
 				{
 					StringId blackboardKey = BL_STRING_TO_STRINGID(yamlBlackboardEntryValue[YAML_KEY_WORLD_STATE_BLACKBOARD_ENTRY_KEY].as<std::string>());
 					Variant blackboardValue;
-					DeserializeVariant(yamlBlackboardEntryValue, YAML_KEY_WORLD_STATE_BLACKBOARD_ENTRY_VARIANT, blackboardValue);
+					SceneManagement::SceneSerializer::DeserializeVariant(yamlBlackboardEntryValue, YAML_KEY_WORLD_STATE_BLACKBOARD_ENTRY_VARIANT, blackboardValue);
 
 					newBlackboard->Emplace(blackboardKey, blackboardValue);
 				}
 			}
 		}
 	}
-
-	void HTNSerializer::SerializeVariant(YAML::Emitter& out, const std::string& yamlKey, const Variant& variant)
-	{
-		out << YAML::Key << (yamlKey + "_TYPE") << YAML::Value << (ui16)(variant.m_valueType);
-		
-		unsigned char* data = (unsigned char*)&variant.GetValue();
-
-		ui64 firstHalf = (ui64)(*data);
-		out << YAML::Key << (yamlKey + "_VALUE_1") << YAML::Value << firstHalf;
-
-		ui64 secondHalf = (ui64)(data[8]);
-		out << YAML::Key << (yamlKey + "_VALUE_2") << YAML::Value << secondHalf;
-	}
-
-	void HTNSerializer::DeserializeVariant(const YAML::Node& node, const std::string& yamlKey, Variant& result)
-	{
-		result.m_valueType = (VariantType)node[yamlKey + "_TYPE"].as<ui16>();
-		ui64 firstHalf = node[yamlKey + "_VALUE_1"].as<ui64>();
-		ui64 secondHalf = node[yamlKey + "_VALUE_2"].as<ui64>();
-
-		unsigned char* data = (unsigned char*)&result.GetValue();
-		data[0] = firstHalf;
-		data[8] = secondHalf;		
-	}	
 }

@@ -83,7 +83,8 @@ namespace BaldLion {
 			}
 
 			{
-				Rendering::Model* model = EditorUtils::RenderResourceInspectorPopup<Rendering::Model>("create_model_entity", ResourceManagement::ResourceType::Model);
+				Rendering::Model* model = nullptr;
+				EditorUtils::RenderResourceInspectorPopup<Rendering::Model>("create_model_entity", ResourceManagement::ResourceType::Model, model);
 				
 				if (model)
 				{
@@ -92,7 +93,8 @@ namespace BaldLion {
 			}
 
 			{
-				Rendering::Mesh* mesh = EditorUtils::RenderResourceInspectorPopup<Rendering::Mesh>("create_mesh_entity", ResourceManagement::ResourceType::Mesh);
+				Rendering::Mesh* mesh = nullptr;
+				EditorUtils::RenderResourceInspectorPopup<Rendering::Mesh>("create_mesh_entity", ResourceManagement::ResourceType::Mesh, mesh);
 				
 				if (mesh)
 				{				

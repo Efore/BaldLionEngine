@@ -27,6 +27,8 @@ namespace BaldLion
 
 		s_instance = this;
 
+		StringId::DeserializeStringIdMap();
+
 		Memory::MemoryManager::Init(0);
 		Threading::TaskScheduler::Init();
 		EventManager::Init();
@@ -82,6 +84,8 @@ namespace BaldLion
 		EventManager::Stop();
 		Threading::TaskScheduler::Stop();
 		Memory::MemoryManager::Stop();
+
+		StringId::SerializeStringIdMap();
 	}
 
 	void Application::PushLayer(GameStateLayer * layer)
@@ -126,16 +130,7 @@ namespace BaldLion
 	void Application::Run()
 	{		
 		while (m_running)
-		{	
-			bool processNewFrame = false;
-
-			Time::UpdateCurrentTime(glfwGetTime(), processNewFrame);
-
-			if (!processNewFrame)// Platform::GetTime
-			{
-				continue;
-			}
-	
+		{		
 			BL_PROFILE_FRAME();
 
 			Input::InputSystem::UpdateEntries();			
@@ -163,6 +158,8 @@ namespace BaldLion
 			EventManager::Update();
 
 			MemoryManager::Delete(AllocationType::Linear_Frame);
+
+			Time::UpdateCurrentTime(glfwGetTime());				
 		}	
 	}
 

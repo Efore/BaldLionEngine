@@ -85,7 +85,7 @@ namespace BaldLion
 		static float GetCurrentTime() { return s_globalTimer.GetCurrentTime(); }
 		static float GetCurrentTimeInMilliseconds() { return s_globalTimer.GetCurrentTimeInMilliseconds(); }
 
-		static void UpdateCurrentTime(double currentTime, bool& processNewFrame);
+		static void UpdateCurrentTime(double currentTime);
 
 		static void RequestNewTimer(Timer& timer);
 		static void RemoveTimer(ui32 timerID);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaldLion/SceneManagement/Scene.h"
+#include "BaldLion/Core/Variant.h"
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
 
@@ -31,6 +32,11 @@ namespace BaldLion
 			static glm::quat DeserializeQuat(const YAML::Node& node, const std::string& key);
 
 			friend class SceneManager;
+
+		public:
+
+			static void SerializeVariant(YAML::Emitter& out, const std::string& yamlKey, const Variant& variant);
+			static void DeserializeVariant(const YAML::Node& node, const std::string& yamlKey, Variant& result);
 		};
 	}
 }

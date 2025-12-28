@@ -19,22 +19,43 @@ namespace BaldLion {
 		s_additionalTimers.Delete();
 	}
 
-	void Time::UpdateCurrentTime(double currentTime, bool& processNewFrame)
+	void Time::UpdateCurrentTime(double currentTime)
 	{
-		const float maxPeriod = 1.0f / MAX_FPS_GAMEPLAY;
+		constexpr float targetMs = (1.0f / MAX_FPS_GAMEPLAY) * 1000.0f;
 
-		if ((float)currentTime - s_globalTimer.GetCurrentTime() > maxPeriod) {
+		const float deltaMs = ((float)currentTime - s_globalTimer.GetCurrentTime()) * 1000.0f;
+		const float deltaToTargetMs = targetMs - deltaMs;
 
-			s_globalTimer.SetCurrentTime(currentTime);
+		if(deltaToTargetMs > 0.0f)
+		{
+			const ui64 begin = std::chrono::duration_cast<std::chrono::nanoseconds>
+				(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 
-			BL_HASHTABLE_FOR(s_additionalTimers, it)
+			const ui64 ms = (ui64)(deltaToTargetMs);
+
+			// Sleep till only 2 ms remain...
+			const i64 timeToSleep = ms - 2;
+			if (timeToSleep > 0)
 			{
-				it.GetValue()->SetCurrentTime(currentTime);
+				std::this_thread::sleep_for(std::chrono::milliseconds(timeToSleep));
 			}
-			processNewFrame = true;
-			return;
+
+			const ui64 deltaToTargetNS = (ui64)(deltaToTargetMs * 1e6);
+
+			// ...and spin for the remaining time
+			while (deltaToTargetNS > 
+				ui64(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch())
+				.count() - begin))
+			{
+			}
 		}
-		processNewFrame = false;
+
+		s_globalTimer.SetCurrentTime(currentTime);
+
+		BL_HASHTABLE_FOR(s_additionalTimers, it)
+		{
+			it.GetValue()->SetCurrentTime(currentTime);
+		}	
 	}
 
 	void Time::RequestNewTimer(Timer& timer)
