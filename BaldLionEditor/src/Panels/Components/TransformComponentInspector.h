@@ -22,7 +22,6 @@ namespace BaldLion
 				static bool scaleEdited = false;
 
 				bool modified = false;
-				static glm::mat4 matTransformBeforeChange;
 
 				{
 					glm::vec3 newPosition = componentTransform->position;
@@ -30,13 +29,8 @@ namespace BaldLion
 					{
 						if (glm::any(glm::epsilonNotEqual(newPosition, componentTransform->position, glm::epsilon<float>())) && !positionEdited)
 						{
-							matTransformBeforeChange = componentTransform->GetTransformMatrix();
 							positionEdited = true;
 						}
-					}
-					else if (positionEdited)
-					{
-						modified = true;
 					}
 					componentTransform->position = newPosition;
 				}
@@ -47,13 +41,8 @@ namespace BaldLion
 					{
 						if (glm::any(glm::epsilonNotEqual(newRotation, componentTransform->rotation, glm::epsilon<float>())) && !rotationEdited)
 						{
-							matTransformBeforeChange = componentTransform->GetTransformMatrix();
 							rotationEdited = true;
 						}
-					}
-					else if (rotationEdited)
-					{
-						modified = true;
 					}
 					componentTransform->rotation = glm::radians(newRotation);
 				}
@@ -64,13 +53,8 @@ namespace BaldLion
 					{
 						if (glm::any(glm::epsilonNotEqual(newScale, componentTransform->scale, glm::epsilon<float>())) && !scaleEdited)
 						{
-							matTransformBeforeChange = componentTransform->GetTransformMatrix();
 							scaleEdited = true;
 						}
-					}
-					else if (scaleEdited)
-					{
-						modified = true;
 					}
 					componentTransform->scale = newScale;
 				}
@@ -90,14 +74,17 @@ namespace BaldLion
 					EditorUtils::DrawVec3Handler("Local Position", localPosition, 0.0f, 110.0f, false);
 					EditorUtils::DrawVec3Handler("Local Rotation", (glm::vec3&)glm::degrees(localRotation), 0.0f, 110.0f, false);
 					EditorUtils::DrawVec3Handler("Local Scale", localScale, 0.0f, 110.0f, false);
-				}				
+				}			
+
+				if (positionEdited || rotationEdited || scaleEdited)
+				{
+					SceneManager::GetECSManager()->MarkEntityTransformAsChangedInHierarchy(entity->GetEntityID());
+				}
 
 				positionEdited = false;
 				rotationEdited = false;
 				scaleEdited = false;
-				modified = false;
 
-				SceneManager::GetECSManager()->MarkEntityTransformAsChangedInHierarchy(entity->GetEntityID());				
 
 				ComponentInspector::EndComponentRender();
 			}

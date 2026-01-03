@@ -17,9 +17,14 @@ namespace BaldLion
 				}
 			}
 
-			void Set(ECSComponentType index, ECSComponent* ptrToComponent)
+			void Set(ECSComponentType componentType, ECSComponent* ptrToComponent)
 			{
-				m_components[(ui32)index] = ptrToComponent;
+				m_components[(ui32)componentType] = ptrToComponent;
+			}
+
+			bool Has(ECSComponentType componentType) const
+			{
+				return m_components[(ui32)componentType] != nullptr;
 			}
 
 			template<typename T>

@@ -393,19 +393,19 @@ namespace BaldLion
 			if (BaldLion::Input::PlatformInput::IsMouseButtonPress(BL_MOUSE_BUTTON_2))
 			{				
 				if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_W))
-					cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
+					cameraMovement -= MathUtils::GetTransformForwardDirection(cameraTransform) * (float)m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 				else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_S))
-					cameraMovement += MathUtils::GetTransformForwardDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;				
+					cameraMovement += MathUtils::GetTransformForwardDirection(cameraTransform) * (float)m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 
 				if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_A))
-					cameraMovement -= MathUtils::GetTransformRightDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
+					cameraMovement -= MathUtils::GetTransformRightDirection(cameraTransform) * (float)m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 				else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_D))
-					cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
+					cameraMovement += MathUtils::GetTransformRightDirection(cameraTransform) * (float)m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 
 				if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_Q))
-					cameraMovement -= MathUtils::Vector3UnitY * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
+					cameraMovement -= MathUtils::Vector3UnitY * (float)m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 				else if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_E))
-					cameraMovement += MathUtils::Vector3UnitY * m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
+					cameraMovement += MathUtils::Vector3UnitY * (float)m_gameStateTimer.GetDeltaTime() * cameraMovementSpeed;
 
 				if (BaldLion::Input::PlatformInput::IsKeyPressed(BL_KEY_LEFT_SHIFT))
 					cameraMovement *= 2;

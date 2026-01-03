@@ -84,10 +84,10 @@ namespace BaldLion
 
 		struct AnimationJoint
 		{
-			glm::mat4 jointOffsetTransform;
-			glm::mat4 jointLocalSpaceTransform;
-			glm::mat4 jointModelSpaceTransform;
-			JointType parentJointType;			
+			glm::mat4 jointOffsetTransform = glm::mat4(1.0f);
+			glm::mat4 jointLocalSpaceTransform = glm::mat4(1.0f);
+			glm::mat4 jointModelSpaceTransform = glm::mat4(1.0f);
+			JointType parentJointType = JointType::Hips;			
 			
 			void UpdateJointTransforms(const glm::mat4& rootInverseTransform, const glm::mat4& parentTransform, const glm::mat4& localAnimationTransform)
 			{	

@@ -19,15 +19,11 @@ namespace BaldLion
 
 		private:
 
-			void DrawAgents();
+			void DrawAgents(bool drawAgentNavmesh);
 			void DrawNavMesh();
 			void DrawMeshTile(const dtMeshTile* tile);
 			void DrawPolygonBoundaries(const dtMeshTile* tile, bool innerBoundaries);
 			void DrawVertices(const dtMeshTile* tile);
-
-			void HandleInput();
-			void SetAgentsTarget(const glm::vec3& pos);
-			void SetCrowdTargetPosition(const glm::vec3& pos);
 
 			float DistancePtLine2d(const float* pt, const float* p, const float* q);
 
@@ -58,13 +54,10 @@ namespace BaldLion
 		private:
 
 			ui32 m_agentCount;
-			glm::vec3 m_currentTarget;
 
 			EditorViewportPanel* m_editorViewportPanel;
 
 			DynamicArray<ui32> m_tileIndexToDraw;
-
-			bool m_manageAgents;
 		};		
 	}
 }

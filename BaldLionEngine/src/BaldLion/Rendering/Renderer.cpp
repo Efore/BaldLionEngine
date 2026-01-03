@@ -295,7 +295,7 @@ namespace BaldLion
 		void Renderer::DrawDebugCommands()
 		{
 			s_debugDrawRender->SetMvpMatrix(s_sceneData.viewProjectionMatrix);
-			dd::flush((int)Time::GetCurrentTimeInMilliseconds());
+			dd::flush(Time::GetCurrentTimeMs());
 		}
 
 		void Renderer::RefreshComponentLookUps()

@@ -12,8 +12,8 @@
 #include "BaldLion/Core/EventManager.h"
 
 #include <functional>
-#include <GLFW/glfw3.h>
 
+#define GAMEPLAY_FRAME_TARGET_MS 16u
 
 namespace BaldLion
 {
@@ -159,7 +159,37 @@ namespace BaldLion
 
 			MemoryManager::Delete(AllocationType::Linear_Frame);
 
-			Time::UpdateCurrentTime(glfwGetTime());				
+			{
+				const ui64 currentTimeMs = ui64(std::chrono::duration_cast<std::chrono::milliseconds>
+					(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+				 
+				const ui64 deltaMs = currentTimeMs - Time::GetCurrentTimeMs();
+
+				const ui64 deltaToTargetMs = deltaMs > GAMEPLAY_FRAME_TARGET_MS ? 0 : GAMEPLAY_FRAME_TARGET_MS - deltaMs;
+
+				if (deltaToTargetMs > 0)
+				{
+					const ui64 beginNs = std::chrono::duration_cast<std::chrono::nanoseconds>
+						(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+
+					// Sleep till only 2 ms remain...
+					const ui64 timeToSleep = deltaToTargetMs - 2;
+					if (timeToSleep > 0)
+					{
+						std::this_thread::sleep_for(std::chrono::milliseconds(timeToSleep));
+					}
+
+					const ui64 deltaToTargetNS = deltaToTargetMs * 1e6;
+
+					// ...and spin for the remaining time 
+					while (deltaToTargetNS >
+						ui64(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch())
+							.count()) - beginNs)
+					{}
+				}
+			}
+
+			Time::UpdateGlobalCurrentTime();
 		}	
 	}
 

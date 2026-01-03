@@ -13,7 +13,8 @@ namespace BaldLion
 		const glm::vec3 Vector3UnitX	= glm::vec3(1.0f, 0.0f, 0.0f);
 		const glm::vec3 Vector3UnitY	= glm::vec3(0.0f, 1.0f, 0.0f);
 		const glm::vec3 Vector3UnitZ	= glm::vec3(0.0f, 0.0f, 1.0f);
-		const glm::vec3 Vector3Zero = glm::vec3(0.0f);
+		const glm::vec3 Vector3Unit		= glm::vec3(1.0f);
+		const glm::vec3 Vector3Zero		= glm::vec3(0.0f);
 		
 		static glm::quat QuaternionIdentity = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 

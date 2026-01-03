@@ -17,7 +17,7 @@ namespace BaldLion
 
 	namespace Editor 
 	{
-		NavigationPanel::NavigationPanel() : EditorPanel("Navigation"),m_agentCount(0), m_currentTarget(0.0f), m_manageAgents(false)
+		NavigationPanel::NavigationPanel() : EditorPanel("Navigation"),m_agentCount(0)
 		{
 			m_tileIndexToDraw = DynamicArray<ui32>(Memory::AllocationType::FreeList_Main, 8);
 		}
@@ -161,20 +161,27 @@ namespace BaldLion
 
 			if (NavMeshBuilder::NavMeshIsValid() && !NavMeshBuilder::NavMeshIsBaking())
 			{
-				DrawAgents();	
-				
-				ImGui::Checkbox("Manage Agents", &m_manageAgents);
+				static bool drawFullNavMesh = false;
+				ImGui::Checkbox("Draw Full NavMesh", &drawFullNavMesh);
+
+				if (drawFullNavMesh)
+				{
+					DrawNavMesh();
+				}				
+
+				DrawAgents(!drawFullNavMesh);
+
 			}
 
 			ImGui::End();
 
-			if (m_manageAgents)
-			{
-				HandleInput();
-			}
+			//if (m_manageAgents)
+			//{
+			//	HandleInput();
+			//}
 		}
 
-		void NavigationPanel::DrawAgents()
+		void NavigationPanel::DrawAgents(bool drawAgentNavmesh)
 		{
 			const dtNavMesh* mesh = NavMeshBuilder::GetNavMesh();			
 
@@ -185,48 +192,52 @@ namespace BaldLion
 
 				if (navMeshAgentComponent != nullptr && transformComponent != nullptr)
 				{
-					static const int MAX_NEIS = 32;
-					const dtMeshTile* neis[MAX_NEIS];
-					ui32 tilesToDraw = 0;
-					int tx, ty;
-					mesh->calcTileLoc((float*)&transformComponent->position, &tx, &ty);
-
-				
-
-					for (ui32 i = 0; i < 9; ++i)
+					if (drawAgentNavmesh) 
 					{
-						int nx = tx, ny = ty;
-						switch (i)
-						{
-						case 0: nx++; break;
-						case 1: nx++; ny++; break;
-						case 2: ny++; break;
-						case 3: nx--; ny++; break;
-						case 4: nx--; break;
-						case 5: nx--; ny--; break;
-						case 6: ny--; break;
-						case 7: nx++; ny--; break;
-						case 8: break;
-						};
+						constexpr int MAX_NEIS = 32;
+						const dtMeshTile* neis[MAX_NEIS];
+						ui32 tilesToDraw = 0;
+						int tx, ty;
+						mesh->calcTileLoc((float*)&transformComponent->position, &tx, &ty);
 
-						tilesToDraw = mesh->getTilesAt(nx, ny, neis, MAX_NEIS);
-
-						for (ui32 j = 0; j < tilesToDraw; ++j)
+						for (ui32 i = 0; i < 9; ++i)
 						{
-							DrawMeshTile(neis[j]);
+							int nx = tx, ny = ty;
+							switch (i)
+							{
+							case 0: nx++; break;
+							case 1: nx++; ny++; break;
+							case 2: ny++; break;
+							case 3: nx--; ny++; break;
+							case 4: nx--; break;
+							case 5: nx--; ny--; break;
+							case 6: ny--; break;
+							case 7: nx++; ny--; break;
+							case 8: break;
+							};
+
+							tilesToDraw = mesh->getTilesAt(nx, ny, neis, MAX_NEIS);
+
+							for (ui32 j = 0; j < tilesToDraw; ++j)
+							{
+								DrawMeshTile(neis[j]);
+							}
 						}
 					}
 
 					const dtCrowdAgent* agent = NavigationManager::GetCrowdAgent(navMeshAgentComponent->crowdAgentIdx);
 
-					const glm::vec3 arrowFrom = transformComponent->position + BaldLion::MathUtils::Vector3UnitY;
-					const glm::vec3 arrowToVel = arrowFrom + *(glm::vec3*)agent->nvel;
-					Renderer::DrawDebugLine(arrowFrom, arrowToVel, EditorUtils::ColorBlue, 0.1f);
+					if (agent != nullptr)
+					{
+						const glm::vec3 arrowFrom = transformComponent->position + BaldLion::MathUtils::Vector3UnitY;
+						const glm::vec3 arrowToVel = arrowFrom + *(glm::vec3*)agent->nvel;
+						Renderer::DrawDebugLine(arrowFrom, arrowToVel, EditorUtils::ColorBlue, 0.1f);
 
-					const glm::vec3 arrowToDVel = arrowFrom + *(glm::vec3*)agent->dvel;
-					Renderer::DrawDebugLine(arrowFrom, arrowToDVel, EditorUtils::ColorGreen, 0.1f);
+						const glm::vec3 arrowToDVel = arrowFrom + *(glm::vec3*)agent->dvel;
+						Renderer::DrawDebugLine(arrowFrom, arrowToDVel, EditorUtils::ColorGreen, 0.1f);
 
-					Renderer::DrawDebugCircle(transformComponent->position + BaldLion::MathUtils::Vector3UnitY * 0.1f, BaldLion::MathUtils::Vector3UnitY, NavMeshBuilder::navMeshConfig.agentRadius, 10, EditorUtils::ColorRed);
+						Renderer::DrawDebugCircle(transformComponent->position + BaldLion::MathUtils::Vector3UnitY * 0.1f, BaldLion::MathUtils::Vector3UnitY, NavMeshBuilder::navMeshConfig.agentRadius, 10, EditorUtils::ColorRed);
+					}
 				}
 			}	
 
@@ -381,84 +392,7 @@ namespace BaldLion
 				const float* v = &tile->verts[i * 3];
 				Renderer::DrawDebugPoint(*(glm::vec3*)&tile->verts[i * 3], glm::vec3(0.0f));				
 			}
-		}
-
-		void NavigationPanel::HandleInput()
-		{
-			if (!NavMeshBuilder::NavMeshIsValid() || !m_editorViewportPanel->GetViewportIsFocused())
-			{
-				return;
-			}
-
-			//if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-			//{
-			//	glm::vec2 mouseInWindow;
-			//	if (EditorUtils::GetMouseRelativePosInWindow(m_editorViewportPanel->GetPanelID(), mouseInWindow))
-			//	{
-			//		const glm::vec3 rayOrigin = m_editorViewportPanel->GetViewportCameraTransform()->position;
-
-			//		const glm::vec4 rayClip = glm::vec4(mouseInWindow.x, mouseInWindow.y, 1.0f, 1.0f);
-
-			//		glm::vec3 rayDirection = glm::inverse(m_editorViewportPanel->GetViewportCamera()->viewProjectionMatrix) * rayClip;
-			//		rayDirection = glm::normalize(rayDirection);
-
-			//		const glm::vec3 rayEnd = rayOrigin + rayDirection * 5000.0f;
-
-			//		float hitTime;
-			//		bool hit = NavMeshBuilder::GetInputGeom()->raycastMesh((float*)&rayOrigin, (float*)&rayEnd, hitTime);
-
-			//		if (hit)
-			//		{
-			//			const glm::vec3 hitPos = rayOrigin + rayDirection * 5000.0f * hitTime;
-			//			CreateAgent(hitPos);
-			//		}
-			//	}
-			//}
-			
-			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-			{
-				glm::vec2 mouseInWindow;
-				if (EditorUtils::GetMouseRelativePosInWindow(m_editorViewportPanel->GetPanelID(), mouseInWindow))
-				{
-					const glm::vec3 rayOrigin = ECS::SingletonSystems::CameraSystem::GetMainCameraTransform()->position;
-
-					const glm::vec4 rayClip = glm::vec4(mouseInWindow.x, mouseInWindow.y, 1.0f, 1.0f);
-
-					glm::vec3 rayDirection = glm::inverse(ECS::SingletonSystems::CameraSystem::GetMainCamera()->viewProjectionMatrix) * rayClip;
-					rayDirection = glm::normalize(rayDirection);
-
-					const glm::vec3 rayEnd = rayOrigin + rayDirection * 5000.0f;
-
-					float hitTime;
-					bool hit = NavMeshBuilder::GetInputGeom()->raycastMesh((float*)&rayOrigin, (float*)&rayEnd, hitTime);
-
-					if (hit)
-					{
-						const glm::vec3 hitPos = rayOrigin + rayDirection * 5000.0f * hitTime;
-						SetAgentsTarget(hitPos);
-					}
-				}
-			}
-		}		
-
-		void NavigationPanel::SetAgentsTarget(const glm::vec3& pos)
-		{
-			m_currentTarget = pos;
-			SetCrowdTargetPosition(m_currentTarget);
-		}
-
-		void NavigationPanel::SetCrowdTargetPosition(const glm::vec3& pos)
-		{
-			BL_HASHTABLE_FOR(SceneManager::GetECSManager()->GetEntityComponents(), it)
-			{
-				const ECS::ECSNavMeshAgentComponent* navMeshAgentComponent = it.GetValue().Read<ECS::ECSNavMeshAgentComponent>(ECS::ECSComponentType::NavMeshAgent);
-
-				if (navMeshAgentComponent != nullptr)
-				{
-					NavigationManager::RequestMoveTo(navMeshAgentComponent->crowdAgentIdx, pos);
-				}
-			}
-		}
+		}	
 
 		float NavigationPanel::DistancePtLine2d(const float* pt, const float* p, const float* q)
 		{			

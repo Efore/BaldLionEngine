@@ -23,9 +23,9 @@ namespace BaldLion
 
 		struct AllocationInfo {
 
-			StringId allocationDescription;
-			AllocationType allocationType;
-			size_t allocationSize;
+			StringId allocationDescription = 0;
+			AllocationType allocationType = AllocationType::FreeList_Main;
+			size_t allocationSize = 0;
 
 			AllocationInfo(){}
 			AllocationInfo (StringId description, AllocationType type, size_t size) : allocationDescription(description), allocationType(type), allocationSize(size){}

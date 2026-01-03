@@ -142,15 +142,26 @@ namespace BaldLion::AI::Navigation
 
 			BL_HASHTABLE_FOR(SceneManagement::SceneManager::GetECSManager()->GetEntityComponents(), it)
 			{
-				const ECS::ECSMeshComponent* meshComponent = it.GetValue().Read<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh);
+				const ECS::ECSMeshComponent* meshComponent = it.GetValue().Read<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh);				
 
 				if (meshComponent != nullptr && meshComponent->isStatic)
 				{
-					s_geom->addVerticesToMesh(&s_ctx, (void*)meshComponent->vertices.Data(), meshComponent->vertices.Size(), meshComponent->indices.Data(), meshComponent->indices.Size());					
+					const ECS::ECSTransformComponent* transformComponent = it.GetValue().Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
+
+					const glm::mat4 transformMatrix = transformComponent->GetTransformMatrix();
+
+					DynamicArray<Vertex> transformedVertices(AllocationType::Linear_Frame, meshComponent->vertices);
+
+					BL_DYNAMICARRAY_FOREACH(transformedVertices)
+					{
+						transformedVertices[i] = transformedVertices[i] * transformMatrix;
+					}
+
+					s_geom->addVerticesToMesh(&s_ctx, (void*)transformedVertices.Data(), meshComponent->vertices.Size(), meshComponent->indices.Data(), meshComponent->indices.Size());
 				}
 			}
-
-			if(!s_geom->closeMesh(&s_ctx))
+			
+			if(s_geom->getMesh()->getVertCount() == 0 || !s_geom->closeMesh(&s_ctx))
 			{
 				MemoryManager::Delete(s_geom);
 				s_geom = nullptr;

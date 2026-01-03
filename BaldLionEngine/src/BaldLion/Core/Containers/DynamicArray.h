@@ -92,7 +92,7 @@ namespace BaldLion
 		ui32 m_size = 0;
 		ui32 m_capacity = 0;
 
-		AllocationType m_allocationType;
+		AllocationType m_allocationType = AllocationType::FreeList_Main;
 	};	
 
 	template <typename T>

@@ -42,7 +42,7 @@ namespace BaldLion
 
 			//---------------------------------------------------------------------------------------
 
-			KeyFrame(KeyFrame &&other) : 
+			 KeyFrame(KeyFrame &&other) noexcept :
 				TimeStamp(other.TimeStamp)
 			{
 				for (ui32 i = 0; i < (ui32)JointType::Count; ++i)
@@ -66,7 +66,7 @@ namespace BaldLion
 
 			//---------------------------------------------------------------------------------------
 
-			KeyFrame& operator=(KeyFrame &&other)
+			KeyFrame& operator=(KeyFrame &&other) noexcept
 			{
 				TimeStamp = other.TimeStamp;
 				for (ui32 i = 0; i < (ui32)JointType::Count; ++i)

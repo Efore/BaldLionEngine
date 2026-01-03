@@ -139,7 +139,7 @@ namespace BaldLion::AI::Navigation
 
 	int BuildContext::doGetAccumulatedTime(const rcTimerLabel label) const
 	{
-		return (int)(m_timers[label].GetCurrentTimeInMilliseconds() - m_timers[label].GetStartTimeInMilliseconds());
+		return (int)(m_timers[label].GetCurrentTimeMs() - m_timers[label].GetStartTimeMs());
 	}
 
 	bool BuildContext::GetInitialized() const

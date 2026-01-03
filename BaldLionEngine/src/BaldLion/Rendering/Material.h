@@ -48,22 +48,22 @@ namespace BaldLion
 
 			struct MaterialProperties {
 
-				glm::vec3 ambientColor;
-				glm::vec3 diffuseColor;
-				glm::vec3 emissiveColor;
-				glm::vec3 specularColor;
-				StringId shaderPath;
-				float shininess;
-				Texture* ambientTex;
-				Texture* diffuseTex;
-				Texture* emissiveTex;
-				Texture* specularTex;
-				Texture* normalTex;
+				glm::vec3 ambientColor = glm::vec3(0.0f);
+				glm::vec3 diffuseColor = glm::vec3(0.0f);
+				glm::vec3 emissiveColor = glm::vec3(0.0f);
+				glm::vec3 specularColor = glm::vec3(0.0f);
+				StringId shaderPath = 0;
+				float shininess = 0.0f;
+				Texture * ambientTex = nullptr;
+				Texture* diffuseTex = nullptr;
+				Texture* emissiveTex = nullptr;
+				Texture* specularTex = nullptr;
+				Texture* normalTex = nullptr;
 
-				BlendMode blendMode;
-				DepthBufferMode depthBufferMode;
-				CullingMode cullingMode;
-				ui8 shadowSettings;
+				BlendMode blendMode = BlendMode::None;
+				DepthBufferMode depthBufferMode = DepthBufferMode::NoDepth;
+				CullingMode cullingMode = CullingMode::None;
+				ui8 shadowSettings = 0;
 
 				MaterialProperties() {}
 

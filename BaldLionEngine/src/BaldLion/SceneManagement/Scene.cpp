@@ -39,7 +39,7 @@ namespace BaldLion {
 					BL_GENERATE_SYSTEM("ECS CameraFollowSystem", ECS::ECSCameraFollowSystem, ECS::ECSSystemType::CameraFollowSystem, m_ecsManager, ECS::ECSComponentType::Transform, ECS::ECSComponentType::CameraFollow);
 					BL_GENERATE_SYSTEM("ECS AnimationSystem", ECS::ECSAnimationSystem, ECS::ECSSystemType::AnimationSystem, m_ecsManager, ECS::ECSComponentType::Animation, ECS::ECSComponentType::Skeleton);
 					BL_GENERATE_SYSTEM("ECS NavigationSystem", ECS::ECSNavigationSystem, ECS::ECSSystemType::NavigationSystem, m_ecsManager, ECS::ECSComponentType::Locomotion, ECS::ECSComponentType::NavMeshAgent, ECS::ECSComponentType::Transform);
-					BL_GENERATE_SYSTEM("ECS PlayerControllerSystem", ECS::ECSPlayerControllerSystem, ECS::ECSSystemType::PlayerControllerSystem, m_ecsManager, ECS::ECSComponentType::Locomotion, ECS::ECSComponentType::Transform);					
+					BL_GENERATE_SYSTEM("ECS PlayerControllerSystem", ECS::ECSPlayerControllerSystem, ECS::ECSSystemType::PlayerControllerSystem, m_ecsManager, ECS::ECSComponentType::PlayerController, ECS::ECSComponentType::Locomotion, ECS::ECSComponentType::Transform);
 					BL_GENERATE_SYSTEM("ECS Frustrum Culling System", ECS::ECSFrustrumCullingSystem, ECS::ECSSystemType::FrustrumCullingSystem, m_ecsManager, ECS::ECSComponentType::Mesh, ECS::ECSComponentType::Transform);
 					BL_GENERATE_SYSTEM("ECS HTN Planner System", ECS::ECSHTNPlannerSystem, ECS::ECSSystemType::HTNPlannerSystem, m_ecsManager, ECS::ECSComponentType::HTNAgent);
 										

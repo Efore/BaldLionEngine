@@ -27,8 +27,8 @@ namespace BaldLion {
 				: animationComponent->currentOneShotAnimationID);
 			 
 			animationComponent->currentAnimationTime = animationComponent->currentOneShotAnimationID == 0
-				? glm::mod(animationComponent->currentAnimationTime + animationComponent->timer.GetDeltaTime(), currentAnimation->AnimationTimeLength)
-				: glm::max(animationComponent->currentAnimationTime + animationComponent->timer.GetDeltaTime(), currentAnimation->AnimationTimeLength);
+				? glm::mod(animationComponent->currentAnimationTime + (float)animationComponent->timer.GetDeltaTime(), currentAnimation->AnimationTimeLength)
+				: glm::max(animationComponent->currentAnimationTime + (float)animationComponent->timer.GetDeltaTime(), currentAnimation->AnimationTimeLength);
 
 			
 
@@ -40,7 +40,7 @@ namespace BaldLion {
 
 			if (currentTransition != nullptr)
 			{
-				animationComponent->currentTransitionTime += animationComponent->timer.GetDeltaTime();
+				animationComponent->currentTransitionTime += (float)animationComponent->timer.GetDeltaTime();
 				currentTransitionTime = animationComponent->currentTransitionTime;
 
 				if (animationComponent->currentTransitionTime >= currentTransition->GetTransitionTime())

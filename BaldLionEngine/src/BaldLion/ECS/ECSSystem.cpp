@@ -101,6 +101,7 @@ namespace BaldLion {
 		void ECSSystem::OnFrameEnd()
 		{
 			BL_PROFILE_FUNCTION();
+			m_parallelTask.Wait();
 			m_firstFrame = false;
 		}
 

@@ -9,9 +9,9 @@ namespace BaldLion {
 
 		struct BoundingBox {
 
-			glm::vec3 minPoint;
-			glm::vec3 maxPoint;			
-			glm::vec3 center;
+			glm::vec3 minPoint = glm::vec3(0.0f);
+			glm::vec3 maxPoint = glm::vec3(0.0f);
+			glm::vec3 center = glm::vec3(0.0f);
 
 			inline const float GetRadius() const { return glm::length(maxPoint - minPoint) * 0.5f; }
 			inline const float GetSqrRadius() const { return glm::length2((maxPoint - minPoint) * 0.5f); }

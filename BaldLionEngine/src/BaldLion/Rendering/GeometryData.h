@@ -11,10 +11,10 @@ namespace BaldLion {
 			
 			DynamicArray<Vertex> vertices;
 			DynamicArray<ui32> indices;
-			ui32 verticesCurrentIndex;
-			ui32 indicesCurrentIndex;
+			ui32 verticesCurrentIndex = 0;
+			ui32 indicesCurrentIndex = 0;
 			std::mutex geometryDataMutex;
-			VertexArray* vertexArray;
+			VertexArray* vertexArray = nullptr;
 
 			GeometryData(){}
 

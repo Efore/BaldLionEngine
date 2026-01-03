@@ -9,11 +9,11 @@ namespace BaldLion
 	{
 		struct BufferElement
 		{
-			ShaderDataType Type;
-			StringId Name;
-			ui32 Size;
-			ui32 Offset;
-			bool Normalized;
+			ShaderDataType Type = ShaderDataType::None;
+			StringId Name = 0;
+			ui32 Size = 0;
+			ui32 Offset = 0;
+			bool Normalized = false;
 
 			BufferElement() { }
 

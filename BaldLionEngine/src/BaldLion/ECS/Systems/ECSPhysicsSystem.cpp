@@ -37,9 +37,9 @@ namespace BaldLion {
 		}
 
 		void ECSPhysicsSystem::UpdateComponents(ECSEntityID entityID, ECSComponentLookUp* componentLookUp, float deltaTime)
-		{
-			
+		{			
 			BL_PROFILE_FUNCTION();
+
 			 ECSTransformComponent* transform = componentLookUp->Write<ECSTransformComponent>(ECSComponentType::Transform);		
 			 ECSPhysicsBodyComponent* physicsBody = componentLookUp->Write<ECSPhysicsBodyComponent>(ECSComponentType::PhysicsBody);
 

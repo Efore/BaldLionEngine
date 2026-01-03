@@ -38,12 +38,12 @@ namespace BaldLion {
 			DynamicArray<Vertex> vertices;
 			DynamicArray<ui32> indices;
 			BoundingBox localBoundingBox;
-			Material* material;
-			VertexArray* vertexArray;
-			ui32 meshResourceID;
-			bool isStatic;
-			bool isVisible;
-			bool isShadowVisible;
+			Material* material = nullptr;
+			VertexArray* vertexArray = nullptr;
+			ui32 meshResourceID = 0;
+			bool isStatic = false;
+			bool isVisible = false;
+			bool isShadowVisible = false;
 		};
 
 	}

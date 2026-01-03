@@ -25,8 +25,10 @@ namespace BaldLion
 			auto lastSlash = modelPath.find_last_of("/\\");		
 			m_modelFolderPath = BL_STRING_TO_STRINGID(modelPath.substr(0, lastSlash + 1));
 			m_subMeshes = DynamicArray<Mesh*>(AllocationType::FreeList_Renderer, 8);
-			m_importFlags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes | aiProcess_GlobalScale;			
-			
+			m_importFlags = aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_ImproveCacheLocality
+				| aiProcess_SortByPType | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph
+				| aiProcess_CalcTangentSpace | aiProcess_TransformUVCoords | aiProcess_GenUVCoords
+				| aiProcess_JoinIdenticalVertices | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes | aiProcess_GlobalScale;
 		}
 
 		Model::~Model()

@@ -308,7 +308,7 @@ namespace BaldLion
 
 					ui32 currentCachedHierarchySize = m_cachedEntityHierarchy.Size();
 
-					m_cachedEntityHierarchy.PushBack({glm::mat4(1.0f), transformComponent, entity->GetEntityID() , -1, false });
+					m_cachedEntityHierarchy.PushBack({transformComponent, MathUtils::Vector3Zero, MathUtils::Vector3Zero, MathUtils::Vector3Unit, entity->GetEntityID() , -1, false });
 
 					BL_DYNAMICARRAY_FOREACH(it.GetValue()->GetChildrenIDs())
 					{
@@ -322,11 +322,9 @@ namespace BaldLion
 		{					
 			ECSEntity* entity = m_entitiyMap.Get(childEntityID);
 			ECS::ECSTransformComponent* transformComponent = m_entityComponents.Get(entity->GetEntityID()).Write<ECS::ECSTransformComponent>(ECSComponentType::Transform);
-
-			glm::mat4 parentWorldMatrix = m_cachedEntityHierarchy[parentIndex].transformComponent->GetTransformMatrix();			
-
+		
 			ui32 currentCachedHierarchySize = m_cachedEntityHierarchy.Size();
-			m_cachedEntityHierarchy.PushBack({ parentWorldMatrix, transformComponent, childEntityID, parentIndex, false});
+			m_cachedEntityHierarchy.PushBack({ transformComponent,m_cachedEntityHierarchy[parentIndex].transformComponent->position, m_cachedEntityHierarchy[parentIndex].transformComponent->rotation, m_cachedEntityHierarchy[parentIndex].transformComponent->scale, childEntityID, parentIndex, false});
 
 			BL_DYNAMICARRAY_FOREACH(entity->GetChildrenIDs())
 			{
@@ -344,30 +342,19 @@ namespace BaldLion
 				if (m_cachedEntityHierarchy[i].parentIndex > -1 && m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].transformHasChanged)
 				{
 					ECS::ECSTransformComponent* transformComponent = m_cachedEntityHierarchy[i].transformComponent;
-					const glm::mat4 transformMatrix = transformComponent->GetTransformMatrix();
+				
+					const glm::vec3 relativePosition = transformComponent->position - m_cachedEntityHierarchy[i].previousParentPosition;
+					const glm::vec3 relativeRotation = transformComponent->rotation - m_cachedEntityHierarchy[i].previousParentRotation;
+					const glm::vec3 relativeScale = transformComponent->scale - m_cachedEntityHierarchy[i].previousParentScale;
 
-					glm::vec3 oldParentPosition;
-					glm::vec3 oldParentRotation;
-					glm::vec3 oldParentScale;
-					
-					MathUtils::DecomposeTransformMatrix(m_cachedEntityHierarchy[i].parentWorldTransform, oldParentPosition, oldParentRotation, oldParentScale);
+					m_cachedEntityHierarchy[i].previousParentPosition = m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].transformComponent->position;
+					m_cachedEntityHierarchy[i].previousParentRotation = m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].transformComponent->rotation;
+					m_cachedEntityHierarchy[i].previousParentScale = m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].transformComponent->scale;
+	
+					transformComponent->position = m_cachedEntityHierarchy[i].previousParentPosition + relativePosition;
+					transformComponent->rotation = m_cachedEntityHierarchy[i].previousParentRotation + relativeRotation;
+					transformComponent->scale = m_cachedEntityHierarchy[i].previousParentScale + relativeScale;
 
-					const glm::vec3 relativePosition = transformComponent->position - oldParentPosition;
-					const glm::vec3 relativeRotation = transformComponent->rotation - oldParentRotation;
-					const glm::vec3 relativeScale = transformComponent->scale - oldParentScale;
-
-					const glm::mat4 newParentWorldTransform = m_cachedEntityHierarchy[m_cachedEntityHierarchy[i].parentIndex].transformComponent->GetTransformMatrix();
-
-					glm::vec3 newParentPosition;
-					glm::vec3 newParentRotation;
-					glm::vec3 newParentScale;	
-					MathUtils::DecomposeTransformMatrix(newParentWorldTransform, newParentPosition, newParentRotation, newParentScale);
-
-					transformComponent->position = newParentPosition + relativePosition;
-					transformComponent->rotation = newParentRotation + relativeRotation;
-					transformComponent->scale = newParentScale + relativeScale;
-
-					m_cachedEntityHierarchy[i].parentWorldTransform = newParentWorldTransform;
 					m_cachedEntityHierarchy[i].transformHasChanged = true;
 				}
 			}

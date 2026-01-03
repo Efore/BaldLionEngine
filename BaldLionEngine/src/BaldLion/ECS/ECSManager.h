@@ -17,8 +17,10 @@ namespace BaldLion {
 
 		struct ECSTransformHierarchyEntry
 		{
-			glm::mat4 parentWorldTransform;
 			ECS::ECSTransformComponent* transformComponent;
+			glm::vec3 previousParentPosition;
+			glm::vec3 previousParentRotation;
+			glm::vec3 previousParentScale;
 			ECSEntityID entityID;
 			i32 parentIndex;
 			bool transformHasChanged;
