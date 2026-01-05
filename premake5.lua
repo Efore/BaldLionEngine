@@ -258,13 +258,13 @@ project "BaldLionEditor"
 		"PATH=%PATH%;$(ProjectDir)lib"
 	}
 
-	-- postbuildcommands {
+	 postbuildcommands {
 			-- -- Copy the necessary files to the target dir
-		-- '{MKDIR} "%{cfg.targetdir}/assets"',
-		-- '{COPYDIR} "%{wks.location}BaldLionEditor/assets/" "%{cfg.targetdir}/assets"',
-		-- '{COPYFILE} "%{wks.location}BaldLionEngine/vendor/assimp/lib/assimp-vc142-mtd.dll" "%{cfg.targetdir}"',			
-		-- '{COPYFILE} "%{wks.location}BaldLionEditor/imgui.ini" "%{cfg.targetdir}"'		
-	-- }	
+		 '{MKDIR} "%{cfg.targetdir}/assets"',
+		 '{COPYDIR} "%{wks.location}BaldLionEditor/assets/" "%{cfg.targetdir}/assets"',
+		 '{COPYFILE} "%{wks.location}BaldLionEngine/vendor/assimp/lib/assimp-vc142-mtd.dll" "%{cfg.targetdir}"',			
+		 '{COPYFILE} "%{wks.location}BaldLionEditor/imgui.ini" "%{cfg.targetdir}"'		
+	 }	
 	
 	files
 	{

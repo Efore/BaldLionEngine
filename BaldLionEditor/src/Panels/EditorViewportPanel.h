@@ -24,10 +24,10 @@ namespace BaldLion {
 
 		private:
 
-			glm::vec2 m_viewportSize;
-			bool m_viewportFocused;
-			bool m_isManipulatingGizmo;
-			ui32 m_imGuizmoOperation;
+			glm::vec2 m_viewportSize = glm::vec2(0.0f);;
+			bool m_viewportFocused = false;
+			bool m_isManipulatingGizmo = false;
+			ui32 m_imGuizmoOperation = 0;
 		};
 	}
 }

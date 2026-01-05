@@ -89,7 +89,7 @@ namespace BaldLion
 
 			RenderDockSpace();			
 
-			const float deltaTime = m_gameStateTimer.GetDeltaTime();
+			const float deltaTime = (float)m_gameStateTimer.GetDeltaTime();
 
 			m_sceneHierarchyPanel.OnImGuiRender(deltaTime);
 			m_editorViewportPanel.OnImGuiRender(deltaTime);
@@ -419,8 +419,8 @@ namespace BaldLion
 				float deltaX = BaldLion::Input::PlatformInput::GetMouseX() - prevX;
 				float deltaY = BaldLion::Input::PlatformInput::GetMouseY() - prevY;
 
-				cameraYaw -= deltaX * cameraRotationSpeed * m_gameStateTimer.GetDeltaTime();
-				cameraPitch -= deltaY * cameraRotationSpeed * m_gameStateTimer.GetDeltaTime();
+				cameraYaw -= deltaX * cameraRotationSpeed * (float)m_gameStateTimer.GetDeltaTime();
+				cameraPitch -= deltaY * cameraRotationSpeed * (float)m_gameStateTimer.GetDeltaTime();
 			}
 
 			prevX = BaldLion::Input::PlatformInput::GetMouseX();

@@ -20,7 +20,10 @@ namespace BaldLion
 		{
 			inline void Wait() const
 			{
-				while (counter > 0);
+				while (counter > 0)
+				{
+
+				}
 			}
 
 			std::atomic<ui32> counter;

@@ -303,6 +303,9 @@
     <ClInclude Include="src\BaldLion\AI\HTN\Operators\HTNOperatorMoveTo.h">
       <Filter>src\BaldLion\AI\HTN\Operators</Filter>
     </ClInclude>
+    <ClInclude Include="src\BaldLion\AI\HTN\Operators\HTNOperatorPlayAnimation.h">
+      <Filter>src\BaldLion\AI\HTN\Operators</Filter>
+    </ClInclude>
     <ClInclude Include="src\BaldLion\AI\HTN\Serialization\HTNSerializer.h">
       <Filter>src\BaldLion\AI\HTN\Serialization</Filter>
     </ClInclude>
@@ -2615,9 +2618,6 @@
     </ClInclude>
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaldLion\AI\HTN\Operators\HTNOperatorPlayAnimation.h">
-      <Filter>src\BaldLion\AI\HTN\Operators</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

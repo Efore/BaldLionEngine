@@ -90,6 +90,12 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "..\bin\Debug-windows-x86_64\BaldLionEditor\assets" (mkdir "..\bin\Debug-windows-x86_64\BaldLionEditor\assets")
+xcopy /Q /E /Y /I "$(SolutionDir)BaldLionEditor\assets\" "..\bin\Debug-windows-x86_64\BaldLionEditor\assets"
+copy /B /Y "$(SolutionDir)BaldLionEngine\vendor\assimp\lib\assimp-vc142-mtd.dll" "..\bin\Debug-windows-x86_64\BaldLionEditor"
+copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Debug-windows-x86_64\BaldLionEditor"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -111,6 +117,12 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "..\bin\Release-windows-x86_64\BaldLionEditor\assets" (mkdir "..\bin\Release-windows-x86_64\BaldLionEditor\assets")
+xcopy /Q /E /Y /I "$(SolutionDir)BaldLionEditor\assets\" "..\bin\Release-windows-x86_64\BaldLionEditor\assets"
+copy /B /Y "$(SolutionDir)BaldLionEngine\vendor\assimp\lib\assimp-vc142-mtd.dll" "..\bin\Release-windows-x86_64\BaldLionEditor"
+copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Release-windows-x86_64\BaldLionEditor"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
@@ -132,6 +144,12 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "..\bin\Dist-windows-x86_64\BaldLionEditor\assets" (mkdir "..\bin\Dist-windows-x86_64\BaldLionEditor\assets")
+xcopy /Q /E /Y /I "$(SolutionDir)BaldLionEditor\assets\" "..\bin\Dist-windows-x86_64\BaldLionEditor\assets"
+copy /B /Y "$(SolutionDir)BaldLionEngine\vendor\assimp\lib\assimp-vc142-mtd.dll" "..\bin\Dist-windows-x86_64\BaldLionEditor"
+copy /B /Y "$(SolutionDir)BaldLionEditor\imgui.ini" "..\bin\Dist-windows-x86_64\BaldLionEditor"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\BaldLionEditorLayer.h" />

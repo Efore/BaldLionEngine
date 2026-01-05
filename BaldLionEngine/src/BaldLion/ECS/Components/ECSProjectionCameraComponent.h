@@ -21,16 +21,16 @@ namespace BaldLion {
 			}
 			
 		public:
-			glm::mat4 viewProjectionMatrix;
-			glm::mat4 shadowProjectionMatrix;
+			glm::mat4 viewProjectionMatrix = glm::mat4(1.0f);
+			glm::mat4 shadowProjectionMatrix = glm::mat4(1.0f);
 
-			float fov;
+			float fov = 0.0f;
 
-			float width;
-			float height;
+			float width = 0.0f;
+			float height = 0.0f;
 
-			float nearPlane;
-			float farPlane;
+			float nearPlane = 0.0f;
+			float farPlane = 0.0f;
 		};
 	}
 }

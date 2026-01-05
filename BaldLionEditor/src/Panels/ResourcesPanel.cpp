@@ -48,7 +48,8 @@ namespace BaldLion {
 
 			if (!filepath.empty())
 			{
-				ResourceManagement::ResourceManager::AddResource<Model>(filepath, ResourceManagement::ResourceType::Model);
+				constexpr bool isExternal = true;
+				ResourceManagement::ResourceManager::AddResource<Model>(filepath, ResourceManagement::ResourceType::Model, isExternal);
 			}
 		}
 

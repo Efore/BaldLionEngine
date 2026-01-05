@@ -68,7 +68,7 @@ namespace BaldLion
 			viewportCamera->shadowProjectionMatrix = shadowProjectionMatrix * viewMatrix;
 
 			SceneManagement::SceneManager::FrameStart();
-			SceneManagement::SceneManager::Update(m_gameStateTimer.GetDeltaTime());	
+			SceneManagement::SceneManager::Update((float)m_gameStateTimer.GetDeltaTime());	
 			SceneManagement::SceneManager::FrameEnd();
 
 			Renderer::BeginScene();			

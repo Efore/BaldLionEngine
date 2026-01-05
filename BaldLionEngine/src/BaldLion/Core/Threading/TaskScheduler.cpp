@@ -62,12 +62,12 @@ namespace BaldLion
 
 			const ui32 requiredBatches = glm::min(iterationCount, workerThreadCount);
 
-			ui32 iterationsDispatched = 0u;
-						
-			taskID.counter.fetch_add(1, std::memory_order_relaxed);
+			ui32 iterationsDispatched = 0u;				
+		
 
 			for (ui32 i = 0u; i < requiredBatches; i++)
 			{
+				taskID.counter.fetch_add(1, std::memory_order_relaxed);
 				ui32 iterationsForThisBatch = iterationsPerBatchBase;
 
 				if (iterationsPerBatchRemaining > 0u)

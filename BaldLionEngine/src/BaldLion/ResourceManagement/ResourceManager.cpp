@@ -7,25 +7,38 @@
 #include "BaldLion/Rendering/Shapes/PlaneMesh.h"
 #include "BaldLion/Rendering/Shapes/SphereMesh.h"
 
+#include <yaml-cpp/yaml.h>
+
 namespace fs = std::filesystem;
 
 #define ASSETS_PATH "assets/"
+
+#define EXTERNAL_RESOURCES_METADATA_PATH "assets/gameAssets/externalResourcesPaths.meta"
+
+#define YAML_KEY_EXTERNAL_RESOURCES_LIST	"ExternalResourcesList"
+#define YAML_KEY_EXTERNAL_RESOURCE_PATH		"ExternalResourcePath"
 
 namespace BaldLion
 {
 	namespace ResourceManagement
 	{
 		HashMap<ui32, Resource*> ResourceManager::s_resourceMap;
+		DynamicArray<StringId> ResourceManager::s_externalResourcesPaths;
+
 		std::mutex ResourceManager::s_resourceManagerMutex;
 
 		void ResourceManager::Init()
 		{
-			s_resourceMap = HashMap<ui32, Resource*>(AllocationType::FreeList_Resources, 96);			
+			s_resourceMap = HashMap<ui32, Resource*>(AllocationType::FreeList_Resources, 96);	
+			s_externalResourcesPaths = DynamicArray<StringId>(AllocationType::FreeList_Resources, 64);
+			DeserializeExternalResourcesPath();
 		}
 
 		void ResourceManager::Stop()
 		{
+			SerializeExternalResourcesPaths();
 			s_resourceMap.Delete();
+			s_externalResourcesPaths.Delete();
 		}
 
 		bool ResourceManager::Exists(const std::string &path)
@@ -214,9 +227,19 @@ namespace BaldLion
 
 			LoadPrimitiveShapeMeshes();
 
-			BL_DYNAMICARRAY_FOR(i, metaPaths, 0)
+			BL_DYNAMICARRAY_FOREACH(metaPaths)
 			{
 				LoadMetaFile(metaPaths[i]);
+			}
+
+			BL_DYNAMICARRAY_FOREACH(s_externalResourcesPaths)
+			{
+				const std::string externalResourcePath = BL_STRINGID_TO_STRING(s_externalResourcesPaths[i]);
+				ResourceType entryType = GetResourceTypeFromPath(externalResourcePath);
+				if (entryType != ResourceType::None)
+				{					
+					AddResource<Resource>(externalResourcePath, entryType);					
+				}
 			}
 		
 		}
@@ -281,5 +304,49 @@ namespace BaldLion
 			sphereMesh->SetUpSphere();
 
 		}
+
+		void ResourceManager::SerializeExternalResourcesPaths()
+		{
+			YAML::Emitter out;
+			out << YAML::BeginMap;
+
+			out << YAML::Key << YAML_KEY_EXTERNAL_RESOURCES_LIST << YAML::Value << YAML::BeginSeq;
+
+			BL_DYNAMICARRAY_FOREACH(s_externalResourcesPaths)
+			{
+				out << YAML::BeginMap;
+				out << YAML::Key << YAML_KEY_EXTERNAL_RESOURCE_PATH << YAML::Value << (ui32)s_externalResourcesPaths[i];
+				out << YAML::EndMap;
+			}
+
+			out << YAML::EndSeq;
+
+			out << YAML::EndMap;
+
+			std::ofstream fout(EXTERNAL_RESOURCES_METADATA_PATH);
+			fout << out.c_str();
+			fout.close();
+		}
+
+		void ResourceManager::DeserializeExternalResourcesPath()
+		{
+			std::ifstream stream(EXTERNAL_RESOURCES_METADATA_PATH);
+			std::stringstream strStream;
+
+			strStream << stream.rdbuf();
+
+			YAML::Node data = YAML::Load(strStream.str());
+
+			if (!data[YAML_KEY_EXTERNAL_RESOURCES_LIST])
+				return;
+
+			auto externalResourcesList = data[YAML_KEY_EXTERNAL_RESOURCES_LIST];
+			for (auto entry : externalResourcesList)
+			{
+				s_externalResourcesPaths.EmplaceBack(entry[YAML_KEY_EXTERNAL_RESOURCE_PATH].as<ui32>());
+			}
+
+		}
+
 	}
 }

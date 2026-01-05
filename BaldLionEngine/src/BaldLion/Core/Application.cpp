@@ -173,13 +173,16 @@ namespace BaldLion
 						(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 
 					// Sleep till only 2 ms remain...
-					const ui64 timeToSleep = deltaToTargetMs - 2;
-					if (timeToSleep > 0)
+					if (deltaToTargetMs > 2)
 					{
-						std::this_thread::sleep_for(std::chrono::milliseconds(timeToSleep));
+						const ui64 timeToSleep = deltaToTargetMs - 2;
+						if (timeToSleep > 0)
+						{
+							std::this_thread::sleep_for(std::chrono::milliseconds(timeToSleep));
+						}
 					}
 
-					const ui64 deltaToTargetNS = deltaToTargetMs * 1e6;
+					const ui64 deltaToTargetNS = deltaToTargetMs * 1000000;
 
 					// ...and spin for the remaining time 
 					while (deltaToTargetNS >

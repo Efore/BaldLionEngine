@@ -22,7 +22,7 @@ namespace BaldLion {
 
 		private:
 
-			SceneHierarchyPanel* m_sceneHierarchyPanel;			
+			SceneHierarchyPanel* m_sceneHierarchyPanel = nullptr;			
 		};
 	}
 }

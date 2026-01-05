@@ -337,7 +337,7 @@ namespace BaldLion {
 
 						if (ImGui::BeginCombo("Domain", domainName_value, flags))
 						{
-							for (int n = 0; n < domainNames.Size(); n++)
+							for (ui32 n = 0; n < domainNames.Size(); n++)
 							{
 								const bool is_selected = (domainName_idx == n);
 								if (ImGui::Selectable(BL_STRINGID_TO_STR_C(domainNames[n]), is_selected))
@@ -366,7 +366,7 @@ namespace BaldLion {
 
 						if (ImGui::BeginCombo("World State Blackboard", blackboardName_value, flags))
 						{
-							for (int n = 0; n < blackboardNames.Size(); n++)
+							for (ui32 n = 0; n < blackboardNames.Size(); n++)
 							{
 								const bool is_selected = (blackboardName_idx == n);
 								if (ImGui::Selectable(BL_STRINGID_TO_STR_C(blackboardNames[n]), is_selected))

@@ -40,7 +40,7 @@ namespace BaldLion
 		double GetDeltaTimeInMilliseconds() const { return m_deltaTime * m_timeScale * 1000.0f; }
 
 		ui64 GetCurrentTimeMs() const { return m_currentTimeMs; }
-		float GetStartTimeMs() const { return  m_startTimeMs; }
+		ui64 GetStartTimeMs() const { return  m_startTimeMs; }
 
 		void SetCurrentTimeMs(ui64 currentTimeMs) { 
 
@@ -55,11 +55,11 @@ namespace BaldLion
 
 	private:
 
-		ui64 m_currentTimeMs;
-		ui64 m_startTimeMs;
-		double m_deltaTime;
-		float m_timeScale;
-		float m_prevTimeScale;
+		ui64 m_currentTimeMs = 0;
+		ui64 m_startTimeMs = 0;
+		double m_deltaTime = 0.0f;
+		float m_timeScale = 0.0f;
+		float m_prevTimeScale = 0.0f;
 		ui32 m_timerID = 0;
 	};
 
@@ -72,8 +72,8 @@ namespace BaldLion
 
 		static void SetTimeScale(float timeScale) { s_globalTimer.SetTimeScale(timeScale); }
 
-		static float GetGlobalDeltaTime() { return s_globalTimer.GetDeltaTime(); }
-		static float GetGlobalDeltaTimeInMilliseconds() { return s_globalTimer.GetDeltaTimeInMilliseconds(); }
+		static float GetGlobalDeltaTime() { return (float)s_globalTimer.GetDeltaTime(); }
+		static float GetGlobalDeltaTimeInMilliseconds() { return  (float)s_globalTimer.GetDeltaTimeInMilliseconds(); }
 
 		static ui64 GetCurrentTimeMs() { return s_globalTimer.GetCurrentTimeMs(); }
 

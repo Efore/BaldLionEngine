@@ -17,7 +17,7 @@ namespace BaldLion {
 
 		protected:
 
-			glm::mat4 m_staticSelectedLastTransform;
+			glm::mat4 m_staticSelectedLastTransform = glm::mat4(1.0f);
 
 			SceneHierarchyPanel* m_sceneHierarchyPanel;
 

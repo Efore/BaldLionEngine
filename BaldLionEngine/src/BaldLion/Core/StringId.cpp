@@ -6,7 +6,7 @@
 #define YAML_KEY_STRINGID_MAP		"StringIdMap"
 #define YAML_KEY_STRINGID_MAP_VALUE	"StringIdMapValue"
 
-#define STRINGID_DATA_PATH "assets/gameAssets/stringIds.meta"
+#define STRINGID_METADATA_PATH "assets/gameAssets/stringIds.meta"
 
 namespace BaldLion {
 
@@ -72,14 +72,14 @@ namespace BaldLion {
 
 		out << YAML::EndMap;
 
-		std::ofstream fout(STRINGID_DATA_PATH);
+		std::ofstream fout(STRINGID_METADATA_PATH);
 		fout << out.c_str();
 		fout.close();
 	}
 
 	void StringId::DeserializeStringIdMap()
 	{
-		std::ifstream stream(STRINGID_DATA_PATH);
+		std::ifstream stream(STRINGID_METADATA_PATH);
 		std::stringstream strStream;
 
 		strStream << stream.rdbuf();

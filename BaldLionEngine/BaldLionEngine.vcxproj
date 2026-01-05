@@ -146,13 +146,13 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\BaldLion\AI\HTN\Operators\HTNOperatorPlayAnimation.h" />
     <ClInclude Include="src\BaldLion.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNAgent.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNManager.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNTask.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\HTNTypes.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\Operators\HTNOperatorMoveTo.h" />
+    <ClInclude Include="src\BaldLion\AI\HTN\Operators\HTNOperatorPlayAnimation.h" />
     <ClInclude Include="src\BaldLion\AI\HTN\Serialization\HTNSerializer.h" />
     <ClInclude Include="src\BaldLion\AI\Navigation\NavMeshBuilder.h" />
     <ClInclude Include="src\BaldLion\AI\Navigation\NavigationManager.h" />

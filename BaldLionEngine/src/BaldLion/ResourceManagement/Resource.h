@@ -45,10 +45,10 @@ namespace BaldLion
 
 		protected:
 
-			ui32 m_resourceID;
-			StringId m_resourcePath;
-			StringId m_resourceName;
-			ResourceType m_resourceType;
+			ui32 m_resourceID = 0;
+			StringId m_resourcePath = 0;
+			StringId m_resourceName = 0;
+			ResourceType m_resourceType = ResourceType::None;
 		};
 	}
 }

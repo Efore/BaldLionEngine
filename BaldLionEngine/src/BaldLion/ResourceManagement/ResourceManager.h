@@ -20,7 +20,7 @@ namespace BaldLion
 			static T* LoadResource(const std::string &path);
 
 			template <typename T>
-			static T* AddResource(const std::string &path, ResourceType resourceType);
+			static T* AddResource(const std::string& path, ResourceType resourceType, bool isExternal = false);
 
 			static HashMap<ui32, Resource*>& GetResourceMap() { return s_resourceMap; }
 
@@ -38,8 +38,12 @@ namespace BaldLion
 			static void LoadMetaFile(const std::string &path);
 			static void LoadPrimitiveShapeMeshes();
 
+			static void SerializeExternalResourcesPaths();
+			static void DeserializeExternalResourcesPath();
+
 		private:
 			static HashMap<ui32, Resource*> s_resourceMap;
+			static DynamicArray<StringId> s_externalResourcesPaths;
 			static std::mutex s_resourceManagerMutex;
 		};
 
@@ -60,7 +64,7 @@ namespace BaldLion
 		}		
 
 		template <typename T>
-		T* ResourceManager::AddResource(const std::string &path, ResourceType resourceType)
+		T* ResourceManager::AddResource(const std::string &path, ResourceType resourceType, bool isExternal)
 		{			
 			static_assert(std::is_base_of<Resource, T>::value, "T must inherit from Resource");	
 
@@ -73,6 +77,15 @@ namespace BaldLion
 
 			auto resourcePath = std::filesystem::path(path);
 			const std::string formatedPath = resourcePath.make_preferred().string();
+
+			if (isExternal)
+			{
+				const ui32 resourceID = BL_STRING_TO_STRINGID(path);
+				if (!s_externalResourcesPaths.Contains(resourceID))
+				{
+					s_externalResourcesPaths.EmplaceBack(resourceID);
+				}
+			}
 
 			switch (resourceType)
 			{

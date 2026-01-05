@@ -34,7 +34,7 @@
 #define YAML_KEY_CONDITION_BLACKBOARD_KEY			"ConditionBlackboardKey"
 #define YAML_KEY_CONDITION_VARIANT					"ConditionVariant"
 
-#define HTN_DATA_PATH "assets/gameAssets/htnData.meta"
+#define HTN_METADATA_PATH "assets/gameAssets/htnData.meta"
 
 
 namespace BaldLion::AI::HTN
@@ -50,14 +50,14 @@ namespace BaldLion::AI::HTN
 
 		out << YAML::EndMap;
 
-		std::ofstream fout(HTN_DATA_PATH);
+		std::ofstream fout(HTN_METADATA_PATH);
 		fout << out.c_str();
 		fout.close();
 	}
 
 	bool HTNSerializer::DeserializeHTNData()
 	{
-		std::ifstream stream(HTN_DATA_PATH);
+		std::ifstream stream(HTN_METADATA_PATH);
 		std::stringstream strStream;
 
 		strStream << stream.rdbuf();

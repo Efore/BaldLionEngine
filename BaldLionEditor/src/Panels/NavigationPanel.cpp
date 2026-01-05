@@ -246,10 +246,10 @@ namespace BaldLion
 		void NavigationPanel::DrawNavMesh()
 		{
 			const dtNavMesh* mesh = NavMeshBuilder::GetNavMesh();
-
-			BL_DYNAMICARRAY_FOREACH(m_tileIndexToDraw)
+			
+			for(int i = 0; i < mesh->getMaxTiles(); ++i)
 			{
-				const dtMeshTile* tile = mesh->getTile(m_tileIndexToDraw[i]);
+				const dtMeshTile* tile = mesh->getTile(i);
 				if (!tile->header) continue;
 				
 				DrawMeshTile(tile);

@@ -131,7 +131,7 @@ namespace BaldLion
 
 				if (!s_activeScenes.Contains(sceneid))
 				{
-					s_activeScenes.Emplace(sceneid, newScene);
+					s_activeScenes.Emplace(sceneid, std::move(newScene));
 				}
 				if (setAsMainScene)
 				{
