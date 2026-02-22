@@ -597,9 +597,10 @@ namespace BaldLion
 			ui64 firstHalf = node[yamlKey + "_VALUE_1"].as<ui64>();
 			ui64 secondHalf = node[yamlKey + "_VALUE_2"].as<ui64>();
 
-			unsigned char* data = (unsigned char*)&result.GetValue();
-			data[0] = firstHalf;
-			data[8] = secondHalf;
+			void* data = (void*)&result.GetValue();
+			
+			((ui64*)data)[0] = firstHalf;
+			((ui64*)data)[1] = secondHalf;
 		}
 	}
 }
