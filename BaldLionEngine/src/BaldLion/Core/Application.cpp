@@ -13,8 +13,6 @@
 
 #include <functional>
 
-#define GAMEPLAY_FRAME_TARGET_MS 16u
-
 namespace BaldLion
 {
 	Application* Application::s_instance = nullptr;
@@ -133,6 +131,8 @@ namespace BaldLion
 		{		
 			BL_PROFILE_FRAME();
 
+			Time::UpdateGlobalCurrentTime();
+
 			Input::InputSystem::UpdateEntries();			
 
 			if (!m_minimized)
@@ -172,27 +172,14 @@ namespace BaldLion
 					const ui64 beginNs = std::chrono::duration_cast<std::chrono::nanoseconds>
 						(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 
-					// Sleep till only 2 ms remain...
-					if (deltaToTargetMs > 2)
-					{
-						const ui64 timeToSleep = deltaToTargetMs - 2;
-						if (timeToSleep > 0)
-						{
-							std::this_thread::sleep_for(std::chrono::milliseconds(timeToSleep));
-						}
-					}
+					Time::s_endOfFrameBeforeBusyWorkTimeNs.store(beginNs + ((deltaToTargetMs - 10) * 1000000));
+					Time::s_endOfFrameTimeNs.store(beginNs + (deltaToTargetMs * 1000000));
 
-					const ui64 deltaToTargetNS = deltaToTargetMs * 1000000;
-
-					// ...and spin for the remaining time 
-					while (deltaToTargetNS >
-						ui64(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch())
-							.count()) - beginNs)
-					{}
+					Time::s_sleepingUntilNextFrame = true;
+					Time::SleepThreadUntilEndOfFrame();
+					Time::s_sleepingUntilNextFrame = false;
 				}
 			}
-
-			Time::UpdateGlobalCurrentTime();
 		}	
 	}
 

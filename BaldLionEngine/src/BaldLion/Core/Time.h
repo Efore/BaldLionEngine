@@ -82,7 +82,14 @@ namespace BaldLion
 		static void RequestNewTimer(Timer& timer);
 		static void RemoveTimer(ui32 timerID);
 
+		static void SleepThread(ui64 sleepMiliseconds);
+		static void SleepThreadUntilEndOfFrame();
+		
+		static std::atomic<bool> s_sleepingUntilNextFrame;
+		static std::atomic<ui64> s_endOfFrameTimeNs;
+		static std::atomic<ui64> s_endOfFrameBeforeBusyWorkTimeNs;
 	private:
+
 
 		static HashTable<ui32, Timer*> s_additionalTimers;
 		static Timer s_globalTimer;

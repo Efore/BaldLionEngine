@@ -12,7 +12,7 @@ namespace BaldLion
 		Queue<Task> TaskScheduler::s_taskQueue;
 
 		std::mutex TaskScheduler::s_taskQueueMutex;
-		bool TaskScheduler::s_running = false;
+		std::atomic<bool> TaskScheduler::s_running = false;
 
 		std::atomic<ui32> TaskScheduler::s_activeJobs = 0;
 
@@ -119,6 +119,11 @@ namespace BaldLion
 					entry.taskID->counter.fetch_sub(1);
 					s_activeJobs.fetch_sub(1);
 				}
+
+				if (Time::s_sleepingUntilNextFrame)
+				{
+					Time::SleepThreadUntilEndOfFrame();
+				}				
 			}
 			return nullptr;
 		}	

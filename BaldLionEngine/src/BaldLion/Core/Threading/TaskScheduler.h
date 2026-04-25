@@ -52,11 +52,11 @@ namespace BaldLion
 
 		private:
 
+			static std::atomic<bool> s_running;
 			static DynamicArray<std::thread > s_workerThreads;
 			static Queue<Task> s_taskQueue;
 			static std::mutex s_taskQueueMutex;
 			static std::atomic<ui32> s_activeJobs;
-			static bool s_running;
 		};
 
 

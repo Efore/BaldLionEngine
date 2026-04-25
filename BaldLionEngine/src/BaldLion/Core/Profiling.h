@@ -2,7 +2,7 @@
 
 #include "optick.h"
 
-#define BL_PROFILE_ACTIVE 0
+#define BL_PROFILE_ACTIVE 1
 
 #if BL_PROFILE_ACTIVE
 #define BL_PROFILE_FRAME() OPTICK_FRAME("Main thread")
