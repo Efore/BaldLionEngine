@@ -96,6 +96,8 @@ struct BuildSettings
 	float navMeshBMax[3];
 	// Size of the tiles in voxels
 	float tileSize;
+	int maxTiles;
+	int maxPolys;
 };
 
 class InputGeom
@@ -133,14 +135,14 @@ public:
 	
 	
 	bool load(class rcContext* ctx, const std::string& filepath);
-	bool saveGeomSet(const BuildSettings* settings);
+	bool saveGeomSet(const BuildSettings* settings, std::string filepath);
 
 	bool prepareMesh(rcContext* ctx);
 	void addVerticesToMesh(rcContext* ctx, const void* vertices, ui32 verticesSize, const ui32* indices, ui32 indicesSize);
 	bool closeMesh(rcContext* ctx);
 
 	/// Method to return static mesh data.
-	const rcMeshLoaderObj* getMesh() const { return m_mesh; }
+	rcMeshLoaderObj* getMesh() const { return m_mesh; }	
 	const float* getMeshBoundsMin() const { return m_meshBMin; }
 	const float* getMeshBoundsMax() const { return m_meshBMax; }
 	const float* getNavMeshBoundsMin() const { return m_hasBuildSettings ? m_buildSettings.navMeshBMin : m_meshBMin; }

@@ -35,6 +35,7 @@ public:
 	int getVertCount() const { return m_vertCount; }
 	int getTriCount() const { return m_triCount; }
 	const std::string& getFileName() const { return m_filename; }
+	void setFileName(const std::string& fileName) { m_filename = fileName; }
 
 	void addVertex(float x, float y, float z, int& cap);
 	void addTriangle(int a, int b, int c, int& cap);

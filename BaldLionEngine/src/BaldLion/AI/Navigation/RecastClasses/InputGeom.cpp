@@ -251,29 +251,31 @@ bool InputGeom::loadGeomSet(rcContext* ctx, const std::string& filepath)
 		{
 			// Settings
 			m_hasBuildSettings = true;
-			sscanf(row + 1, "%f %f %f %f %f %f %f %f %f %f %f %f %f %d %f %f %f %f %f %f %f",
-							&m_buildSettings.cellSize,
-							&m_buildSettings.cellHeight,
-							&m_buildSettings.agentHeight,
-							&m_buildSettings.agentRadius,
-							&m_buildSettings.agentMaxClimb,
-							&m_buildSettings.agentMaxSlope,
-							&m_buildSettings.regionMinSize,
-							&m_buildSettings.regionMergeSize,
-							&m_buildSettings.edgeMaxLen,
-							&m_buildSettings.edgeMaxError,
-							&m_buildSettings.vertsPerPoly,
-							&m_buildSettings.detailSampleDist,
-							&m_buildSettings.detailSampleMaxError,
-							&m_buildSettings.partitionType,
-							&m_buildSettings.navMeshBMin[0],
-							&m_buildSettings.navMeshBMin[1],
-							&m_buildSettings.navMeshBMin[2],
-							&m_buildSettings.navMeshBMax[0],
-							&m_buildSettings.navMeshBMax[1],
-							&m_buildSettings.navMeshBMax[2],
-							&m_buildSettings.tileSize);
-		}
+			sscanf(row + 1, "%f %f %f %f %f %f %f %f %f %f %f %f %f %d %f %f %f %f %f %f %f %d %d",
+				&m_buildSettings.cellSize,
+				&m_buildSettings.cellHeight,
+				&m_buildSettings.agentHeight,
+				&m_buildSettings.agentRadius,
+				&m_buildSettings.agentMaxClimb,
+				&m_buildSettings.agentMaxSlope,
+				&m_buildSettings.regionMinSize,
+				&m_buildSettings.regionMergeSize,
+				&m_buildSettings.edgeMaxLen,
+				&m_buildSettings.edgeMaxError,
+				&m_buildSettings.vertsPerPoly,
+				&m_buildSettings.detailSampleDist,
+				&m_buildSettings.detailSampleMaxError,
+				&m_buildSettings.partitionType,
+				&m_buildSettings.navMeshBMin[0],
+				&m_buildSettings.navMeshBMin[1],
+				&m_buildSettings.navMeshBMin[2],
+				&m_buildSettings.navMeshBMax[0],
+				&m_buildSettings.navMeshBMax[1],
+				&m_buildSettings.navMeshBMax[2],
+				&m_buildSettings.tileSize,
+				&m_buildSettings.maxTiles,
+				&m_buildSettings.maxPolys);
+		}			
 	}
 	
 	delete [] buf;
@@ -298,12 +300,11 @@ bool InputGeom::load(rcContext* ctx, const std::string& filepath)
 	return false;
 }
 
-bool InputGeom::saveGeomSet(const BuildSettings* settings)
+bool InputGeom::saveGeomSet(const BuildSettings* settings, std::string filepath)
 {
 	if (!m_mesh) return false;
 	
 	// Change extension
-	std::string filepath = m_mesh->getFileName();
 	size_t extPos = filepath.find_last_of('.');
 	if (extPos != std::string::npos)
 		filepath = filepath.substr(0, extPos);
@@ -320,7 +321,7 @@ bool InputGeom::saveGeomSet(const BuildSettings* settings)
 	if (settings)
 	{
 		fprintf(fp,
-			"s %f %f %f %f %f %f %f %f %f %f %f %f %f %d %f %f %f %f %f %f %f\n",
+			"s %f %f %f %f %f %f %f %f %f %f %f %f %f %d %f %f %f %f %f %f %f %d %d\n",
 			settings->cellSize,
 			settings->cellHeight,
 			settings->agentHeight,
@@ -341,7 +342,9 @@ bool InputGeom::saveGeomSet(const BuildSettings* settings)
 			settings->navMeshBMax[0],
 			settings->navMeshBMax[1],
 			settings->navMeshBMax[2],
-			settings->tileSize);
+			settings->tileSize,
+			settings->maxTiles,
+			settings->maxPolys);
 	}
 	
 	// Store off-mesh links.
@@ -369,7 +372,6 @@ bool InputGeom::saveGeomSet(const BuildSettings* settings)
 	
 	return true;
 }
-
 
 bool InputGeom::prepareMesh(rcContext* ctx)
 {

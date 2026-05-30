@@ -84,6 +84,9 @@ using namespace BaldLion::ECS;
 #define YAML_KEY_CHILDENTITIES		"ChildEntities"
 #define YAML_KEY_CHILDENTITY		"ChildEntity"
 
+//Navmesh
+#define YAML_KEY_NAVMESHDATA_PATH	"NavMeshDataPath"
+
 namespace BaldLion
 {
 	namespace SceneManagement 
@@ -92,7 +95,7 @@ namespace BaldLion
 		{
 			YAML::Emitter out;
 			out << YAML::BeginMap;
-
+;
 			out << YAML::Key << YAML_KEY_ENTITYID_PROVIDER << YAML::Value << ECS::ECSManager::GetLastProvidedEntityID();
 			out << YAML::Key << YAML_KEY_SCENEID << YAML::Value << BL_STRINGID_TO_STR_C(scene->GetSceneID());
 			out << YAML::Key << YAML_KEY_SCENENAME << YAML::Value << BL_STRINGID_TO_STR_C(scene->GetSceneName());

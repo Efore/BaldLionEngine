@@ -36,11 +36,6 @@ namespace BaldLion
 		{
 			ImGui::Begin(BL_STRINGID_TO_STR_C(m_panelName));
 
-			if (ImGui::Button("Load Geometry"))
-			{
-				NavMeshBuilder::LoadGeom();
-			}
-
 			ImGui::SliderFloat("Cell Size", &(NavMeshBuilder::navMeshConfig.cellSize), 0.1f, 1.0f, "%.2f");
 			ImGui::SliderFloat("Cell Height", &(NavMeshBuilder::navMeshConfig.cellHeight), 0.1f, 1.0f, "%.2f");
 
@@ -147,17 +142,17 @@ namespace BaldLion
 				ImGui::Text(text);
 
 				ImGui::Separator();
-			}
+			}	
 			
-
-			if (NavMeshBuilder::GeomMeshAdded())
+			if (ImGui::Button("Bake NavMesh"))
 			{
-				if (ImGui::Button("Bake NavMesh"))
+				NavMeshBuilder::BuildGeomFromScene();
+				if (NavMeshBuilder::GeomMeshAdded())
 				{
 					NavMeshBuilder::BuildNavMesh();
 					NavigationManager::InitCrowd();
 				}
-			}
+			}			
 
 			if (NavMeshBuilder::NavMeshIsValid() && !NavMeshBuilder::NavMeshIsBaking())
 			{

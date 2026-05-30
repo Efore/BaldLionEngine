@@ -5,6 +5,7 @@
 #include "BaldLion/SceneManagement/SceneManager.h"
 #include "BaldLion/ECS/ECSManager.h"
 #include "BaldLion/ECS/Components/ECSMeshComponent.h"
+#include <string.h>
 
 
 namespace BaldLion::AI::Navigation
@@ -92,7 +93,7 @@ namespace BaldLion::AI::Navigation
 		}
 	}
 
-	bool NavMeshBuilder::LoadGeom()
+	bool NavMeshBuilder::BuildGeomFromScene()
 	{
 		if (SceneManagement::SceneManager::GetECSManager()->GetComponentPool<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh)->Size() == 0)
 			return false;
@@ -109,7 +110,147 @@ namespace BaldLion::AI::Navigation
 		}
 
 		s_geom = MemoryManager::New<InputGeom>("NavMesh Geom", AllocationType::FreeList_ECS);
+				
+		s_geomMeshAdded = false;
+		Threading::TaskScheduler::KickSingleTask(s_bakeNavMeshTask,[] 
+		{
 
+			BL_PROFILE_SCOPE("Load Geom for Navmesh", Optick::Category::Navigation);
+			if (!s_geom->prepareMesh(&s_ctx)) 
+			{
+				MemoryManager::Delete(s_geom);
+				s_geom = nullptr;
+			}
+			else
+			{		
+				BL_HASHTABLE_FOR(SceneManagement::SceneManager::GetECSManager()->GetEntityComponents(), it)
+				{
+					const ECS::ECSMeshComponent* meshComponent = it.GetValue().Read<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh);
+
+					if (meshComponent != nullptr && meshComponent->isStatic)
+					{
+						const ECS::ECSTransformComponent* transformComponent = it.GetValue().Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
+
+						const glm::mat4 transformMatrix = transformComponent->GetTransformMatrix();
+
+						DynamicArray<Vertex> transformedVertices(AllocationType::Linear_Frame, meshComponent->vertices);
+
+						BL_DYNAMICARRAY_FOREACH(transformedVertices)
+						{
+							transformedVertices[i] = transformedVertices[i] * transformMatrix;
+						}
+
+						s_geom->addVerticesToMesh(&s_ctx, (void*)transformedVertices.Data(), meshComponent->vertices.Size(), meshComponent->indices.Data(), meshComponent->indices.Size());
+					}
+				}
+
+				if ((s_geom->getMesh()->getVertCount() == 0 || !s_geom->closeMesh(&s_ctx)))
+				{
+					MemoryManager::Delete(s_geom);
+					s_geom = nullptr;
+				}
+			}
+
+		});
+
+		s_bakeNavMeshTask.Wait();
+
+		if (!s_geom)
+		{
+			return false;
+		}
+
+		s_geomMeshAdded = true;
+
+		return true;
+	}
+
+	bool NavMeshBuilder::LoadNavMeshData(const std::string& navMeshDataPath)
+	{
+		if (s_ctx.GetInitialized())
+		{
+			s_ctx.Stop();
+		}
+		s_ctx.Init();
+
+		if (s_geom != nullptr)
+		{
+			MemoryManager::Delete(s_geom);
+		}
+
+		s_geom = MemoryManager::New<InputGeom>("NavMesh Geom", AllocationType::FreeList_ECS);		
+
+		// Change extension
+		std::string geomSetPath = navMeshDataPath;
+		size_t extPos = geomSetPath.find_last_of('.');
+		if (extPos != std::string::npos)
+			geomSetPath = geomSetPath.substr(0, extPos);
+
+		geomSetPath += ".gset";
+
+		if (s_geom->load(&s_ctx, geomSetPath))
+		{
+			navMeshConfig.cellSize = s_geom->getBuildSettings()->cellSize;
+			navMeshConfig.cellHeight = s_geom->getBuildSettings()->cellHeight;
+			navMeshConfig.agentHeight = s_geom->getBuildSettings()->agentHeight;
+			navMeshConfig.agentRadius = s_geom->getBuildSettings()->agentRadius;
+			navMeshConfig.agentMaxClimb = s_geom->getBuildSettings()->agentMaxClimb;
+			navMeshConfig.agentMaxSlope = s_geom->getBuildSettings()->agentMaxSlope;
+			navMeshConfig.regionMinSize = s_geom->getBuildSettings()->regionMinSize;
+			navMeshConfig.regionMergeSize = s_geom->getBuildSettings()->regionMergeSize;
+			navMeshConfig.edgeMaxLen = s_geom->getBuildSettings()->edgeMaxLen;
+			navMeshConfig.edgeMaxError = s_geom->getBuildSettings()->edgeMaxError;
+			navMeshConfig.vertsPerPoly = s_geom->getBuildSettings()->vertsPerPoly;
+			navMeshConfig.detailSampleDist = s_geom->getBuildSettings()->detailSampleDist;
+			navMeshConfig.detailSampleMaxError = s_geom->getBuildSettings()->detailSampleMaxError;
+			navMeshConfig.partitionType = s_geom->getBuildSettings()->partitionType;
+			navMeshConfig.tileSize = s_geom->getBuildSettings()->tileSize;
+			navMeshConfig.maxTiles = s_geom->getBuildSettings()->maxTiles;
+			navMeshConfig.maxPolys = s_geom->getBuildSettings()->maxPolys;
+
+			
+			std::string navMeshPath = navMeshDataPath;
+			size_t extPos = navMeshPath.find_last_of('.');
+			if (extPos != std::string::npos)
+				navMeshPath = navMeshPath.substr(0, extPos);
+
+			navMeshPath += ".navmesh";
+
+			FILE* fp = fopen(navMeshPath.c_str(), "rb");
+
+			if (!fp)
+				return false;
+
+			if (InitializeNavMesh())
+			{
+				for (int i = 0; i < navMeshConfig.maxTiles; ++i)
+				{
+					int dataSize;
+					fread(&dataSize, sizeof(int), 1, fp);
+
+					unsigned char* data = (unsigned char*)dtAlloc(sizeof(unsigned char) * dataSize, DT_ALLOC_PERM);
+					fread(data, sizeof(unsigned char), dataSize, fp);
+
+					dtStatus status = s_navMesh->addTile(data, dataSize, DT_TILE_FREE_DATA, 0, 0);
+					if (dtStatusFailed(status))
+						dtFree(data);
+				}
+			}			
+
+			fclose(fp);
+
+			return true;
+		}
+		return false;
+	}
+
+	bool NavMeshBuilder::SaveNavMeshData(const std::string& navMeshDataPath)
+	{
+		if (!s_geom)
+		{
+			return false;
+		}
+		
 		BuildSettings buildSettings;
 
 		buildSettings.cellSize = navMeshConfig.cellSize;
@@ -127,73 +268,51 @@ namespace BaldLion::AI::Navigation
 		buildSettings.detailSampleMaxError = navMeshConfig.detailSampleMaxError;
 		buildSettings.partitionType = navMeshConfig.partitionType;
 		buildSettings.tileSize = navMeshConfig.tileSize;
+		buildSettings.maxTiles = navMeshConfig.maxTiles;
+		buildSettings.maxPolys = navMeshConfig.maxPolys;
 
-		s_geom->saveGeomSet(&buildSettings);
-		s_geomMeshAdded = false;
-		Threading::TaskScheduler::KickSingleTask(s_bakeNavMeshTask,[] 
+
+		rcVcopy(buildSettings.navMeshBMin, s_geom->getMeshBoundsMin());
+		rcVcopy(buildSettings.navMeshBMax, s_geom->getMeshBoundsMax());
+
+		// Change extension
+		std::string geomSettingsFile = navMeshDataPath;
+		size_t extPos = geomSettingsFile.find_last_of('.');
+		if (extPos != std::string::npos)
+			geomSettingsFile = geomSettingsFile.substr(0, extPos);
+
+		geomSettingsFile += ".gset";
+
+		if (s_geom->saveGeomSet(&buildSettings, geomSettingsFile))
 		{
+			std::string navMeshFile = navMeshDataPath;
+			size_t extPos = navMeshFile.find_last_of('.');
+			if (extPos != std::string::npos)
+				navMeshFile = navMeshFile.substr(0, extPos);
 
-			BL_PROFILE_SCOPE("Load Geom for Navmesh", Optick::Category::Navigation);
-			if (!s_geom->prepareMesh(&s_ctx)) 
+			navMeshFile += ".navmesh";
+
+			FILE* fp = fopen(navMeshFile.c_str(), "wb");
+			if (!fp) return false;
+
+			const dtNavMesh* navMesh = GetNavMesh();
+			const int maxTiles = GetNavMesh()->getMaxTiles();
+
+			for (int i = 0; i < maxTiles; ++i)
 			{
-				MemoryManager::Delete(s_geom);
-				s_geom = nullptr;
+				const dtMeshTile* tile = navMesh->getTile(i);
+				fwrite(&tile->dataSize, sizeof(int), 1, fp);
+				fwrite(tile->data, sizeof(unsigned char), tile->dataSize, fp);
 			}
 
-			BL_HASHTABLE_FOR(SceneManagement::SceneManager::GetECSManager()->GetEntityComponents(), it)
-			{
-				const ECS::ECSMeshComponent* meshComponent = it.GetValue().Read<ECS::ECSMeshComponent>(ECS::ECSComponentType::Mesh);				
-
-				if (meshComponent != nullptr && meshComponent->isStatic)
-				{
-					const ECS::ECSTransformComponent* transformComponent = it.GetValue().Read<ECS::ECSTransformComponent>(ECS::ECSComponentType::Transform);
-
-					const glm::mat4 transformMatrix = transformComponent->GetTransformMatrix();
-
-					DynamicArray<Vertex> transformedVertices(AllocationType::Linear_Frame, meshComponent->vertices);
-
-					BL_DYNAMICARRAY_FOREACH(transformedVertices)
-					{
-						transformedVertices[i] = transformedVertices[i] * transformMatrix;
-					}
-
-					s_geom->addVerticesToMesh(&s_ctx, (void*)transformedVertices.Data(), meshComponent->vertices.Size(), meshComponent->indices.Data(), meshComponent->indices.Size());
-				}
-			}
-			
-			if(s_geom->getMesh()->getVertCount() == 0 || !s_geom->closeMesh(&s_ctx))
-			{
-				MemoryManager::Delete(s_geom);
-				s_geom = nullptr;
-			}
-
-			s_geomMeshAdded = true;
-		});
-			
+			fclose(fp);
+		}
 
 		return true;
 	}
 
-	bool NavMeshBuilder::BuildNavMesh()
+	bool NavMeshBuilder::InitializeNavMesh()
 	{	
-		if (s_geom == nullptr)
-		{
-			return false;
-		}
-
-		InternalBuildNavMesh();
-
-		return true;
-	}	
-	
-	bool NavMeshBuilder::InternalBuildNavMesh()
-	{
-		if (!s_geom || !s_geom->getMesh())
-		{
-			s_ctx.log(RC_LOG_ERROR, "buildTiledNavigation: No vertices and triangles.");
-			return false;
-		}
-
 		dtFreeNavMesh(s_navMesh);
 
 		s_navMesh = dtAllocNavMesh();
@@ -205,8 +324,8 @@ namespace BaldLion::AI::Navigation
 
 		dtNavMeshParams params;
 		rcVcopy(params.orig, s_geom->getNavMeshBoundsMin());
-		params.tileWidth = navMeshConfig.tileSize *  navMeshConfig.cellSize;
-		params.tileHeight = navMeshConfig.tileSize *  navMeshConfig.cellSize;
+		params.tileWidth = navMeshConfig.tileSize * navMeshConfig.cellSize;
+		params.tileHeight = navMeshConfig.tileSize * navMeshConfig.cellSize;
 		params.maxTiles = navMeshConfig.maxTiles;
 		params.maxPolys = navMeshConfig.maxPolys;
 
@@ -226,16 +345,31 @@ namespace BaldLion::AI::Navigation
 			return false;
 		}
 
-		s_bakeNavMeshTask.Wait();
-
-		Threading::TaskScheduler::KickSingleTask(s_bakeNavMeshTask, [] {
-			s_isBakingNavmesh = true;
-			BuildAllTiles();
-			s_isBakingNavmesh = false;
-		});
-
 		return true;
 	}
+
+	bool NavMeshBuilder::BuildNavMesh()
+	{			
+		if (!s_geom || !s_geom->getMesh())
+		{
+			s_ctx.log(RC_LOG_ERROR, "buildTiledNavigation: No vertices and triangles.");
+			return false;
+		}
+
+		if (InitializeNavMesh())
+		{
+			s_bakeNavMeshTask.Wait();
+
+			Threading::TaskScheduler::KickSingleTask(s_bakeNavMeshTask, [] {
+				s_isBakingNavmesh = true;
+				BuildAllTiles();
+				s_isBakingNavmesh = false;
+				});
+
+			return true;
+		}
+		return false;
+	}		
 
 	void NavMeshBuilder::BuildAllTiles()
 	{

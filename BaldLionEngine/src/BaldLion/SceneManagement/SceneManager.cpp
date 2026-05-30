@@ -2,6 +2,8 @@
 #include "SceneManager.h"
 #include "Serialization/SceneSerializer.h"
 #include "BaldLion/ECS/SingletonSystems/CameraSystem.h"
+#include "BaldLion/AI/Navigation/NavMeshBuilder.h"
+#include "BaldLion/AI/Navigation/NavigationManager.h"
 #include <filesystem>
 
 namespace BaldLion
@@ -86,6 +88,11 @@ namespace BaldLion
 		{
 			try
 			{
+				if (AI::Navigation::NavMeshBuilder::LoadNavMeshData(filepath))
+				{					
+					AI::Navigation::NavigationManager::InitCrowd();
+				}
+				
 				bool success = SceneSerializer::DeserializeScene(filepath);
 				if (!success)
 				{
@@ -104,6 +111,7 @@ namespace BaldLion
 
 		void SceneManager::SaveScene(const char* filepath)
 		{
+			AI::Navigation::NavMeshBuilder::SaveNavMeshData(filepath);
 			SceneSerializer::SerializeScene(s_mainScene, filepath);
 			s_mainScenePathFile = filepath;
 
