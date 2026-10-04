@@ -522,7 +522,7 @@ namespace BaldLion
 				StringId worldStateBlackboardID = yamlComponent[YAML_KEY_HTNAGENT_WORLDSTATE_BLACKBOARD_ID].as<ui32>();
 
 				component = SceneManager::GetECSManager()->CreateComponent<ECS::ECSHTNAgentComponent>(
-					ECS::ECSComponentType::HTNAgent, initialDomainID, worldStateBlackboardID);
+					ECS::ECSComponentType::HTNAgent, worldStateBlackboardID, initialDomainID);
 			}
 			break;
 			default:

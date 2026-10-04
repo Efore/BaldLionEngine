@@ -30,6 +30,7 @@ namespace BaldLion
 
 			static std::string GetMainScenePathFile() { return s_mainScenePathFile; }
 			static void SetMainScenePathFile(const std::string& mainScenePathFile) { s_mainScenePathFile = mainScenePathFile; }
+			static bool s_isEditorMode;
 
 		private:
 			static HashMap<StringId,Scene*> s_activeScenes;

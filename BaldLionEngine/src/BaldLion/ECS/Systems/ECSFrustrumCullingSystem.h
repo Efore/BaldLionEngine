@@ -9,7 +9,7 @@ namespace BaldLion {
 		{
 		public:
 			ECSFrustrumCullingSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, class ECSManager* ecsManager) :
-				ECSSystem(systemName,systemType, signature, ecsManager, true) {}
+				ECSSystem(systemName,systemType, signature, ecsManager, true, true) {}
 			
 			virtual void OnStart() override {};
 			virtual void OnUpdate(float deltaTime) override;

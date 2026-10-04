@@ -122,105 +122,105 @@ namespace BaldLion {
 
 									switch (chosenType)
 									{
+										case ECS::ECSComponentType::Transform:
 
-									case ECS::ECSComponentType::Transform:
+											newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSTransformComponent>(ECSComponentType::Transform,
+												MathUtils::Vector3Zero,
+												MathUtils::Vector3Zero,
+												glm::vec3(1.0f));
 
-										newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSTransformComponent>(ECSComponentType::Transform,
-											MathUtils::Vector3Zero,
-											MathUtils::Vector3Zero,
-											glm::vec3(1.0f));
+											break;
 
-										break;
+										case ECS::ECSComponentType::ProjectionCamera:
 
-									case ECS::ECSComponentType::ProjectionCamera:
+											newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera,
+												45.0f,
+												600.0f,
+												480.0f,
+												0.1f,
+												1000.0f);
 
-										newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSProjectionCameraComponent>(ECSComponentType::ProjectionCamera,
-											45.0f,
-											600.0f,
-											480.0f,
-											0.1f,
-											1000.0f);
+											break;
 
-										break;
-
-									case ECS::ECSComponentType::Mesh:
-									case ECS::ECSComponentType::Skeleton:
+										case ECS::ECSComponentType::Mesh:
+										case ECS::ECSComponentType::Skeleton:
 									
-										ImGui::OpenPopup(meshPopup);									
+											ImGui::OpenPopup(meshPopup);									
 									
-										break;									
+											break;									
 
-									case ECS::ECSComponentType::DirectionalLight:
+										case ECS::ECSComponentType::DirectionalLight:
 
-										newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSDirectionalLightComponent>(ECSComponentType::DirectionalLight,
-											glm::vec3(0.0f),
-											glm::vec3(1.0f),
-											glm::vec3(0.2f));
+											newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSDirectionalLightComponent>(ECSComponentType::DirectionalLight,
+												glm::vec3(0.0f),
+												glm::vec3(1.0f),
+												glm::vec3(0.2f));
 
-										ECS::SingletonSystems::LightningSystem::SetDirectionalLight((ECSDirectionalLightComponent*)newComponent);
+											ECS::SingletonSystems::LightningSystem::SetDirectionalLight((ECSDirectionalLightComponent*)newComponent);
 											
-										break;
+											break;
 
-									case ECS::ECSComponentType::Locomotion:
-										newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSLocomotionComponent>(ECSComponentType::Locomotion,
-											5.0f, 3.5f, 3.5f);
-										break;
+										case ECS::ECSComponentType::Locomotion:
+											newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSLocomotionComponent>(ECSComponentType::Locomotion,
+												5.0f, 3.5f, 3.5f);
+											break;
 
-									case ECS::ECSComponentType::Animation:
-										ImGui::OpenPopup(animatorPopup);
-										break;
+										case ECS::ECSComponentType::Animation:
+											ImGui::OpenPopup(animatorPopup);
+											break;
 
-									case ECS::ECSComponentType::PhysicsBody:
-										ImGui::OpenPopup(physicsBodyPopup);
-										break;
+										case ECS::ECSComponentType::PhysicsBody:
+											ImGui::OpenPopup(physicsBodyPopup);
+											break;
 
-									case ECS::ECSComponentType::NavMeshAgent:
-									{
-										const ECS::ECSTransformComponent* transformComponent =
-											SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityComponents().Get(selectedEntityID).Read<ECS::ECSTransformComponent>(ECSComponentType::Transform);
-
-										if (transformComponent != nullptr)
+										case ECS::ECSComponentType::NavMeshAgent:
 										{
-											newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent,
-												transformComponent->position, 3.5f, 3.5f);
+											const ECS::ECSTransformComponent* transformComponent =
+												SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityComponents().Get(selectedEntityID).Read<ECS::ECSTransformComponent>(ECSComponentType::Transform);
 
-											ECS::ECSLocomotionComponent* locomotionComponent =
-												SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityComponents().Get(selectedEntityID).Write<ECS::ECSLocomotionComponent>(ECSComponentType::Locomotion);
-
-											if (locomotionComponent == nullptr)
+											if (transformComponent != nullptr)
 											{
-												locomotionComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSLocomotionComponent>(ECSComponentType::Locomotion,
-													5.0f, 3.5f, 3.5f);
-												SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddComponentToEntity(selectedEntityID, locomotionComponent);
+												newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSNavMeshAgentComponent>(ECSComponentType::NavMeshAgent,
+													transformComponent->position, 3.5f, 3.5f);
+
+												ECS::ECSLocomotionComponent* locomotionComponent =
+													SceneManagement::SceneManager::GetMainScene()->GetECSManager()->GetEntityComponents().Get(selectedEntityID).Write<ECS::ECSLocomotionComponent>(ECSComponentType::Locomotion);
+
+												if (locomotionComponent == nullptr)
+												{
+													locomotionComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSLocomotionComponent>(ECSComponentType::Locomotion,
+														5.0f, 3.5f, 3.5f);
+													SceneManagement::SceneManager::GetMainScene()->GetECSManager()->AddComponentToEntity(selectedEntityID, locomotionComponent);
+												}
 											}
 										}
-									}
+											break;
+
+										case ECS::ECSComponentType::CameraFollow:
+										{
+											ImGui::OpenPopup(followedEntityPopup);
+										}
+											break;
+										case ECS::ECSComponentType::PlayerController:
+											newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSPlayerControllerComponent>(ECSComponentType::PlayerController);
+											break;
+										case ECS::ECSComponentType::HTNAgent:
+										{
+											if (AI::HTN::HTNManager::s_definedDomains.Size() > 0)
+											{
+												ImGui::OpenPopup(htnAgentPopup);
+											}
+											else
+											{
+												newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSHTNAgentComponent>(ECSComponentType::HTNAgent,
+													0, 0);
+											}
+										}
 										break;
 
-									case ECS::ECSComponentType::CameraFollow:
-									{
-										ImGui::OpenPopup(followedEntityPopup);
-									}
-										break;
-									case ECS::ECSComponentType::PlayerController:
-										newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECSPlayerControllerComponent>(ECSComponentType::PlayerController);
-										break;
-									case ECS::ECSComponentType::HTNAgent:
-									{
-										if (AI::HTN::HTNManager::s_definedDomains.Size() > 0)
-										{
-											ImGui::OpenPopup(htnAgentPopup);
-										}
-										else
-										{
-											newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSHTNAgentComponent>(ECSComponentType::HTNAgent,
-												0, 0);
-										}
-									}
-										break;
-									}
-
-									break;
+										default:
+											break;
+									}									
 								}
 							}							
 						}
@@ -262,6 +262,7 @@ namespace BaldLion {
 								newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSAnimationComponent>(ECSComponentType::Animation,
 									hashMapIterator.GetValue()->GetResourceID(),
 									hashMapIterator.GetValue()->GetInitialAnimationID());
+								break;
 							}							
 						}
 						ImGui::EndPopup();
@@ -283,6 +284,8 @@ namespace BaldLion {
 									MathUtils::Vector3Zero,
 									MathUtils::Vector3Zero,
 									1.0f);
+
+								break;
 							}
 						}
 						
@@ -313,13 +316,14 @@ namespace BaldLion {
 									glm::vec2(0.0f),
 									5.0f,
 									1.0f);
+
+								break;
 							}							
 								
 						}
 
 						ImGui::EndPopup();
 					}
-
 					
 					if (ImGui::BeginPopupModal(htnAgentPopup, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 					{
@@ -348,7 +352,9 @@ namespace BaldLion {
 
 								// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 								if (is_selected)
-									ImGui::SetItemDefaultFocus();
+								{
+									ImGui::SetItemDefaultFocus();									
+								}
 							}
 							ImGui::EndCombo();
 						}
@@ -386,6 +392,7 @@ namespace BaldLion {
 						{
 							newComponent = SceneManagement::SceneManager::GetMainScene()->GetECSManager()->CreateComponent<ECS::ECSHTNAgentComponent>(ECSComponentType::HTNAgent,
 								domainID, worldStateBlackboardID);
+							ImGui::CloseCurrentPopup();
 						}
 
 						ImGui::EndPopup();
@@ -487,7 +494,5 @@ namespace BaldLion {
 				
 			}
 		}
-
-
 	}
 }

@@ -25,11 +25,10 @@ namespace BaldLion
 
 		void BaldLionGameLayer::OnActivate()
 		{
-			Physics::PhysicsManager::SetIsPhysicsActive(true);
 			EventManager::RegisterEventHandler("WindowResizedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionGameLayer::OnWindowResizedEvent));
 			EventManager::RegisterEventHandler("KeyPressedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionGameLayer::OnKeyPressedEvent));
-
-			SceneManagement::SceneManager::OpenScene(SceneManagement::SceneManager::GetMainScenePathFile().c_str());
+			
+			SceneManagement::SceneManager::OpenScene(SceneManagement::SceneManager::GetMainScenePathFile().c_str());			
 
 			m_ecsManager = SceneManagement::SceneManager::GetECSManager();
 			

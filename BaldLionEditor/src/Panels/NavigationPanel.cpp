@@ -146,7 +146,11 @@ namespace BaldLion
 			
 			if (ImGui::Button("Bake NavMesh"))
 			{
-				NavMeshBuilder::BuildGeomFromScene();
+				if (!NavMeshBuilder::GeomMeshAdded())
+				{
+					NavMeshBuilder::BuildGeomFromScene();
+				}
+
 				if (NavMeshBuilder::GeomMeshAdded())
 				{
 					NavMeshBuilder::BuildNavMesh();

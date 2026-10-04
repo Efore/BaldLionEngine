@@ -38,11 +38,10 @@ namespace BaldLion
 			BL_PROFILE_FUNCTION();
 
 			m_isActive = true;
-			Physics::PhysicsManager::SetIsPhysicsActive(false);
-
 			EventManager::RegisterEventHandler("WindowResizedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnWindowResizedEvent));
 			EventManager::RegisterEventHandler("KeyPressedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
 
+			SceneManagement::SceneManager::s_isEditorMode = true;
 			if (SceneManagement::SceneManager::GetMainScenePathFile().empty() || 
 				!SceneManagement::SceneManager::OpenScene(SceneManagement::SceneManager::GetMainScenePathFile().c_str()))
 			{
@@ -62,6 +61,9 @@ namespace BaldLion
 		void BaldLionEditorLayer::OnDeactivate()
 		{		
 			m_isActive = false;
+
+			SceneManagement::SceneManager::s_isEditorMode = false;
+			SceneManagement::SceneManager::RemoveActiveScene(SceneManagement::SceneManager::GetMainScene()->GetSceneID());
 			EventManager::UnregisterEventHandler("WindowResizedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnWindowResizedEvent));
 			EventManager::UnregisterEventHandler("KeyPressedEvent", BL_BIND_OBJECT_FUNCTION(BaldLionEditorLayer::OnKeyPressedEvent));
 		}

@@ -1,19 +1,21 @@
 #include "blpch.h"
 #include "ECSSystem.h"
 #include "ECSManager.h"
+#include "BaldLion/SceneManagement/SceneManager.h"
 #include "BaldLion/Core/Containers/HashMap.h"
 
 namespace BaldLion {
 
 	namespace ECS {
 
-		ECSSystem::ECSSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, ECSManager* ecsManager, bool parallelize) :
+		ECSSystem::ECSSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, ECSManager* ecsManager, bool parallelize, bool shouldExecuteOnEditorMode) :
 			m_systemName(BL_STRING_TO_STRINGID(systemName)), 
 			m_systemType(systemType),
 			m_signature(signature), 
 			m_ecsManager(ecsManager),
 			m_parallelize(parallelize),
-			m_refreshComponentLookUps(false)
+			m_shouldExecuteOnEditorMode(shouldExecuteOnEditorMode),
+			m_refreshComponentLookUps(false)			
 		{
 			m_componentLookUps = DynamicArray<ECSComponentLookUp*>(AllocationType::FreeList_ECS, 96);
 			m_entityIDs = DynamicArray<ECSEntityID>(AllocationType::FreeList_ECS, 96);
@@ -41,6 +43,11 @@ namespace BaldLion {
 		{			
 			if (m_componentLookUps.Size() == 0)
 				return;
+
+			if (SceneManagement::SceneManager::s_isEditorMode && !m_shouldExecuteOnEditorMode)
+			{
+				return;
+			}
 
 			if (m_parallelDependenciesCount > 0)
 			{

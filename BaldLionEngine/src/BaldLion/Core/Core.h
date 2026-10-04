@@ -20,7 +20,7 @@
 #define BL_BIND_STATIC_FUNCTION(fn) std::bind(fn, std::placeholders::_1)
 #define BL_NUMARGS(...) std::tuple_size<decltype(std::make_tuple(__VA_ARGS__))>::value
 
-#define GAMEPLAY_FRAME_TARGET_MS 33u
+#define GAMEPLAY_FRAME_TARGET_MS 16u
 
 using ui64 = uint64_t;
 using i64 = int64_t;

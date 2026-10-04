@@ -1,5 +1,6 @@
 #include "blpch.h"
 #include "Scene.h"
+#include "SceneManager.h"
 #include "BaldLion/ECS/ECSSystemsInclude.h"
 
 namespace BaldLion {
@@ -33,7 +34,7 @@ namespace BaldLion {
 				m_ecsManager = Memory::MemoryManager::New<ECS::ECSManager>("ECS Manager", Memory::AllocationType::FreeList_ECS);
 
 				{//Systems
-
+				
 					BL_GENERATE_SYSTEM("ECS PhysicsSystem", ECS::ECSPhysicsSystem, ECS::ECSSystemType::PhysicsSystem, m_ecsManager, ECS::ECSComponentType::PhysicsBody, ECS::ECSComponentType::Transform);
 					BL_GENERATE_SYSTEM("ECS LocomotionSystem", ECS::ECSLocomotionSystem, ECS::ECSSystemType::LocomotionSystem, m_ecsManager, ECS::ECSComponentType::Transform, ECS::ECSComponentType::Locomotion);
 					BL_GENERATE_SYSTEM("ECS CameraFollowSystem", ECS::ECSCameraFollowSystem, ECS::ECSSystemType::CameraFollowSystem, m_ecsManager, ECS::ECSComponentType::Transform, ECS::ECSComponentType::CameraFollow);
@@ -42,11 +43,11 @@ namespace BaldLion {
 					BL_GENERATE_SYSTEM("ECS PlayerControllerSystem", ECS::ECSPlayerControllerSystem, ECS::ECSSystemType::PlayerControllerSystem, m_ecsManager, ECS::ECSComponentType::PlayerController, ECS::ECSComponentType::Locomotion, ECS::ECSComponentType::Transform);
 					BL_GENERATE_SYSTEM("ECS Frustrum Culling System", ECS::ECSFrustrumCullingSystem, ECS::ECSSystemType::FrustrumCullingSystem, m_ecsManager, ECS::ECSComponentType::Mesh, ECS::ECSComponentType::Transform);
 					BL_GENERATE_SYSTEM("ECS HTN Planner System", ECS::ECSHTNPlannerSystem, ECS::ECSSystemType::HTNPlannerSystem, m_ecsManager, ECS::ECSComponentType::HTNAgent);
-										
+
 					BL_SET_SYSTEM_DEPENDENCIES(ECS::ECSSystemType::LocomotionSystem, m_ecsManager, ECS::ECSSystemType::PhysicsSystem, ECS::ECSSystemType::NavigationSystem);
 					BL_SET_SYSTEM_DEPENDENCIES(ECS::ECSSystemType::CameraFollowSystem, m_ecsManager, ECS::ECSSystemType::LocomotionSystem);
-					BL_SET_SYSTEM_DEPENDENCIES(ECS::ECSSystemType::AnimationSystem, m_ecsManager, ECS::ECSSystemType::LocomotionSystem);					
-					BL_SET_SYSTEM_DEPENDENCIES(ECS::ECSSystemType::FrustrumCullingSystem, m_ecsManager, ECS::ECSSystemType::AnimationSystem);
+					BL_SET_SYSTEM_DEPENDENCIES(ECS::ECSSystemType::AnimationSystem, m_ecsManager, ECS::ECSSystemType::LocomotionSystem);
+					BL_SET_SYSTEM_DEPENDENCIES(ECS::ECSSystemType::FrustrumCullingSystem, m_ecsManager, ECS::ECSSystemType::AnimationSystem);					
 				}
 
 				m_ecsManager->StartSystems();

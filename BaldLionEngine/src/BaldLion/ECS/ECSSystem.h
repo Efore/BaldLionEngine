@@ -11,7 +11,7 @@ namespace BaldLion
 		class ECSSystem {
 
 		public:
-			ECSSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, class ECSManager* ecsManager, bool parallelize);
+			ECSSystem(const char* systemName, ECSSystemType systemType, const ECSSignature& signature, class ECSManager* ecsManager, bool parallelize, bool shouldExecuteOnEditorMode);
 			virtual ~ECSSystem();
 
 			virtual void OnStart() = 0;
@@ -45,6 +45,7 @@ namespace BaldLion
 
 			bool m_refreshComponentLookUps;
 			bool m_firstFrame = true;
+			bool m_shouldExecuteOnEditorMode = false;
 
 			bool m_parallelize;
 			Threading::TaskID m_parallelTask;

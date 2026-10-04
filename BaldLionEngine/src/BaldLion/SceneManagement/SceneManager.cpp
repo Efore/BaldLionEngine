@@ -16,6 +16,7 @@ namespace BaldLion
 		Scene* SceneManager::s_mainScene;		
 
 		std::string SceneManager::s_mainScenePathFile;
+		bool SceneManager::s_isEditorMode = false;
 
 		void SceneManager::Init()
 		{
